@@ -159,3 +159,50 @@
     flex-direction: column;
   }
 }
+
+/* #213: timing legend is a small explanation, not another dashboard metric. */
+.review-count-guidance {
+  flex-basis: 100%;
+  margin: 6px 0 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  line-height: 1.65;
+}
+
+.review-window-toolbar {
+  flex-wrap: wrap;
+}
+
+.review-list-item .review-list-copy,
+.review-list-item .review-list-side {
+  min-width: 0;
+}
+
+@media (max-width: 720px) {
+  .review-count-guidance {
+    margin-top: 0;
+  }
+}
+
+/* Review is not necessarily a Wrong Note; only link to a known related Concept. */
+.review-page .review-list-item {
+  cursor: default;
+}
+
+.review-page .review-row-action:not(.review-row-info) {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  color: var(--accent-strong);
+  text-decoration: none;
+}
+
+.review-page .review-row-action:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.review-page .review-row-info {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}

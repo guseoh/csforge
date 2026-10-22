@@ -56,3 +56,17 @@
     grid-template-columns: 1fr;
   }
 }
+
+/* #212: retry history note must remain visible alongside the next action. */
+.quiz-result-actions-focused .result-retry-history-note {
+  display: block;
+  max-width: 720px;
+  margin-top: 8px;
+  line-height: 1.65;
+}
+
+.result-self-check-actions [role='alert'] {
+  display: block;
+  flex-basis: 100%;
+  line-height: 1.6;
+}

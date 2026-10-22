@@ -4,6 +4,7 @@ import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { CanonicalBootstrapCard } from '../components/CanonicalBootstrapCard'
 import { getConcepts, getLearningAreas, type AreaSummary, type ConceptListItem } from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
+import { defaultBookmarksSearch } from '../lib/bookmarks-search'
 import { selectRecentConcepts } from '../lib/learning-recent'
 import { defaultQuizSearch } from '../lib/quiz-search'
 
@@ -14,7 +15,9 @@ function completionPercent(area: AreaSummary) {
 
 function AreaRow({ area, index }: { area: AreaSummary; index: number }) {
   const completion = completionPercent(area)
-  const started = area.startedConceptCount > 0
+  const started = area.startedConceptCount > 0 || area.completedConceptCount > 0
+  const finished = area.publishedConceptCount > 0 && area.completedConceptCount >= area.publishedConceptCount
+  const stateLabel = area.publishedConceptCount === 0 ? '콘텐츠 없음' : finished ? '완료' : started ? '진행 중' : '미시작'
 
   return (
     <article className="area-row">
@@ -26,7 +29,8 @@ function AreaRow({ area, index }: { area: AreaSummary; index: number }) {
           <span className="area-row-context">{area.publishedConceptCount}개 개념 · {area.publishedQuestionCount}개 문제{area.finalizedAttemptCount > 0 ? ` · 정확도 ${Math.round(area.accuracyPercent)}%` : ''}</span>
         </span>
       </Link>
-      <span className="area-row-progress" aria-label={started ? `학습 진행률 ${completion}%` : '아직 학습을 시작하지 않음'}>
+      <span className="area-row-progress" aria-label={`${stateLabel} · 학습 진행률 ${completion}%`}>
+        <strong className="area-row-study-state">{stateLabel}</strong>
         {started ? (
           <>
             <span className="area-row-progress-label"><span>{area.completedConceptCount}/{area.publishedConceptCount}개 완료</span><span>{completion}%</span></span>
@@ -65,11 +69,26 @@ export function LearningPage() {
     queryKey: ['concepts', { page: 0, size: 6, sort: 'VIEWED' }],
     queryFn: () => getConcepts({ page: 0, size: 6, sort: 'VIEWED' }),
   })
+  const hasPublishedConcepts = areasQuery.data?.some((area) => area.publishedConceptCount > 0) ?? false
+  const inProgressQuery = useQuery({
+    queryKey: ['concepts', { page: 0, size: 1, sort: 'CURRICULUM', learningStatus: 'LEARNING' }],
+    queryFn: () => getConcepts({ page: 0, size: 1, sort: 'CURRICULUM', learningStatus: 'LEARNING' }),
+    enabled: hasPublishedConcepts,
+  })
+  const unseenQuery = useQuery({
+    queryKey: ['concepts', { page: 0, size: 1, sort: 'CURRICULUM', learningStatus: 'UNSEEN' }],
+    queryFn: () => getConcepts({ page: 0, size: 1, sort: 'CURRICULUM', learningStatus: 'UNSEEN' }),
+    enabled: hasPublishedConcepts,
+  })
 
   if (areasQuery.isPending) return <PageSkeleton rows={6} />
   if (areasQuery.isError) return <ErrorState onRetry={() => void areasQuery.refetch()} />
 
   const recentConcepts = recentConceptsQuery.data ? selectRecentConcepts(recentConceptsQuery.data.items) : []
+  const nextConcept = inProgressQuery.data?.items[0]
+    ?? (!inProgressQuery.isPending && !inProgressQuery.isError ? unseenQuery.data?.items[0] : undefined)
+  const nextPending = hasPublishedConcepts && (inProgressQuery.isPending || (!nextConcept && unseenQuery.isPending))
+  const nextError = !nextConcept && (inProgressQuery.isError || unseenQuery.isError)
 
   return (
     <section className="page-section learning-page">
@@ -81,6 +100,8 @@ export function LearningPage() {
         </div>
         <div className="learning-index-summary"><strong>{areasQuery.data.length}</strong><span>개 영역<br />커리큘럼 색인</span></div>
       </header>
+
+      <Link className="secondary-button" to="/bookmarks" search={defaultBookmarksSearch}>내 북마크 모아보기</Link>
 
       <CanonicalBootstrapCard />
 
@@ -103,6 +124,40 @@ export function LearningPage() {
           <div className="recent-concept-list">
             {recentConcepts.map((concept, index) => <RecentConceptRow key={concept.id} concept={concept} index={index} />)}
           </div>
+        </section>
+      )}
+
+      {hasPublishedConcepts && (
+        <section className="learning-next-section" aria-labelledby="learning-next-heading">
+          <div className="learning-section-heading">
+            <div>
+              <p className="eyebrow">다음 학습</p>
+              <h2 id="learning-next-heading">새로 공부할 개념</h2>
+            </div>
+            <span className="helper-text">최근 본 기록과는 별도로, 미완료 개념을 안내합니다.</span>
+          </div>
+          {nextConcept ? (
+            <Link className="learning-next-link" to="/concepts/$conceptId" params={{ conceptId: String(nextConcept.id) }}>
+              <span className="learning-next-copy">
+                <strong>{nextConcept.learningStatus === 'LEARNING' ? '학습 중인 개념 이어가기' : '다음 미학습 개념 시작하기'}</strong>
+                <span>{nextConcept.title}</span>
+                <small>{nextConcept.areaName} · {nextConcept.topicTitle} · 레벨 {nextConcept.level}</small>
+              </span>
+              <span aria-hidden="true">→</span>
+            </Link>
+          ) : nextError ? (
+            <div className="recent-concepts-state error-text" role="alert">
+              다음 학습 대상을 불러오지 못했습니다.
+              <button className="text-button" type="button" onClick={() => {
+                if (inProgressQuery.isError) void inProgressQuery.refetch()
+                if (unseenQuery.isError) void unseenQuery.refetch()
+              }}>다시 시도</button>
+            </div>
+          ) : nextPending ? (
+            <p className="recent-concepts-state" role="status">다음 학습 대상을 찾는 중…</p>
+          ) : (
+            <p className="recent-concepts-state">새로 학습할 개념이 없습니다. 복습 필요 항목은 주제 목록에서 별도로 확인할 수 있습니다.</p>
+          )}
         </section>
       )}
 

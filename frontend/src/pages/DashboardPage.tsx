@@ -2,6 +2,7 @@ import { Link, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { CanonicalBootstrapCard } from '../components/CanonicalBootstrapCard'
+import { LearningInsightsSection } from '../components/LearningInsightsSection'
 import { getDashboard, type Dashboard, type DashboardHeatmapDay } from '../lib/dashboard-api'
 import { getConcepts } from '../lib/learning-api'
 import { selectRecentConcepts } from '../lib/learning-recent'
@@ -58,7 +59,7 @@ export function DashboardPage() {
     },
   })
 
-  if (dashboardQuery.isPending || recentConceptsQuery.isPending) return <PageSkeleton rows={5} />
+  if (dashboardQuery.isPending) return <PageSkeleton rows={5} />
   if (dashboardQuery.isError || !dashboardQuery.data) {
     return <ErrorState message="홈을 불러오지 못했습니다." onRetry={() => void dashboardQuery.refetch()} />
   }
@@ -75,7 +76,9 @@ export function DashboardPage() {
     ...(recentAreaInPool ? [recentAreaInPool] : []),
     ...areaPool.filter((area) => area.areaSlug !== recentAreaInPool?.areaSlug),
   ].slice(0, 4)
-  const fallbackArea = featuredAreas[0] ?? dashboard.areaProgress[0] ?? null
+  const fallbackArea = featuredAreas.find((area) => area.publishedConceptCount > 0)
+    ?? dashboard.areaProgress.find((area) => area.publishedConceptCount > 0)
+    ?? null
   const primaryKind = dashboard.activeQuiz
     ? 'quiz'
     : dashboard.today.reviewDueCount > 0
@@ -123,6 +126,8 @@ export function DashboardPage() {
           : '학습 콘텐츠 상태를 확인하세요.'
   const showReviewFollowUp = dashboard.activeQuiz !== null && dashboard.today.reviewDueCount > 0
   const showConceptFollowUp = recentConcept !== null && primaryKind !== 'concept'
+  const showNewLearningFollowUp = fallbackArea !== null && primaryKind !== 'area'
+    && !(showReviewFollowUp && showConceptFollowUp)
   const areaSectionTitle = showingProgressedAreas ? '진행 중인 학습 영역' : '다음 학습 영역'
   const areaSectionDescription = showingProgressedAreas
     ? '이미 시작한 영역에서 다음 개념을 이어가세요.'
@@ -169,7 +174,7 @@ export function DashboardPage() {
         </div>
       )}
 
-      {(showReviewFollowUp || showConceptFollowUp) && (
+      {(showReviewFollowUp || showConceptFollowUp || showNewLearningFollowUp) && (
         <section className="home-follow-up" aria-labelledby="home-follow-up-heading">
           <div className="dashboard-section-heading home-follow-up-heading">
             <div><p className="eyebrow">그다음</p><h2 id="home-follow-up-heading">이어갈 학습</h2></div>
@@ -187,6 +192,12 @@ export function DashboardPage() {
                 <span className="home-row-action">계속 읽기 →</span>
               </Link>
             )}
+            {showNewLearningFollowUp && fallbackArea && (
+              <Link className="home-follow-up-row" to="/learning/$areaSlug" params={{ areaSlug: fallbackArea.areaSlug }} search={defaultLearningSearch}>
+                <span className="home-follow-up-copy"><span>새로운 학습</span><strong>{fallbackArea.areaName}</strong><small>커리큘럼에서 다음 미학습 개념을 찾아보세요.</small></span>
+                <span className="home-row-action">개념 찾기 →</span>
+              </Link>
+            )}
           </div>
         </section>
       )}
@@ -202,21 +213,22 @@ export function DashboardPage() {
           <p className="dashboard-section-copy">{areaSectionDescription}</p>
           <div className="dashboard-area-list">
             {featuredAreas.map((area, index) => {
-              const started = area.startedConceptCount > 0
+              const started = area.startedConceptCount > 0 || area.completedConceptCount > 0
+              const hasPublished = area.publishedConceptCount > 0
               return (
                 <Link className="dashboard-area-row" key={area.areaSlug} to="/learning/$areaSlug" params={{ areaSlug: area.areaSlug }} search={defaultLearningSearch}>
                   <span className="dashboard-area-index" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
                   <span className="dashboard-area-copy">
                     <strong>{area.areaName}</strong>
-                    <span>{started ? `${area.completedConceptCount}/${area.publishedConceptCount}개 개념 완료` : `${area.publishedConceptCount}개 개념 · 미시작`}</span>
+                    <span>{!hasPublished ? '공개된 개념 없음' : started ? `${area.completedConceptCount}/${area.publishedConceptCount}개 개념 완료` : `${area.publishedConceptCount}개 개념 · 미시작`}</span>
                   </span>
                   <span className="dashboard-area-progress">
-                    {started ? (
+                    {started && hasPublished ? (
                       <>
                         <b>{percent(area.completionPercent)}</b>
                         <span className="dashboard-progress-track" aria-hidden="true"><span style={{ width: `${Math.min(100, area.completionPercent)}%` }} /></span>
                       </>
-                    ) : <span className="helper-text">미시작</span>}
+                    ) : <span className="helper-text">{hasPublished ? '미시작' : '콘텐츠 없음'}</span>}
                   </span>
                   <span className="dashboard-area-arrow" aria-hidden="true">→</span>
                 </Link>
@@ -238,12 +250,14 @@ export function DashboardPage() {
         </section>
       </div>
 
+      <LearningInsightsSection areas={dashboard.areaProgress} />
+
       <details className="home-stats-disclosure">
         <summary><span><span className="eyebrow">학습 통계</span><strong>오늘 기록과 장기 활동 보기</strong></span><span>펼치기 <span aria-hidden="true">⌄</span></span></summary>
         <div className="home-stats-content">
           <section className="dashboard-status-strip" aria-label="오늘의 학습 통계">
             <div className="dashboard-status-item"><span>오늘 푼 문제</span><strong>{dashboard.today.solvedCount}</strong><small>정답 {dashboard.today.correctCount} · 오답 {dashboard.today.wrongCount}</small></div>
-            <div className="dashboard-status-item"><span>오늘 정확도</span><strong>{percent(dashboard.today.accuracyPercent)}</strong><small>{dashboard.today.solvedCount === 0 ? '아직 풀이 기록이 없습니다.' : '채점 완료 문항 기준'}</small></div>
+            <div className="dashboard-status-item"><span>오늘 정확도</span><strong>{dashboard.today.solvedCount === 0 ? '—' : percent(dashboard.today.accuracyPercent)}</strong><small>{dashboard.today.solvedCount === 0 ? '확정 채점 문항이 없어 정확도를 계산하지 않습니다.' : '채점이 확정된 문항 기준 · 자기채점 대기 제외'}</small></div>
             <div className="dashboard-status-item"><span>복습 대기</span><strong>{dashboard.today.reviewDueCount}</strong><small>{dashboard.today.reviewDueCount > 0 ? '지금 시작할 수 있습니다.' : '현재 대기 중인 복습이 없습니다.'}</small></div>
             <div className="dashboard-status-item"><span>연속 학습</span><strong>{dashboard.currentStreak}일</strong><small>{dashboard.currentStreak === 0 ? '오늘 다시 시작해 보세요.' : '활동이 이어지고 있습니다.'}</small></div>
           </section>

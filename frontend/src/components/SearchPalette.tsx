@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboa
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
 import { getSearchSuggestions } from '../lib/search-api'
-import { addRecentSearch, primarySearchDestination } from '../lib/search-ui'
+import { addRecentSearch, primarySearchDestination, shouldIgnorePaletteShortcut } from '../lib/search-ui'
 import { defaultSearchSearch, questionSuggestionSearch } from '../lib/search-search'
 
 const RECENT_KEY = 'csforge.search.recent.v1'
@@ -18,13 +18,18 @@ function loadRecent(): string[] {
 }
 
 function persistRecent(recent: string[]) {
-  localStorage.setItem(RECENT_KEY, JSON.stringify(recent))
+  try {
+    localStorage.setItem(RECENT_KEY, JSON.stringify(recent))
+  } catch {
+    // Optional recent-search persistence must not block navigation.
+  }
 }
 
 export function SearchPalette() {
   const navigate = useNavigate()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const composingRef = useRef(false)
   const [open, setOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
@@ -60,7 +65,8 @@ export function SearchPalette() {
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
-      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k'
+        && !shouldIgnorePaletteShortcut(event)) {
         event.preventDefault()
         if (open) closePalette()
         else openPalette()
@@ -136,6 +142,7 @@ export function SearchPalette() {
     : normalized.length >= 2 ? actionableSuggestions.length : 0
 
   const handleInputKeyDown = (event: ReactKeyboardEvent<HTMLInputElement>) => {
+    if (composingRef.current || event.nativeEvent.isComposing || event.key === 'Process') return
     if (event.key === 'ArrowDown' && actionableCount > 0) {
       event.preventDefault()
       setActiveIndex((current) => current < actionableCount - 1 ? current + 1 : 0)
@@ -168,12 +175,14 @@ export function SearchPalette() {
         onClick={(event) => { if (event.target === event.currentTarget) closePalette() }}
       >
           <section className="search-palette">
-            <form className="search-palette-form" onSubmit={(event) => { event.preventDefault(); submitSearch(query) }}>
+            <form className="search-palette-form" onSubmit={(event) => { event.preventDefault(); if (!composingRef.current) submitSearch(query) }}>
               <input
                 ref={inputRef}
                 value={query}
                 maxLength={200}
                 onChange={(event) => setQuery(event.target.value)}
+                onCompositionStart={() => { composingRef.current = true }}
+                onCompositionEnd={() => { composingRef.current = false }}
                 onKeyDown={handleInputKeyDown}
                 placeholder="개념, 문제, 오답, 노트를 검색하세요"
                 aria-label="전체 검색어"
@@ -211,7 +220,7 @@ export function SearchPalette() {
               {normalized.length >= 2 && debouncedQuery === normalized && suggestions.isError && <p className="palette-muted">제안을 불러오지 못했습니다. Enter로 전체 검색은 계속 사용할 수 있습니다.</p>}
               {normalized.length >= 2 && debouncedQuery === normalized && suggestions.data && (
                 <div>
-                  <p className="palette-section-title">바로가기 제안</p>
+                  <p className="palette-section-title">제목 바로가기 · 전체 검색 결과는 Enter 또는 검색 버튼</p>
                   <div className="palette-list" role="listbox">
                     {actionableSuggestions.length === 0 ? <p className="palette-muted">바로 이동할 수 있는 제목 제안이 없습니다. Enter로 전체 검색을 할 수 있습니다.</p> : actionableSuggestions.map((item, index) => (
                       <button
@@ -223,7 +232,7 @@ export function SearchPalette() {
                         type="button"
                         onMouseEnter={() => setActiveIndex(index)}
                         onClick={() => openSuggestion(item)}
-                      ><span>{item.title}</span><small>{item.documentType.replace('_', ' ')}</small></button>
+                      ><span>{item.title}</span><small>{item.documentType === 'PERSONAL_NOTE' ? '개인 메모' : item.documentType === 'WRONG_NOTE' ? '오답 노트' : item.documentType === 'REFERENCE' ? '참고 자료' : item.documentType === 'QUESTION' ? '문제' : '개념'}</small></button>
                     ))}
                   </div>
                 </div>

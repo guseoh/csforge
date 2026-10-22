@@ -576,3 +576,59 @@
     align-items: flex-start;
   }
 }
+
+/* #213: preserve reading order and make historical answers legible. */
+.wrong-note-retry-area {
+  display: grid;
+  justify-items: start;
+  gap: 9px;
+  margin-top: 18px;
+}
+
+.wrong-note-retry-area .helper-text {
+  max-width: 730px;
+  line-height: 1.6;
+}
+
+.wrong-note-save-retry {
+  min-height: 40px;
+  margin-top: 8px;
+}
+
+.wrong-note-attempt-row {
+  align-items: start;
+}
+
+.wrong-note-attempt-detail {
+  display: grid;
+  min-width: 0;
+  gap: 5px;
+}
+
+.wrong-note-attempt-answer {
+  color: var(--text-strong);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.wrong-note-answer-panel .markdown-content,
+.wrong-note-answer-panel pre,
+.wrong-note-explanation pre {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.wrong-note-answer-panel pre,
+.wrong-note-explanation pre {
+  overflow-x: auto;
+}
+
+@media (max-width: 720px) {
+  .wrong-note-attempt-row {
+    grid-template-columns: 1fr;
+  }
+
+  .wrong-note-retry-area .primary-button {
+    width: 100%;
+  }
+}

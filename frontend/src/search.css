@@ -583,3 +583,42 @@
     position: static;
   }
 }
+
+/* #214: lightweight search recovery and contextual result guidance. */
+.search-mode-guidance,
+.search-inline-notice {
+  margin: 10px 0 18px;
+  color: var(--text-muted);
+  font-size: 0.81rem;
+  line-height: 1.6;
+}
+
+.search-inline-notice {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.search-filter-error {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  color: var(--state-error);
+  font-size: 0.82rem;
+  line-height: 1.5;
+}
+
+.search-filter-error button {
+  width: fit-content;
+  min-height: 40px;
+}
+
+.search-empty-results .secondary-button {
+  margin-top: 12px;
+  width: fit-content;
+}
+
+.search-result-card .search-snippet {
+  overflow-wrap: anywhere;
+}

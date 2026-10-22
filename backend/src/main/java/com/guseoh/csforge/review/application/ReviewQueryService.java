@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import com.guseoh.csforge.review.domain.ReviewSchedule;
 import com.guseoh.csforge.review.domain.ReviewScheduleRepository;
 import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
 import com.guseoh.csforge.review.infrastructure.ReviewScheduleSearchRepository;
+import com.guseoh.csforge.wrongnote.domain.WrongNoteRepository;
 
 /**
  * 복습 요약과 bounded 일정 목록 조회를 처리한다.
@@ -30,6 +32,7 @@ public class ReviewQueryService {
     private final ReviewScheduleRepository scheduleRepository;
     private final ReviewScheduleSearchRepository searchRepository;
     private final QuestionConceptRepository conceptRepository;
+    private final WrongNoteRepository wrongNoteRepository;
     private final Clock clock;
     private final ZoneId studyZoneId;
 
@@ -54,17 +57,20 @@ public class ReviewQueryService {
         List<Long> ids = result.getContent().stream().map(ReviewSchedule::getQuestionId).toList();
         Map<Long, List<QuestionConceptSummary>> concepts = conceptRepository.findSummariesForQuestionIds(ids).stream()
                 .collect(Collectors.groupingBy(QuestionConceptSummary::questionId));
+        Set<Long> wrongNoteIds = ids.isEmpty() ? Set.of() : wrongNoteRepository.findByQuestionIdIn(ids)
+                .stream().map(note -> note.getQuestion().getId()).collect(Collectors.toSet());
         return new ReviewPageView(
-                result.getContent().stream().map(schedule -> toItem(schedule, concepts.getOrDefault(schedule.getQuestionId(), List.of()))).toList(),
+                result.getContent().stream().map(schedule -> toItem(schedule, concepts.getOrDefault(schedule.getQuestionId(), List.of()),
+                        wrongNoteIds.contains(schedule.getQuestionId()))).toList(),
                 result.getTotalElements(), page, size);
     }
 
-    private ReviewListItemView toItem(ReviewSchedule schedule, List<QuestionConceptSummary> links) {
+    private ReviewListItemView toItem(ReviewSchedule schedule, List<QuestionConceptSummary> links, boolean wrongNoteAvailable) {
         var question = schedule.getQuestion();
         return new ReviewListItemView(question.getId(), question.getPromptMarkdown(), question.getQuestionType(), question.getDifficulty(),
                 links.stream().map(link -> {
                     return new ReviewListItemView.ConceptView(link.conceptId(), link.conceptSlug(), link.conceptTitle(),
                             link.areaSlug(), link.areaName(), link.conceptLevel());
-                }).toList(), schedule.getStatus(), schedule.getStage(), schedule.getDueAt(), schedule.getLastReviewedAt());
+                }).toList(), schedule.getStatus(), schedule.getStage(), schedule.getDueAt(), schedule.getLastReviewedAt(), wrongNoteAvailable);
     }
 }

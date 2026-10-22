@@ -99,6 +99,8 @@ class QuizIntegrationTest {
     @BeforeEach
     void setUpFixture() {
         TEST_CLOCK.set(BASE_TIME);
+        // Another test temporarily deactivates the Java area: restore fixture isolation.
+        jdbc.update("UPDATE learning_area SET active = true WHERE slug = 'java'");
         jdbc.update("DELETE FROM attempt");
         jdbc.update("DELETE FROM quiz_question");
         jdbc.update("DELETE FROM quiz_session");
@@ -144,6 +146,67 @@ class QuizIntegrationTest {
                 "DRAFT");
         draftQuestionId = jdbc.queryForObject("SELECT id FROM question WHERE content_key = 'draft-question'", Long.class);
         archivedQuestionId = saveArchivedQuestion(concept);
+    }
+
+    @Test
+    void refactorDailyLoopPreservesNoteBookmarkAttemptsAndReviewAcrossReadModels() throws Exception {
+        // One connected transaction flow, using the app HTTP API and isolated PostgreSQL.
+        assertEquals(200, request("POST", "/api/concepts/" + conceptId + "/view", null).statusCode());
+        assertEquals(200, request("PUT", "/api/concepts/" + conceptId + "/note",
+                "{\"content\":\"Original learner note\"}").statusCode());
+        assertEquals(200, request("PATCH", "/api/concepts/" + conceptId + "/progress",
+                "{\"status\":\"LEARNING\",\"bookmarked\":true}").statusCode());
+        JsonNode categories = json(request("GET", "/api/bookmark-categories", null));
+        long categoryId = categories.get(0).get("id").asLong();
+        assertEquals(200, request("PUT", "/api/concepts/" + conceptId + "/bookmark-category",
+                "{\"categoryId\":" + categoryId + "}").statusCode());
+        int filteredBookmarkCount = json(request("GET",
+                "/api/concepts?bookmarked=true&bookmarkCategoryId=" + categoryId, null))
+                .get("page").get("totalElements").asInt();
+        // Distinguish a broken fixture from a regression in the public search projection.
+        assertTrue(jdbc.queryForObject(
+                "select bookmarked from concept_progress where concept_id = ?",
+                Boolean.class, conceptId));
+        assertEquals(categoryId, jdbc.queryForObject(
+                "select category_id from bookmark_category_concept where concept_id = ?",
+                Long.class, conceptId));
+
+        long quizId = createQuiz(1, null);
+        assertEquals(200, request("PUT", "/api/quizzes/" + quizId + "/questions/"
+                + multipleChoiceId + "/answer",
+                "{\"selectedChoiceKey\":\"B\",\"answerText\":null,\"reviewNeeded\":false}").statusCode());
+        assertEquals(200, request("POST", "/api/quizzes/" + quizId + "/submit", null).statusCode());
+        JsonNode result = json(request("GET", "/api/quizzes/" + quizId + "/result", null));
+        assertEquals(1, result.get("wrong").asInt());
+        assertEquals("SCHEDULED", result.get("questions").get(0).get("reviewScheduleStatus").asText());
+        assertEquals(200, request("GET", "/api/wrong-notes/" + multipleChoiceId, null).statusCode());
+        JsonNode reviewRows = json(request("GET", "/api/reviews?size=20", null)).get("items");
+        assertEquals(1, reviewRows.size());
+        assertTrue(reviewRows.get(0).get("wrongNoteAvailable").asBoolean());
+        assertTrue(json(request("GET", "/api/search?q=Quiz", null)).get("items").size() > 0);
+
+        JsonNode understanding = json(request("GET",
+                "/api/concepts/" + conceptId + "/understanding", null));
+        assertEquals(1, understanding.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(1, understanding.get("evidence").get("uniqueQuestions").asInt());
+        assertEquals("NOT_ENOUGH_EVIDENCE", understanding.get("assessmentStatus").asText());
+        JsonNode insights = json(request("GET", "/api/learning-insights?range=7d&area=java", null));
+        assertEquals(1, insights.get("current").get("wrongAttempts").asInt());
+        assertEquals(1, insights.get("current").get("viewedConcepts").asInt());
+
+        JsonNode after = json(request("GET", "/api/concepts/" + conceptId, null));
+        assertEquals("Original learner note", after.get("personalNote").get("content").asText());
+        assertTrue(after.get("progress").get("bookmarked").asBoolean());
+        assertEquals(categoryId, json(request("GET",
+                "/api/concepts/" + conceptId + "/bookmark-category", null))
+                .get("categoryId").asLong());
+        assertEquals(1, jdbc.queryForObject("select count(*) from attempt where quiz_session_id = ?",
+                Integer.class, quizId));
+        assertEquals(1, jdbc.queryForObject("select count(*) from wrong_note where question_id = ?",
+                Integer.class, multipleChoiceId));
+        // Combined bookmark search must agree with the persisted classification across the full flow.
+        assertEquals(1, filteredBookmarkCount,
+                "Issue #268: bookmark classification exists in the DB, but the combined filter loses it");
     }
 
     @Test
@@ -814,6 +877,8 @@ class QuizIntegrationTest {
         JsonNode scheduled = json(request("GET", "/api/reviews?size=20", null));
         assertEquals(1, scheduled.get("items").size());
         assertEquals(1, scheduled.get("items").get(0).get("stage").asInt());
+        assertFalse(scheduled.get("items").get(0).get("wrongNoteAvailable").asBoolean(),
+                "Correct answers explicitly scheduled for review must not link to a missing Wrong Note");
     }
 
     private void completeReviewCorrectly(int days) throws Exception {

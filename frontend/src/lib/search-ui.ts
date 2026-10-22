@@ -37,6 +37,10 @@ export function segmentSearchHighlight(value: string): HighlightSegment[] {
   return segments.filter((segment) => segment.text.length > 0)
 }
 
+export function shouldIgnorePaletteShortcut(event: { isComposing: boolean; key: string; altKey: boolean; shiftKey: boolean }) {
+  return event.isComposing || event.key === 'Process' || event.altKey || event.shiftKey
+}
+
 export function addRecentSearch(recent: string[], query: string, maxSize = 6): string[] {
   const normalized = query.trim()
   if (!normalized) return recent.slice(0, maxSize)

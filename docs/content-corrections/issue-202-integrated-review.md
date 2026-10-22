@@ -1,6 +1,8 @@
 # Issue #202 — Network / Database / DSA cross-PR final review and live QA
 
-> Status: **automated cross-PR validation PASS; manual Human Usage Check and user merge approval pending**. This document is evidence, not an approval to merge or synchronize Production.
+> **Latest retrospective (2026-10-22):** PR #253/#254/#255 were approved and merged on 2026-10-21. The original status line below describes the **pre-merge** checkpoint, not the current GitHub status. The original evidence is kept intact. Production canonical synchronization is a distinct operation.
+>
+> Historical status at the time of the cross-PR test: automated cross-PR validation PASS; Human Usage Check and merge approval pending.
 
 ## Locked review inputs
 
@@ -48,3 +50,38 @@
 - Exact whole-pack reimport with personal/history present: **3,380 UNCHANGED, 0 UPDATED, 0 ERROR/FAILED**. Snapshot digest unchanged for ten tables: `personal_note`, `concept_progress`, `quiz_session`, `attempt`, `wrong_note`, `review_schedule`, `review_history`, `question_answer`, `question_concept`, `concept_reference`. The three sampled Concept IDs and before/after Quiz results remained unchanged.
 - This is **real backend/API/PostgreSQL stateful integration**, and supplements the earlier explicit Multipart `Preview → Apply → same-file UNCHANGED` for B-tree in [run #39530733270](https://github.com/guseoh/csforge/actions/runs/39530733270). It **does not replace a new manual full-area 249 Concept / 749 Question Content Full Review** or a new complete human-driven end-to-end browser session after the latest content change.
 - One-off workflow `.github/workflows/issue202-final-stateful-import.yml` is to be removed after this PASS; the GitHub Actions logs and this record retain the evidence. No Production DB modification and no PR merge.
+
+
+## 2026-10-22 — Current `refactor` closure audit (Issue #202)
+
+This is a **post-merge verification**, not another claim to have individually regraded all 753 Questions by hand, and not an execution of Production Import.
+
+### Repository and three-area source parity
+
+- `main=1fe11d94516d56e0aee2e818c7902f63b37f22a3`; review base `refactor=59edbc3dddcb1aacf508347e92bf9913df8f348c`.
+- Network PR #253 **merged** as `1dbde268`, Database PR #254 as `b3fc6afd`, DSA PR #255 as `fffa3e78`, all on 2026-10-21 with user approval.
+- Recursive Git trees for `main` and `refactor`: **127 Network + 38 Database + 84 DSA canonical Concept Markdown paths are present**, matching the pre-existing comprehensive per-key ledgers in Wave 3 Network/DSA and Wave 2 Database. Every ledger Concept key maps to a present Markdown path.
+- DSA canonical source files fully match main. For Network and Database, **every canonical file except four specific Question JSON files matches main byte-for-byte**. These four contain *only one additional existing-Concept-linked Question each*, without modifying any pre-existing Question.
+- The four additional keys are:
+  - `network-http.core.http-cache.if-none-match.q4`
+  - `network-http.core.http-status.409-412.q4`
+  - `database.core.mvcc.visibility.q3`
+  - `database.core.sql.join-semantics.q3`
+- Current question counts: Network **383** (previous 381), Database **77** (previous 75), DSA **293**; **753 total**, 39 `questions.json` files. The four additional Questions have been individually inspected for premise, response/SQL state, one correct answer and plausible distractors. They are outside the original 749-question audit snapshots and must not be silently counted as audited by those old snapshots.
+- All 39 latest JSON files were fetched and parsed. All 753 Question objects passed the baseline structural checks: unique key within each area, prompt/explanation/concept links present, MC exactly four choices with one correct key and nonempty distractor rationale, SHORT_ANSWER accepted answers, DESCRIPTIVE/SCENARIO model answer. **Structural validity does not by itself prove semantic correctness**.
+
+### Prior full-area review and correction disposition
+
+- Existing audit records contain direct per-Concept and per-Question qualitative decisions for **249 Concepts / 749 Questions**, all referenced by key. Network original P0/P1/P2 30 (one already resolved by #222); Database 10; DSA 27 including carried finding. Their correction disposition and exact changed keys are retained in each Issue #202 area README.
+- Core correction footprint was **37 Concept + 46 Question**, and the historical PostgreSQL restore/correct/replay checks established these updates' idempotency and stable canonical IDs.
+- Latest B-tree accepted-answer false negative correction remains present in `content/database/index/questions.json`: exactly **9 accepted answers** including the recorded natural-language explanation. Live backend/Chromium verification [#39530733270](https://github.com/guseoh/csforge/actions/runs/39530733270) and corrected three-area stateful replay [#39536301424](https://github.com/guseoh/csforge/actions/runs/39536301424) both succeeded.
+- 2026-10-21 stateful rehearsal: **3,380 CREATED** then **3,380 UNCHANGED**, 0 errors/updates, with personal note / progress / Quiz / Attempt / Wrong Note / Review and link-table digests invariant. This result applied to the then-locked content snapshot; **the later four Questions in refactor are not represented in this historical count**. The current `refactor` validation CI is used for latest-code regression, not falsely described as another stateful historical import run.
+- Primary-source cross-check: [RFC 9846](https://www.rfc-editor.org/info/rfc9846/) (TLS 1.3, obsoletes 8446), [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html) (If-Match/If-None-Match preconditions), [RFC 9112](https://www.rfc-editor.org/rfc/rfc9112.html) (HTTP/1.1 transfer framing), [PostgreSQL 16 transaction isolation](https://www.postgresql.org/docs/16/transaction-iso.html) (snapshot rules), [Princeton LazyPrimMST](https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/LazyPrimMST.html) and [PrimMST](https://algs4.cs.princeton.edu/code/javadoc/edu/princeton/cs/algs4/PrimMST.html) (distinct complexity bounds). Findings remain aligned to these primary contracts.
+- Visualization/Reference evidence: existing Wave 2/3 assessment plus historical isolated Chromium Reader/Quiz light/dark 375/1280 and actual Spring/PostgreSQL/Chromium combined test; preserve existing diagrams/assets/metadata. There were no new image replacements in this closure pass. This does **not** assert that a new manual accessibility audit was performed.
+
+### Closure and remaining independent operations
+
+- User's current instruction (2026-10-21) explicitly **waives the Human Usage Check gate**. Do not rewrite historical records to claim it was performed. Existing automated browser and live integration evidence is preserved.
+- Previous user-approved merges are already completed. For the active refactoring work, **only `refactor` may receive new commits**; no new branch or PR, and no new push/merge to main/dev in this verification.
+- Final `refactor` Repository Validation must be SUCCESS before Issue #202 is closed. Since no canonical content files were changed by this checkpoint, the previous isolated Import proof and current structural/source parity justify marking the content correction task complete.
+- **Production PostgreSQL canonical sync was not executed and must not be inferred from CI or repository merge.** It is a separate guarded Production operation with its own Preview/Apply/History preservation requirements.

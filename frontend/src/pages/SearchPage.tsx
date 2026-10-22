@@ -38,7 +38,7 @@ function rememberQuery(query: string) {
     const recent = Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : []
     localStorage.setItem(RECENT_KEY, JSON.stringify(addRecentSearch(recent, query)))
   } catch {
-    localStorage.setItem(RECENT_KEY, JSON.stringify([query.trim()]))
+    // Optional recent-search storage must not block live search.
   }
 }
 
@@ -77,6 +77,7 @@ export function SearchPage() {
   const selectedTopics = csvSearchValues(search.topics)
   const selectedLevels = csvSearchValues(search.levels)
   const activeFilterCount = selectedTypes.length + selectedAreas.length + selectedTopics.length + selectedLevels.length
+  const hasActiveFilters = activeFilterCount > 0
   const [searchFiltersOpen, setSearchFiltersOpen] = useState(true)
   const visibleTopicGroups = filters.data?.filter((area) => selectedAreas.includes(area.areaSlug)
     || area.topics.some((topic) => selectedTopics.includes(topic.contentKey))) ?? []
@@ -117,9 +118,6 @@ export function SearchPage() {
     }
   }
 
-  if (status.isPending) return <PageSkeleton rows={5} />
-  if (status.isError) return <ErrorState message="검색 상태를 확인하지 못했습니다. 다른 학습 기능은 계속 사용할 수 있습니다." onRetry={() => void status.refetch()} />
-
   return (
     <section className="page-section search-page">
       <div className="page-heading search-heading">
@@ -130,6 +128,12 @@ export function SearchPage() {
         </div>
       </div>
 
+      {status.isError && (
+        <div className="search-inline-notice" role="status">
+          검색 서버 상태를 확인하지 못했습니다. 검색은 시도할 수 있습니다.
+          <button className="text-button" type="button" onClick={() => void status.refetch()}>상태 다시 확인</button>
+        </div>
+      )}
       <form className="search-form" onSubmit={submit}>
         <input name="q" defaultValue={search.q} key={search.q} maxLength={200} placeholder="예: volatile happens-before, PostgreSQL transaction" aria-label="검색어" />
         <button className="primary-button" type="submit">검색</button>
@@ -191,6 +195,12 @@ export function SearchPage() {
               {selectedAreas.length > 0 && <button type="button" onClick={() => update({ areas: '', topics: '', page: 0 })}>영역 초기화</button>}
             </div>
             {filters.isPending && <span className="search-filter-muted">불러오는 중…</span>}
+            {filters.isError && (
+              <div className="search-filter-error" role="alert">
+                <span>학습 영역 필터를 불러오지 못했습니다.</span>
+                <button type="button" onClick={() => void filters.refetch()}>다시 시도</button>
+              </div>
+            )}
             {filters.data?.map((area) => (
               <label className={selectedAreas.includes(area.areaSlug) ? 'search-area-option active' : 'search-area-option'} key={area.areaSlug}>
                 <input type="checkbox" checked={selectedAreas.includes(area.areaSlug)} onChange={() => toggleArea(area.areaSlug)} />
@@ -208,6 +218,7 @@ export function SearchPage() {
         </div>
       </details>
 
+      <p className="search-mode-guidance">상단 검색은 제출한 검색어로 전체 문서를 조회합니다. Ctrl/Cmd+K의 입력 중 제안은 제목 바로가기이며, 전체 검색 결과와 다를 수 있습니다.</p>
       <div className={`search-layout search-guide-layout${showTopicRail ? ' with-topic-rail' : ''}`}>
         {showTopicRail && (
           <aside className="search-topic-rail" aria-label="주제 필터">
@@ -251,8 +262,16 @@ export function SearchPage() {
           {search.q && results.isPending && <PageSkeleton rows={5} />}
           {search.q && results.isError && <ErrorState message="검색 결과를 불러오지 못했습니다." onRetry={() => void results.refetch()} />}
           {!search.q && <div className="state-card"><strong>통합 검색을 시작해 보세요.</strong><span>Ctrl/Cmd + K를 누르면 어느 화면에서든 빠르게 검색할 수 있습니다.</span></div>}
-          {results.data?.items.length === 0 && <div className="state-card"><strong>검색 결과가 없습니다.</strong><span>필터를 줄이거나 다른 용어로 검색해 보세요.</span></div>}
-          {results.data && results.data.items.length > 0 && (
+          {search.q.trim() && !results.isPending && !results.isError && results.data?.items.length === 0 && (
+            <div className="state-card search-empty-results">
+              <strong>검색 결과가 없습니다.</strong>
+              <span>{hasActiveFilters ? '선택한 필터에서 결과를 찾지 못했습니다. 필터를 초기화하거나 다른 검색어를 시도해 보세요.' : '다른 용어로 검색하거나 유형과 학습 영역을 확인해 보세요.'}</span>
+              {hasActiveFilters && (
+                <button className="secondary-button" type="button" onClick={() => update({ types: '', areas: '', topics: '', levels: '', page: 0 })}>필터 초기화하고 다시 보기</button>
+              )}
+            </div>
+          )}
+          {!results.isError && results.data && results.data.items.length > 0 && (
             <div className="search-result-list">
               {results.data.items.map((item) => {
                 const related = relatedConceptDestination(item)
@@ -262,10 +281,11 @@ export function SearchPage() {
                   <article className={`search-result-card search-result-${item.documentType.toLowerCase()}`} key={`${item.documentType}:${item.sourceId}`}>
                     <div className="search-result-meta"><span className="search-type-badge">{documentTypeLabels[item.documentType]}</span><span>{resultContext(item)}</span><time dateTime={item.updatedAt}>{new Date(item.updatedAt).toLocaleDateString('ko-KR')}</time></div>
                     <h2><HighlightText value={item.highlightedTitle || item.title} /></h2>
-                    <p className="search-snippet"><HighlightText value={preview} /></p>
+                    <p className="search-snippet" aria-label="일치하는 검색 문맥"><HighlightText value={preview} /></p>
                     <div className="search-result-actions">
                       {primary?.kind === 'question' && <QuestionPracticeAction questionId={primary.questionId} />}
                       {primary && primary.kind !== 'question' && <button className="secondary-button" type="button" onClick={() => openResult(item)}>{primary.kind === 'external' ? '자료 열기' : item.documentType === 'WRONG_NOTE' ? '오답 노트 열기' : '개념 열기'}</button>}
+                      {item.documentType === 'CONCEPT' && <button className="text-button" type="button" onClick={() => void navigate({ to: '/compare', search: { left: item.sourceId } })}>개념 비교하기</button>}
                       {(item.documentType === 'REFERENCE' || item.documentType === 'QUESTION') && related?.kind === 'concept' && <button className="text-button" type="button" onClick={() => void navigate({ to: '/concepts/$conceptId', params: { conceptId: String(related.conceptId) } })}>관련 개념 보기</button>}
                     </div>
                   </article>
@@ -274,7 +294,7 @@ export function SearchPage() {
             </div>
           )}
 
-          {results.data && results.data.totalPages > 0 && (
+          {!results.isError && results.data && results.data.totalPages > 1 && (
             <div className="pagination">
               <button className="secondary-button" type="button" disabled={search.page <= 0} onClick={() => update({ page: Math.max(0, search.page - 1) })}>이전</button>
               <span>{search.page + 1} / {results.data.totalPages}</span>

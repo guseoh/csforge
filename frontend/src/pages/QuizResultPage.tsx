@@ -189,14 +189,14 @@ function QuestionResultCard({ quizId, question, source, defaultOpen = false, has
 
         {question.gradingStatus === 'SELF_CHECK_REQUIRED' && (
           <div className="self-check-actions result-self-check-actions">
-            <span className="helper-text">내 답과 모범 답안을 비교한 뒤 직접 판정하세요.</span>
+            <span className="helper-text">내 답과 모범 답안을 비교한 뒤 직접 판정하세요. 아직 정답률에는 반영되지 않습니다.</span>
             <button
               className="secondary-button"
               type="button"
               disabled={selfCheckMutation.isPending}
               onClick={() => selfCheckMutation.mutate(true)}
             >
-              맞았어요
+              {selfCheckMutation.isPending ? '판정 저장 중…' : '맞았어요'}
             </button>
             <button
               className="secondary-button"
@@ -204,8 +204,11 @@ function QuestionResultCard({ quizId, question, source, defaultOpen = false, has
               disabled={selfCheckMutation.isPending}
               onClick={() => selfCheckMutation.mutate(false)}
             >
-              틀렸어요
+              {selfCheckMutation.isPending ? '판정 저장 중…' : '틀렸어요'}
             </button>
+            {selfCheckMutation.isError && (
+              <span className="helper-text error-text" role="alert">자기채점 결과를 저장하지 못했습니다. 다시 선택해 저장하세요.</span>
+            )}
           </div>
         )}
 
@@ -262,7 +265,8 @@ function QuestionResultCard({ quizId, question, source, defaultOpen = false, has
               {retryQuestionMutation.isPending ? '준비 중…' : '이 문제 다시 풀기'}
             </button>
             {hasPendingSelfCheck && <span className="helper-text">자기채점을 모두 완료하면 이 문제를 다시 풀 수 있습니다.</span>}
-            {retryQuestionMutation.isError && <span className="helper-text error-text">이 문제를 다시 시작하지 못했습니다.</span>}
+            {!hasPendingSelfCheck && <span className="helper-text">기존 풀이·오답 기록은 유지되고 새 Quiz가 생성됩니다.</span>}
+            {retryQuestionMutation.isError && <span className="helper-text error-text" role="alert">새 Quiz를 시작하지 못했습니다. 다시 시도해 주세요.</span>}
           </div>
         )}
       </div>
@@ -345,8 +349,8 @@ export function QuizResultPage() {
   const finalizedQuestions = result.questions.filter((question) => question.gradingStatus !== 'SELF_CHECK_REQUIRED')
   const hasScheduledReview = finalizedQuestions.some((question) => question.reviewScheduleStatus === 'SCHEDULED')
   const hasMasteredReview = finalizedQuestions.some((question) => question.reviewScheduleStatus === 'MASTERED')
-  const wrongQuestions = result.questions.filter((question) => question.correct === false && hasSubmittedAnswer(question))
-  const unansweredQuestions = result.questions.filter((question) => !hasSubmittedAnswer(question))
+  const wrongQuestions = result.questions.filter((question) => question.gradingStatus !== 'SELF_CHECK_REQUIRED' && question.correct === false && hasSubmittedAnswer(question))
+  const unansweredQuestions = result.questions.filter((question) => question.gradingStatus !== 'SELF_CHECK_REQUIRED' && !hasSubmittedAnswer(question))
   const reviewQuestions = [...wrongQuestions, ...unansweredQuestions]
   const correctQuestions = result.questions.filter((question) => question.correct === true)
   const retryLabel = result.wrong > 0 && result.unanswered > 0
@@ -438,7 +442,10 @@ export function QuizResultPage() {
         </div>
         {result.selfCheckPending > 0 && <span className="helper-text error-text">자기채점을 모두 완료하면 다시 풀 수 있습니다.</span>}
         {result.selfCheckPending === 0 && result.wrong + result.unanswered === 0 && <span className="helper-text">다시 풀 문제는 없습니다.</span>}
-        {retryMutation.isError && <span className="helper-text error-text">다시 풀기를 시작하지 못했습니다.</span>}
+        {result.wrong + result.unanswered > 0 && (
+          <span className="helper-text result-retry-history-note">새 Quiz를 만들어 다시 풀며, 기존 답안·점수·오답 기록은 그대로 보존됩니다.</span>
+        )}
+        {retryMutation.isError && <span className="helper-text error-text" role="alert">새 Quiz를 시작하지 못했습니다. 다시 시도해 주세요.</span>}
       </div>
 
       {result.breakdown.length > 0 && (

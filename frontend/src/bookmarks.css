@@ -1,0 +1,24 @@
+.bookmarks-page { max-width: 1040px; }
+.bookmarks-header { margin-bottom: 28px; }
+.bookmark-category-list { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin: 22px 0; }
+.bookmark-category-list > button, .bookmark-category-item > button:first-child { min-height: 38px; padding: 8px 12px; border: 1px solid var(--border-default); background: var(--surface-elevated); color: var(--text-default); border-radius: 8px; cursor: pointer; }
+.bookmark-category-list button.active { background: var(--surface-interactive); color: var(--accent-strong); border-color: var(--accent); }
+.bookmark-category-item { display: flex; gap: 5px; align-items: center; }
+.bookmark-category-item .text-button { font-size: .8rem; padding: 8px; }
+.bookmark-rename-form { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; margin: 20px 0; padding: 18px; border: 1px solid var(--border-subtle); border-radius: 10px; }
+.bookmark-rename-form input { min-height: 40px; flex: 1 1 180px; }
+.bookmark-list-header { display: flex; align-items: baseline; justify-content: space-between; margin: 25px 0 10px; }
+.bookmark-list-header h2 { font-size: 1.25rem; color: var(--text-strong); }
+.bookmark-concept { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 0; border-bottom: 1px solid var(--border-subtle); }
+.bookmark-concept h3 { margin: 0 0 8px; font-size: 1rem; }
+.bookmark-concept p { margin: 0 0 8px; color: var(--text-muted); }
+.bookmark-concept small { color: var(--text-faint); }
+.bookmark-category-picker { display: flex; gap: 9px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+.bookmark-category-picker label { color: var(--text-muted); font-size: .85rem; }
+.bookmark-category-picker select { min-height: 38px; max-width: 220px; }
+.bookmark-category-picker > a { font-size: .85rem; color: var(--accent-strong); }
+.bookmark-category-error { color: var(--text-muted); }
+@media (max-width: 620px) {
+  .bookmark-concept { align-items: flex-start; flex-direction: column; }
+  .bookmark-rename-form { flex-direction: column; align-items: stretch; }
+}

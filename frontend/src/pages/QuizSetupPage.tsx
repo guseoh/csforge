@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef } from 'react'
 import { Link, useLocation, useNavigate, useSearch } from '@tanstack/react-router'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { SavedQuizSets } from '../components/SavedQuizSets'
 import {
   createQuiz,
   getActiveQuiz,
@@ -233,6 +234,24 @@ export function QuizSetupPage() {
   const conceptScopedShortage = effectiveCount < settings.count
   const conceptScopedNoQuestions = settings.concepts.length > 0 && questionCountAvailable === 0
   const selectedPreset = quickPreset(settings)
+  const stateDescription = ({
+    ALL: '전체 문제',
+    UNSEEN: '미풀이',
+    WRONG: '오답',
+    REVIEW_NEEDED: '복습 예정',
+  } as const)[settings.state]
+  const selectedAreaNames = settings.areas.map((slug) =>
+    areasQuery.data.find((area) => area.slug === slug)?.name ?? slug,
+  )
+  const conditionsSummary = [
+    settings.concepts.length > 0 ? `개념 ${settings.concepts.length}개` : selectedAreaNames.length > 0 ? selectedAreaNames.join('·') : '모든 영역',
+    stateDescription,
+    settings.levels.length > 0 ? `L${settings.levels.join('·L')}` : '전체 레벨',
+    settings.difficulties.length > 0 ? `난이도 ${settings.difficulties.map((value) => difficulties.find((item) => item.value === value)?.label ?? value).join('·')}` : null,
+    settings.questionTypes.length > 0 ? `유형 ${settings.questionTypes.map((value) => questionTypes.find((item) => item.value === value)?.label ?? value).join('·')}` : null,
+    `${settings.count}문항 요청`,
+    settings.timeLimitSeconds === null ? '시간 제한 없음' : `${Math.round(settings.timeLimitSeconds / 60)}분 제한`,
+  ].filter((part): part is string => part !== null)
   const hasDetailedSettings = Boolean(
     settings.areas.length
     || settings.concepts.length
@@ -264,6 +283,12 @@ export function QuizSetupPage() {
         <span className="result-count">{availabilityQuery.isPending ? '확인 중…' : availabilityQuery.isError ? '확인 필요' : `${questionCountAvailable}개 출제 가능`}</span>
       </div>
 
+      {activeQuery.isError && (
+        <div className="recent-concepts-state error-text" role="alert">
+          이어 풀 수 있는 세션을 확인하지 못했습니다.
+          <button className="text-button" type="button" onClick={() => void activeQuery.refetch()}>다시 확인</button>
+        </div>
+      )}
       {activeQuery.data && (
         <div className="quiz-resume-banner">
           <div>
@@ -294,6 +319,8 @@ export function QuizSetupPage() {
           </button>
         </div>
       </section>
+
+      <SavedQuizSets current={search} onApply={navigateToSettings} />
 
       <details className="quiz-config-disclosure" open={hasDetailedSettings ? true : undefined}>
         <summary>
@@ -384,6 +411,11 @@ export function QuizSetupPage() {
           </details>
         </div>
       </details>
+
+      <div className="quiz-selection-summary" aria-label="현재 적용된 문제 조건">
+        <strong>현재 조건</strong>
+        <p>{conditionsSummary.join(' · ')}</p>
+      </div>
 
       <div className="quiz-unified-start" aria-label="문제 풀이 시작">
         <div>

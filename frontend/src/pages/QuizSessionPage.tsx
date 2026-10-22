@@ -34,6 +34,11 @@ function choiceLabel(index: number) {
   return String.fromCharCode(65 + index)
 }
 
+/** Keep answer-editing shortcuts inert after submission or timer expiry. */
+export function canEditQuizAnswerByShortcut(status: string | undefined, expired: boolean) {
+  return status === 'IN_PROGRESS' && !expired
+}
+
 export function QuizSessionPage() {
   const { quizId: quizIdParam } = useParams({ from: '/quiz/$quizId' })
   const quizId = Number(quizIdParam)
@@ -104,7 +109,7 @@ export function QuizSessionPage() {
 
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
-      if (submitMutation.isPending) return
+      if (submitMutation.isPending || event.ctrlKey || event.metaKey || event.altKey || event.isComposing) return
       const target = event.target as HTMLElement | null
       if (target?.closest('input, textarea, select, button, a, summary, [contenteditable="true"]')) return
       if (event.key === 'ArrowRight' || event.key === 'Enter') {
@@ -115,6 +120,7 @@ export function QuizSessionPage() {
         event.preventDefault()
         moveTo(position - 1)
       }
+      if (!canEditQuizAnswerByShortcut(session?.status, expired)) return
       if (event.key.toLowerCase() === 'r') {
         event.preventDefault()
         updateDraft({ reviewNeeded: !draft.reviewNeeded })
@@ -129,7 +135,7 @@ export function QuizSessionPage() {
     }
     window.addEventListener('keydown', handleShortcut)
     return () => window.removeEventListener('keydown', handleShortcut)
-  }, [draft.reviewNeeded, moveTo, position, question, submitMutation.isPending, updateDraft])
+  }, [draft.reviewNeeded, expired, moveTo, position, question, session?.status, submitMutation.isPending, updateDraft])
 
   const timerLabel = useMemo(() => formatRemaining(session?.expiresAt ?? null, now), [now, session?.expiresAt])
   if (!Number.isSafeInteger(quizId) || quizId <= 0) {
@@ -218,6 +224,7 @@ export function QuizSessionPage() {
                 key={choice.choiceKey}
                 type="button"
                 className={draft.selectedChoiceKey === choice.choiceKey ? 'choice-button selected' : 'choice-button'}
+                aria-pressed={draft.selectedChoiceKey === choice.choiceKey}
                 disabled={expired || session.status !== 'IN_PROGRESS' || submitMutation.isPending}
                 onClick={() => updateDraft({ selectedChoiceKey: choice.choiceKey, answerText: null })}
               >
@@ -229,6 +236,7 @@ export function QuizSessionPage() {
         ) : (
           <textarea
             className="quiz-answer-editor"
+            aria-label="문제 답안"
             value={draft.answerText ?? ''}
             disabled={expired || session.status !== 'IN_PROGRESS' || submitMutation.isPending}
             placeholder="답안을 입력하면 자동 저장됩니다."

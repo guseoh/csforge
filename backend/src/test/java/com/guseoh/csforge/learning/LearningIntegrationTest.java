@@ -12,6 +12,13 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.sql.Timestamp;
+import java.util.List;
+
+import jakarta.persistence.EntityManagerFactory;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
+import org.springframework.data.jpa.repository.Query;
+import com.guseoh.csforge.learning.infrastructure.ConceptUnderstandingBatchRepository;
 
 import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import tools.jackson.databind.JsonNode;
@@ -48,6 +55,9 @@ class LearningIntegrationTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    EntityManagerFactory entityManagerFactory;
 
     @Value("${local.server.port}")
     int port;
@@ -109,6 +119,23 @@ class LearningIntegrationTest {
         assertEquals(2, area.get("topics").size());
         assertEquals(2, area.get("topics").get(0).get("publishedConceptCount").asInt());
         assertEquals(1, area.get("topics").get(1).get("level1Count").asInt());
+    }
+
+    @Test
+    void savedQuizScopeDoesNotSilentlyLoseUnpublishedConcepts() throws Exception {
+        JsonNode available = json(request("GET",
+                "/api/concepts/published-ids?ids=" + firstConceptId + "," + secondConceptId + ",9999999", null));
+        assertEquals(2, available.size());
+        assertEquals(firstConceptId, available.get(0).asLong());
+        assertEquals(secondConceptId, available.get(1).asLong());
+        jdbc.update("UPDATE concept SET status = 'DRAFT' WHERE id = ?", secondConceptId);
+        JsonNode partial = json(request("GET",
+                "/api/concepts/published-ids?ids=" + firstConceptId + "," + secondConceptId, null));
+        assertEquals(1, partial.size());
+        assertEquals(firstConceptId, partial.get(0).asLong());
+        assertEquals(0, json(request("GET",
+                "/api/concepts/published-ids?ids=" + secondConceptId, null)).size());
+        assertEquals(400, request("GET", "/api/concepts/published-ids?ids=-1", null).statusCode());
     }
 
     @Test
@@ -285,6 +312,317 @@ class LearningIntegrationTest {
         JsonNode validation = json(request("PUT", "/api/concepts/" + firstConceptId + "/note", "{}"));
         assertEquals("VALIDATION_FAILED", validation.get("code").asText());
         assertEquals("content", validation.get("fieldErrors").get(0).get("field").asText());
+    }
+
+
+    @Test
+    void understandingIsUnknownWithoutGradedEvidenceEvenIfReadingIsCompleted() throws Exception {
+        JsonNode before = json(request("GET", "/api/concepts/" + firstConceptId + "/understanding", null));
+        assertEquals("UNSEEN", before.get("learningStatus").asText());
+        assertEquals("NOT_ENOUGH_EVIDENCE", before.get("assessmentStatus").asText());
+        assertTrue(before.get("recentAccuracyPercent").isNull());
+        assertTrue(before.get("lastAssessedAt").isNull());
+        assertEquals(0, before.get("evidence").get("uniqueQuestions").asInt());
+
+        request("PATCH", "/api/concepts/" + firstConceptId + "/progress", "{\"status\":\"COMPLETED\"}");
+        JsonNode completed = json(request("GET", "/api/concepts/" + firstConceptId + "/understanding", null));
+        assertEquals("COMPLETED", completed.get("learningStatus").asText());
+        assertEquals("NOT_ENOUGH_EVIDENCE", completed.get("assessmentStatus").asText());
+        assertTrue(completed.get("recentAccuracyPercent").isNull());
+        assertEquals(0, completed.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(404, request("GET", "/api/concepts/99999999/understanding", null).statusCode());
+    }
+
+    @Test
+    void understandingUsesLatestOfDistinctQuestionsAndKeepsRepeatedAttemptsSeparate() throws Exception {
+        long q1 = insertPublishedQuestion("understanding-a", "First", firstConceptId, secondConceptId);
+        long q2 = insertPublishedQuestion("understanding-b", "Second", firstConceptId);
+        long q3 = insertPublishedQuestion("understanding-c", "Third", firstConceptId);
+        for (int i = 0; i < 9; i++) insertAttempt(q1, "GRADED", true);
+        insertAttempt(q1, "GRADED", false);
+        insertAttempt(q2, "GRADED", true);
+        insertAttempt(q3, "SELF_CHECKED", true);
+        insertAttempt(q2, "SELF_CHECK_REQUIRED", null);
+
+        JsonNode evidence = json(request("GET", "/api/concepts/" + firstConceptId + "/understanding", null));
+        assertEquals(3, evidence.get("evidence").get("uniqueQuestions").asInt());
+        assertEquals(12, evidence.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(2, evidence.get("evidence").get("correctQuestions").asInt());
+        assertEquals(1, evidence.get("evidence").get("pendingSelfCheckCount").asInt());
+        assertEquals("DEVELOPING", evidence.get("assessmentStatus").asText());
+        assertEquals(66.66666666666667, evidence.get("recentAccuracyPercent").asDouble(), 0.0001);
+        assertNotNull(evidence.get("lastAssessedAt"));
+
+        JsonNode shared = json(request("GET", "/api/concepts/" + secondConceptId + "/understanding", null));
+        assertEquals(1, shared.get("evidence").get("uniqueQuestions").asInt());
+        assertEquals(10, shared.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals("NOT_ENOUGH_EVIDENCE", shared.get("assessmentStatus").asText());
+        assertTrue(shared.get("recentAccuracyPercent").isNull());
+        assertEquals("UNSEEN", shared.get("learningStatus").asText());
+
+        insertAttempt(q1, "SELF_CHECKED", true);
+        JsonNode selfChecked = json(request("GET", "/api/concepts/" + firstConceptId + "/understanding", null));
+        assertEquals(13, selfChecked.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(3, selfChecked.get("evidence").get("correctQuestions").asInt());
+        assertEquals("CONSISTENT", selfChecked.get("assessmentStatus").asText());
+        assertEquals(100.0, selfChecked.get("recentAccuracyPercent").asDouble(), 0.001);
+    }
+
+    @Test
+    void understandingSamplesOnlyTenRecentQuestionsAndIgnoresUnsubmittedSessions() throws Exception {
+        long first = 0L;
+        for (int i = 0; i < 12; i++) {
+            long questionId = insertPublishedQuestion("understanding-bound-" + i, "Question " + i, firstConceptId);
+            if (i == 0) first = questionId;
+            insertAttempt(questionId, "GRADED", i >= 2);
+        }
+        Timestamp at = Timestamp.valueOf("2026-09-04 00:00:00");
+        long sessionId = jdbc.queryForObject(
+                "INSERT INTO quiz_session (status, source, started_at) VALUES (?, ?, ?) RETURNING id",
+                Long.class, "IN_PROGRESS", "STANDARD", at);
+        jdbc.update("""
+                INSERT INTO attempt (quiz_session_id, question_id, grading_status, correct, graded_at)
+                VALUES (?, ?, 'GRADED', false, ?)
+                """, sessionId, first, at);
+
+        JsonNode evidence = json(request("GET", "/api/concepts/" + firstConceptId + "/understanding", null));
+        assertEquals(10, evidence.get("evidence").get("uniqueQuestions").asInt());
+        assertEquals(12, evidence.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(10, evidence.get("evidence").get("correctQuestions").asInt());
+        assertEquals("CONSISTENT", evidence.get("assessmentStatus").asText());
+    }
+
+
+    @Test
+    void areaUnderstandingHasStableTopicPagingAndMatchesConceptEvidence() throws Exception {
+        long shared = insertPublishedQuestion("area-understanding-shared", "Shared question", firstConceptId, secondConceptId);
+        long single = insertPublishedQuestion("area-understanding-first", "First-only question", firstConceptId);
+        insertAttempt(shared, "GRADED", true);
+        insertAttempt(single, "SELF_CHECK_REQUIRED", null);
+
+        JsonNode first = json(request("GET",
+                "/api/learning-areas/java/understanding?topicId=" + topicId + "&page=0&size=1", null));
+        assertEquals(2, first.get("page").get("totalElements").asInt());
+        assertEquals(2, first.get("page").get("totalPages").asInt());
+        assertTrue(first.get("page").get("hasNext").asBoolean());
+        JsonNode firstItem = first.get("items").get(0);
+        assertEquals(firstConceptId, firstItem.get("conceptId").asLong());
+        assertEquals(1, firstItem.get("evidence").get("uniqueQuestions").asInt());
+        assertEquals(1, firstItem.get("evidence").get("finalizedAttempts").asInt());
+        assertEquals(1, firstItem.get("evidence").get("pendingSelfCheckCount").asInt());
+        assertTrue(firstItem.get("recentAccuracyPercent").isNull());
+
+        JsonNode second = json(request("GET",
+                "/api/learning-areas/java/understanding?topicId=" + topicId + "&page=1&size=1", null));
+        assertFalse(second.get("page").get("hasNext").asBoolean());
+        assertEquals(secondConceptId, second.get("items").get(0).get("conceptId").asLong());
+        assertEquals(1, second.get("items").get(0).get("evidence").get("finalizedAttempts").asInt());
+        JsonNode direct = json(request("GET", "/api/concepts/" + secondConceptId + "/understanding", null));
+        assertEquals(direct.get("evidence"), second.get("items").get(0).get("evidence"));
+
+        JsonNode empty = json(request("GET",
+                "/api/learning-areas/java/understanding?topicId=" + topicId + "&page=2&size=1", null));
+        assertEquals(0, empty.get("items").size());
+        assertEquals(404, request("GET", "/api/learning-areas/missing/understanding", null).statusCode());
+        assertEquals(400, request("GET", "/api/learning-areas/java/understanding?size=51", null).statusCode());
+    }
+
+    @Test
+    void areaUnderstandingBatchDoesNotCountPendingAsFinalizedAcrossConcepts() throws Exception {
+        long question = insertPublishedQuestion("area-understanding-multi", "Related", firstConceptId, secondConceptId);
+        insertAttempt(question, "SELF_CHECK_REQUIRED", null);
+        JsonNode area = json(request("GET", "/api/learning-areas/java/understanding?size=10", null));
+        assertEquals(3, area.get("items").size());
+        for (int index = 0; index < 2; index++) {
+            JsonNode item = area.get("items").get(index);
+            assertEquals(0, item.get("evidence").get("finalizedAttempts").asInt());
+            assertEquals(1, item.get("evidence").get("pendingSelfCheckCount").asInt());
+            assertEquals(0, item.get("evidence").get("uniqueQuestions").asInt());
+            assertTrue(item.get("recentAccuracyPercent").isNull());
+        }
+        assertEquals(0, area.get("items").get(2).get("evidence").get("pendingSelfCheckCount").asInt());
+    }
+
+
+    @Test
+    void areaUnderstandingQueryCountIsIndependentOfRequestedConceptCountAndExplainRuns() throws Exception {
+        long q1 = insertPublishedQuestion("understanding-plan-one", "Plan one", firstConceptId);
+        long q2 = insertPublishedQuestion("understanding-plan-two", "Plan two", firstConceptId, secondConceptId);
+        insertAttempt(q1, "GRADED", true);
+        insertAttempt(q2, "GRADED", false);
+
+        Statistics statistics = entityManagerFactory.unwrap(SessionFactory.class).getStatistics();
+        boolean previous = statistics.isStatisticsEnabled();
+        statistics.setStatisticsEnabled(true);
+        try {
+            long beforeSmall = statistics.getPrepareStatementCount();
+            assertEquals(200, request("GET", "/api/learning-areas/java/understanding?page=0&size=1", null).statusCode());
+            long small = statistics.getPrepareStatementCount() - beforeSmall;
+
+            long beforeFull = statistics.getPrepareStatementCount();
+            assertEquals(200, request("GET", "/api/learning-areas/java/understanding?page=0&size=3", null).statusCode());
+            long full = statistics.getPrepareStatementCount() - beforeFull;
+
+            assertTrue(small <= 8, "Unexpected repeated database queries for one Concept: " + small);
+            assertEquals(small, full, "Area batch evidence must not issue per-Concept queries");
+        } finally {
+            statistics.setStatisticsEnabled(previous);
+        }
+
+        String select = ConceptUnderstandingBatchRepository.class
+                .getMethod("summarizeConceptIds", List.class)
+                .getAnnotation(Query.class).value();
+        List<String> plan = jdbc.queryForList(
+                "EXPLAIN (ANALYZE, BUFFERS, FORMAT TEXT) " + select.replace(":conceptIds", String.valueOf(firstConceptId)),
+                String.class);
+        assertFalse(plan.isEmpty());
+        assertTrue(plan.stream().anyMatch(row -> row.contains("WindowAgg")),
+                "The latest-attempt-per-question query should execute window aggregation");
+    }
+
+    @Test
+    void concurrentBookmarkCategoryAssignmentsPreserveOneRowAndPersonalNote() throws Exception {
+        assertEquals(200, request("PATCH", "/api/concepts/" + firstConceptId + "/progress",
+                "{\"bookmarked\":true}").statusCode());
+        assertEquals(200, request("PUT", "/api/concepts/" + firstConceptId + "/note",
+                "{\"content\":\"protected learner note\"}").statusCode());
+        JsonNode categories = json(request("GET", "/api/bookmark-categories", null));
+        long first = categories.get(0).get("id").asLong();
+        long second = categories.get(1).get("id").asLong();
+        String path = "/api/concepts/" + firstConceptId + "/bookmark-category";
+
+        java.util.concurrent.CountDownLatch start = new java.util.concurrent.CountDownLatch(1);
+        try (var pool = java.util.concurrent.Executors.newFixedThreadPool(2)) {
+            var a = pool.submit(() -> {
+                start.await();
+                return request("PUT", path, "{\"categoryId\":" + first + "}");
+            });
+            var b = pool.submit(() -> {
+                start.await();
+                return request("PUT", path, "{\"categoryId\":" + second + "}");
+            });
+            start.countDown();
+            assertEquals(200, a.get().statusCode(), a.get().body());
+            assertEquals(200, b.get().statusCode(), b.get().body());
+        }
+
+        assertEquals(1, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM bookmark_category_concept WHERE concept_id = ?",
+                Integer.class, firstConceptId));
+        long assigned = jdbc.queryForObject(
+                "SELECT category_id FROM bookmark_category_concept WHERE concept_id = ?",
+                Long.class, firstConceptId);
+        assertTrue(assigned == first || assigned == second);
+        assertTrue(json(request("GET", "/api/concepts/" + firstConceptId, null))
+                .get("progress").get("bookmarked").asBoolean());
+        assertEquals("protected learner note",
+                json(request("GET", "/api/concepts/" + firstConceptId, null))
+                        .get("personalNote").get("content").asText());
+    }
+
+    @Test
+    void racingUnbookmarkAndClassificationNeverLeavesOrphanAssignment() throws Exception {
+        assertEquals(200, request("PATCH", "/api/concepts/" + firstConceptId + "/progress",
+                "{\"bookmarked\":true}").statusCode());
+        long category = json(request("GET", "/api/bookmark-categories", null)).get(0).get("id").asLong();
+        String path = "/api/concepts/" + firstConceptId + "/bookmark-category";
+
+        java.util.concurrent.CountDownLatch start = new java.util.concurrent.CountDownLatch(1);
+        try (var pool = java.util.concurrent.Executors.newFixedThreadPool(2)) {
+            var unbookmark = pool.submit(() -> {
+                start.await();
+                return request("PATCH", "/api/concepts/" + firstConceptId + "/progress",
+                        "{\"bookmarked\":false}");
+            });
+            var assign = pool.submit(() -> {
+                start.await();
+                return request("PUT", path, "{\"categoryId\":" + category + "}");
+            });
+            start.countDown();
+            var unbookmarkResult = unbookmark.get();
+            var assignResult = assign.get();
+            assertEquals(200, unbookmarkResult.statusCode(), unbookmarkResult.body());
+            assertTrue(assignResult.statusCode() == 200 || assignResult.statusCode() == 400,
+                    assignResult.body());
+        }
+
+        assertEquals(0, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM bookmark_category_concept WHERE concept_id = ?",
+                Integer.class, firstConceptId));
+        assertFalse(json(request("GET", "/api/concepts/" + firstConceptId, null))
+                .get("progress").get("bookmarked").asBoolean());
+    }
+
+    @Test
+    void bookmarkCategoryClassificationIsOptionalAndNeverChangesLearningHistory() throws Exception {
+        JsonNode categories = json(request("GET", "/api/bookmark-categories", null));
+        assertEquals(3, categories.size());
+        assertEquals("다시 읽기", categories.get(0).get("name").asText());
+        long first = categories.get(0).get("id").asLong();
+        long second = categories.get(1).get("id").asLong();
+        String assignmentPath = "/api/concepts/" + firstConceptId + "/bookmark-category";
+
+        assertEquals(400, request("PUT", assignmentPath,
+                "{\"categoryId\":" + first + "}").statusCode());
+        assertEquals(200, request("PATCH", "/api/concepts/" + firstConceptId + "/progress",
+                "{\"bookmarked\":true}").statusCode());
+        assertEquals(200, request("PUT", assignmentPath, "{\"categoryId\":" + first + "}").statusCode());
+        assertEquals(200, request("PUT", assignmentPath, "{\"categoryId\":" + first + "}").statusCode());
+        assertEquals(first, json(request("GET", assignmentPath, null)).get("categoryId").asLong());
+        assertEquals(1, json(request("GET",
+                "/api/concepts?bookmarked=true&bookmarkCategoryId=" + first, null))
+                .get("page").get("totalElements").asInt());
+
+        assertEquals(200, request("PUT", assignmentPath, "{\"categoryId\":" + second + "}").statusCode());
+        assertEquals(0, json(request("GET",
+                "/api/concepts?bookmarkCategoryId=" + first, null))
+                .get("page").get("totalElements").asInt());
+        assertEquals(1, json(request("GET",
+                "/api/concepts?bookmarkCategoryId=" + second, null))
+                .get("page").get("totalElements").asInt());
+
+        assertEquals(200, request("PUT", assignmentPath, "{\"categoryId\":null}").statusCode());
+        assertTrue(json(request("GET", assignmentPath, null)).get("categoryId").isNull());
+        assertEquals(1, json(request("GET", "/api/concepts?bookmarked=true", null))
+                .get("page").get("totalElements").asInt());
+        assertEquals(0, jdbc.queryForObject(
+                "SELECT count(*) FROM bookmark_category_concept WHERE concept_id = ?", Integer.class, firstConceptId));
+
+        request("PUT", assignmentPath, "{\"categoryId\":" + first + "}");
+        assertEquals(200, request("PATCH", "/api/concepts/" + firstConceptId + "/progress",
+                "{\"bookmarked\":false}").statusCode());
+        assertTrue(json(request("GET", assignmentPath, null)).get("categoryId").isNull());
+        assertEquals(0, json(request("GET", "/api/concepts?bookmarked=true", null))
+                .get("page").get("totalElements").asInt());
+        assertEquals(0, jdbc.queryForObject(
+                "SELECT count(*) FROM bookmark_category_concept WHERE concept_id = ?", Integer.class, firstConceptId));
+        JsonNode concept = json(request("GET", "/api/concepts/" + firstConceptId, null));
+        assertEquals("UNSEEN", concept.get("progress").get("learningStatus").asText());
+        assertTrue(concept.get("progress").get("firstViewedAt").isNull());
+    }
+
+    @Test
+    void bookmarkCategoryRenameIsValidatedAndExistingBookmarkDoesNotDisappear() throws Exception {
+        JsonNode categories = json(request("GET", "/api/bookmark-categories", null));
+        long first = categories.get(0).get("id").asLong();
+        String original = categories.get(0).get("name").asText();
+        String secondName = categories.get(1).get("name").asText();
+        String path = "/api/bookmark-categories/" + first;
+        assertEquals(400, request("PATCH", path, "{\"name\":\"  \"}").statusCode());
+        assertEquals(400, request("PATCH", path,
+                "{\"name\":\"" + secondName + "\"}").statusCode());
+        request("PATCH", "/api/concepts/" + firstConceptId + "/progress", "{\"bookmarked\":true}");
+        assertEquals(404, request("PUT", "/api/concepts/" + firstConceptId + "/bookmark-category",
+                "{\"categoryId\":987654}").statusCode());
+        try {
+            HttpResponse<String> response = request("PATCH", path, "{\"name\":\"나중에 복습\"}");
+            assertEquals(200, response.statusCode());
+            assertEquals("나중에 복습", json(response).get("name").asText());
+            assertEquals("나중에 복습", json(request("GET", "/api/bookmark-categories", null))
+                    .get(0).get("name").asText());
+        } finally {
+            request("PATCH", path, "{\"name\":\"" + original + "\"}");
+        }
     }
 
     private HttpResponse<String> request(String method, String path, String body) throws IOException, InterruptedException {

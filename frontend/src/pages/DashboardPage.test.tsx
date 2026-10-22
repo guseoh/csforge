@@ -22,6 +22,7 @@ const mocks = vi.hoisted(() => ({
 vi.mock('@tanstack/react-router', () => ({
   Link: ({ children }: { children: ReactNode }) => <a href="#">{children}</a>,
   useNavigate: () => mocks.navigate,
+  useSearch: () => ({ insightsOpen: '0', insightsRange: '7d', insightsArea: '' }),
 }))
 
 vi.mock('@tanstack/react-query', () => ({
@@ -189,5 +190,78 @@ describe('DashboardPage', () => {
     expect(markup).toContain('0/1개 개념 완료')
     expect(markup).toContain('0%')
     expect(markup).not.toContain('미시작')
+  })
+  it('keeps primary quiz, review and recent concept as the top three actions', () => {
+    mocks.recentConcepts.data = conceptPage([{
+      id: 77, areaSlug: 'java', areaName: 'Java', topicId: 9,
+      topicSlug: 'jvm', topicTitle: 'JVM', title: '최근에 본 클래스 로딩',
+      summary: null, level: 2, contentStatus: 'PUBLISHED',
+      learningStatus: 'LEARNING', bookmarked: false, lastViewedAt: '2026-09-03T11:00:00Z',
+    }])
+    const html = render(dashboard({
+      activeQuiz: { quizId: 41, questionCount: 10, answeredCount: 3, lastPosition: 3, startedAt: '2026-09-03T12:00:00Z', expiresAt: null },
+      areaProgress: [{ areaSlug: 'java', areaName: 'Java', completedConceptCount: 1, startedConceptCount: 2, publishedConceptCount: 7, completionPercent: 14, levels: [] }],
+    }))
+    expect(html).toContain('풀던 퀴즈 이어가기')
+    expect(html).toContain('오늘 복습 2개')
+    expect(html).toContain('최근에 본 클래스 로딩')
+    expect(html).not.toContain('개념 찾기 →')
+  })
+
+  it('offers an additional curriculum action without another API call when a recent concept is primary', () => {
+    mocks.recentConcepts.data = conceptPage([{
+      id: 7, areaSlug: 'java', areaName: 'Java', topicId: 9,
+      topicSlug: 'jvm', topicTitle: 'JVM', title: '최근 개념',
+      summary: null, level: 1, contentStatus: 'PUBLISHED',
+      learningStatus: 'LEARNING', bookmarked: false, lastViewedAt: '2026-09-03T11:00:00Z',
+    }])
+    const html = render(dashboard({
+      today: { solvedCount: 0, correctCount: 0, wrongCount: 0, accuracyPercent: 0, reviewDueCount: 0 },
+      areaProgress: [{ areaSlug: 'java', areaName: 'Java', completedConceptCount: 0, startedConceptCount: 1, publishedConceptCount: 7, completionPercent: 0, levels: [] }],
+    }))
+    expect(html).toContain('최근 개념')
+    expect(html).toContain('새로운 학습')
+    expect(html).toContain('개념 찾기 →')
+    expect(html.indexOf('계속 읽기')).toBeLessThan(html.indexOf('개념 찾기 →'))
+  })
+
+  it('does not call zero-answer accuracy 0% and does not invent a denominator', () => {
+    const html = render(dashboard({
+      today: { solvedCount: 0, correctCount: 0, wrongCount: 0, accuracyPercent: 0, reviewDueCount: 0 },
+      areaProgress: [{ areaSlug: 'empty', areaName: '빈 영역', completedConceptCount: 0, startedConceptCount: 0, publishedConceptCount: 0, completionPercent: 0, levels: [] }],
+    }))
+    expect(html).toContain('확정 채점 문항이 없어 정확도를 계산하지 않습니다.')
+    expect(html).toContain('공개된 개념 없음')
+    expect(html).toContain('콘텐츠 없음')
+    expect(html).not.toContain('NaN%')
+  })
+
+  it('does not suggest a new Concept in an area without any published content', () => {
+    const html = render(dashboard({
+      today: { solvedCount: 0, correctCount: 0, wrongCount: 0, accuracyPercent: 0, reviewDueCount: 0 },
+      areaProgress: [{ areaSlug: 'java', areaName: 'Java', completedConceptCount: 0, startedConceptCount: 0, publishedConceptCount: 0, completionPercent: 0, levels: [] }],
+    }))
+    expect(html).toContain('공개된 개념 없음')
+    expect(html).toContain('학습 영역에서 시작하기')
+    expect(html).not.toContain('개념 찾기 →')
+  })
+
+  it('offers diagnosis without adding an eager insights query to the main Dashboard', () => {
+    const html = render(dashboard())
+    expect(html).toContain('7·30일 학습 진단')
+    expect(html).toContain('학습 진단 펼치기')
+    expect(html).not.toContain('진단 근거 불러오는 중')
+    expect(html).toContain('최근 365일 학습 활동')
+  })
+
+  it('does not block the main dashboard when recent-concept lookup is pending or unavailable', () => {
+    mocks.recentConcepts.isPending = true
+    expect(render(dashboard())).toContain('오늘의 학습')
+    mocks.recentConcepts.isPending = false
+    mocks.recentConcepts.isError = true
+    const html = render(dashboard())
+    expect(html).toContain('오늘의 학습')
+    expect(html).toContain('최근 본 개념을 불러오지 못했습니다.')
+    expect(html).toContain('다시 시도')
   })
 })

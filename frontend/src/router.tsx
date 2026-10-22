@@ -14,10 +14,16 @@ import { defaultQuizSearch, parseQuizSearch } from './lib/quiz-search'
 import { defaultWrongNoteSearch, parseWrongNoteSearch } from './lib/wrong-note-search'
 import { parseReviewSearch } from './lib/review-search'
 import { parseSearchSearch } from './lib/search-search'
+import { parseInsightsSearch } from './lib/insights-search'
+import { parseCompareSearch } from './lib/compare-search'
+import { parseBookmarksSearch } from './lib/bookmarks-search'
 import { isStaleLazyChunkError } from './lib/route-errors'
 
 const AreaPage = lazyRouteComponent(() => import('./pages/AreaPage'), 'AreaPage')
+const TopicFocusPage = lazyRouteComponent(() => import('./pages/TopicFocusPage'), 'TopicFocusPage')
 const ConceptPage = lazyRouteComponent(() => import('./pages/ConceptPage'), 'ConceptPage')
+const ConceptComparePage = lazyRouteComponent(() => import('./pages/ConceptComparePage'), 'ConceptComparePage')
+const BookmarksPage = lazyRouteComponent(() => import('./pages/BookmarksPage'), 'BookmarksPage')
 const LearningPage = lazyRouteComponent(() => import('./pages/LearningPage'), 'LearningPage')
 const QuizResultPage = lazyRouteComponent(() => import('./pages/QuizResultPage'), 'QuizResultPage')
 const QuizSessionPage = lazyRouteComponent(() => import('./pages/QuizSessionPage'), 'QuizSessionPage')
@@ -225,7 +231,7 @@ const rootRoute = createRootRoute({
   notFoundComponent: NotFoundPage,
 })
 
-const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', component: DashboardPage })
+const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', validateSearch: (search) => parseInsightsSearch(search), component: DashboardPage })
 const loginRoute = createRoute({ getParentRoute: () => rootRoute, path: '/login', component: LoginPage })
 
 const learningRoute = createRoute({
@@ -242,11 +248,16 @@ const areaRoute = createRoute({
   component: AreaPage,
 })
 
+const topicFocusRoute = createRoute({ getParentRoute: () => rootRoute, path: '/learning/$areaSlug/topics/$topicId/focus', component: TopicFocusPage })
+
 const conceptRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/concepts/$conceptId',
   component: ConceptPage,
 })
+
+const bookmarksRoute = createRoute({ getParentRoute: () => rootRoute, path: '/bookmarks', validateSearch: parseBookmarksSearch, component: BookmarksPage })
+const compareRoute = createRoute({ getParentRoute: () => rootRoute, path: '/compare', validateSearch: parseCompareSearch, component: ConceptComparePage })
 
 const quizRoute = createRoute({
   getParentRoute: () => rootRoute,
@@ -267,7 +278,10 @@ const routeTree = rootRoute.addChildren([
   loginRoute,
   learningRoute,
   areaRoute,
+  topicFocusRoute,
   conceptRoute,
+  compareRoute,
+  bookmarksRoute,
   quizRoute,
   quizSessionRoute,
   quizResultRoute,

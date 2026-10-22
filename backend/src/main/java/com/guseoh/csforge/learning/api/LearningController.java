@@ -6,6 +6,7 @@ import com.guseoh.csforge.learning.application.ConceptSearchCriteria;
 import com.guseoh.csforge.learning.application.ConceptSort;
 import com.guseoh.csforge.learning.application.LearningAreaOutlineCriteria;
 import com.guseoh.csforge.learning.application.LearningCommandService;
+import com.guseoh.csforge.learning.application.ConceptUnderstandingQueryService;
 import com.guseoh.csforge.learning.application.LearningQueryService;
 import com.guseoh.csforge.learning.application.PersonalNoteView;
 import com.guseoh.csforge.learning.domain.LearningStatus;
@@ -26,14 +27,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class LearningController {
 
     private final LearningQueryService queryService;
+    private final ConceptUnderstandingQueryService understandingService;
     private final LearningCommandService commandService;
     private final LearningApiMapper apiMapper;
 
     public LearningController(
             LearningQueryService queryService,
+            ConceptUnderstandingQueryService understandingService,
             LearningCommandService commandService,
             LearningApiMapper apiMapper) {
         this.queryService = queryService;
+        this.understandingService = understandingService;
         this.commandService = commandService;
         this.apiMapper = apiMapper;
     }
@@ -57,6 +61,16 @@ public class LearningController {
                 new LearningAreaOutlineCriteria(areaSlug, page, size)));
     }
 
+    @GetMapping("/learning-areas/{areaSlug}/understanding")
+    public ConceptUnderstandingPageResponse getAreaUnderstanding(
+            @PathVariable String areaSlug,
+            @RequestParam(required = false) Long topicId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ConceptUnderstandingPageResponse.from(
+                understandingService.getAreaUnderstanding(areaSlug, topicId, page, size));
+    }
+
     @GetMapping("/concepts")
     public ConceptPageResponse listConcepts(
             @RequestParam(required = false) String area,
@@ -64,17 +78,28 @@ public class LearningController {
             @RequestParam(required = false) Short level,
             @RequestParam(required = false) LearningStatus learningStatus,
             @RequestParam(required = false) Boolean bookmarked,
+            @RequestParam(required = false) Long bookmarkCategoryId,
             @RequestParam(required = false) String q,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "30") int size,
             @RequestParam(defaultValue = "CURRICULUM") String sort) {
         return apiMapper.toResponse(queryService.listConcepts(new ConceptSearchCriteria(
-                area, topicId, level, learningStatus, bookmarked, q, page, size, ConceptSort.from(sort))));
+                area, topicId, level, learningStatus, bookmarked, q, page, size, ConceptSort.from(sort), bookmarkCategoryId)));
+    }
+
+    @GetMapping("/concepts/published-ids")
+    public List<Long> publishedConceptIds(@RequestParam List<Long> ids) {
+        return queryService.availableConceptIdsForPractice(ids);
     }
 
     @GetMapping("/concepts/{conceptId}")
     public ConceptDetailResponse getConcept(@PathVariable long conceptId) {
         return apiMapper.toResponse(queryService.getConcept(conceptId));
+    }
+
+    @GetMapping("/concepts/{conceptId}/understanding")
+    public ConceptUnderstandingResponse getUnderstanding(@PathVariable long conceptId) {
+        return ConceptUnderstandingResponse.from(understandingService.getUnderstanding(conceptId));
     }
 
     @PostMapping("/concepts/{conceptId}/view")

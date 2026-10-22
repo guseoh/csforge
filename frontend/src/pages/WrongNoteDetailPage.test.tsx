@@ -6,7 +6,7 @@ const mocks = vi.hoisted(() => ({
   session: { data: { mode: 'CLOUD' }, isPending: false, isError: false, refetch: vi.fn() },
   detail: { data: null as unknown, isPending: false, isError: false, refetch: vi.fn() },
   attempts: {
-    data: { pages: [{ items: [], nextCursor: null }] },
+    data: { pages: [{ items: [] as Record<string, unknown>[], nextCursor: null as string | null }] },
     hasNextPage: false,
     isPending: false,
     isError: false,
@@ -16,6 +16,8 @@ const mocks = vi.hoisted(() => ({
     fetchNextPage: vi.fn(),
   },
   navigate: vi.fn(),
+  ai: { data: null as unknown, isPending: false, isError: false, refetch: vi.fn() },
+  note: { isError: false, isPending: false, dirty: false, retry: vi.fn() },
 }))
 
 vi.mock('@tanstack/react-router', () => ({
@@ -29,7 +31,7 @@ vi.mock('@tanstack/react-query', () => ({
     ? mocks.session
     : queryKey[0] === 'wrong-note'
       ? mocks.detail
-      : { data: null, isPending: false, isError: false, refetch: vi.fn() },
+      : mocks.ai,
   useInfiniteQuery: () => mocks.attempts,
   useMutation: () => ({ isPending: false, isError: false, mutate: vi.fn() }),
 }))
@@ -42,10 +44,11 @@ vi.mock('../components/toast/ToastProvider', () => ({ useToast: () => ({ showToa
 
 vi.mock('../lib/use-wrong-note-persistence', () => ({
   useWrongNotePersistence: () => ({
-    note: '',
-    dirty: false,
+    note: '내가 놓친 전제',
+    dirty: mocks.note.dirty,
     updateNote: vi.fn(),
-    noteMutation: { isError: false, isPending: false },
+    noteMutation: { isError: mocks.note.isError, isPending: mocks.note.isPending },
+    retryNoteSave: mocks.note.retry,
   }),
 }))
 
@@ -106,6 +109,18 @@ describe('WrongNoteDetailPage', () => {
     mocks.detail.isPending = false
     mocks.detail.isError = false
     mocks.navigate.mockReset()
+    mocks.ai.data = null
+    mocks.ai.isPending = false
+    mocks.ai.isError = false
+    mocks.note.isError = false
+    mocks.note.isPending = false
+    mocks.note.dirty = false
+    mocks.note.retry.mockReset()
+    mocks.attempts.data = { pages: [{ items: [], nextCursor: null }] }
+    mocks.attempts.hasNextPage = false
+    mocks.attempts.isPending = false
+    mocks.attempts.isError = false
+    mocks.attempts.isFetchNextPageError = false
   })
 
   it('shows selected and correct rationale while disclosing the remaining choice rationale', () => {
@@ -134,5 +149,68 @@ describe('WrongNoteDetailPage', () => {
     expect(markup).toContain('내가 고른 오답 내용')
     expect(markup).not.toContain('choice-rationale')
     expect(markup).not.toContain('이 선택지가 맞는 이유')
+  })
+  it('keeps the last wrong answer, reflection and concept learning ahead of retry', () => {
+    const html = renderToStaticMarkup(<WrongNoteDetailPage />)
+    expect(html.indexOf('내 답과 정답 비교')).toBeLessThan(html.indexOf('왜 틀렸을까요?'))
+    expect(html.indexOf('왜 틀렸을까요?')).toBeLessThan(html.indexOf('이어 학습하기'))
+    expect(html.indexOf('이어 학습하기')).toBeLessThan(html.indexOf('이 문제 다시 풀기'))
+    expect(html).toContain('기존 풀이·오답 이력은 보존되고 새 Quiz가 생성됩니다')
+    expect(html).toContain('내 오답 원인 메모')
+  })
+
+  it('preserves the note editor when a save fails and offers retry', () => {
+    mocks.note.isError = true
+    mocks.note.dirty = true
+    const html = renderToStaticMarkup(<WrongNoteDetailPage />)
+    expect(html).toContain('메모 저장 실패')
+    expect(html).toContain('입력한 내용은 임시 보관됩니다')
+    expect(html).toContain('메모 다시 저장')
+    expect(html).toContain('내가 놓친 전제')
+    expect(html).toContain('기존 전체 해설')
+  })
+
+  it('keeps multiple attempts distinct, including a pending self-check', () => {
+    mocks.attempts.data = { pages: [{
+      items: [
+        { attemptId: 21, quizId: 17, source: 'STANDARD', selectedChoiceKey: 'B', answerText: null, gradingStatus: 'GRADED', correct: false, updatedAt: '2026-09-23T00:00:00Z' },
+        { attemptId: 22, quizId: 18, source: 'WRONG_RETRY', selectedChoiceKey: null, answerText: '다시 작성한 설명', gradingStatus: 'SELF_CHECK_REQUIRED', correct: null, updatedAt: '2026-09-24T00:00:00Z' },
+      ],
+      nextCursor: 'page2',
+    }] }
+    mocks.attempts.hasNextPage = true
+    const html = renderToStaticMarkup(<WrongNoteDetailPage />)
+    expect(html).toContain('2개 조회됨')
+    expect(html).toContain('선택한 답: B')
+    expect(html).toContain('작성한 답: 다시 작성한 설명')
+    expect(html).toContain('현재 비교 중인 최근 오답')
+    expect(html).toContain('자기채점 대기')
+    expect(html).toContain('더 불러오기')
+    expect(html).not.toContain('복습 일정 없음')
+  })
+
+  it('leaves personal notes, answer explanations and related concepts available if AI analysis fails', () => {
+    mocks.session.data = { mode: 'LOCAL' }
+    mocks.ai.data = { status: 'FAILED', retryable: true }
+    const failed = renderToStaticMarkup(<WrongNoteDetailPage />)
+    expect(failed).toContain('AI 분석에 실패했습니다.')
+    expect(failed).toContain('내가 놓친 전제')
+    expect(failed).toContain('기존 전체 해설')
+    expect(failed).toContain('개념 보기 · 관련 개념')
+    mocks.ai.data = { status: 'PENDING' }
+    const pending = renderToStaticMarkup(<WrongNoteDetailPage />)
+    expect(pending).toContain('분석 작업을 준비하는 중입니다.')
+    expect(pending).toContain('내가 놓친 전제')
+    expect(pending).toContain('기존 전체 해설')
+  })
+
+  it('does not invent a mastered status when an active wrong note has no schedule', () => {
+    const current = detail('정답 선택지의 근거')
+    current.state.reviewStatus = null as never
+    current.state.dueAt = null as never
+    mocks.detail.data = current
+    const html = renderToStaticMarkup(<WrongNoteDetailPage />)
+    expect(html).toContain('복습 일정 없음')
+    expect(html).not.toContain('복습 완료')
   })
 })

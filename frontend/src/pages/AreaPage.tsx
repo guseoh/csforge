@@ -3,11 +3,79 @@ import { Link, useNavigate, useParams, useSearch } from '@tanstack/react-router'
 import { useQueries, useQuery } from '@tanstack/react-query'
 import { AreaLearningRail } from '../components/AreaLearningRail'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
-import { getConcepts, getLearningArea, getLearningAreaOutline, type LearningStatus } from '../lib/learning-api'
+import { getConcepts, getLearningArea, getLearningAreaOutline, getLearningAreaUnderstanding, type LearningStatus, type ConceptUnderstandingPage } from '../lib/learning-api'
 import { defaultLearningSearch, type LearningSearch } from '../lib/learning-search'
 import { csvParam, defaultQuizSearch } from '../lib/quiz-search'
+import { chooseNextConcept, chooseReviewConcept } from '../lib/learning-next'
 
 const PAGE_SIZE = 12
+
+const assessmentLabels = {
+  NOT_ENOUGH_EVIDENCE: '근거 부족',
+  NEEDS_PRACTICE: '추가 연습 필요',
+  DEVELOPING: '이해 근거 축적 중',
+  CONSISTENT: '최근 정답 일관',
+} as const
+
+export function TopicUnderstandingResults({ data, onPageChange, titlesById = {} }: {
+  data: ConceptUnderstandingPage
+  onPageChange: (nextPage: number) => void
+  titlesById?: Record<number, string>
+}) {
+  return (
+    <>
+      <div className="topic-understanding-rows">
+        {data.items.map((item) => (
+          <div className="topic-understanding-row" key={item.conceptId}>
+            <Link to="/concepts/$conceptId" params={{ conceptId: String(item.conceptId) }}>{titlesById[item.conceptId] ?? `개념 #${item.conceptId}`} · 문제 근거 보기 →</Link>
+            <strong>{assessmentLabels[item.assessmentStatus]}</strong>
+            <span>{item.evidence.uniqueQuestions}개 서로 다른 문제 중 {item.evidence.correctQuestions}개 정답
+              {' · '}확정 {item.evidence.finalizedAttempts}회
+              {item.evidence.pendingSelfCheckCount > 0 ? ` · 자기채점 대기 ${item.evidence.pendingSelfCheckCount}회` : ''}
+            </span>
+          </div>
+        ))}
+      </div>
+      {data.page.totalPages > 1 && (
+        <nav className="topic-understanding-pagination" aria-label="문제 풀이 근거 페이지">
+          <button className="secondary-button" type="button" disabled={!data.page.hasPrevious} onClick={() => onPageChange(data.page.page - 1)}>이전</button>
+          <span>{data.page.page + 1} / {data.page.totalPages}</span>
+          <button className="secondary-button" type="button" disabled={!data.page.hasNext} onClick={() => onPageChange(data.page.page + 1)}>다음</button>
+        </nav>
+      )}
+    </>
+  )
+}
+
+function TopicUnderstandingEvidence({ areaSlug, topicId, titlesById }: {
+  areaSlug: string; topicId: number; titlesById: Record<number, string>
+}) {
+  const [expanded, setExpanded] = useState(false)
+  const [page, setPage] = useState(0)
+  const query = useQuery({
+    queryKey: ['learning-area-understanding', areaSlug, topicId, page],
+    queryFn: () => getLearningAreaUnderstanding(areaSlug, topicId, page),
+    enabled: expanded,
+  })
+  return (
+    <section className="topic-understanding-preview" aria-label="문제 풀이 이해도 근거">
+      <button className="text-button" type="button" aria-expanded={expanded} onClick={() => setExpanded(!expanded)}>
+        {expanded ? '문제 풀이 근거 접기' : '문제 풀이 근거 확인하기'} {expanded ? '↑' : '↓'}
+      </button>
+      {expanded && (query.isPending ? (
+        <p className="helper-text" role="status">문제 풀이 근거 불러오는 중…</p>
+      ) : query.isError || !query.data ? (
+        <div className="topic-understanding-error" role="alert">
+          <span>문제 풀이 근거를 불러오지 못했습니다.</span>
+          <button className="text-button" type="button" onClick={() => void query.refetch()}>다시 시도</button>
+        </div>
+      ) : query.data.items.length === 0 ? (
+        <p className="helper-text">이 주제에 표시할 개념이 없습니다.</p>
+      ) : <TopicUnderstandingResults data={query.data} onPageChange={setPage} titlesById={titlesById} />)}
+    </section>
+  )
+}
+
 
 const learningStatusLabels: Record<LearningStatus, string> = {
   UNSEEN: '미학습',
@@ -45,10 +113,11 @@ export function AreaPage() {
   const firstOutlineQuery = useQuery({
     queryKey: ['learning-outline', areaSlug, 0],
     queryFn: () => getLearningAreaOutline(areaSlug, 0),
+    enabled: !hasActiveFilters,
   })
   const outlinePageCount = firstOutlineQuery.data?.page.totalPages ?? 1
   const laterOutlineQueries = useQueries({
-    queries: Array.from({ length: Math.max(0, outlinePageCount - 1) }, (_, index) => {
+    queries: Array.from({ length: hasActiveFilters ? 0 : Math.max(0, outlinePageCount - 1) }, (_, index) => {
       const page = index + 1
       return {
         queryKey: ['learning-outline', areaSlug, page],
@@ -89,14 +158,17 @@ export function AreaPage() {
   const outlineIsError = outlineQueries.some((query) => query.isError)
   const totalConcepts = area.topics.reduce((total, topic) => total + topic.publishedConceptCount, 0)
   const completedConcepts = area.topics.reduce((total, topic) => total + topic.completedConceptCount, 0)
-  const preferredTopic = area.topics.find((topic) => topic.learningCount > 0 || topic.reviewNeededCount > 0)
-    ?? area.topics.find((topic) => topic.completedConceptCount < topic.publishedConceptCount)
+  const preferredTopic = area.topics.find((topic) => topic.learningCount > 0)
+    ?? area.topics.find((topic) => topic.unseenCount > 0)
+    ?? area.topics.find((topic) => topic.reviewNeededCount > 0)
     ?? area.topics[0]
   const selectedTopic = area.topics.find((topic) => topic.id === selectedTopicId) ?? preferredTopic
   const selectedTopicIndex = selectedTopic ? area.topics.findIndex((topic) => topic.id === selectedTopic.id) : -1
   const selectedTopicConcepts = selectedTopic
     ? outlineConcepts.filter((concept) => concept.topicId === selectedTopic.id)
     : []
+  const suggestedConcept = chooseNextConcept(selectedTopicConcepts)
+  const reviewConcept = chooseReviewConcept(selectedTopicConcepts)
   const previousTopic = selectedTopicIndex > 0 ? area.topics[selectedTopicIndex - 1] : null
   const nextTopic = selectedTopicIndex >= 0 && selectedTopicIndex < area.topics.length - 1
     ? area.topics[selectedTopicIndex + 1]
@@ -150,6 +222,33 @@ export function AreaPage() {
                     <p className="eyebrow">현재 주제</p>
                     <h2 id="topic-index-heading">{selectedTopic.title}</h2>
                     <p>{selectedTopic.description ?? '이 주제의 개념을 커리큘럼 순서대로 학습하세요.'}</p>
+                    <p className="topic-order-note">표시된 개념은 커리큘럼 순서입니다. 레벨은 개념의 학습 단계이며, 복습 필요는 다음 미학습 개념과 별도로 표시됩니다.</p>
+                    <nav className="topic-level-links" aria-label="레벨별 개념 보기">
+                      {([1, 2, 3] as const).map((level) => (
+                        <Link
+                          className="topic-level-link"
+                          key={level}
+                          to="/learning/$areaSlug"
+                          params={{ areaSlug: area.slug }}
+                          search={{ ...defaultLearningSearch, topic: selectedTopic.id, level: String(level) as '1' | '2' | '3' }}
+                        >
+                          L{level} <span>{level === 1 ? selectedTopic.level1Count : level === 2 ? selectedTopic.level2Count : selectedTopic.level3Count}개</span>
+                        </Link>
+                      ))}
+                    </nav>
+                    <Link className="secondary-button" to="/learning/$areaSlug/topics/$topicId/focus" params={{ areaSlug: area.slug, topicId: String(selectedTopic.id) }}>이 Topic 집중 학습</Link>
+                    {suggestedConcept && (
+                      <Link className="topic-next-concept-link" to="/concepts/$conceptId" params={{ conceptId: String(suggestedConcept.id) }}>
+                        <span>{suggestedConcept.learningStatus === 'LEARNING' ? '학습 중인 개념 이어가기' : '다음 미학습 개념'}</span>
+                        <strong>{suggestedConcept.title}</strong>
+                        <span aria-hidden="true">→</span>
+                      </Link>
+                    )}
+                    {reviewConcept && (
+                      <Link className="topic-review-concept-link" to="/concepts/$conceptId" params={{ conceptId: String(reviewConcept.id) }}>
+                        복습 필요: {reviewConcept.title} <span aria-hidden="true">→</span>
+                      </Link>
+                    )}
                     {selectedTopicConcepts.length > 0 ? (
                       <Link
                         className="secondary-button topic-quiz-link"
@@ -162,13 +261,21 @@ export function AreaPage() {
                   </div>
                   <div className="selected-topic-progress" aria-label={`${selectedTopic.completedConceptCount}/${selectedTopic.publishedConceptCount}개 완료`}>
                     <strong>{selectedTopic.completedConceptCount}/{selectedTopic.publishedConceptCount}</strong>
-                    <span>개념 완료</span>
+                    <span>개념 읽기 완료</span>
                   </div>
                 </header>
+                <p className="topic-order-note">읽기 완료와 문제 풀이에 근거한 이해도는 다릅니다. 아래에서 주제별 확정 정답 근거를 펼쳐 확인하거나 개념 상세에서 개별 근거를 볼 수 있습니다.</p>
+                <TopicUnderstandingEvidence
+                  key={selectedTopic.id}
+                  areaSlug={area.slug}
+                  topicId={selectedTopic.id}
+                  titlesById={Object.fromEntries(selectedTopicConcepts.map((concept) => [concept.id, concept.title]))}
+                />
 
                 <div className="topic-concept-list curriculum-concept-list">
                   {selectedTopicConcepts.map((concept, conceptIndex) => (
-                    <Link className="topic-concept-row curriculum-concept-row" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
+                    <div className="compare-area-row" key={concept.id}>
+                      <Link className="topic-concept-row curriculum-concept-row" to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
                       <span className="topic-concept-index">{String(conceptIndex + 1).padStart(2, '0')}</span>
                       <span className="topic-concept-copy">
                         <strong>{concept.title}</strong>
@@ -179,7 +286,9 @@ export function AreaPage() {
                         {concept.learningStatus === 'COMPLETED' ? '✓ 완료' : learningStatusLabels[concept.learningStatus]}
                       </span>
                       <span className="topic-guide-arrow" aria-hidden="true">→</span>
-                    </Link>
+                      </Link>
+                      <Link className="compare-source-link" to="/compare" search={{ left: concept.id }} aria-label={`${concept.title} 비교하기`}>비교하기</Link>
+                    </div>
                   ))}
                 </div>
 
@@ -281,7 +390,8 @@ export function AreaPage() {
             </div>
             <div className="concept-list">
               {conceptsQuery.data.items.map((concept) => (
-                <Link className="concept-list-item" key={concept.id} to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
+                <div className="compare-area-row" key={concept.id}>
+                  <Link className="concept-list-item" to="/concepts/$conceptId" params={{ conceptId: String(concept.id) }}>
                   <div className="concept-list-main">
                     <h3>{concept.title}</h3>
                     <p>{concept.summary ?? '요약이 아직 없습니다.'}</p>
@@ -292,7 +402,9 @@ export function AreaPage() {
                     </div>
                   </div>
                   <span className="concept-topic">{concept.topicTitle}</span>
-                </Link>
+                  </Link>
+                  <Link className="compare-source-link" to="/compare" search={{ left: concept.id }} aria-label={`${concept.title} 비교하기`}>비교하기</Link>
+                </div>
               ))}
             </div>
             <div className="pagination" aria-label="개념 페이지네이션">

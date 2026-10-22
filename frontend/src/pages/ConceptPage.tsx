@@ -3,16 +3,21 @@ import { Link, useParams } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { ConceptLearningRail } from '../components/ConceptLearningRail'
+import { BookmarkCategoryPicker } from '../components/BookmarkCategoryPicker'
 import { ConceptReferences } from '../components/ConceptReferences'
 import { InterviewRecallSection } from '../components/InterviewRecallSection'
+import { ActiveRecallSection } from '../components/ActiveRecallSection'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { useToast } from '../components/toast/ToastProvider'
 import { extractInterviewSection } from '../lib/interview-section'
+import { appendInterviewDraftToNote } from '../lib/interview-practice'
 import {
   getConcept,
+  getConceptUnderstanding,
   recordConceptView,
   updateConceptProgress,
   type ConceptDetail as ConceptDetailModel,
+  type ConceptAssessmentStatus,
   type LearningStatus,
 } from '../lib/learning-api'
 import { defaultLearningSearch } from '../lib/learning-search'
@@ -32,7 +37,14 @@ const learningStatusLabels: Record<LearningStatus, string> = {
   REVIEW_NEEDED: '복습 필요',
 }
 
-function ConceptArticleToc({ conceptId }: { conceptId: number }) {
+
+type ArticleTocProps = {
+  headings: TocHeading[]
+  activeId: string
+  onNavigate: (id: string) => void
+}
+
+function useConceptArticleToc(conceptId: number, contentMarkdown: string) {
   const [headings, setHeadings] = useState<TocHeading[]>([])
   const [activeId, setActiveId] = useState('')
 
@@ -41,52 +53,87 @@ function ConceptArticleToc({ conceptId }: { conceptId: number }) {
       document.querySelectorAll<HTMLElement>('.concept-reading-content h2, .concept-reading-content h3'),
     )
     const extraSectionCandidates: { element: HTMLElement | null; heading: TocHeading }[] = [
+      { element: document.getElementById('active-recall'), heading: { id: 'active-recall', label: '스스로 설명해 보기', level: 2 } },
       { element: document.getElementById('interview'), heading: { id: 'interview', label: '면접에서 이렇게 나옵니다', level: 2 } },
       { element: document.getElementById('learning-actions'), heading: { id: 'learning-actions', label: '학습 마무리', level: 2 } },
       { element: document.getElementById('personal-note'), heading: { id: 'personal-note', label: '학습 노트', level: 2 } },
       { element: document.getElementById('references'), heading: { id: 'references', label: '함께 볼 자료', level: 2 } },
     ]
-    const extraSections = extraSectionCandidates.filter(
+    const extras = extraSectionCandidates.filter(
       (item): item is { element: HTMLElement; heading: TocHeading } => item.element !== null,
     )
-    const trackedElements = [...articleHeadings, ...extraSections.map((item) => item.element)]
-    const mappedHeadings: TocHeading[] = articleHeadings.map((heading, index) => {
-      const id = `concept-${conceptId}-section-${index + 1}`
+    const mapped = articleHeadings.map((heading, index): TocHeading => {
+      const id = 'concept-' + conceptId + '-section-' + (index + 1)
       heading.id = id
+      heading.tabIndex = -1
       return {
         id,
-        label: heading.textContent?.trim() || `섹션 ${index + 1}`,
+        label: heading.textContent?.trim() || '섹션 ' + (index + 1),
         level: heading.tagName === 'H3' ? 3 : 2,
       }
     })
-    const sectionHeadings = extraSections.map((item) => item.heading)
+    const targets = [...articleHeadings, ...extras.map((item) => item.element)]
+    const items = [...mapped, ...extras.map((item) => item.heading)]
+    extras.forEach((item) => { item.element.tabIndex = -1 })
+    setHeadings(items)
 
-    setHeadings([...mappedHeadings, ...sectionHeadings])
-    setActiveId(mappedHeadings[0]?.id ?? sectionHeadings[0]?.id ?? '')
+    let pendingFrame = 0
+    const syncActiveSection = () => {
+      pendingFrame = 0
+      let current = targets[0]?.id ?? ''
+      for (const target of targets) {
+        if (target.getBoundingClientRect().top <= 132) current = target.id
+        else break
+      }
+      setActiveId(current)
+    }
+    const scheduleSync = () => {
+      if (!pendingFrame) pendingFrame = window.requestAnimationFrame(syncActiveSection)
+    }
+    const syncHash = () => {
+      const hash = window.location.hash.slice(1)
+      if (targets.some((target) => target.id === hash)) {
+        setActiveId(hash)
+        document.getElementById(hash)?.scrollIntoView({ block: 'start' })
+      } else {
+        scheduleSync()
+      }
+    }
+    window.addEventListener('scroll', scheduleSync, { passive: true })
+    window.addEventListener('resize', scheduleSync)
+    window.addEventListener('hashchange', syncHash)
+    const initialFrame = window.requestAnimationFrame(syncHash)
 
-    const observer = new IntersectionObserver((entries) => {
-      const visible = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((left, right) => left.boundingClientRect.top - right.boundingClientRect.top)[0]
-      if (visible?.target.id) setActiveId(visible.target.id)
-    }, { rootMargin: '-18% 0px -72% 0px', threshold: [0, 1] })
+    return () => {
+      window.cancelAnimationFrame(initialFrame)
+      if (pendingFrame) window.cancelAnimationFrame(pendingFrame)
+      window.removeEventListener('scroll', scheduleSync)
+      window.removeEventListener('resize', scheduleSync)
+      window.removeEventListener('hashchange', syncHash)
+    }
+  }, [conceptId, contentMarkdown])
 
-    trackedElements.forEach((element) => observer.observe(element))
-    return () => observer.disconnect()
-  }, [conceptId])
+  const navigateToHeading = (id: string) => {
+    setActiveId(id)
+    window.requestAnimationFrame(() => document.getElementById(id)?.focus({ preventScroll: true }))
+  }
 
+  return { headings, activeId, navigateToHeading }
+}
+
+function ConceptArticleToc({ headings, activeId, onNavigate }: ArticleTocProps) {
   if (headings.length === 0) return null
-
   return (
-    <aside className="concept-toc" aria-label="이 글의 목차">
+    <aside className="concept-toc concept-toc-desktop" aria-label="이 글의 목차">
       <p className="concept-toc-title">이 글에서</p>
       <nav>
         {headings.map((heading) => (
           <a
-            className={`${heading.level === 3 ? 'toc-level-3' : 'toc-level-2'}${activeId === heading.id ? ' active' : ''}`}
-            href={`#${heading.id}`}
+            className={(heading.level === 3 ? 'toc-level-3' : 'toc-level-2') + (activeId === heading.id ? ' active' : '')}
+            href={'#' + heading.id}
             key={heading.id}
             aria-current={activeId === heading.id ? 'location' : undefined}
+            onClick={() => onNavigate(heading.id)}
           >
             {heading.label}
           </a>
@@ -96,7 +143,79 @@ function ConceptArticleToc({ conceptId }: { conceptId: number }) {
   )
 }
 
-function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; conceptId: number }) {
+export function CompactConceptArticleToc({ headings, activeId, onNavigate }: ArticleTocProps) {
+  if (headings.length === 0) return null
+  return (
+    <details className="concept-toc-compact">
+      <summary>이 글의 목차 <span>{headings.length}개 섹션</span></summary>
+      <nav aria-label="이 글의 목차">
+        {headings.map((heading) => (
+          <a
+            className={(heading.level === 3 ? 'toc-level-3' : 'toc-level-2') + (activeId === heading.id ? ' active' : '')}
+            href={'#' + heading.id}
+            key={heading.id}
+            aria-current={activeId === heading.id ? 'location' : undefined}
+            onClick={() => onNavigate(heading.id)}
+          >
+            {heading.label}
+          </a>
+        ))}
+      </nav>
+    </details>
+  )
+}
+
+const assessmentLabels: Record<ConceptAssessmentStatus, string> = {
+  NOT_ENOUGH_EVIDENCE: '판단할 문제 근거가 아직 부족합니다',
+  NEEDS_PRACTICE: '추가 문제 풀이가 필요합니다',
+  DEVELOPING: '문제 풀이 근거가 쌓이고 있습니다',
+  CONSISTENT: '최근 정답 근거가 비교적 일관됩니다',
+}
+
+export function ConceptUnderstandingSection({ conceptId }: { conceptId: number }) {
+  const query = useQuery({
+    queryKey: ['concept-understanding', conceptId],
+    queryFn: () => getConceptUnderstanding(conceptId),
+  })
+
+  return (
+    <section className="detail-section concept-understanding-section" aria-labelledby="concept-understanding-title">
+      <div className="section-heading">
+        <div>
+          <p className="eyebrow">문제 풀이 근거</p>
+          <h2 id="concept-understanding-title">실제 정답으로 확인하기</h2>
+        </div>
+      </div>
+      <p className="helper-text">읽기 완료·복습 필요는 학습 행동 기록입니다. 아래 수치는 연결된 문제의 확정 채점을 기반으로 한 참고 정보이며 완전한 숙달 판정이 아닙니다.</p>
+      {query.isPending ? (
+        <p className="helper-text" role="status">채점 근거 불러오는 중…</p>
+      ) : query.isError || !query.data ? (
+        <div className="concept-understanding-error" role="alert">
+          <span>채점 근거를 불러오지 못했습니다. 읽기와 노트 작성은 계속할 수 있습니다.</span>
+          <button className="text-button" type="button" onClick={() => void query.refetch()}>다시 시도</button>
+        </div>
+      ) : (
+        <div className="concept-understanding-data">
+          <strong>{assessmentLabels[query.data.assessmentStatus]}</strong>
+          <p>
+            최근 서로 다른 문제 {query.data.evidence.uniqueQuestions}개 중 {query.data.evidence.correctQuestions}개 정답
+            {query.data.assessmentStatus !== 'NOT_ENOUGH_EVIDENCE' && query.data.recentAccuracyPercent !== null
+              ? ` · 최근 정답 비율 ${Math.round(query.data.recentAccuracyPercent)}%` : ''}
+          </p>
+          <span className="helper-text">
+            전체 확정 풀이 {query.data.evidence.finalizedAttempts}회 · 자기채점 대기 {query.data.evidence.pendingSelfCheckCount}회
+            {' · '}표본은 서로 다른 최근 문제 최대 10개, 최소 3개부터 추세 분류
+          </span>
+          <p className="helper-text">
+            하나의 문제가 여러 개념과 연결될 수 있으므로 이 수치는 해당 개념만의 실력을 분리 측정한 값이 아닙니다.
+          </p>
+        </div>
+      )}
+    </section>
+  )
+}
+
+function ConceptContent({ data, conceptId, tocProps }: { data: ConceptDetailModel; conceptId: number; tocProps: ArticleTocProps }) {
   const { noteContent, noteState, updateNote, flushNote } = useConceptNotePersistence(conceptId, data.personalNote?.content ?? '')
   const { bodyMarkdown, interview } = extractInterviewSection(data.contentMarkdown)
   const isCompleted = data.progress.learningStatus === 'COMPLETED'
@@ -122,11 +241,26 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
         </div>
       </header>
 
-      <article className="concept-reading-content" aria-label={`${data.title} 학습 노트`}>
+      <CompactConceptArticleToc {...tocProps} />
+
+      <article id="concept-reading-start" className="concept-reading-content" aria-label={`${data.title} 학습 노트`}>
         <MarkdownContent dedupeLeadingHeading={data.title}>{bodyMarkdown}</MarkdownContent>
       </article>
 
-      {interview && <InterviewRecallSection section={interview} />}
+      <ActiveRecallSection key={data.contentKey} contentKey={data.contentKey} bodyMarkdown={bodyMarkdown} />
+
+      {interview && <InterviewRecallSection
+        section={interview}
+        contentKey={data.contentKey}
+        conceptId={conceptId}
+        areaSlug={data.area.slug}
+        relatedConcepts={data.relatedConcepts}
+        noteState={noteState}
+        onCopyToNote={(question, answer) => {
+          const next = appendInterviewDraftToNote(noteContent, question, answer)
+          if (next !== noteContent) updateNote(next)
+        }}
+      />}
 
       <section className="concept-completion-section" id="learning-actions" aria-labelledby="learning-actions-title">
         <div className="concept-completion-copy">
@@ -160,8 +294,11 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
             />
             <BookmarkButton conceptId={conceptId} bookmarked={data.progress.bookmarked} />
           </div>
+          {data.progress.bookmarked && <BookmarkCategoryPicker conceptId={conceptId} />}
         </div>
       </section>
+
+      <ConceptUnderstandingSection conceptId={conceptId} />
 
       <section className="detail-section personal-note-section" id="personal-note">
         <div className="section-heading">
@@ -203,10 +340,16 @@ function ConceptContent({ data, conceptId }: { data: ConceptDetailModel; concept
           {data.previous ? <Link className="navigation-card" to="/concepts/$conceptId" params={{ conceptId: String(data.previous.id) }}><span>← 이전 개념</span><strong>{data.previous.title}</strong></Link> : <span />}
           {data.next ? <Link className="navigation-card next" to="/concepts/$conceptId" params={{ conceptId: String(data.next.id) }}><span>다음 개념 →</span><strong>{data.next.title}</strong></Link> : <span />}
         </div>
+        <Link className="secondary-button" to="/compare" search={{ left: conceptId }}>이 개념 비교하기</Link>
         {data.relatedConcepts.length > 0 && (
           <div className="concept-related-list">
             <p className="eyebrow">이 주제의 관련 개념</p>
-            {data.relatedConcepts.map((related) => <Link key={related.id} to="/concepts/$conceptId" params={{ conceptId: String(related.id) }}>{related.title} <span>레벨 {related.level}</span></Link>)}
+            {data.relatedConcepts.map((related) => (
+              <div className="compare-area-row" key={related.id}>
+                <Link to="/concepts/$conceptId" params={{ conceptId: String(related.id) }}>{related.title} <span>레벨 {related.level}</span></Link>
+                <Link className="compare-source-link" to="/compare" search={{ left: conceptId, right: related.id }}>나란히 읽기</Link>
+              </div>
+            ))}
           </div>
         )}
       </section>
@@ -226,6 +369,7 @@ function BookmarkButton({ conceptId, bookmarked }: { conceptId: number; bookmark
       void queryClient.invalidateQueries({ queryKey: ['learning-areas'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-area'] })
       void queryClient.invalidateQueries({ queryKey: ['learning-outline'] })
+      void queryClient.invalidateQueries({ queryKey: ['bookmark-assignment', conceptId] })
     },
     onError: () => showToast('error', '북마크 저장에 실패했습니다.'),
   })
@@ -316,7 +460,13 @@ export function ConceptPage() {
   if (conceptQuery.isPending) return <PageSkeleton rows={6} />
   if (conceptQuery.isError || !conceptQuery.data) return <ErrorState message="개념을 불러오지 못했습니다." onRetry={() => void conceptQuery.refetch()} />
 
-  const data = conceptQuery.data
+  return <ConceptReaderLayout data={conceptQuery.data} conceptId={conceptId} />
+}
+
+function ConceptReaderLayout({ data, conceptId }: { data: ConceptDetailModel; conceptId: number }) {
+  const { headings, activeId, navigateToHeading } = useConceptArticleToc(conceptId, data.contentMarkdown)
+  const tocProps = { headings, activeId, onNavigate: navigateToHeading }
+
   return (
     <div className="concept-workspace concept-reading-workspace">
       <ConceptLearningRail concept={data} />
@@ -328,16 +478,19 @@ export function ConceptPage() {
             to="/learning/$areaSlug"
             params={{ areaSlug: data.area.slug }}
             search={defaultLearningSearch}
-            hash={`topic-${data.topic.id}`}
+            hash={'topic-' + data.topic.id}
           >
             {data.area.name}
           </Link>
           <span>/</span>
           <strong>{data.topic.title}</strong>
         </nav>
-        <ConceptContent key={conceptId} data={data} conceptId={conceptId} />
+        <Link className="topic-focus-back-link" to="/learning/$areaSlug/topics/$topicId/focus" params={{ areaSlug: data.area.slug, topicId: String(data.topic.id) }}>
+          Topic 집중 학습으로 돌아가기
+        </Link>
+        <ConceptContent key={conceptId} data={data} conceptId={conceptId} tocProps={tocProps} />
       </section>
-      <ConceptArticleToc conceptId={conceptId} />
+      <ConceptArticleToc {...tocProps} />
     </div>
   )
 }

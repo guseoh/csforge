@@ -20,6 +20,7 @@ export interface ReviewListItem {
   stage: number
   dueAt: string | null
   lastReviewedAt: string | null
+  wrongNoteAvailable: boolean
 }
 
 export interface ReviewPage {

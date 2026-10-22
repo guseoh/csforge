@@ -38,7 +38,7 @@ vi.mock('../components/MarkdownContent', () => ({
   MarkdownContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }))
 
-import { QuizSessionPage } from './QuizSessionPage'
+import { canEditQuizAnswerByShortcut, QuizSessionPage } from './QuizSessionPage'
 
 describe('QuizSessionPage submit recovery', () => {
   beforeEach(() => {
@@ -109,5 +109,40 @@ describe('QuizSessionPage submit recovery', () => {
     expect(mocks.getQuizResult).toHaveBeenCalledWith(41)
     expect(mocks.persistence && (mocks.persistence as { clearLocalDrafts: ReturnType<typeof vi.fn> }).clearLocalDrafts).toHaveBeenCalled()
     expect(mocks.navigate).toHaveBeenCalledWith({ to: '/quiz/$quizId/result', params: { quizId: '41' } })
+  })
+
+  // Shortcut and persistence regression cases share the complete active-session fixture.
+  it.each([
+    ['IN_PROGRESS', false, true],
+    ['IN_PROGRESS', true, false],
+    ['SUBMITTED', false, false],
+    ['COMPLETED', false, false],
+    [undefined, false, false],
+  ])('allows answer shortcuts only in an editable session (%s, expired=%s)', (status, expired, allowed) => {
+    expect(canEditQuizAnswerByShortcut(status, expired)).toBe(allowed)
+  })
+
+  it('keeps options readable to screen readers and exposes pressed state', () => {
+    const html = renderToStaticMarkup(<QuizSessionPage />)
+    expect(html).toContain('aria-pressed="false"')
+    expect(html).toContain('Answer A')
+    expect(html).not.toContain('aria-label="선택지 A"')
+    expect(html).toContain('모두 저장됨')
+  })
+
+  it('shows failure recovery without leaking correct answers before submission', () => {
+    const persistence = mocks.persistence as {
+      saveStates: Record<number, string>
+      failedQuestionIds: number[]
+      savingCount: number
+    }
+    persistence.saveStates = { 22: 'error' }
+    persistence.failedQuestionIds = [22]
+    persistence.savingCount = 0
+    const html = renderToStaticMarkup(<QuizSessionPage />)
+    expect(html).toContain('저장 실패 1개 문항')
+    expect(html).toContain('저장 실패 · 다시 저장')
+    expect(html).not.toContain('정답 선택지')
+    expect(html).not.toContain('왜 이렇게 판단하나')
   })
 })

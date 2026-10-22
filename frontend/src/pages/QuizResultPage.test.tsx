@@ -7,6 +7,7 @@ import type { QuizQuestionResult } from '../lib/quiz-api'
 const mocks = vi.hoisted(() => ({
   result: { data: null as unknown, error: null as unknown, isPending: false, isError: false, refetch: vi.fn() },
   navigate: vi.fn(),
+  mutationIsError: false,
 }))
 
 vi.mock('@tanstack/react-router', () => ({
@@ -20,7 +21,7 @@ vi.mock('@tanstack/react-router', () => ({
 vi.mock('@tanstack/react-query', () => ({
   useQuery: () => mocks.result,
   useQueryClient: () => ({ invalidateQueries: vi.fn() }),
-  useMutation: () => ({ isPending: false, isError: false, mutate: vi.fn() }),
+  useMutation: () => ({ isPending: false, isError: mocks.mutationIsError, mutate: vi.fn() }),
 }))
 
 import { QuizResultPage } from './QuizResultPage'
@@ -83,6 +84,7 @@ describe('QuizResultPage', () => {
     mocks.result.isError = false
     mocks.result.refetch.mockReset()
     mocks.navigate.mockReset()
+    mocks.mutationIsError = false
   })
 
   it('offers to resume an in-progress quiz when result access conflicts', () => {
@@ -397,5 +399,73 @@ describe('QuizResultPage', () => {
 
     expect(markup).toContain('복습 일정 완료')
     expect(markup).toContain('완료된 복습 일정도 있습니다.')
+  })
+})
+
+describe('QuizResultPage #212 outcome feedback', () => {
+  beforeEach(() => {
+    mocks.result.data = null
+    mocks.result.error = null
+    mocks.result.isPending = false
+    mocks.result.isError = false
+    mocks.mutationIsError = false
+  })
+
+  it.each([
+    ['MULTIPLE_CHOICE', 'A', null],
+    ['SHORT_ANSWER', null, 'wrong response'],
+    ['DESCRIPTIVE', null, 'wrong explanation'],
+    ['SCENARIO', null, 'wrong situation analysis'],
+  ] as const)('compares incorrect %s answers and offers a new quiz', (questionType, selectedChoiceKey, answerText) => {
+    const markup = renderSubmittedResult([
+      resultQuestion({ questionType, selectedChoiceKey, answerText, correct: false }),
+    ], { correct: 0, wrong: 1, unanswered: 0 })
+    expect(markup).toContain('내 답')
+    expect(markup).toContain(questionType === 'MULTIPLE_CHOICE' ? '정답' : questionType === 'SHORT_ANSWER' ? '허용 답안' : '모범 답안')
+    expect(markup).toContain('이 문제 다시 풀기')
+    expect(markup).toContain('새 Quiz를 만들어 다시 풀며, 기존 답안·점수·오답 기록은 그대로 보존됩니다.')
+  })
+
+  it.each(['MULTIPLE_CHOICE', 'SHORT_ANSWER', 'DESCRIPTIVE', 'SCENARIO'] as const)(
+    'does not misclassify an unanswered %s question as a wrong submitted answer',
+    (questionType) => {
+      const markup = renderSubmittedResult([
+        resultQuestion({ questionType, selectedChoiceKey: null, answerText: null, correct: false }),
+      ], { correct: 0, wrong: 0, unanswered: 1 })
+      expect(markup).toContain('result-status-unanswered')
+      expect(markup).not.toContain('result-status-wrong')
+    },
+  )
+
+  it.each(['DESCRIPTIVE', 'SCENARIO'] as const)(
+    'keeps pending %s out of finalized score and offers self-check retry feedback',
+    (questionType) => {
+      mocks.mutationIsError = true
+      const markup = renderSubmittedResult([
+        resultQuestion({
+          questionType, selectedChoiceKey: null, answerText: '내 설명',
+          gradingStatus: 'SELF_CHECK_REQUIRED', correct: null, modelAnswer: '모범 비교 근거',
+        }),
+      ], { correct: 0, wrong: 0, unanswered: 0, selfCheckPending: 1 })
+      expect(markup).toContain('자기채점 대기')
+      expect(markup).toContain('확정 0문항 중 0개 정답')
+      expect(markup).toContain('자기채점 결과를 저장하지 못했습니다.')
+      expect(markup).not.toContain('result-status-wrong')
+      expect(markup).not.toContain('result-status-unanswered')
+    },
+  )
+
+  it('keeps a completed successful attempt separate from retry history', () => {
+    const markup = renderSubmittedResult([
+      resultQuestion({ questionType: 'SHORT_ANSWER', selectedChoiceKey: null, answerText: 'accepted', correct: true }),
+    ], { correct: 1, wrong: 0, unanswered: 0 })
+    expect(markup).toContain('result-status-correct')
+    expect(markup).not.toContain('새 Quiz를 만들어 다시 풀며')
+  })
+
+  it('handles an empty finalized result without inventing retryable questions', () => {
+    const markup = renderSubmittedResult([], { correct: 0, wrong: 0, unanswered: 0 })
+    expect(markup).toContain('다시 확인할 오답이나 미답변이 없습니다.')
+    expect(markup).not.toContain('새 Quiz를 만들어 다시 풀며')
   })
 })

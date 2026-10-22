@@ -148,6 +148,27 @@ export interface ConceptDetail {
   relatedConcepts: ConceptNavigation[]
 }
 
+export type ConceptAssessmentStatus = 'NOT_ENOUGH_EVIDENCE' | 'NEEDS_PRACTICE' | 'DEVELOPING' | 'CONSISTENT'
+
+export interface ConceptUnderstanding {
+  conceptId: number
+  learningStatus: LearningStatus
+  evidence: {
+    uniqueQuestions: number
+    finalizedAttempts: number
+    correctQuestions: number
+    pendingSelfCheckCount: number
+  }
+  recentAccuracyPercent: number | null
+  assessmentStatus: ConceptAssessmentStatus
+  lastAssessedAt: string | null
+}
+
+export interface ConceptUnderstandingPage {
+  items: ConceptUnderstanding[]
+  page: ConceptPage['page']
+}
+
 export interface ProgressResponse {
   learningStatus: LearningStatus
   bookmarked: boolean
@@ -182,6 +203,7 @@ export function getConcepts(filters: {
   level?: number
   learningStatus?: LearningStatus
   bookmarked?: boolean
+  bookmarkCategoryId?: number
   q?: string
   page: number
   size: number
@@ -193,6 +215,7 @@ export function getConcepts(filters: {
   if (filters.level) params.set('level', String(filters.level))
   if (filters.learningStatus) params.set('learningStatus', filters.learningStatus)
   if (filters.bookmarked) params.set('bookmarked', 'true')
+  if (filters.bookmarkCategoryId !== undefined) params.set('bookmarkCategoryId', String(filters.bookmarkCategoryId))
   if (filters.q) params.set('q', filters.q)
   params.set('page', String(filters.page))
   params.set('size', String(filters.size))
@@ -200,8 +223,31 @@ export function getConcepts(filters: {
   return request<ConceptPage>(`/api/concepts?${params.toString()}`)
 }
 
+/** One bounded read-only query: do not silently lose saved Concept IDs. */
+export function getAvailableConceptIdsForPractice(ids: number[]): Promise<number[]> {
+  const params = new URLSearchParams({ ids: ids.join(',') })
+  return request<number[]>(`/api/concepts/published-ids?${params.toString()}`)
+}
+
 export function getConcept(conceptId: number): Promise<ConceptDetail> {
   return request<ConceptDetail>(`/api/concepts/${conceptId}`)
+}
+
+/** Separate read-only assessment; never changes ConceptProgress. */
+export function getConceptUnderstanding(conceptId: number): Promise<ConceptUnderstanding> {
+  return request<ConceptUnderstanding>(`/api/concepts/${conceptId}/understanding`)
+}
+
+export function getLearningAreaUnderstanding(
+  areaSlug: string,
+  topicId: number,
+  page: number,
+  size = 10,
+): Promise<ConceptUnderstandingPage> {
+  const params = new URLSearchParams({ topicId: String(topicId), page: String(page), size: String(size) })
+  return request<ConceptUnderstandingPage>(
+    `/api/learning-areas/${encodeURIComponent(areaSlug)}/understanding?${params.toString()}`,
+  )
 }
 
 export function recordConceptView(conceptId: number): Promise<ProgressResponse> {

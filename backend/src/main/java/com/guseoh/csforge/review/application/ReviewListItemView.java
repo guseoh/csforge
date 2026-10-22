@@ -19,7 +19,8 @@ public record ReviewListItemView(
         ReviewScheduleStatus status,
         short stage,
         Instant dueAt,
-        Instant lastReviewedAt) {
+        Instant lastReviewedAt,
+        boolean wrongNoteAvailable) {
 
     /**
      * 목록에 표시할 Concept 요약이다.

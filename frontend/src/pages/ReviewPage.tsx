@@ -83,14 +83,14 @@ export function ReviewPage() {
             {hasActionableReviews(summary.data) ? (
               <>
                 <div className="review-primary-copy">
-                  <strong>지금 복습 {actionableCount}개</strong>
-                  <span>기한이 지났거나 지금 다시 볼 문제</span>
+                  <strong>지금 시작 가능한 복습 {actionableCount}개</strong>
+                  <span>기한 지남 {summary.data.overdue}개 · 지금 도래 {summary.data.dueNow}개 (예정 문항 제외)</span>
                 </div>
                 <button className="primary-button" disabled={create.isPending} onClick={() => create.mutate()}>
                   {create.isPending ? '문제 준비 중…' : '복습 시작'}
                 </button>
               </>
-            ) : <span className="helper-text">지금 시작할 복습 문제가 없습니다.</span>}
+            ) : <span className="helper-text">지금 시작할 복습은 0개입니다. 예정 문항은 해당 날짜가 되면 복습할 수 있습니다.</span>}
           </div>
         )}
       </div>
@@ -119,19 +119,21 @@ export function ReviewPage() {
               ))}
             </div>
             <span className="review-mastered-count">정리 완료 <strong>{summary.data.mastered}</strong></span>
+            <p className="review-count-guidance">‘기한 지남’과 ‘지금 복습’은 별도 건수입니다. 24시간·7일 내 예정 문항은 현재 복습 시작 대상에 포함되지 않습니다.</p>
           </div>
 
           {reviews.data.items.length === 0 ? (
             <div className="state-card">
               <strong>선택한 시점에 복습할 항목이 없습니다.</strong>
-              <span>다른 복습 시점을 선택해 보세요.</span>
+              <span>다른 복습 시점을 선택하거나 전체 일정으로 돌아가세요.</span>
+              {search.due !== 'ALL' && <button className="secondary-button" type="button" onClick={() => updateDue('ALL')}>전체 일정 보기</button>}
             </div>
           ) : (
             <div className="review-list">
               {reviews.data.items.map((item) => {
                 const timing = reviewTiming(item.dueAt, item.status)
                 return (
-                  <Link className="review-list-item" key={item.questionId} to="/wrong-notes/$questionId" params={{ questionId: String(item.questionId) }}>
+                  <article className="review-list-item" key={item.questionId}>
                     <div className="review-list-copy">
                       <h3>{compactMarkdownPreview(item.promptMarkdown)}</h3>
                       <p className="review-concept-path">{item.concepts.map((concept) => `${concept.areaName} · ${concept.title} · 레벨 ${concept.level}`).join(', ')}</p>
@@ -144,9 +146,22 @@ export function ReviewPage() {
                     <div className="review-list-side">
                       <span className={`review-timing-label review-timing-${timing.className}`}>{timing.label}</span>
                       <strong className="review-due-date">{item.dueAt ? new Date(item.dueAt).toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' }) : '정리 완료'}</strong>
-                      <span className="review-row-action" aria-hidden="true">기록 보기 →</span>
+                      {item.wrongNoteAvailable && <Link
+                        className="review-row-action"
+                        to="/wrong-notes/$questionId"
+                        params={{ questionId: String(item.questionId) }}
+                      >오답 기록 보기 →</Link>}
+                      {item.concepts.length > 0 ? (
+                        <Link
+                          className="review-row-action"
+                          to="/concepts/$conceptId"
+                          params={{ conceptId: String(item.concepts[0].id) }}
+                        >
+                          관련 개념 읽기 →
+                        </Link>
+                      ) : <span className="review-row-action review-row-info">연결된 개념 없음 · 복습은 위에서 시작</span>}
                     </div>
-                  </Link>
+                  </article>
                 )
               })}
             </div>
