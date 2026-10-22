@@ -202,7 +202,7 @@ class QuizIntegrationTest {
                 Integer.class, quizId));
         assertEquals(1, jdbc.queryForObject("select count(*) from wrong_note where question_id = ?",
                 Integer.class, multipleChoiceId));
-        // Keep the observed search defect failing at the end, after all other read models are tested.
+        // Combined bookmark search must agree with the persisted classification across the full flow.
         assertEquals(1, filteredBookmarkCount,
                 "Issue #268: bookmark classification exists in the DB, but the combined filter loses it");
     }

@@ -464,6 +464,79 @@ class LearningIntegrationTest {
     }
 
     @Test
+    void concurrentBookmarkCategoryAssignmentsPreserveOneRowAndPersonalNote() throws Exception {
+        assertEquals(200, request("PATCH", "/api/concepts/" + firstConceptId + "/progress",
+                "{\"bookmarked\":true}").statusCode());
+        assertEquals(200, request("PUT", "/api/concepts/" + firstConceptId + "/note",
+                "{\"content\":\"protected learner note\"}").statusCode());
+        JsonNode categories = json(request("GET", "/api/bookmark-categories", null));
+        long first = categories.get(0).get("id").asLong();
+        long second = categories.get(1).get("id").asLong();
+        String path = "/api/concepts/" + firstConceptId + "/bookmark-category";
+
+        java.util.concurrent.CountDownLatch start = new java.util.concurrent.CountDownLatch(1);
+        try (var pool = java.util.concurrent.Executors.newFixedThreadPool(2)) {
+            var a = pool.submit(() -> {
+                start.await();
+                return request("PUT", path, "{\"categoryId\":" + first + "}");
+            });
+            var b = pool.submit(() -> {
+                start.await();
+                return request("PUT", path, "{\"categoryId\":" + second + "}");
+            });
+            start.countDown();
+            assertEquals(200, a.get().statusCode(), a.get().body());
+            assertEquals(200, b.get().statusCode(), b.get().body());
+        }
+
+        assertEquals(1, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM bookmark_category_concept WHERE concept_id = ?",
+                Integer.class, firstConceptId));
+        long assigned = jdbc.queryForObject(
+                "SELECT category_id FROM bookmark_category_concept WHERE concept_id = ?",
+                Long.class, firstConceptId);
+        assertTrue(assigned == first || assigned == second);
+        assertTrue(json(request("GET", "/api/concepts/" + firstConceptId, null))
+                .get("progress").get("bookmarked").asBoolean());
+        assertEquals("protected learner note",
+                json(request("GET", "/api/concepts/" + firstConceptId, null))
+                        .get("personalNote").get("content").asText());
+    }
+
+    @Test
+    void racingUnbookmarkAndClassificationNeverLeavesOrphanAssignment() throws Exception {
+        assertEquals(200, request("PATCH", "/api/concepts/" + firstConceptId + "/progress",
+                "{\"bookmarked\":true}").statusCode());
+        long category = json(request("GET", "/api/bookmark-categories", null)).get(0).get("id").asLong();
+        String path = "/api/concepts/" + firstConceptId + "/bookmark-category";
+
+        java.util.concurrent.CountDownLatch start = new java.util.concurrent.CountDownLatch(1);
+        try (var pool = java.util.concurrent.Executors.newFixedThreadPool(2)) {
+            var unbookmark = pool.submit(() -> {
+                start.await();
+                return request("PATCH", "/api/concepts/" + firstConceptId + "/progress",
+                        "{\"bookmarked\":false}");
+            });
+            var assign = pool.submit(() -> {
+                start.await();
+                return request("PUT", path, "{\"categoryId\":" + category + "}");
+            });
+            start.countDown();
+            var unbookmarkResult = unbookmark.get();
+            var assignResult = assign.get();
+            assertEquals(200, unbookmarkResult.statusCode(), unbookmarkResult.body());
+            assertTrue(assignResult.statusCode() == 200 || assignResult.statusCode() == 400,
+                    assignResult.body());
+        }
+
+        assertEquals(0, jdbc.queryForObject(
+                "SELECT COUNT(*) FROM bookmark_category_concept WHERE concept_id = ?",
+                Integer.class, firstConceptId));
+        assertFalse(json(request("GET", "/api/concepts/" + firstConceptId, null))
+                .get("progress").get("bookmarked").asBoolean());
+    }
+
+    @Test
     void bookmarkCategoryClassificationIsOptionalAndNeverChangesLearningHistory() throws Exception {
         JsonNode categories = json(request("GET", "/api/bookmark-categories", null));
         assertEquals(3, categories.size());
