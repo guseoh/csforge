@@ -17,6 +17,21 @@
 - 로컬 Git 작성자 설정이 없어 기존 refactor 커밋의 `guseoh <81723538+guseoh@users.noreply.github.com>`를 명령 단위로 사용했다. 전역/저장소 설정은 변경하지 않았다.
 - Backend 전체 `gradlew.bat test --no-daemon` 재실행이 26분 39초 후 exit 0으로 완료됐다. 50 suites, 171 tests 중 170 통과 / 실패·오류 0 / 수동 성능 감사 1 skip이다. 최초 실패·범위 한정 성공 증거를 덮어쓰지 않고 [새 전체 집계](backend-full-rerun-summary.json)에 별도 보존했다. 집계에는 전체 로그의 SHA-256도 포함했다.
 
+## 커밋된 실제 diff 리뷰
+
+- 구현 커밋: `18f0d10e662789123d6a61a26b29c52e4862e283`. `origin/main...18f0d10e`의 전체 변경은 63개 파일(소스 53개, 증거 10개), 1,673 additions / 153 deletions다.
+- 공개 JPA 조회·DTO·application/API 경계, 공개 검색 타입 제한과 추천 중복 제거 순서, GET allowlist·allowlist identity·CSRF/session/logout, 게스트 컴포넌트와 Query/local storage 분리, 모달 접근성·복귀·오류 회복, 테스트 정규화와 증거를 검토했다.
+- application에서 API 타입을 참조하거나 controller/mapper에서 aggregate를 생성하는 새 경로, setter 기반 도메인 생성, 새 JDBC persistence 경로·entity·schema migration은 없다. 신규 Java class의 목적 Javadoc과 read-only transaction, canonical 조회 범위·페이지 제한도 확인했다.
+- 검토한 소스 53개와 커밋 blob이 전부 동일하며, 예기치 않은 파일은 없다. `git diff origin/main...HEAD --check` 통과. push를 막을 actionable finding은 발견하지 못했다. 단일 에이전트 자체 리뷰이며 독립 리뷰를 수행했다고 주장하지 않는다. [리뷰 집계](diff-review.json).
+- 원격 main/refactor HEAD를 push 직전에 재확인한 뒤 refactor에 일반 fast-forward push했다. force-push 없이 `05d67b7b..18f0d10e`로 갱신했다. `backend/bin/`은 계속 미추적 상태로 보존한다.
+
+## 원격 Preview와 Production 병합 판단
+
+- 구현 커밋의 [Repository Validation #39906684135](https://github.com/guseoh/csforge/actions/runs/39906684135)는 **SUCCESS**다. 원격 Backend tests/build, Frontend lint/test/build, Compose validation이 모두 통과했으며 `Deploy backend to Cloud Run`은 refactor 조건에 따라 **skipped**였다. [원격 job/step 증거](remote-ci.json). 후속 보고서 커밋은 이 구현 커밋의 소스·테스트·workflow를 변경하지 않는다.
+- 같은 구현 커밋의 [Vercel Preview](https://csforge-julzomi3i-guseoh.vercel.app)는 READY다. 익명 `/`은 200이지만 `/api/auth/session`, `/api/public/learning-areas`는 Backend의 JSON `UNAUTHENTICATED` 401을 반환했다. Vercel 자체 보호 페이지가 아니라 기존 Backend 계약의 응답이다. [연동 확인](preview-integration.json).
+- refactor push는 검증과 프런트엔드 Preview를 실행하지만 새 Cloud Run Backend는 배포하지 않는다. 따라서 이 Preview의 build 성공을 새 API·실제 OAuth의 end-to-end 성공으로 간주할 수 없다.
+- **Production 병합 보류.** 새 Backend와 같은 버전의 Frontend를 연결한 비운영 환경에서 실제 Google 승인·세션 생성·원래 보호 경로와 search/hash 복귀·로그아웃을 확인해야 한다. 그 뒤 PR 리뷰 및 사용자 병합 승인을 받아야 한다. 이번 작업에서는 main push, PR 생성, Production merge/deploy, 운영 DB 변경을 실행하지 않았다.
+
 ## Task 순서별 결과
 
 | 순서 | 구현 결과 | 주요 변경 파일 |
@@ -54,6 +69,7 @@
 | 비밀번호를 지정한 production Compose config | 통과 |
 | 비밀번호 없는 production Compose config | 예상대로 실패하여 누락된 필수 비밀번호 거절 확인 |
 | `git diff --check` | 통과 |
+| 원격 Repository Validation (구현 커밋 `18f0d10e`) | **SUCCESS**. Backend tests/build, Frontend validation, Compose 통과. Production Backend 배포 skip. [원격 증거](remote-ci.json) |
 
 건너뛴 `DailyRouteQueryAuditTest`는 `CSFORGE_PERF_AUDIT=1`일 때만 실행되는 수동 성능 감사이다. 이번 실행에서 해당 환경변수는 지정하지 않았다.
 
@@ -88,5 +104,5 @@ QA fixture는 Concept 2개와 개인 노트 1개였다. 브라우저 열람·비
 ## 남은 검증과 운영 제한
 
 - 실제 Google 계정으로 OAuth 승인 → Cloud 세션 생성 → 원래 보호 경로 복귀까지의 실계정 검증은 미수행이다. 소유자/비허용/미검증 identity, CSRF, 세션 종료는 모의 OIDC 기반 통합 테스트로 검증한다. 원래 URL의 TTL·외부 URL 차단·search/hash 처리는 기존 `auth-return` 테스트로 검증한다. 사용자는 비운영 OAuth 환경이 없다고 확인했다. 기존 클라이언트에는 localhost 콜백이 없었으며, 별도 localhost 검증 클라이언트 생성은 사용자가 진행하지 않기로 했다. 미저장 양식을 취소했고 Google Cloud 설정/자격 증명은 변경하지 않았다. 준비용 로컬 Vite 및 폐기용 DB도 종료했다.
-- GitHub Repository Validation은 push/PR 없이 원격 실행하지 않았다. workflow_dispatch는 배포 job까지 실행할 수 있어 사용하지 않았다. 이 보고서의 로컬 검사와 원격 CI 성공을 구별해야 한다.
+- GitHub Repository Validation은 refactor push로 원격 실행하여 성공을 확인했다. main push·workflow_dispatch·Production 배포는 실행하지 않았다. 로컬 전체 검사와 원격 CI 결과는 별도 증거로 보존했다.
 - 운영 canonical 3,410개와 개인/history 데이터는 조회·변경하지 않았다. 운영 행 수 보존을 실측했다고 주장하지 않는다. 이번 구현은 스키마/마이그레이션/운영 적용을 포함하지 않는다.

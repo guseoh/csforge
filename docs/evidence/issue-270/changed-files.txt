@@ -40,9 +40,12 @@ docs/evidence/issue-270/backend-full-rerun-summary.json
 docs/evidence/issue-270/backend-full-summary.json
 docs/evidence/issue-270/branch-integration.json
 docs/evidence/issue-270/changed-files.txt
+docs/evidence/issue-270/diff-review.json
 docs/evidence/issue-270/login-desktop-dark.jpg
 docs/evidence/issue-270/login-mobile.jpg
+docs/evidence/issue-270/preview-integration.json
 docs/evidence/issue-270/qa-db-invariants.txt
+docs/evidence/issue-270/remote-ci.json
 docs/evidence/issue-270/verification-commands.txt
 frontend/src/auth.css
 frontend/src/components/AuthGate.tsx
