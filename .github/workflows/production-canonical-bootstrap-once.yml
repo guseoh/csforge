@@ -11,6 +11,10 @@ permissions:
   contents: read
   id-token: write
 
+concurrency:
+  group: production-canonical-final-synchronization
+  cancel-in-progress: false
+
 jobs:
   bootstrap-production-content:
     runs-on: ubuntu-latest
@@ -22,6 +26,8 @@ jobs:
       BOOTSTRAP_IMAGE: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge:bootstrap-${{ github.sha }}
     steps:
       - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v3
@@ -41,8 +47,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          test "$(git rev-parse HEAD^)" = "e56e55e0d49ec172baf91bb26faa194ade703ab3" || { echo "Reviewed main source SHA drift"; exit 1; }
-          test "$(git diff --name-only HEAD^ HEAD)" = ".github/workflows/production-canonical-bootstrap-once.yml" || { echo "Unexpected source changed in bootstrap commit"; exit 1; }
+          git cat-file -e "e56e55e0d49ec172baf91bb26faa194ade703ab3^{commit}" || { echo "Reviewed main source SHA absent"; exit 1; }
+          test "$(git diff --name-only e56e55e0d49ec172baf91bb26faa194ade703ab3 HEAD)" = ".github/workflows/production-canonical-bootstrap-once.yml" || { echo "Unexpected source changed in bootstrap commit"; exit 1; }
           python3 - <<'PATCH_SCRIPT'
           from pathlib import Path
           p=Path("backend/scripts/production-canonical-bootstrap.sh")
