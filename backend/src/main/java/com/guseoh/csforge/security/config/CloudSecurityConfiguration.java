@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
@@ -72,6 +73,13 @@ public class CloudSecurityConfiguration {
             SecurityApiAccessDeniedHandler accessDeniedHandler) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.GET, "/api/auth/session",
+                                "/api/public/learning-areas", "/api/public/learning-areas/{areaSlug}",
+                                "/api/public/learning-areas/{areaSlug}/outline",
+                                "/api/public/concepts", "/api/public/concepts/{conceptId}",
+                                "/api/public/search", "/api/public/search/suggestions",
+                                "/api/public/search/filter-options", "/api/public/search/status")
+                        .permitAll()
                         .requestMatchers("/actuator/health", "/actuator/health/**", "/oauth2/**", "/login/**",
                                 "/error", "/api/auth/logout")
                         .permitAll()
@@ -82,7 +90,9 @@ public class CloudSecurityConfiguration {
                 .exceptionHandling(exception -> exception
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(accessDeniedHandler))
-                .oauth2Login(oauth2 -> oauth2.defaultSuccessUrl(properties.frontendOrigin(), true))
+                .oauth2Login(oauth2 -> oauth2
+                        .defaultSuccessUrl(properties.frontendOrigin(), true)
+                        .failureUrl(properties.frontendOrigin() + "/login?error=oauth"))
                 .logout(logout -> logout
                         .logoutUrl("/api/auth/logout")
                         .invalidateHttpSession(true)

@@ -78,7 +78,7 @@ class JavaReferenceCorrectionIntegrationTest {
         CanonicalContentFile canonical = contentSource.load().stream()
                 .filter(file -> file.path().equals("java/api-design/static-factory-method.md"))
                 .findFirst().orElseThrow();
-        String corrected = new String(canonical.content(), StandardCharsets.UTF_8);
+        String corrected = new String(canonical.content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
         int closing = corrected.indexOf("\n---\n", 4);
         assertTrue(closing > 0, "Expected closing YAML frontmatter delimiter");
         String oldRelation = """

@@ -85,7 +85,7 @@ class InfraNistReferenceCorrectionIntegrationTest {
 
         CanonicalContentFile file = contentSource.load().stream()
                 .filter(entry -> entry.path().equals(PATH)).findFirst().orElseThrow();
-        String corrected = new String(file.content(), StandardCharsets.UTF_8);
+        String corrected = new String(file.content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
         assertTrue(corrected.contains(NEW_NIST), "Updated NIST block mismatch");
         assertFalse(corrected.contains(OLD_NIST));
         String historical = corrected.replace(NEW_NIST, OLD_NIST);

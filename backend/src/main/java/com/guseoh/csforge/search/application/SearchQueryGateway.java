@@ -10,4 +10,8 @@ public interface SearchQueryGateway {
     List<SearchSuggestionView> suggest(String query, int size);
 
     long countSearchableDocuments();
+
+    List<SearchSuggestionView> suggestPublic(String query, int size);
+
+    long countPublicDocuments();
 }

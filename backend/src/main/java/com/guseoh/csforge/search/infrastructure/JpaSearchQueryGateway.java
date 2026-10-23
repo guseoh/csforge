@@ -64,6 +64,16 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
     @Override
     @Transactional(readOnly = true)
     public List<SearchSuggestionView> suggest(String query, int size) {
+        return suggestions(query, size, "");
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<SearchSuggestionView> suggestPublic(String query, int size) {
+        return suggestions(query, size, " and d.document_type in ('CONCEPT', 'REFERENCE')");
+    }
+
+    private List<SearchSuggestionView> suggestions(String query, int size, String scope) {
         String normalizedQuery = query.toLowerCase(Locale.ROOT);
         String prefix = likePattern(normalizedQuery) + "%";
         String contains = "%" + likePattern(normalizedQuery) + "%";
@@ -90,8 +100,9 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
                                         d.document_key
                            ) as title_rank
                     from search_document_view d
-                    where lower(d.title) like :prefix escape '\\'
-                       or lower(d.title) like :contains escape '\\'
+                    where (lower(d.title) like :prefix escape '\\'
+                       or lower(d.title) like :contains escape '\\')
+                """ + scope + """
                 ) d
                 """ + QUESTION_NAVIGATION_JOIN + """
                 where d.title_rank = 1
@@ -108,6 +119,13 @@ public class JpaSearchQueryGateway implements SearchQueryGateway {
     public long countSearchableDocuments() {
         return ((Number) entityManager.createNativeQuery("select count(*) from " + SEARCH_VIEW)
                 .getSingleResult()).longValue();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long countPublicDocuments() {
+        return ((Number) entityManager.createNativeQuery("select count(*) from " + SEARCH_VIEW
+                + " where document_type in ('CONCEPT', 'REFERENCE')").getSingleResult()).longValue();
     }
 
     private long count(SearchCriteria criteria, List<String> queryTerms) {

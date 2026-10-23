@@ -92,7 +92,7 @@ class DsaReferenceScopeCorrectionIntegrationTest {
         for (Correction correction : CORRECTIONS) {
             CanonicalContentFile source = filesByPath.get(correction.path());
             assertTrue(source != null, () -> "Missing content file " + correction.path());
-            String updated = new String(source.content(), StandardCharsets.UTF_8);
+            String updated = new String(source.content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
             int start = updated.indexOf("    relationNote: \"");
             assertTrue(start >= 0, () -> "Missing relationNote in " + correction.path());
             int lineEnd = updated.indexOf('\n', start);

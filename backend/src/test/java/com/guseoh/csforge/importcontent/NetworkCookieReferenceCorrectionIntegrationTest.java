@@ -89,7 +89,7 @@ class NetworkCookieReferenceCorrectionIntegrationTest {
             String filePath = "network-http/http-state-intermediary/" + name + ".md";
             CanonicalContentFile file = canonical.get(filePath);
             assertTrue(file != null, "Missing canonical file " + filePath);
-            String corrected = new String(file.content(), StandardCharsets.UTF_8);
+            String corrected = new String(file.content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
             int start = corrected.indexOf("references:\n");
             int closing = corrected.indexOf("\n---\n", start);
             assertTrue(start >= 0 && closing > start);

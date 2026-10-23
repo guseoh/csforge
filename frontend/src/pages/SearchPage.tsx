@@ -1,3 +1,4 @@
+import { useAccess } from '../lib/access-context'
 import { useState, type FormEvent, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate, useSearch } from '@tanstack/react-router'
@@ -32,11 +33,11 @@ function HighlightText({ value }: { value: string }): ReactNode {
     : <span key={index}>{segment.text}</span>)
 }
 
-function rememberQuery(query: string) {
+function rememberQuery(query: string, publicOnly: boolean) {
   try {
-    const parsed = JSON.parse(localStorage.getItem(RECENT_KEY) ?? '[]')
+    const parsed = JSON.parse(localStorage.getItem(publicOnly ? `${RECENT_KEY}.public` : RECENT_KEY) ?? '[]')
     const recent = Array.isArray(parsed) ? parsed.filter((item): item is string => typeof item === 'string') : []
-    localStorage.setItem(RECENT_KEY, JSON.stringify(addRecentSearch(recent, query)))
+    localStorage.setItem(publicOnly ? `${RECENT_KEY}.public` : RECENT_KEY, JSON.stringify(addRecentSearch(recent, query)))
   } catch {
     // Optional recent-search storage must not block live search.
   }
@@ -52,16 +53,20 @@ function resultContext(item: SearchResultItem): string {
 }
 
 export function SearchPage() {
+  const { authenticated } = useAccess()
+  const publicOnly = !authenticated
+  const scope = authenticated ? 'private' : 'public'
+  const documentTypes = publicOnly ? DOCUMENT_TYPES.filter((type) => type.value === 'CONCEPT' || type.value === 'REFERENCE') : DOCUMENT_TYPES
   const search = useSearch({ from: '/search' })
   const navigate = useNavigate({ from: '/search' })
   const status = useQuery({
-    queryKey: ['search-status'],
-    queryFn: getSearchStatus,
+    queryKey: ['search-status', scope],
+    queryFn: () => getSearchStatus(publicOnly),
   })
-  const filters = useQuery({ queryKey: ['search-filter-options'], queryFn: getSearchFilterOptions, staleTime: 60_000 })
+  const filters = useQuery({ queryKey: ['search-filter-options', scope], queryFn: () => getSearchFilterOptions(publicOnly), staleTime: 60_000 })
   const results = useQuery({
-    queryKey: ['search', search],
-    queryFn: () => searchDocuments({ q: search.q, types: search.types, areas: search.areas, topics: search.topics, levels: search.levels, sort: search.sort, page: search.page }),
+    queryKey: ['search', search, scope],
+    queryFn: () => searchDocuments({ q: search.q, types: search.types, areas: search.areas, topics: search.topics, levels: search.levels, sort: search.sort, page: search.page }, publicOnly),
     enabled: search.q.trim().length > 0,
   })
 
@@ -102,7 +107,7 @@ export function SearchPage() {
     const data = new FormData(event.currentTarget)
     const q = String(data.get('q') ?? '').trim()
     if (!q) return
-    rememberQuery(q)
+    rememberQuery(q, publicOnly)
     update({ q, page: 0 })
   }
 
@@ -122,9 +127,9 @@ export function SearchPage() {
     <section className="page-section search-page">
       <div className="page-heading search-heading">
         <div>
-          <p className="eyebrow">통합 검색</p>
+          <p className="eyebrow">{publicOnly ? '공개 개념·참고 자료 검색' : '통합 검색'}</p>
           <h1>검색</h1>
-          <p className="lead">개념, 문제, 개인 메모, 오답 기록, 참고 자료를 한 번에 찾습니다.</p>
+          <p className="lead">{publicOnly ? '공개된 개념과 참고 자료를 검색합니다.' : '개념, 문제, 개인 메모, 오답 기록, 참고 자료를 한 번에 찾습니다.'}</p>
         </div>
       </div>
 
@@ -152,7 +157,7 @@ export function SearchPage() {
         <div className="search-filter-cluster">
           <span className="search-filter-label">유형</span>
           <div className="search-filter-chips">
-            {DOCUMENT_TYPES.map((type) => (
+            {documentTypes.map((type) => (
               <button
                 className={selectedTypes.includes(type.value) ? 'search-filter-chip active' : 'search-filter-chip'}
                 key={type.value}

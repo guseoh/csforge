@@ -94,7 +94,7 @@ class JavaReferenceFullMigrationIntegrationTest {
             assertTrue(paths.add(path), "Duplicate historical fixture " + path);
             CanonicalContentFile current = canonical.get(path);
             assertTrue(current != null, "Missing canonical file " + path);
-            String corrected = new String(current.content(), StandardCharsets.UTF_8);
+            String corrected = new String(current.content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
             String historical = corrected;
             for (JsonNode hunk : changed.get("hunks")) {
                 String from = hunk.get("current").asText();

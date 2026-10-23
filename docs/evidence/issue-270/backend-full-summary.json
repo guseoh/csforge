@@ -1,0 +1,59 @@
+{
+  "tests": 171,
+  "failures": 10,
+  "errors": 0,
+  "skipped": 1,
+  "suites": 50,
+  "failedTests": [
+    {
+      "class": "com.guseoh.csforge.importcontent.CaFloatingPointReferenceCorrectionIntegrationTest",
+      "test": "replacesIEEEPublicationNumberAndAddsReadableFormatSourceWithoutLosingHistory()",
+      "message": "org.opentest4j.AssertionFailedError: Missing frontmatter references block ==> expected: <true> but was: <false>"
+    },
+    {
+      "class": "com.guseoh.csforge.importcontent.CaJmhReferenceCorrectionIntegrationTest",
+      "test": "changesJmhLearningUrlWhileKeepingReferenceIdAndPersonalHistory()",
+      "message": "org.opentest4j.AssertionFailedError: expected: <true> but was: <false>"
+    },
+    {
+      "class": "com.guseoh.csforge.importcontent.DsaReferenceScopeCorrectionIntegrationTest",
+      "test": "updatesSixNotesAndPreservesFullCanonicalImportAndPersonalHistory()",
+      "message": "org.opentest4j.AssertionFailedError: expected: <true> but was: <false>"
+    },
+    {
+      "class": "com.guseoh.csforge.importcontent.InfraNistReferenceCorrectionIntegrationTest",
+      "test": "replacesWithdrawnNistUrlWithoutChangingHistoryOrExistingPostgresReference()",
+      "message": "org.opentest4j.AssertionFailedError: Updated NIST block mismatch ==> expected: <true> but was: <false>"
+    },
+    {
+      "class": "com.guseoh.csforge.importcontent.JavaReferenceCorrectionIntegrationTest",
+      "test": "removingOutdatedReferenceKeepsConceptAndLearningHistory()",
+      "message": "org.opentest4j.AssertionFailedError: Expected closing YAML frontmatter delimiter ==> expected: <true> but was: <false>"
+    },
+    {
+      "class": "com.guseoh.csforge.importcontent.JavaReferenceFullMigrationIntegrationTest",
+      "test": "allTwentyTwoReferenceUpdatesPreserveIdentityHistoryAndImportIdempotency()",
+      "message": "org.opentest4j.AssertionFailedError: Could not locate exact current diff hunk: java/api-design/static-factory-method.md ==> expected: <true> but was: <false>"
+    },
+    {
+      "class": "com.guseoh.csforge.importcontent.NetworkCookieReferenceCorrectionIntegrationTest",
+      "test": "threePublishedAndDraftReferenceCorrectionsPreserveHistoryAndReimport()",
+      "message": "org.opentest4j.AssertionFailedError: expected: <true> but was: <false>"
+    },
+    {
+      "class": "com.guseoh.csforge.importcontent.OsSourceScopeReferenceCorrectionIntegrationTest",
+      "test": "correctsTwoReadingGuidesWithoutRecreatingReferencesOrHistory()",
+      "message": "org.opentest4j.AssertionFailedError: expected: <true> but was: <false>"
+    },
+    {
+      "class": "com.guseoh.csforge.importcontent.OsThreadReferenceScopeIntegrationTest",
+      "test": "limitsThreadIntroductionNoteWithoutRecreatingLinksOrErasingHistory()",
+      "message": "java.lang.StringIndexOutOfBoundsException: Range [-1, 1821) out of bounds for length 1821"
+    },
+    {
+      "class": "com.guseoh.csforge.importcontent.SecurityUserDetailsReferenceCorrectionIntegrationTest",
+      "test": "replacesUserDetailsUrlWithoutChangingQuestionOrPersonalHistory()",
+      "message": "java.lang.StringIndexOutOfBoundsException: Range [-1, 2378) out of bounds for length 2378"
+    }
+  ]
+}

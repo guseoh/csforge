@@ -66,7 +66,7 @@ class OsThreadReferenceScopeIntegrationTest {
 
         CanonicalContentFile input = contentSource.load().stream()
                 .filter(entry -> entry.path().equals(PATH)).findFirst().orElseThrow();
-        String corrected = new String(input.content(), StandardCharsets.UTF_8);
+        String corrected = new String(input.content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
         assertTrue(corrected.contains(NEW_NOTE), "Corrected relation note must be packaged");
         assertFalse(corrected.contains(OLD_NOTE), "Old misleading note must be removed");
         String historical = corrected.replace(NEW_NOTE, OLD_NOTE);

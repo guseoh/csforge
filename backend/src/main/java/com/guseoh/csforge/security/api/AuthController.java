@@ -1,6 +1,8 @@
 package com.guseoh.csforge.security.api;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.ObjectProvider;
+import com.guseoh.csforge.security.application.AllowedEmailPolicy;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,9 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final String mode;
+    private final ObjectProvider<AllowedEmailPolicy> allowedEmailPolicy;
 
-    public AuthController(@Value("${csforge.security.mode:local}") String mode) {
+    public AuthController(@Value("${csforge.security.mode:local}") String mode,
+            ObjectProvider<AllowedEmailPolicy> allowedEmailPolicy) {
         this.mode = mode;
+        this.allowedEmailPolicy = allowedEmailPolicy;
     }
 
     @GetMapping("/session")
@@ -23,10 +28,10 @@ public class AuthController {
         if ("local".equalsIgnoreCase(mode)) {
             return new AuthSessionResponse(true, "LOCAL", null);
         }
-        return new AuthSessionResponse(
-                authentication != null && authentication.isAuthenticated(),
-                "CLOUD",
-                emailOf(authentication));
+        boolean owner = authentication != null && authentication.isAuthenticated()
+                && authentication.getPrincipal() instanceof OAuth2User user
+                && allowedEmailPolicy.getObject().isAllowed(user.getAttribute("email"), user.getAttribute("email_verified"));
+        return new AuthSessionResponse(owner, "CLOUD", owner ? emailOf(authentication) : null);
     }
 
     private String emailOf(Authentication authentication) {

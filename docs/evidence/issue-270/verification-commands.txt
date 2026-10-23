@@ -1,0 +1,32 @@
+Backend working directory: backend/
+Initial compile: .\gradlew.bat compileJava --no-daemon
+Initial cloud security test: .\gradlew.bat test --tests '*CloudSecurityIntegrationTest' --no-daemon
+Full validation: .\gradlew.bat build --no-daemon
+
+Isolated final test output (temporary Gradle init script):
+gradle.beforeProject { project ->
+    project.layout.buildDirectory.set(new File(project.projectDir, 'build/issue270-final'))
+}
+
+Final focused validation:
+.\gradlew.bat test --tests '*CaFloatingPointReferenceCorrectionIntegrationTest' --tests '*CaJmhReferenceCorrectionIntegrationTest' --tests '*DsaReferenceScopeCorrectionIntegrationTest' --tests '*InfraNistReferenceCorrectionIntegrationTest' --tests '*JavaReferenceCorrectionIntegrationTest' --tests '*JavaReferenceFullMigrationIntegrationTest' --tests '*NetworkCookieReferenceCorrectionIntegrationTest' --tests '*OsSourceScopeReferenceCorrectionIntegrationTest' --tests '*OsThreadReferenceScopeIntegrationTest' --tests '*SecurityUserDetailsReferenceCorrectionIntegrationTest' --tests '*CloudSecurityIntegrationTest' --tests '*LocalSessionContextIntegrationTest' --init-script "$env:TEMP/csforge-issue270-verify.init.gradle" --project-cache-dir build/issue270-final-cache --no-daemon
+Final packaging:
+.\gradlew.bat assemble --init-script "$env:TEMP/csforge-issue270-verify.init.gradle" --project-cache-dir build/issue270-final-cache --no-daemon
+
+Frontend working directory: frontend/
+npm test
+.\node_modules\.bin\vitest.cmd run src/pages/PublicLearningPages.test.tsx src/pages/ConceptComparePage.test.tsx src/pages/SearchPage.test.tsx src/lib/auth-return.test.ts src/lib/access.test.ts
+npm run build
+npm run lint
+
+Repository root:
+docker compose config --quiet
+$env:POSTGRES_PASSWORD='validation-secret'; docker compose -f compose.prod.yaml config --quiet
+Remove-Item Env:POSTGRES_PASSWORD; docker compose -f compose.prod.yaml config --quiet  # expected failure
+git diff --check
+
+Follow-up full backend rerun (2026-10-23, same final source):
+cd backend
+.\gradlew.bat test --no-daemon
+# BUILD SUCCESSFUL in 26m 39s; 50 suites / 171 tests / 170 passed / 0 failed / 1 manual audit skipped.
+# backend-full-rerun-summary.json preserves the new XML totals and the full log SHA-256.

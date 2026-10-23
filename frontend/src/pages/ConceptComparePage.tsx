@@ -4,7 +4,9 @@ import { useQuery } from '@tanstack/react-query'
 import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { ConceptReferences } from '../components/ConceptReferences'
 import { MarkdownContent } from '../components/MarkdownContent'
-import { getConcept, getConcepts, type ConceptDetail } from '../lib/learning-api'
+import { getConcept, getConcepts } from '../lib/learning-api'
+import { getPublicConcept, getPublicConcepts, type PublicConcept } from '../lib/public-api'
+import { useAccess } from '../lib/access-context'
 import { defaultQuizSearch } from '../lib/quiz-search'
 import { defaultLearningSearch } from '../lib/learning-search'
 import type { CompareSearch } from '../lib/compare-search'
@@ -12,7 +14,7 @@ import type { CompareSearch } from '../lib/compare-search'
 type Heading = { id: string; title: string; sub: boolean }
 
 /** Independent scroll and TOC keep each canonical article intact. Does not record learning activity. */
-export function CompareColumn({ concept, side }: { concept: ConceptDetail; side: 'left' | 'right' }) {
+export function CompareColumn({ concept, side }: { concept: PublicConcept; side: 'left' | 'right' }) {
   const scroll = useRef<HTMLDivElement>(null)
   const [headings, setHeadings] = useState<Heading[]>([])
   useEffect(() => {
@@ -56,18 +58,22 @@ export function CompareColumn({ concept, side }: { concept: ConceptDetail; side:
 }
 
 export function ConceptComparePage() {
+  const { authenticated } = useAccess()
+  const scope = authenticated ? 'private' : 'public'
+  const loadConcept = authenticated ? getConcept : getPublicConcept
+  const loadConcepts = authenticated ? getConcepts : getPublicConcepts
   const { left, right } = useSearch({ from: '/compare' })
   const navigate = useNavigate({ from: '/compare' })
   const [term, setTerm] = useState('')
   const q = term.trim()
-  const first = useQuery({ queryKey: ['concept', left], queryFn: () => getConcept(left!), enabled: left !== undefined })
+  const first = useQuery({ queryKey: ['concept', left, scope], queryFn: () => loadConcept(left!), enabled: left !== undefined })
   const second = useQuery({
-    queryKey: ['concept', right], queryFn: () => getConcept(right!),
+    queryKey: ['concept', right, scope], queryFn: () => loadConcept(right!),
     enabled: left !== undefined && right !== undefined && left !== right,
   })
   const choices = useQuery({
-    queryKey: ['concepts', 'compare-picker', q],
-    queryFn: () => getConcepts({ q, page: 0, size: 10, sort: 'TITLE' }),
+    queryKey: ['concepts', 'compare-picker', q, scope],
+    queryFn: () => loadConcepts({ q, page: 0, size: 10, sort: 'TITLE' }),
     enabled: q.length >= 2,
   })
   const duplicate = left !== undefined && right !== undefined && left === right
