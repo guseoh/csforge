@@ -1,3 +1,4 @@
+import { AccessContext } from '../lib/access-context'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 
@@ -73,7 +74,7 @@ describe('SearchPage', () => {
   })
 
   it('prioritizes solving a question and keeps its related concept action', () => {
-    const markup = renderToStaticMarkup(<SearchPage />)
+    const markup = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><SearchPage /></AccessContext.Provider>)
 
     expect(markup).toContain('문제 풀기')
     expect(markup).toContain('관련 개념 보기')
@@ -96,7 +97,7 @@ describe('SearchPage', () => {
       totalHits: 5, totalPages: 1,
       items: ['CONCEPT','QUESTION','PERSONAL_NOTE','WRONG_NOTE','REFERENCE'].map(source),
     }
-    const html = renderToStaticMarkup(<SearchPage />)
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><SearchPage /></AccessContext.Provider>)
     for (const label of ['개념','문제','개인 메모','오답 노트','참고 자료']) {
       expect(html).toContain(label)
     }
@@ -112,7 +113,7 @@ describe('SearchPage', () => {
   it('offers a reset when an active filter has no matching results', () => {
     mocks.search.types = 'WRONG_NOTE'
     mocks.results.data = { totalHits: 0, totalPages: 0, items: [] }
-    const html = renderToStaticMarkup(<SearchPage />)
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><SearchPage /></AccessContext.Provider>)
     expect(html).toContain('검색 결과가 없습니다.')
     expect(html).toContain('필터 초기화하고 다시 보기')
     expect(html).not.toContain('1 / 0')
@@ -120,7 +121,7 @@ describe('SearchPage', () => {
 
   it('keeps search usable during supplementary status failure', () => {
     mocks.status.isError = true
-    const html = renderToStaticMarkup(<SearchPage />)
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><SearchPage /></AccessContext.Provider>)
     expect(html).toContain('검색 서버 상태를 확인하지 못했습니다.')
     expect(html).toContain('상태 다시 확인')
     expect(html).toContain('Java Memory Model')
@@ -128,7 +129,7 @@ describe('SearchPage', () => {
 
   it('shows filter recovery without dropping search results', () => {
     mocks.filters.isError = true
-    const html = renderToStaticMarkup(<SearchPage />)
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><SearchPage /></AccessContext.Provider>)
     expect(html).toContain('학습 영역 필터를 불러오지 못했습니다.')
     expect(html).toContain('다시 시도')
     expect(html).toContain('Java Memory Model')
@@ -136,13 +137,13 @@ describe('SearchPage', () => {
 
   it('does not render stale results while the current request has failed', () => {
     mocks.results.isError = true
-    const html = renderToStaticMarkup(<SearchPage />)
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><SearchPage /></AccessContext.Provider>)
     expect(html).toContain('검색 결과를 불러오지 못했습니다.')
     expect(html).not.toContain('Java Memory Model')
   })
 
   it('explains title suggestions separately from submitted full results', () => {
-    const html = renderToStaticMarkup(<SearchPage />)
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><SearchPage /></AccessContext.Provider>)
     expect(html).toContain('입력 중 제안은 제목 바로가기')
     expect(html).toContain('상단 검색은 제출한 검색어')
   })

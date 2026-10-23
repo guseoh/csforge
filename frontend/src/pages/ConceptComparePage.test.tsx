@@ -1,3 +1,4 @@
+import { AccessContext } from '../lib/access-context'
 import type { ReactNode } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
@@ -36,21 +37,21 @@ describe('Concept comparison', () => {
     mocks.right = { data: undefined, isPending: false, isError: false, refetch: vi.fn() }
   })
   it('provides empty selection without rendering columns', () => {
-    const html = renderToStaticMarkup(<ConceptComparePage />)
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><ConceptComparePage /></AccessContext.Provider>)
     expect(html).toContain('첫 번째 개념 검색')
     expect(html).not.toContain('compare-column-header')
   })
   it('keeps the first article while selecting the second', () => {
     mocks.search.left = 17
     mocks.left.data = concept
-    const html = renderToStaticMarkup(<ConceptComparePage />)
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><ConceptComparePage /></AccessContext.Provider>)
     expect(html).toContain('두 번째 개념을 선택하면')
     expect(html).toContain('값 전달')
   })
   it('rejects the same pair instead of implying a comparison', () => {
     mocks.search = { left: 17, right: 17 }
     mocks.left.data = concept
-    const html = renderToStaticMarkup(<ConceptComparePage />)
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><ConceptComparePage /></AccessContext.Provider>)
     expect(html).toContain('같은 개념끼리는 비교할 수 없습니다')
     expect(html).not.toContain('compare-grid')
   })
@@ -58,7 +59,7 @@ describe('Concept comparison', () => {
     mocks.search = { left: 17, right: 19 }
     mocks.left.data = concept
     mocks.right.data = { ...concept, id: 19, title: '참조 공유' }
-    const html = renderToStaticMarkup(<ConceptComparePage />)
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><ConceptComparePage /></AccessContext.Provider>)
     expect(html).toContain('값 전달 읽기 영역')
     expect(html).toContain('참조 공유 읽기 영역')
     expect(html.match(/관련 문제 풀기/g)).toHaveLength(2)
@@ -67,7 +68,7 @@ describe('Concept comparison', () => {
     mocks.search = { left: 17, right: 999 }
     mocks.left.data = concept
     mocks.right.isError = true
-    const html = renderToStaticMarkup(<ConceptComparePage />)
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><ConceptComparePage /></AccessContext.Provider>)
     expect(html).toContain('값 전달')
     expect(html).toContain('두 번째 개념이 없거나 공개되지 않았습니다')
     expect(html).toContain('다른 개념 선택')

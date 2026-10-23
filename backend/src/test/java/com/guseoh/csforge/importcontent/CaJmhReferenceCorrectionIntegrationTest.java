@@ -71,7 +71,7 @@ class CaJmhReferenceCorrectionIntegrationTest {
 
         CanonicalContentFile file = contentSource.load().stream()
                 .filter(entry -> entry.path().equals(PATH)).findFirst().orElseThrow();
-        String corrected = new String(file.content(), StandardCharsets.UTF_8);
+        String corrected = new String(file.content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
         assertTrue(corrected.contains(NEW_URL));
         assertTrue(corrected.contains("relationNote:"));
         assertFalse(corrected.contains(OLD_URL));

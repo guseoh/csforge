@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { useNavigate } from '@tanstack/react-router'
+import { Link, useNavigate } from '@tanstack/react-router'
 import { useEffect } from 'react'
 import { AuthRecoveryActions } from '../components/AuthRecoveryActions'
 import { startGoogleLogin, getAuthSession } from '../lib/auth-api'
@@ -60,6 +60,9 @@ export function LoginPage() {
         <p className="eyebrow">CSForge</p>
         <h1 id="login-title">CS·백엔드 학습을 이어가세요</h1>
         <p>개념을 읽고 문제를 풀고, 오답과 복습으로 이어갑니다.</p>
+        {typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('error') &&
+          <p className="auth-error" role="alert">Google 로그인에 실패했거나 취소되었습니다. 다시 시도하거나 공개 학습을 계속하세요.</p>}
+        <Link className="text-button" to="/">공개 학습으로 돌아가기</Link>
         <ol className="auth-learning-flow" aria-label="학습 흐름">
           <li>학습</li>
           <li>문제</li>

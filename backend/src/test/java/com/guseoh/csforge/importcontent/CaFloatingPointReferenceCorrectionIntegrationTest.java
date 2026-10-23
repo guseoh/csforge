@@ -74,7 +74,7 @@ class CaFloatingPointReferenceCorrectionIntegrationTest {
 
         CanonicalContentFile input = contentSource.load().stream()
                 .filter(file -> file.path().equals(PATH)).findFirst().orElseThrow();
-        String corrected = new String(input.content(), StandardCharsets.UTF_8);
+        String corrected = new String(input.content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
         int start = corrected.indexOf("\nreferences:\n");
         int end = corrected.indexOf("\n---\n", 4);
         assertTrue(start >= 0 && end > start, "Missing frontmatter references block");

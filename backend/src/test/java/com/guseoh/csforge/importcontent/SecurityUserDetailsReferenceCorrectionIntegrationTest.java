@@ -70,7 +70,7 @@ class SecurityUserDetailsReferenceCorrectionIntegrationTest {
 
         CanonicalContentFile source = contentSource.load().stream()
                 .filter(item -> item.path().equals(PATH)).findFirst().orElseThrow();
-        String corrected = new String(source.content(), StandardCharsets.UTF_8);
+        String corrected = new String(source.content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
         assertTrue(corrected.contains(NEW_URL));
         assertTrue(corrected.contains(NEW_NOTE));
         String historical = corrected.replace(NEW_URL, OLD_URL).replace(NEW_NOTE, OLD_NOTE);

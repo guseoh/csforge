@@ -1,11 +1,13 @@
 import { Link, Outlet, createRootRoute, createRoute, createRouter, lazyRouteComponent, useLocation, useNavigate } from '@tanstack/react-router'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import { SearchPalette } from './components/SearchPalette'
 import { UtilityMenu } from './components/UtilityMenu'
 import { ThemeControl } from './components/ThemeControl'
 import { AppUpdatePrompt } from './components/AppUpdatePrompt'
 import { AuthGate } from './components/AuthGate'
+import { useAccess } from './lib/access-context'
+import { isPublicPage } from './lib/access'
 import { getAuthSession, logout } from './lib/auth-api'
 import { clearAuthReturnLocation } from './lib/auth-return'
 import { dismissHeaderPopover, toggleHeaderPopover, type HeaderPopoverId } from './lib/header-popovers'
@@ -18,6 +20,10 @@ import { parseInsightsSearch } from './lib/insights-search'
 import { parseCompareSearch } from './lib/compare-search'
 import { parseBookmarksSearch } from './lib/bookmarks-search'
 import { isStaleLazyChunkError } from './lib/route-errors'
+
+const PublicLearningPage = lazyRouteComponent(() => import('./pages/PublicLearningPages'), 'PublicLearningPage')
+const PublicAreaPage = lazyRouteComponent(() => import('./pages/PublicLearningPages'), 'PublicAreaPage')
+const PublicConceptPage = lazyRouteComponent(() => import('./pages/PublicLearningPages'), 'PublicConceptPage')
 
 const AreaPage = lazyRouteComponent(() => import('./pages/AreaPage'), 'AreaPage')
 const TopicFocusPage = lazyRouteComponent(() => import('./pages/TopicFocusPage'), 'TopicFocusPage')
@@ -44,6 +50,31 @@ const headerNavigation = [
 ] as const
 
 function AppLayout() {
+  return <AuthGate><AppShell /></AuthGate>
+}
+
+function HomeRoutePage() {
+  return useAccess().authenticated ? <DashboardPage /> : <PublicLearningPage home />
+}
+
+function LearningRoutePage() {
+  return useAccess().authenticated ? <LearningPage /> : <PublicLearningPage />
+}
+
+function AreaRoutePage() {
+  return useAccess().authenticated ? <AreaPage /> : <PublicAreaPage />
+}
+
+function ConceptRoutePage() {
+  return useAccess().authenticated ? <ConceptPage /> : <PublicConceptPage />
+}
+
+function ProtectedPage({ children }: { children: ReactNode }) {
+  return useAccess().authenticated ? children : <PublicLearningPage home />
+}
+
+function AppShell() {
+  const { authenticated, requestLogin } = useAccess()
   const [mobileNavOpen, setMobileNavOpen] = useState(false)
   const [activePopover, setActivePopover] = useState<HeaderPopoverId | null>(null)
   const location = useLocation()
@@ -102,7 +133,17 @@ function AppLayout() {
   }
 
   return (
-    <div className="app-shell">
+    <div className="app-shell" onClickCapture={(event) => {
+      if (authenticated || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return
+      const anchor = event.target instanceof Element ? event.target.closest('a') : null
+      if (!anchor || anchor.target === '_blank') return
+      const url = new URL(anchor.href, window.location.origin)
+      if (url.origin === window.location.origin && !isPublicPage(url.pathname)) {
+        event.preventDefault()
+        event.stopPropagation()
+        requestLogin(`${url.pathname}${url.search}${url.hash}`)
+      }
+    }}>
       <header className="topbar">
         <div className="topbar-inner">
           <Link className="brand" to="/"><span className="brand-mark" aria-hidden="true">CF</span><span>CSForge</span></Link>
@@ -121,7 +162,7 @@ function AppLayout() {
             ))}
           </nav>
           <div className="topbar-actions">
-            <SearchPalette />
+            <SearchPalette key={authenticated ? 'private' : 'public'} />
             <ThemeControl />
             <UtilityMenu open={activePopover === 'utility'} onToggle={() => togglePopover('utility')} onClose={closePopover} />
             <AuthActions open={activePopover === 'account'} onToggle={() => togglePopover('account')} onClose={closePopover} />
@@ -143,7 +184,7 @@ function AppLayout() {
       </header>
       <AppUpdatePrompt />
       <div className="content-layout">
-        <main className="main-content"><AuthGate><Outlet /></AuthGate></main>
+        <main className="main-content"><Outlet /></main>
       </div>
     </div>
   )
@@ -151,19 +192,24 @@ function AppLayout() {
 
 function AuthActions({ open, onToggle, onClose }: { open: boolean; onToggle: () => void; onClose: () => void }) {
   const navigate = useNavigate()
+  const { requestLogin } = useAccess()
   const queryClient = useQueryClient()
   const session = useQuery({ queryKey: ['auth-session'], queryFn: getAuthSession, retry: false })
   const logoutMutation = useMutation({
     mutationFn: logout,
-    onSuccess: () => {
+    onSuccess: async () => {
       onClose()
+      await queryClient.cancelQueries()
       queryClient.clear()
-      void navigate({ to: '/login', replace: true })
+      queryClient.setQueryData(['auth-session'], { authenticated: false, mode: 'CLOUD', email: null })
+      void navigate({ to: '/', replace: true })
     },
   })
 
   if (!session.data) return null
   if (session.data.mode !== 'CLOUD') return <span className="environment-badge environment-badge-subtle">LOCAL</span>
+
+  if (!session.data.authenticated) return <button className="secondary-button" type="button" onClick={() => requestLogin()}>로그인</button>
 
   const email = session.data.email ?? 'Cloud 계정'
   const accountInitial = email.charAt(0).toUpperCase()
@@ -231,47 +277,47 @@ const rootRoute = createRootRoute({
   notFoundComponent: NotFoundPage,
 })
 
-const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', validateSearch: (search) => parseInsightsSearch(search), component: DashboardPage })
+const indexRoute = createRoute({ getParentRoute: () => rootRoute, path: '/', validateSearch: (search) => parseInsightsSearch(search), component: HomeRoutePage })
 const loginRoute = createRoute({ getParentRoute: () => rootRoute, path: '/login', component: LoginPage })
 
 const learningRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/learning',
   validateSearch: (search) => parseLearningSearch(search),
-  component: LearningPage,
+  component: LearningRoutePage,
 })
 
 const areaRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/learning/$areaSlug',
   validateSearch: (search) => parseLearningSearch(search),
-  component: AreaPage,
+  component: AreaRoutePage,
 })
 
-const topicFocusRoute = createRoute({ getParentRoute: () => rootRoute, path: '/learning/$areaSlug/topics/$topicId/focus', component: TopicFocusPage })
+const topicFocusRoute = createRoute({ getParentRoute: () => rootRoute, path: '/learning/$areaSlug/topics/$topicId/focus', component: () => <ProtectedPage><TopicFocusPage /></ProtectedPage> })
 
 const conceptRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/concepts/$conceptId',
-  component: ConceptPage,
+  component: ConceptRoutePage,
 })
 
-const bookmarksRoute = createRoute({ getParentRoute: () => rootRoute, path: '/bookmarks', validateSearch: parseBookmarksSearch, component: BookmarksPage })
+const bookmarksRoute = createRoute({ getParentRoute: () => rootRoute, path: '/bookmarks', validateSearch: parseBookmarksSearch, component: () => <ProtectedPage><BookmarksPage /></ProtectedPage> })
 const compareRoute = createRoute({ getParentRoute: () => rootRoute, path: '/compare', validateSearch: parseCompareSearch, component: ConceptComparePage })
 
 const quizRoute = createRoute({
   getParentRoute: () => rootRoute,
   path: '/quiz',
   validateSearch: (search) => parseQuizSearch(search),
-  component: QuizSetupPage,
+  component: () => <ProtectedPage><QuizSetupPage /></ProtectedPage>,
 })
-const quizSessionRoute = createRoute({ getParentRoute: () => rootRoute, path: '/quiz/$quizId', component: QuizSessionPage })
-const quizResultRoute = createRoute({ getParentRoute: () => rootRoute, path: '/quiz/$quizId/result', component: QuizResultPage })
-const wrongNotesRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes', validateSearch: (search) => parseWrongNoteSearch(search), component: WrongNotesPage })
-const wrongNoteDetailRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes/$questionId', component: WrongNoteDetailPage })
-const reviewRoute = createRoute({ getParentRoute: () => rootRoute, path: '/review', validateSearch: (search) => parseReviewSearch(search), component: ReviewPage })
+const quizSessionRoute = createRoute({ getParentRoute: () => rootRoute, path: '/quiz/$quizId', component: () => <ProtectedPage><QuizSessionPage /></ProtectedPage> })
+const quizResultRoute = createRoute({ getParentRoute: () => rootRoute, path: '/quiz/$quizId/result', component: () => <ProtectedPage><QuizResultPage /></ProtectedPage> })
+const wrongNotesRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes', validateSearch: (search) => parseWrongNoteSearch(search), component: () => <ProtectedPage><WrongNotesPage /></ProtectedPage> })
+const wrongNoteDetailRoute = createRoute({ getParentRoute: () => rootRoute, path: '/wrong-notes/$questionId', component: () => <ProtectedPage><WrongNoteDetailPage /></ProtectedPage> })
+const reviewRoute = createRoute({ getParentRoute: () => rootRoute, path: '/review', validateSearch: (search) => parseReviewSearch(search), component: () => <ProtectedPage><ReviewPage /></ProtectedPage> })
 const searchRoute = createRoute({ getParentRoute: () => rootRoute, path: '/search', validateSearch: (search) => parseSearchSearch(search), component: SearchPage })
-const importRoute = createRoute({ getParentRoute: () => rootRoute, path: '/settings/import', component: ImportPage })
+const importRoute = createRoute({ getParentRoute: () => rootRoute, path: '/settings/import', component: () => <ProtectedPage><ImportPage /></ProtectedPage> })
 
 const routeTree = rootRoute.addChildren([
   indexRoute,

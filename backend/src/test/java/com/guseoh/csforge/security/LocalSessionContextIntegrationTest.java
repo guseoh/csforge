@@ -3,6 +3,7 @@ package com.guseoh.csforge.security;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import org.junit.jupiter.api.Test;
@@ -48,6 +49,10 @@ class LocalSessionContextIntegrationTest {
 
     @Test
     void localApiRemainsAvailableWithoutAuthentication() throws Exception {
+        mockMvc.perform(get("/api/auth/session"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.authenticated").value(true))
+                .andExpect(jsonPath("$.mode").value("LOCAL"));
         mockMvc.perform(get("/api/learning-areas"))
                 .andExpect(status().isOk());
     }

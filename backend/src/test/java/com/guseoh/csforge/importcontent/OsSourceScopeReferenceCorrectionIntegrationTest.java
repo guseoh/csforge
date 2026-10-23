@@ -137,7 +137,7 @@ class OsSourceScopeReferenceCorrectionIntegrationTest {
     private String canonical(String path) {
         CanonicalContentFile entry = contentSource.load().stream()
                 .filter(item -> item.path().equals(path)).findFirst().orElseThrow();
-        return new String(entry.content(), StandardCharsets.UTF_8);
+        return new String(entry.content(), StandardCharsets.UTF_8).replace("\r\n", "\n");
     }
 
     private long conceptId(String key) {

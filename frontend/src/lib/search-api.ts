@@ -78,7 +78,7 @@ export function searchDocuments(filters: {
   sort: SearchSort
   page: number
   size?: number
-}): Promise<SearchPage> {
+}, publicOnly = false): Promise<SearchPage> {
   const params = new URLSearchParams({
     q: filters.q,
     sort: filters.sort,
@@ -89,18 +89,18 @@ export function searchDocuments(filters: {
   appendCsv(params, 'area', filters.areas)
   appendCsv(params, 'topic', filters.topics)
   appendCsv(params, 'level', filters.levels)
-  return searchRequest<SearchPage>(`/api/search?${params.toString()}`)
+  return searchRequest<SearchPage>(`/api/${publicOnly ? 'public/' : ''}search?${params.toString()}`)
 }
 
-export function getSearchSuggestions(q: string, size = 8): Promise<SearchSuggestion[]> {
+export function getSearchSuggestions(q: string, size = 8, publicOnly = false): Promise<SearchSuggestion[]> {
   const params = new URLSearchParams({ q, size: String(size) })
-  return searchRequest<SearchSuggestion[]>(`/api/search/suggestions?${params.toString()}`)
+  return searchRequest<SearchSuggestion[]>(`/api/${publicOnly ? 'public/' : ''}search/suggestions?${params.toString()}`)
 }
 
-export function getSearchFilterOptions(): Promise<SearchFilterArea[]> {
-  return searchRequest<SearchFilterArea[]>('/api/search/filter-options')
+export function getSearchFilterOptions(publicOnly = false): Promise<SearchFilterArea[]> {
+  return searchRequest<SearchFilterArea[]>(`/api/${publicOnly ? 'public/' : ''}search/filter-options`)
 }
 
-export function getSearchStatus(): Promise<SearchStatus> {
-  return searchRequest<SearchStatus>('/api/search/status')
+export function getSearchStatus(publicOnly = false): Promise<SearchStatus> {
+  return searchRequest<SearchStatus>(`/api/${publicOnly ? 'public/' : ''}search/status`)
 }

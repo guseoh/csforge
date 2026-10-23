@@ -1,3 +1,4 @@
+import { useAccess } from '../lib/access-context'
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { useNavigate } from '@tanstack/react-router'
@@ -8,24 +9,26 @@ import { defaultSearchSearch, questionSuggestionSearch } from '../lib/search-sea
 const RECENT_KEY = 'csforge.search.recent.v1'
 const SUGGESTION_DEBOUNCE_MS = 180
 
-function loadRecent(): string[] {
+function loadRecent(publicOnly: boolean): string[] {
   try {
-    const stored = JSON.parse(localStorage.getItem(RECENT_KEY) ?? '[]')
+    const stored = JSON.parse(localStorage.getItem(publicOnly ? `${RECENT_KEY}.public` : RECENT_KEY) ?? '[]')
     return Array.isArray(stored) ? stored.filter((item): item is string => typeof item === 'string').slice(0, 6) : []
   } catch {
     return []
   }
 }
 
-function persistRecent(recent: string[]) {
+function persistRecent(recent: string[], publicOnly: boolean) {
   try {
-    localStorage.setItem(RECENT_KEY, JSON.stringify(recent))
+    localStorage.setItem(publicOnly ? `${RECENT_KEY}.public` : RECENT_KEY, JSON.stringify(recent))
   } catch {
     // Optional recent-search persistence must not block navigation.
   }
 }
 
 export function SearchPalette() {
+  const { authenticated } = useAccess()
+  const publicOnly = !authenticated
   const navigate = useNavigate()
   const dialogRef = useRef<HTMLDialogElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -34,15 +37,15 @@ export function SearchPalette() {
   const [query, setQuery] = useState('')
   const [debouncedQuery, setDebouncedQuery] = useState('')
   const [activeIndex, setActiveIndex] = useState(-1)
-  const [recent, setRecent] = useState<string[]>(() => loadRecent())
+  const [recent, setRecent] = useState<string[]>(() => loadRecent(publicOnly))
   const previousFocusRef = useRef<HTMLElement | null>(null)
   const wasOpenRef = useRef(false)
   const normalized = query.trim()
   const visibleRecent = useMemo(() => recent.slice(0, 6), [recent])
 
   const suggestions = useQuery({
-    queryKey: ['search-suggestions', debouncedQuery],
-    queryFn: () => getSearchSuggestions(debouncedQuery),
+    queryKey: [publicOnly ? 'public' : 'private', 'search-suggestions', debouncedQuery],
+    queryFn: () => getSearchSuggestions(debouncedQuery, 8, publicOnly),
     enabled: open && debouncedQuery.length >= 2,
     staleTime: 15_000,
   })
@@ -113,7 +116,7 @@ export function SearchPalette() {
     if (!nextQuery) return
     const nextRecent = addRecentSearch(recent, nextQuery)
     setRecent(nextRecent)
-    persistRecent(nextRecent)
+    persistRecent(nextRecent, publicOnly)
     closePalette()
     void navigate({
       to: '/search',
@@ -164,7 +167,7 @@ export function SearchPalette() {
         <span className="search-trigger-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" strokeWidth="1.8" /><path d="m16 16 4 4" strokeWidth="1.8" strokeLinecap="round" /></svg>
         </span>
-        <span className="search-trigger-placeholder">개념, 문제, 오답을 검색하세요</span>
+        <span className="search-trigger-placeholder">{publicOnly ? '개념, 참고 자료를 검색하세요' : '개념, 문제, 오답을 검색하세요'}</span>
         <kbd>Ctrl K</kbd>
       </button>
       <dialog
@@ -184,7 +187,7 @@ export function SearchPalette() {
                 onCompositionStart={() => { composingRef.current = true }}
                 onCompositionEnd={() => { composingRef.current = false }}
                 onKeyDown={handleInputKeyDown}
-                placeholder="개념, 문제, 오답, 노트를 검색하세요"
+                placeholder={publicOnly ? '개념, 참고 자료를 검색하세요' : '개념, 문제, 오답, 노트를 검색하세요'}
                 aria-label="전체 검색어"
                 aria-activedescendant={activeIndex >= 0 ? `search-palette-option-${activeIndex}` : undefined}
               />
