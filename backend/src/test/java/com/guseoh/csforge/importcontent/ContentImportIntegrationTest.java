@@ -21,6 +21,7 @@ import java.util.UUID;
 import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -448,9 +449,27 @@ class ContentImportIntegrationTest {
         }
         assertEquals(12, pack.size());
         // Seed the same canonical identities with older bodies, then exercise real UPDATE paths.
-        List<Part> older = pack.stream().map(part -> part.type().equals("text/markdown")
+        List<Part> older = new ArrayList<>(pack.stream().map(part -> part.type().equals("text/markdown")
                 ? new Part(part.name(), part.type(), part.content().split("\\r?\\n---\\r?\\n", 2)[0] + "\n---\n# 이전 본문\n")
-                : part).toList();
+                : part).toList());
+        String correctedQuestionKey = "java.core.language-types.primitive-reference-values.q1";
+        for (int i = 0; i < older.size(); i++) {
+            Part part = older.get(i);
+            if (!part.name().equals("questions.json")) continue;
+            var questions = objectMapper.readTree(part.content());
+            for (var question : questions) {
+                if (question.get("contentKey").asText().equals(correctedQuestionKey)) {
+                    ((ObjectNode) question).put("promptMarkdown", "다음 코드에서 마지막 표현식의 평가 결과는 무엇인가요?\n\n```java\nString a = new String(\"cs\");\nString b = a;\n\na == b\n```");
+                    ((ObjectNode) question).put("explanationMarkdown", "`new String(\"cs\")`로 만든 객체의 참조 값이 먼저 `a`에 저장되고, `b = a`에서 **그 참조 값이 `b`에 복사**됩니다. 따라서 두 변수는 같은 `String` 객체를 가리키고 참조 동일성을 비교하는 `a == b`는 `true`입니다. `b = a`는 `String` 객체를 한 번 더 복제하는 코드가 아닙니다.");
+                    for (var choice : question.get("choices")) {
+                        if (choice.get("key").asText().equals("C")) {
+                            ((ObjectNode) choice).put("rationaleMarkdown", "`String` 참조값을 다른 `String` 변수에 대입하는 것은 허용된다.");
+                        }
+                    }
+                }
+            }
+            older.set(i, new Part(part.name(), part.type(), questions.toString()));
+        }
         JsonNode initial = json(post("/api/imports/preview", older, null)).get("body");
         assertEquals(0, initial.get("totals").get("errors").asInt(), initial::toString);
         assertEquals(200, post("/api/imports/apply", older, initial.get("previewDigest").asText()).statusCode());
@@ -458,6 +477,8 @@ class ContentImportIntegrationTest {
         assertEquals(56, jdbc.queryForObject("select count(*) from question", Integer.class));
         List<Map<String, Object>> identities = jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id");
         List<Map<String, Object>> links = jdbc.queryForList("select * from question_concept order by question_id, concept_id");
+        long correctedQuestionId = jdbc.queryForObject("select id from question where content_key = ?", Long.class, correctedQuestionKey);
+        List<Map<String, Object>> choices = jdbc.queryForList("select id, choice_key, display_order from question_choice where question_id = ? order by id", correctedQuestionId);
         for (var concept : identities) {
             long conceptId = ((Number) concept.get("id")).longValue();
             jdbc.update("insert into concept_progress (concept_id, status, bookmarked) values (?, 'LEARNING', true)", conceptId);
@@ -469,15 +490,18 @@ class ContentImportIntegrationTest {
             jdbc.update("insert into review_schedule (question_id, status, stage, due_at, last_processed_attempt_id) values (?, 'SCHEDULED', 1, current_timestamp + interval '1 day', ?)", questionId, attemptId);
             jdbc.update("insert into review_history (question_id, quiz_session_id, attempt_id, result, stage_before, stage_after, reviewed_at, next_due_at) select question_id, quiz_session_id, id, 'WRONG', 1, 1, current_timestamp, current_timestamp + interval '1 day' from attempt where id = ?", attemptId);
         }
+        jdbc.update("update attempt set selected_choice_id = (select id from question_choice where question_id = ? and choice_key = 'B') where question_id = ?", correctedQuestionId, correctedQuestionId);
         Map<String, List<Map<String, Object>>> before = languageTypesHistorySnapshot();
         JsonNode preview = json(post("/api/imports/preview", pack, null)).get("body");
         assertTrue(preview.get("canApply").asBoolean(), preview::toString);
         assertEquals(0, preview.get("totals").get("errors").asInt());
-        assertEquals(10, preview.get("totals").get("updated").asInt());
+        assertEquals(11, preview.get("totals").get("updated").asInt());
         assertEquals(200, post("/api/imports/apply", pack, preview.get("previewDigest").asText()).statusCode());
         assertEquals(before, languageTypesHistorySnapshot());
         assertEquals(identities, jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id"));
         assertEquals(links, jdbc.queryForList("select * from question_concept order by question_id, concept_id"));
+        assertEquals(choices, jdbc.queryForList("select id, choice_key, display_order from question_choice where question_id = ? order by id", correctedQuestionId));
+        assertTrue(jdbc.queryForObject("select prompt_markdown from question where id = ?", String.class, correctedQuestionId).contains("System.out.println(a == b);"));
         JsonNode repeated = json(post("/api/imports/preview", pack, null)).get("body");
         assertEquals(67, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
         assertEquals(0, repeated.get("totals").get("updated").asInt());
