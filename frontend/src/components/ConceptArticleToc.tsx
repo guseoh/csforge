@@ -132,4 +132,3 @@ export function CompactConceptArticleToc({ headings, activeId, onNavigate }: Art
     </details>
   )
 }
-
