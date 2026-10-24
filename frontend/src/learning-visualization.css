@@ -1,0 +1,92 @@
+/* Diagram colors are neutral and independent of application accent/syntax colors. */
+.learning-visualization {
+  --diagram-surface: #ffffff;
+  --diagram-node: #f2f2f2;
+  --diagram-active: #d6d6d6;
+  --diagram-text: #202020;
+  --diagram-muted: #525252;
+  --diagram-line: #626262;
+  margin: 28px 0;
+  padding: 18px 0;
+  min-width: 0;
+  max-width: 100%;
+  color: var(--diagram-text);
+  background: var(--diagram-surface);
+  border-block: 1px solid var(--diagram-line);
+  font-size: 15px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+:root[data-theme='dark'] .learning-visualization {
+  --diagram-surface: #181818;
+  --diagram-node: #292929;
+  --diagram-active: #454545;
+  --diagram-text: #eeeeee;
+  --diagram-muted: #c4c4c4;
+  --diagram-line: #aaaaaa;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .learning-visualization {
+    --diagram-surface: #181818;
+    --diagram-node: #292929;
+    --diagram-active: #454545;
+    --diagram-text: #eeeeee;
+    --diagram-muted: #c4c4c4;
+    --diagram-line: #aaaaaa;
+  }
+}
+.learning-visualization figcaption > strong { font-size: 17px; }
+.learning-visualization figcaption p,
+.learning-visualization > p { margin: 10px 0 16px; }
+.learning-visualization .diagram-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  border-block: 1px solid var(--diagram-line);
+}
+.learning-visualization .diagram-canvas { display: block; max-width: none; color: var(--diagram-text); background: var(--diagram-surface); }
+.learning-visualization text { fill: var(--diagram-text); font-family: var(--font-sans, sans-serif); font-size: 15px; }
+.learning-visualization .diagram-index { fill: var(--diagram-muted); font-size: 13px; }
+.learning-visualization .diagram-node rect,
+.learning-visualization .diagram-node circle { fill: var(--diagram-node); stroke: var(--diagram-line); stroke-width: 1.5; }
+.learning-visualization .diagram-active rect,
+.learning-visualization .diagram-active circle { fill: var(--diagram-active); stroke: var(--diagram-text); stroke-width: 3; }
+.learning-visualization .diagram-edge line,
+.learning-visualization .diagram-tree-edge,
+.learning-visualization .diagram-lifeline { stroke: var(--diagram-line); stroke-width: 1.5; }
+.learning-visualization .diagram-edge path { fill: var(--diagram-line); }
+.learning-visualization .diagram-active line { stroke: var(--diagram-text); stroke-width: 3; }
+.learning-visualization .diagram-active path { fill: var(--diagram-text); }
+.learning-visualization .diagram-dashed line,
+.learning-visualization .diagram-dashed rect,
+.learning-visualization .diagram-lifeline { stroke-dasharray: 5 4; }
+.learning-visualization .diagram-controls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 12px; margin: 16px 0; }
+.learning-visualization .diagram-controls label { display: grid; gap: 5px; }
+.learning-visualization .diagram-controls button,
+.learning-visualization .diagram-controls input {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 8px 12px;
+  border: 1px solid var(--diagram-line);
+  border-radius: 4px;
+  color: var(--diagram-text);
+  background: var(--diagram-node);
+  font: inherit;
+}
+.learning-visualization .diagram-controls input { width: 110px; }
+.learning-visualization button { cursor: pointer; }
+.learning-visualization button:disabled { cursor: default; opacity: 0.55; }
+.learning-visualization :focus-visible { outline: 2px solid var(--diagram-text); outline-offset: 3px; }
+.learning-visualization .diagram-status { min-height: 3.4em; }
+.learning-visualization .diagram-pan-hint { color: var(--diagram-muted); font-size: 13px; }
+.learning-visualization .diagram-code code { color: var(--diagram-text); background: var(--diagram-node); white-space: normal; }
+.learning-visualization .diagram-array { display: flex; flex-wrap: wrap; list-style: none; gap: 6px; padding: 0; margin: 16px 0; }
+.learning-visualization .diagram-array li { display: grid; width: 52px; margin: 0; border: 1px solid var(--diagram-line); text-align: center; background: var(--diagram-node); }
+.learning-visualization .diagram-array li.diagram-active { outline: 2px solid var(--diagram-text); background: var(--diagram-active); }
+.learning-visualization .diagram-array span { font-size: 13px; color: var(--diagram-muted); }
+.learning-visualization .diagram-trace summary { min-height: 44px; cursor: pointer; padding-block: 8px; }
+.learning-visualization .diagram-trace li[aria-current='step'] { font-weight: 700; }
+.diagram-fallback { padding: 12px; border: 1px dashed currentColor; overflow-wrap: anywhere; }
+@media (prefers-reduced-motion: reduce) {
+  .learning-visualization *, .learning-visualization { animation: none; transition: none; scroll-behavior: auto; }
+}

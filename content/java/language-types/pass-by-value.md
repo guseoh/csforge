@@ -28,8 +28,6 @@ Java의 메서드 인자 전달 규칙은 하나입니다. **호출자가 가진
 메서드의 매개변수
 ```
 
-![Java 값 전달(pass-by-value)에서 참조 값이 복사되는 흐름](/learning/java/pass-by-value.svg)
-
 따라서 “원시 타입은 값 전달, 객체는 참조 전달”이라고 둘로 나누어 외우면 오히려 잘못 이해하기 쉽습니다. 참조 타입에서도 호출자의 변수 자체가 넘어가는 것이 아니라 **그 변수에 들어 있던 참조 값**이 복사됩니다.
 
 ### 원시 값이 전달될 때
@@ -101,6 +99,19 @@ System.out.println(member.name); // kim
 ```
 
 `value = new Member()`는 메서드 내부의 **매개변수 `value`가 가진 참조 값만 교체**합니다. 호출자의 `member` 변수까지 바꾸지는 못합니다.
+
+아래 도식은 위 `replace` 호출을 추적합니다. 처음에는 두 참조 값이 객체 A를 가리키지만, 재대입 뒤에는 매개변수만 새 객체 B를 가리킵니다. 마지막 출력은 여전히 `kim`입니다.
+
+```csforge-viz
+{
+  "version": 1,
+  "title": "참조 값 복사와 매개변수 재대입",
+  "description": "member는 객체 A의 참조 값을 유지합니다. value에는 그 값이 복사되고, 새 객체 B로 재대입해도 member.name은 kim입니다.",
+  "type": "java-pass-by-value",
+  "initialName": "kim",
+  "replacementName": "park"
+}
+```
 
 | 코드 | 바뀌는 대상 | 호출자에서 변화가 보이는가 |
 | --- | --- | --- |

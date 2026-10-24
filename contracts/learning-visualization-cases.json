@@ -1,0 +1,142 @@
+[
+  {
+    "name": "static-flow0",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "java-pass-by-value1",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"java-pass-by-value\", \"initialName\": \"kim\", \"replacementName\": \"park\"}"
+  },
+  {
+    "name": "min-heap2",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [30, 10, 20]}"
+  },
+  {
+    "name": "tcp-handshake3",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": 100, \"serverIsn\": 300}"
+  },
+  {
+    "name": "tcp-handshake4",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": 4294967295, \"serverIsn\": 0}"
+  },
+  {
+    "name": "min-heap5",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": []}"
+  },
+  {
+    "name": "unknown-type",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"execute-js\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "unknown-version",
+    "valid": false,
+    "source": "{\"version\": 2, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "extra-field",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"], \"script\": \"alert(1)\"}"
+  },
+  {
+    "name": "prototype",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"], \"__proto__\": {\"polluted\": true}}"
+  },
+  {
+    "name": "missing-summary",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "html-description",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"<script>alert(1)</script>\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "html-label",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"<img onerror=alert(1)>\", \"응답\"]}"
+  },
+  {
+    "name": "large-heap",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}"
+  },
+  {
+    "name": "out-of-range",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [100]}"
+  },
+  {
+    "name": "fraction",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [1.5]}"
+  },
+  {
+    "name": "null-item",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [null]}"
+  },
+  {
+    "name": "negative-isn",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": -1, \"serverIsn\": 300}"
+  },
+  {
+    "name": "overflow-isn",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": 100, \"serverIsn\": 4294967296}"
+  },
+  {
+    "name": "code-name",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"java-pass-by-value\", \"initialName\": \"kim\", \"replacementName\": \"\\\";alert(1)\"}"
+  },
+  {
+    "name": "empty-name",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"java-pass-by-value\", \"initialName\": \" \", \"replacementName\": \"park\"}"
+  },
+  {
+    "name": "long-label",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴\", \"응답\"]}"
+  },
+  {
+    "name": "one-node",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"하나\"]}"
+  },
+  {
+    "name": "boolean-version",
+    "valid": false,
+    "source": "{\"version\": true, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "array-root",
+    "valid": false,
+    "source": "[{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}, {\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"java-pass-by-value\", \"initialName\": \"kim\", \"replacementName\": \"park\"}, {\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [30, 10, 20]}, {\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": 100, \"serverIsn\": 300}, {\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": 4294967295, \"serverIsn\": 0}, {\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": []}]"
+  },
+  {
+    "name": "null-root",
+    "valid": false,
+    "source": "null"
+  },
+  {
+    "name": "malformed-json",
+    "valid": false,
+    "source": "{oops"
+  },
+  {
+    "name": "trailing-json",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"\\ud559\\uc2b5 \\ub3c4\\uc2dd\", \"description\": \"\\uc0c1\\ud0dc \\ubcc0\\ud654\\uc640 \\uacb0\\uacfc\\ub97c \\ubcf8\\ubb38\\uacfc \\ud568\\uaed8 \\ud655\\uc778\\ud569\\ub2c8\\ub2e4.\", \"type\": \"static-flow\", \"labels\": [\"\\uc694\\uccad\", \"\\ucc98\\ub9ac\", \"\\uc751\\ub2f5\"]} {}"
+  }
+]

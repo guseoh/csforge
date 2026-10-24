@@ -7,6 +7,18 @@ import { remarkKoreanStrong } from '../lib/remark-korean-strong'
 import { MarkdownCodeBlock } from './MarkdownCodeBlock'
 import { MarkdownImage } from './MarkdownImage'
 import { highlightSimpleCode } from './SyntaxHighlightedCode'
+import { LearningVisualization } from './visualization/LearningVisualization'
+
+// Keep this component identity stable so owner note/progress updates do not reset an interactive diagram.
+const MarkdownPre: Components['pre'] = ({ node, children }) => {
+  const code = node?.children[0]
+  if (code?.type === 'element' && code.tagName === 'code'
+    && Array.isArray(code.properties.className) && code.properties.className.includes('language-csforge-viz')) {
+    const source = code.children.filter((child) => child.type === 'text').map((child) => child.value).join('')
+    return <LearningVisualization source={source} />
+  }
+  return <MarkdownCodeBlock>{children}</MarkdownCodeBlock>
+}
 
 interface MarkdownContentProps {
   children: string
@@ -190,7 +202,7 @@ export function MarkdownContent({ children, className, fallback, dedupeLeadingHe
         </code>
       )
     },
-    pre: ({ node: _node, ...props }) => <MarkdownCodeBlock>{props.children}</MarkdownCodeBlock>,
+    pre: MarkdownPre,
     table: ({ node: _node, ...props }) => (
       <div className="markdown-table-scroll" role="region" aria-label="비교 표, 가로 스크롤 가능" tabIndex={0}>
         <table {...props} />

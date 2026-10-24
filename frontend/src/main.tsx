@@ -45,6 +45,7 @@ import './step8-wrong-note-alignment.css'
 import './learning-workspace.css'
 import './concept-reader.css'
 import './markdown-renderer.css'
+import './learning-visualization.css'
 import './public-learning.css'
 
 const queryClient = new QueryClient({

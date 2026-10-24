@@ -13,11 +13,16 @@ import com.guseoh.csforge.learning.domain.ReferenceType;
 import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.question.domain.QuestionDifficulty;
 import com.guseoh.csforge.question.domain.QuestionType;
+import com.guseoh.csforge.importcontent.validation.VisualizationMarkdownValidator;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 /** 파싱된 item의 cross-file 참조와 domain 입력을 검증한다. */
 @Component
+@RequiredArgsConstructor
 public class ContentImportValidator {
+    private final VisualizationMarkdownValidator visualizationValidator;
+
     public List<NormalizedImportItem> validate(List<NormalizedImportItem> items) {
         Set<String> topics = new HashSet<>();
         Set<String> concepts = new HashSet<>();
@@ -39,6 +44,7 @@ public class ContentImportValidator {
                 result.add(item);
                 continue;
             }
+            validateVisualizations(item, errors);
             if (item.contentKey() != null) {
                 String identity = item.kind() + ":" + item.contentKey();
                 NormalizedImportItem previous = definitions.putIfAbsent(identity, item);
@@ -82,6 +88,17 @@ public class ContentImportValidator {
             result.add(copyWithErrors(item, errors));
         }
         return result;
+    }
+
+    private void validateVisualizations(NormalizedImportItem item, List<ImportValidationError> errors) {
+        errors.addAll(visualizationValidator.validate(item.contentMarkdown(), "contentMarkdown"));
+        errors.addAll(visualizationValidator.validate(item.promptMarkdown(), "promptMarkdown"));
+        errors.addAll(visualizationValidator.validate(item.explanationMarkdown(), "explanationMarkdown"));
+        errors.addAll(visualizationValidator.validate(item.modelAnswer(), "modelAnswer"));
+        for (int index = 0; index < item.choices().size(); index++) {
+            errors.addAll(visualizationValidator.validate(item.choices().get(index).content(), "choices[" + index + "].content"));
+            errors.addAll(visualizationValidator.validate(item.choices().get(index).rationaleMarkdown(), "choices[" + index + "].rationaleMarkdown"));
+        }
     }
 
     private void validateQuestion(NormalizedImportItem item, Set<String> concepts, List<ImportValidationError> errors) {

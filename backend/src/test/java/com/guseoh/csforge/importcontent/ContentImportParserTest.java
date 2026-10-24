@@ -19,7 +19,9 @@ import com.guseoh.csforge.importcontent.parser.ContentImportParser;
 class ContentImportParserTest {
     private final ContentImportParser parser = new ContentImportParser(new ObjectMapper());
     private final com.guseoh.csforge.importcontent.application.ContentImportValidator validator =
-            new com.guseoh.csforge.importcontent.application.ContentImportValidator();
+            new com.guseoh.csforge.importcontent.application.ContentImportValidator(
+                    new com.guseoh.csforge.importcontent.validation.VisualizationMarkdownValidator(
+                            new com.guseoh.csforge.importcontent.validation.LearningVisualizationValidator(new ObjectMapper())));
 
     @Test
     void parsesJsonSingleArrayAndMarkdownBody() {

@@ -80,6 +80,33 @@ class ContentImportIntegrationTest {
     }
 
     @Test
+    void validatesVisualizationBeforeApplyAndPreservesItsCanonicalPayload() throws Exception {
+        String payload = """
+                {"version":1,"type":"min-heap","title":"최소 힙","description":"부모 값은 자식 이하입니다.","initialValues":[30,10,20]}
+                """.strip();
+        List<Part> base = sampleParts();
+        String source = base.get(1).content() + "\n```csforge-viz\n" + payload + "\n```\n";
+        List<Part> valid = List.of(base.getFirst(), new Part("concept.md", "text/markdown", source), base.get(2));
+        JsonNode preview = json(post("/api/imports/preview", valid, null)).get("body");
+        assertTrue(preview.get("canApply").asBoolean());
+        assertEquals(200, post("/api/imports/apply", valid, preview.get("previewDigest").asText()).statusCode());
+
+        JsonNode list = json(get("/api/public/concepts?area=java&page=0&size=10&sort=CURRICULUM")).get("body");
+        long id = list.get("items").get(0).get("id").asLong();
+        String stored = json(get("/api/public/concepts/" + id)).get("body").get("contentMarkdown").asText();
+        assertTrue(stored.contains(payload));
+        JsonNode repeated = json(post("/api/imports/preview", valid, null)).get("body");
+        assertEquals(3, repeated.get("totals").get("unchanged").asInt());
+
+        List<Part> invalid = List.of(base.getFirst(), new Part("concept.md", "text/markdown", source.replace("\"version\":1", "\"version\":99")), base.get(2));
+        JsonNode rejected = json(post("/api/imports/preview", invalid, null)).get("body");
+        assertFalse(rejected.get("canApply").asBoolean());
+        assertTrue(rejected.get("items").toString().contains("contentMarkdown.visualizations[0]"));
+        assertNotEquals(200, post("/api/imports/apply", invalid, rejected.get("previewDigest").asText()).statusCode());
+        assertEquals(stored, json(get("/api/public/concepts/" + id)).get("body").get("contentMarkdown").asText());
+    }
+
+    @Test
     void publishedMultipleChoiceRequiresEveryRationaleButDraftAllowsIncompleteAuthoring() throws Exception {
         List<Part> base = sampleParts();
         String published = base.get(2).content();
