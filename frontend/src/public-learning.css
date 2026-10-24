@@ -38,14 +38,51 @@
   overflow-wrap: break-word;
 }
 
+/* The public concept reader should have one consistent reading column. */
 .public-reader {
-  max-width: 72rem;
+  width: min(46rem, 100%);
+  max-width: 100%;
+  min-width: 0;
   margin-inline: auto;
 }
 
 .public-reader .concept-reading-content {
-  max-width: 46rem;
-  margin-inline: auto;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin-inline: 0;
+}
+
+.public-reader > .breadcrumb,
+.public-reader > .detail-section,
+.public-reader > nav,
+.public-reader > .public-reader-actions {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.public-reader .breadcrumb a,
+.public-reader > nav a,
+.public-reader .reference-item-title {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.public-reader .reference-item-body {
+  min-width: 0;
+}
+
+.public-reader nav {
+  overflow-x: visible;
+}
+
+@media (max-width: 640px) {
+  .public-reader .reference-item {
+    display: grid;
+    gap: 10px;
+    align-items: start;
+  }
 }
 
 .public-reader-actions {
