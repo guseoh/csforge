@@ -396,20 +396,6 @@
   padding: 14px 0;
 }
 
-.area-guide-page .guide-quiz-link {
-  padding: 10px 13px;
-  border: 1px solid var(--accent);
-  border-radius: 8px;
-  color: var(--accent-contrast);
-  background: var(--accent);
-}
-
-.area-guide-page .guide-quiz-link:hover {
-  color: var(--accent-contrast);
-  background: var(--accent-strong);
-  text-decoration: none;
-}
-
 @media (max-width: 1120px) {
   .topic-guide-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }

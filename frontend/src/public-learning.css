@@ -40,7 +40,7 @@
 
 /* The public concept reader should have one consistent reading column. */
 .public-reader {
-  width: min(46rem, 100%);
+  width: min(720px, 100%);
   max-width: 100%;
   min-width: 0;
   margin-inline: auto;
@@ -259,3 +259,18 @@
     padding-block: 16px;
   }
 }
+
+/* Guest and Owner use the same header, article rhythm and accessible article outline. */
+.public-reader .concept-toc-compact { display: block; }
+.public-reader .concept-toc-compact nav { display: grid; margin: 0; gap: 0; }
+.public-topic-disclosure > summary {
+  min-height: 44px;
+  padding: 12px 0;
+  color: var(--text-strong);
+  cursor: pointer;
+  font-weight: 650;
+}
+.public-topic-navigation a { border: 0; border-bottom: 1px solid var(--border-subtle); border-radius: 0; background: transparent; }
+.public-topic-navigation a[aria-current='page'] { border-left: 2px solid var(--accent); background: var(--surface-interactive); }
+.public-topic-disclosure > summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.public-area-page { width: min(1100px, 100%); margin-inline: auto; }

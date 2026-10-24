@@ -46,7 +46,8 @@ vi.mock('../components/toast/ToastProvider', () => ({
   useToast: () => ({ showToast: vi.fn() }),
 }))
 
-import { CompactConceptArticleToc, ConceptPage, ConceptUnderstandingSection } from './ConceptPage'
+import { CompactConceptArticleToc } from '../components/ConceptArticleToc'
+import { ConceptPage, ConceptUnderstandingSection } from './ConceptPage'
 
 const concept: ConceptDetail = {
   id: 17,

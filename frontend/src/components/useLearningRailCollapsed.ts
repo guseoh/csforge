@@ -8,9 +8,9 @@ function readCollapsedPreference() {
   try {
     const stored = window.sessionStorage.getItem(LEARNING_RAIL_COLLAPSED_KEY)
     if (stored !== null) return stored === 'true'
-    return window.matchMedia('(max-width: 720px)').matches
+    return window.matchMedia('(max-width: 1100px)').matches
   } catch {
-    return window.matchMedia('(max-width: 720px)').matches
+    return window.matchMedia('(max-width: 1100px)').matches
   }
 }
 

@@ -302,39 +302,6 @@
   background: var(--surface-elevated);
 }
 
-/* 5-E — The collapsed rail is a quiet navigation affordance, not a floating card. */
-.concept-reading-workspace .concept-learning-rail[data-collapsed='true'] {
-  width: 42px;
-  height: 30px;
-  max-height: 30px;
-  padding: 0;
-  border-right: 0;
-}
-
-.concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
-  grid-template-columns: 42px minmax(0, 760px) 190px;
-  column-gap: 24px;
-}
-
-.concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle {
-  right: 0;
-  width: 42px;
-  height: 30px;
-  border-color: transparent;
-  border-radius: 4px;
-  color: var(--text-muted);
-  background: transparent;
-  font-size: 0.78rem;
-  font-weight: 600;
-}
-
-.concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle:hover,
-.concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle:focus-visible {
-  border-color: var(--border-subtle);
-  color: var(--text-strong);
-  background: var(--surface-interactive);
-}
-
 .concept-toc {
   padding-left: 14px;
   border-left: 1px solid var(--border-subtle);
@@ -352,35 +319,6 @@
 .concept-toc a:hover,
 .concept-toc a.active {
   color: var(--text-strong);
-}
-
-@media (max-width: 1280px) {
-  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
-    grid-template-columns: 42px minmax(0, 760px);
-    column-gap: 20px;
-  }
-}
-
-@media (max-width: 900px) {
-  .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] {
-    width: 100%;
-    height: auto;
-    max-height: none;
-  }
-
-  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
-    display: block;
-    width: 100%;
-  }
-
-  .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle {
-    width: 100%;
-    height: 40px;
-    justify-content: space-between;
-    padding: 0 12px;
-    border-color: var(--border-subtle);
-    font-size: 0.84rem;
-  }
 }
 
 @media (max-width: 680px) {

@@ -236,7 +236,7 @@ export function AreaPage() {
                         </Link>
                       ))}
                     </nav>
-                    <Link className="secondary-button" to="/learning/$areaSlug/topics/$topicId/focus" params={{ areaSlug: area.slug, topicId: String(selectedTopic.id) }}>이 Topic 집중 학습</Link>
+                    <Link className="text-button" to="/learning/$areaSlug/topics/$topicId/focus" params={{ areaSlug: area.slug, topicId: String(selectedTopic.id) }}>이 Topic 집중 학습</Link>
                     {suggestedConcept && (
                       <Link className="topic-next-concept-link" to="/concepts/$conceptId" params={{ conceptId: String(suggestedConcept.id) }}>
                         <span>{suggestedConcept.learningStatus === 'LEARNING' ? '학습 중인 개념 이어가기' : '다음 미학습 개념'}</span>
@@ -251,7 +251,7 @@ export function AreaPage() {
                     )}
                     {selectedTopicConcepts.length > 0 ? (
                       <Link
-                        className="secondary-button topic-quiz-link"
+                        className="text-button topic-quiz-link"
                         to="/quiz"
                         search={{ ...defaultQuizSearch, concepts: csvParam(selectedTopicConcepts.map((concept) => concept.id)) }}
                       >

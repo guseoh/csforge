@@ -86,16 +86,6 @@
     line-height: 1.46;
   }
 
-  .area-workspace {
-    grid-template-columns: 200px minmax(0, 1fr);
-    gap: 30px;
-    width: min(1080px, calc(100% - 44px));
-  }
-
-  .area-learning-rail {
-    width: 200px;
-  }
-
   .guide-summary-line {
     margin: 20px 0 28px;
     padding: 10px 0;
@@ -181,20 +171,5 @@
 
   .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] .rail-collapse-toggle {
     font-size: 0.82rem;
-  }
-}
-
-/* At wide desktop widths, reserve the original rail track even when collapsed.
- * The button remains small, but the article and right-side TOC no longer jump
- * left toward the visual center. */
-@media (min-width: 1281px) {
-  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
-    grid-template-columns: 220px minmax(0, 760px) 190px;
-    column-gap: 44px;
-    width: min(1300px, calc(100% - 64px));
-  }
-
-  .concept-reading-workspace .concept-learning-rail[data-collapsed='true'] {
-    justify-self: start;
   }
 }

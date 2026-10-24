@@ -3,6 +3,7 @@ import { Fragment, isValidElement } from 'react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { removeDuplicateLeadingHeading } from '../lib/markdown'
+import { remarkKoreanStrong } from '../lib/remark-korean-strong'
 import { MarkdownCodeBlock } from './MarkdownCodeBlock'
 import { MarkdownImage } from './MarkdownImage'
 import { highlightSimpleCode } from './SyntaxHighlightedCode'
@@ -202,7 +203,7 @@ export function MarkdownContent({ children, className, fallback, dedupeLeadingHe
     <div className={['markdown-content', className].filter(Boolean).join(' ')}>
       {sourceMarkdown !== null
         ? <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
+            remarkPlugins={[remarkGfm, remarkKoreanStrong]}
             components={components}
           >{sourceMarkdown}</ReactMarkdown>
         : content}

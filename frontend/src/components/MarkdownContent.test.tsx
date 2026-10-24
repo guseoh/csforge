@@ -6,6 +6,43 @@ function renderMarkdown(markdown: string) {
   return renderToStaticMarkup(<MarkdownContent>{markdown}</MarkdownContent>)
 }
 
+describe('MarkdownContent Korean strong delimiters', () => {
+  it('renders the canonical classfile example with its attached particle', () => {
+    // content/java/jvm-runtime/jdk-jvm-classfile.md, unchanged through Import/API.
+    const html = renderMarkdown('흔히 **바이트코드(bytecode)**라고 부르는 것은 클래스 파일 안의 JVM 명령 중심 표현입니다.')
+    expect(html).toContain('<strong>바이트코드(bytecode)</strong>라고')
+  })
+
+  it.each(['**강조**', '**예시**를', '**필드(field)**와', '**“예시”**는', '**C(x) < C(y)**라는'])('renders %s without literal delimiters', (source) => {
+    const html = renderMarkdown(source)
+    expect(html).toContain('<strong>')
+    expect(html).not.toContain('**')
+  })
+
+  it('preserves deliberate escapes, unmatched symbols, inline code and fenced code', () => {
+    const tick = String.fromCharCode(96)
+    const fence = tick.repeat(3)
+    const html = renderMarkdown(String.raw`\*\*예시\*\*와 \*\*필드(field)\*\*를` + '\n\n** 미완성 **\n\n' + tick + '**예시**를' + tick + '\n\n' + fence + 'text\n**필드(field)**를\n' + fence)
+    expect(html).toContain('**예시**와 **필드(field)**를')
+    expect(html).toContain('** 미완성 **')
+    expect(html).toContain('<code>**예시**를</code>')
+    expect(html).toContain('**필드(field)**를</code>')
+    expect(html).not.toContain('<strong>')
+  })
+
+  it('keeps GFM lists, tables, links, URLs and unsafe HTML boundaries', () => {
+    const html = renderMarkdown('- **필드(field)**와 **예시**를 확인\n\n| 용어 | 설명 |\n| --- | --- |\n| **필드(field)**는 | 값 |\n\n[문서](https://example.com/a**b)\n\n<script>alert(1)</script>')
+    expect(html).toContain('<li><strong>필드(field)</strong>와 <strong>예시</strong>를 확인</li>')
+    expect(html).toContain('<strong>필드(field)</strong>는')
+    expect(html).toContain('href="https://example.com/a**b"')
+    expect(html).not.toContain('<script>')
+  })
+
+  it('renders emphasis within a link label without rewriting its destination', () => {
+    expect(renderMarkdown('[**필드(field)**를](https://example.com/a**b)')).toContain('<a href="https://example.com/a**b"><strong>필드(field)</strong>를</a>')
+  })
+})
+
 describe('MarkdownContent literal URL particles', () => {
   it.each(['으로', '에서', '은', '는', '이', '가', '을', '를', '에', '로', '와', '과'])(
     'keeps %s outside a GFM literal autolink',
