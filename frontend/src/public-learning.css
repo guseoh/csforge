@@ -1,0 +1,224 @@
+/* Public canonical reading screens. Keep guest layout independent of owner workspace. */
+.public-curriculum {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+}
+
+.public-curriculum > article {
+  min-width: 0;
+  padding: 18px 2px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.public-curriculum h2,
+.public-curriculum h3 {
+  margin: 0 0 8px;
+  font-size: clamp(1rem, 1.35vw, 1.15rem);
+  line-height: 1.45;
+}
+
+.public-curriculum h2 a,
+.public-curriculum h3 a {
+  color: var(--text-strong);
+  overflow-wrap: anywhere;
+}
+
+.public-curriculum h2 a:hover,
+.public-curriculum h3 a:hover {
+  color: var(--accent-strong);
+}
+
+.public-curriculum p {
+  max-width: 74ch;
+  margin: 0 0 8px;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.65;
+  overflow-wrap: break-word;
+}
+
+.public-reader {
+  max-width: 72rem;
+  margin-inline: auto;
+}
+
+.public-reader .concept-reading-content {
+  max-width: 46rem;
+  margin-inline: auto;
+}
+
+.public-reader-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-block: 24px;
+}
+
+.public-reader nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-block: 16px;
+}
+
+.public-area-page {
+  min-width: 0;
+}
+
+.public-area-page > h1 {
+  margin-bottom: 6px;
+}
+
+.public-area-page > .lead {
+  max-width: 70ch;
+}
+
+.public-area-page .public-filters {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(95px, 0.7fr) minmax(0, 1.3fr) minmax(120px, 0.85fr) auto;
+  align-items: end;
+  gap: 14px;
+  min-width: 0;
+  margin: 26px 0 22px;
+  padding: 18px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  background: var(--surface-elevated);
+}
+
+.public-area-page .public-filters label {
+  display: grid;
+  gap: 7px;
+  min-width: 0;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 650;
+}
+
+.public-area-page .public-filters select,
+.public-area-page .public-filters input {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.public-area-page .public-filters > button {
+  white-space: nowrap;
+}
+
+.public-topic-navigation {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+  margin: 22px 0 32px;
+}
+
+.public-topic-navigation a {
+  display: block;
+  min-width: 0;
+  padding: 13px 15px;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  background: var(--surface-elevated);
+  color: var(--text-default);
+  font-size: 0.88rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.public-topic-navigation a:hover,
+.public-topic-navigation a:focus-visible {
+  border-color: var(--border-accent);
+  background: var(--surface-interactive);
+  color: var(--text-strong);
+}
+
+.public-concept-list {
+  border-top: 1px solid var(--border-subtle);
+}
+
+.public-concept-list .helper-text {
+  display: block;
+  margin-bottom: 7px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+
+.public-concept-list > article h2 {
+  font-size: clamp(1rem, 1.4vw, 1.13rem);
+  line-height: 1.45;
+}
+
+.public-concept-list > article p {
+  max-width: 90ch;
+  margin-bottom: 0;
+}
+
+.public-page-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-top: 26px;
+  padding-top: 18px;
+}
+
+.public-page-navigation > span {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 1080px) {
+  .public-area-page .public-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-areas:
+      "topic topic"
+      "search search"
+      "level sort"
+      "submit submit";
+  }
+
+  .public-area-page .public-filters label:nth-of-type(1) { grid-area: topic; }
+  .public-area-page .public-filters label:nth-of-type(2) { grid-area: level; }
+  .public-area-page .public-filters label:nth-of-type(3) { grid-area: search; }
+  .public-area-page .public-filters label:nth-of-type(4) { grid-area: sort; }
+  .public-area-page .public-filters > button { grid-area: submit; justify-self: start; }
+}
+
+@media (max-width: 640px) {
+  .public-area-page .public-filters {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "topic"
+      "level"
+      "search"
+      "sort"
+      "submit";
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .public-topic-navigation {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 7px;
+    margin-bottom: 24px;
+  }
+
+  .public-topic-navigation a {
+    padding: 12px;
+  }
+
+  .public-curriculum > article {
+    padding-block: 16px;
+  }
+}
