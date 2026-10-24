@@ -29,6 +29,18 @@ class LearningVisualizationValidationTest {
     }
 
     @Test
+    void matchesTheFrontendCommonMarkFenceFixtures() throws Exception {
+        var cases = mapper.readTree(Files.readString(Path.of("../contracts/visualization-markdown-cases.json")));
+        for (var sample : cases) {
+            var errors = markdown.validate(sample.get("source").asText(), "contentMarkdown");
+            assertEquals(sample.get("errors").asInt(), errors.size(), sample.get("name").asText());
+        }
+        String indentedLiteral = "    ```csforge-viz\n    {}\n    ```\n\n";
+        assertEquals("contentMarkdown.visualizations[0]", markdown.validate(
+                indentedLiteral + "```csforge-viz\n{}\n```", "contentMarkdown").getFirst().path());
+    }
+
+    @Test
     void handlesFencesContainersAndLegacyCodeWithoutGlobalBlocking() {
         assertTrue(markdown.validate("```csforge-viz\n" + VALID + "\n```", "body").isEmpty());
         assertTrue(markdown.validate("~~~csforge-viz\n" + VALID + "\n~~~", "body").isEmpty());
@@ -48,7 +60,7 @@ class LearningVisualizationValidationTest {
         }
         assertFalse(markdown.validate(("```csforge-viz\n" + VALID + "\n```\n").repeat(9), "contentMarkdown").isEmpty());
         assertFalse(markdown.validate("- - ```csforge-viz\n    {}\n    ```", "contentMarkdown").isEmpty());
-        assertFalse(markdown.validate("    ```csforge-viz\n    {}\n    ```", "contentMarkdown").isEmpty());
+        assertTrue(markdown.validate("    ```csforge-viz\n    {}\n    ```", "contentMarkdown").isEmpty());
         assertEquals("contentMarkdown.visualizations[0]", markdown.validate("```csforge-viz\n{}\n```", "contentMarkdown").getFirst().path());
     }
 }

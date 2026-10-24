@@ -107,6 +107,33 @@ class ContentImportIntegrationTest {
     }
 
     @Test
+    void preservesIndentedLiteralsAndValidListFencesAcrossImportAndReimport() throws Exception {
+        List<Part> base = sampleParts();
+        String literal = "\n    ```csforge-viz\n    {}\n    ```\n";
+        String payload = "{\"version\":1,\"type\":\"min-heap\",\"title\":\"힙\",\"description\":\"최소 힙\",\"initialValues\":[30,10,20]}";
+        String listFence = "\n- 목록\n\n    ```csforge-viz\n    " + payload + "\n    ```\n";
+        for (String suffix : List.of(literal, listFence)) {
+            String source = base.get(1).content() + suffix;
+            List<Part> parts = List.of(base.getFirst(), new Part("concept.md", "text/markdown", source), base.get(2));
+            JsonNode preview = json(post("/api/imports/preview", parts, null)).get("body");
+            assertTrue(preview.get("canApply").asBoolean());
+            assertEquals(200, post("/api/imports/apply", parts, preview.get("previewDigest").asText()).statusCode());
+            JsonNode repeated = json(post("/api/imports/preview", parts, null)).get("body");
+            assertEquals(3, repeated.get("totals").get("unchanged").asInt());
+        }
+        JsonNode list = json(get("/api/public/concepts?area=java&page=0&size=10&sort=CURRICULUM")).get("body");
+        long id = list.get("items").get(0).get("id").asLong();
+        String stored = json(get("/api/public/concepts/" + id)).get("body").get("contentMarkdown").asText();
+        assertTrue(stored.contains(listFence.stripTrailing()));
+        List<Part> invalid = List.of(base.getFirst(), new Part("concept.md", "text/markdown",
+                base.get(1).content() + listFence.replace(payload, "{}")), base.get(2));
+        JsonNode rejected = json(post("/api/imports/preview", invalid, null)).get("body");
+        assertFalse(rejected.get("canApply").asBoolean());
+        assertNotEquals(200, post("/api/imports/apply", invalid, rejected.get("previewDigest").asText()).statusCode());
+        assertEquals(stored, json(get("/api/public/concepts/" + id)).get("body").get("contentMarkdown").asText());
+    }
+
+    @Test
     void publishedMultipleChoiceRequiresEveryRationaleButDraftAllowsIncompleteAuthoring() throws Exception {
         List<Part> base = sampleParts();
         String published = base.get(2).content();

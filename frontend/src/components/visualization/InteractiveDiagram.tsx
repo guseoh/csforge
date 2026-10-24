@@ -17,7 +17,7 @@ export function HeapDiagram({ data }: { data: VisualizationOf<'min-heap'> }) {
   function operate(operation: { type: 'offer'; value: number } | { type: 'poll' }) {
     const next = heapOperation(committed, operation)
     setFrames(next)
-    setIndex(next.length - 1)
+    setIndex(0)
     setError('')
     setInput('')
   }
@@ -33,7 +33,7 @@ export function HeapDiagram({ data }: { data: VisualizationOf<'min-heap'> }) {
       <button type="button" disabled={replaying} onClick={() => operate({ type: 'poll' })}>최솟값 꺼내기 (poll)</button>
     </form>
     {error && <p id={errorId} role="alert">{error}</p>}
-    <p>최대 {MAX_HEAP_SIZE}개 · {replaying ? '기록을 보는 중에는 다음 단계로 완료 위치에 돌아온 뒤 조작하세요.' : committed.length === MAX_HEAP_SIZE ? '큐가 가득 찼습니다. poll 후 삽입하세요.' : '중복 값·음수도 삽입할 수 있습니다.'}</p>
+    <p>최대 {MAX_HEAP_SIZE}개 · {replaying ? '첫 상태부터 다음 단계로 비교·교환을 확인하세요. 완료 단계에서 새 연산을 시작할 수 있습니다.' : committed.length === MAX_HEAP_SIZE ? '큐가 가득 찼습니다. poll 후 삽입하세요.' : '중복 값·음수도 삽입할 수 있습니다.'}</p>
     <DiagramCanvas label={`최소 힙 트리. 배열 인덱스와 값: ${frame.values.map((v, i) => `${i}번 ${v}`).join(', ') || '빈 큐'}`} width={canvas.width} height={canvas.height} centerInitially>
       {frame.values.map((_, child) => {
         if (child === 0) return null

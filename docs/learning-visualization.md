@@ -55,10 +55,13 @@ Concept 본문뿐 아니라 문제 본문·해설·모범 답안·선택지 본�
 Apply는 기존 analyzer로 재검증하고 오류가 있으면 transaction 쓰기 전에 거부한다.
 새 테이블, entity, 저장 형식, API 응답 형식은 추가하지 않았다.
 
-백틱/물결 fence, 일반 quote/list 컨테이너, 들여쓴 예약 선언을 검사한다.
-일반 코드 fence 안에 있는 예시는 도식으로 검증하지 않는다. 예약 구문의 literal 예시는 위 예제처럼
-더 긴 바깥 일반 fence에 넣는다. 이 검증기는 범용 Markdown AST 파서가 아니며 예약 선언은 보수적으로 검사한다.
-fence 정보 문자열은 `csforge-viz` 하나이고 닫는 fence를 명시해야 한다.
+서버는 승인된 `org.commonmark:commonmark:0.31.0`으로 AST를 만들고 실제 `FencedCodeBlock`만 검사한다.
+최상위 4칸/탭 들여쓰기는 일반 코드로 유지한다. 리스트 안에서는 항목의 본문 들여쓰기를 기준으로
+정상 fence와 추가 4칸 들여쓴 일반 코드를 구분하며, quote·중첩 목록·HTML block·바깥 code fence의 문맥도 파서가 처리한다.
+예약 구문의 literal 예시는 위 예제처럼 더 긴 바깥 일반 fence에 넣거나 일반 들여쓰기 코드를 사용한다.
+escape/entity가 해석된 info의 첫 단어로 예약 언어를 인식한다. JSON 계약과 함께 기존 Import 정책도 유지하므로
+info는 `csforge-viz` 하나이고 닫는 fence를 명시해야 한다. CommonMark에서 렌더링되는 미종료 fence나 metadata 포함 fence도
+선언으로 인식하되 Import에서는 이 정책에 따라 거부한다. HTML 렌더러는 사용하지 않는다.
 
 Import를 거치지 않은 오래된 잘못된 선언은 런타임에서도 검증하고 대체 안내를 표시한다.
 유효한 선언의 렌더러 오류는 개별 오류 경계에서 설명으로 대체한다. 본문·코드·이미지는 남는다.
@@ -93,7 +96,7 @@ SVG는 컴포넌트에서 생성하므로 외부 SVG fetch 실패나 외부 이�
 ## 세 PoC의 정확성 범위
 
 1. `java/language-types/pass-by-value.md`: 기존 `replace(Member value)` 코드와 같은 호출 전→참조 A 복사→새 B 재대입→B.name 변경→반환의 5 snapshot이다. caller는 항상 A/kim을 유지한다. 참조 없는 B를 즉시 수거됐다고 표현하지 않는다.
-2. `java/collections/priorityqueue.md`: 자연 순서 정수 최소 힙이다. 삽입은 sift-up, poll은 마지막 값의 루트 이동과 sift-down을 수행한다. 비교·교환 snapshot을 되짚을 수 있다. **완료 상태**에서 부모≤자식이며 복구 중 화면은 명시한다. 기록 재생 중에는 새 연산을 막는다. JDK의 정확한 내부 배열/교환 순서나 동률 안정성을 API 계약으로 주장하지 않는다.
+2. `java/collections/priorityqueue.md`: 자연 순서 정수 최소 힙이다. 삽입은 sift-up, poll은 마지막 값의 루트 이동과 sift-down을 수행한다. 실행 뒤 첫 중간 snapshot부터 다음 단계로 비교·교환을 학습하고 다시 되짚을 수 있다. 기존 기록과 미리 계산한 완료 결과는 보존한다. **완료 상태**에서 부모≤자식이며 복구 중 화면은 명시한다. 기록 재생 중에는 새 연산을 막는다. JDK의 정확한 내부 배열/교환 순서나 동률 안정성을 API 계약으로 주장하지 않는다.
 3. `network-http/tcp/three-way-handshake.md`: 데이터 없는 일반 능동 연결 수립이다. 송신/수신을 나누어 마지막 ACK 전송 중에는 client ESTABLISHED/server SYN-RECEIVED, 수신 뒤 양쪽 ESTABLISHED를 보인다. SYN의 시퀀스 공간 소비와 32비트 순환을 반영한다. 동시 열기·재전송·Fast Open·TLS 성공은 이 모델의 보장이 아니다.
 
 근거: [JLS 15.12.4.5](https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12.4.5),
@@ -119,3 +122,13 @@ SVG는 컴포넌트에서 생성하므로 외부 SVG fetch 실패나 외부 이�
 브라우저의 학습 데이터 저장은 메모리 fixture, Import 저장은 일회용 Testcontainers DB에서만 검증했다.
 운영 데이터/DB schema/인증 정책과 다른 canonical Concept은 바꾸지 않았다.
 남은 Java·Network 전수 감사·문체 교정·SVG 교체는 #277·#278의 범위다.
+
+## 리뷰 후속 교정 (#276, 기준 `6e4a0a0e`)
+
+- 들여쓰기를 제거하던 수동 스캐너를 CommonMark AST 순회로 교체했다. 파서는 재사용하고 순회는 문서 순서의 반복형 DFS로 수행한다. 의존성 추가는 사용자 승인을 받았다.
+- `contracts/visualization-markdown-cases.json`의 32개 source를 서버와 실제 `MarkdownContent` 렌더러가 함께 읽는다. 최상위 0~3칸/4칸/탭, 리스트·순서 목록·중첩 목록의 상대 들여쓰기, 인용문, 바깥 코드/HTML block, escape/entity 언어, 미종료/metadata/잘못된 JSON, 실제 선언 개수 제한을 구분한다. 일반 코드가 오류 인덱스나 최대 8개 제한에 포함되지 않는 것도 확인한다.
+- 힙 모델·JSON 계약은 변경하지 않았다. UI 커서만 완료 위치에서 첫 중간 상태로 변경하고 안내 문장을 보정했다. offer/poll의 정방향 배열 순서, 완료 불변식, 역이동 시 snapshot 보존 회귀 테스트를 추가했다.
+- Frontend lint, 70개 파일/423개 테스트, TypeScript/Vite/PWA build가 통과했다. 관련 테스트 116개와 Backend 선언/Parser 테스트도 통과했다.
+- PostgreSQL Import 통합 테스트는 일반 들여쓰기 코드와 정상 리스트 fence의 Preview→Apply→재수입 UNCHANGED 및 잘못된 리스트 선언의 Apply 거부/저장 본문 보존을 검증하고 통과했다. canonical bootstrap 멱등성 테스트도 통과했다.
+- 격리 API의 Guest/Owner 브라우저 검증에서 offer `[10,30,20,5]`→비교/교환→`[5,10,20,30]`, poll `[30,10,20]`→비교/교환→`[10,30,20]`를 확인했다. 완료 전 조작 차단, 역이동, 초기화, Owner autosave 후 `1/6` 유지, 1440px light/390px dark에서 기존 읽기·권한·넘침 처리를 확인했다.
+- 전체 Repository Validation은 push로 실행되는 기존 CI의 Backend tests/build, Frontend lint/test/build, Compose validation 단계로 확인한다. Production 배포 job은 main에만 해당하므로 refactor에서는 실행하지 않는다.

@@ -7,8 +7,15 @@ import { applyThemePreference } from './theme-preference'
 
 const cases = JSON.parse(readFileSync(new URL('../../../contracts/learning-visualization-cases.json', import.meta.url), 'utf8')) as { name: string; valid: boolean; source: string }[]
 const fence = '`'.repeat(3)
+const markdownCases = JSON.parse(readFileSync(new URL('../../../contracts/visualization-markdown-cases.json', import.meta.url), 'utf8')) as { name: string; source: string; visualizations: number }[]
 
 describe('shared visualization contract', () => {
+  it.each(markdownCases)('recognizes CommonMark fences: $name', ({ source, visualizations }) => {
+    const html = renderToStaticMarkup(<MarkdownContent>{source}</MarkdownContent>)
+    const rendered = (html.match(/class="learning-visualization"/g)?.length ?? 0)
+      + (html.match(/class="diagram-fallback"/g)?.length ?? 0)
+    expect(rendered).toBe(visualizations)
+  })
   it.each(cases)('$name', ({ valid, source }) => {
     expect(parseVisualization(source) !== null).toBe(valid)
   })

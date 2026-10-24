@@ -61,6 +61,26 @@ describe('interactive min heap', () => {
     expect(heapOperation(initial, { type: 'offer', value: 5 })).toEqual(frames)
   })
 
+  it('offers and polls in forward learning order while retaining the settled result', () => {
+    const offered = heapOperation([10, 30, 20], { type: 'offer', value: 5 })
+    expect(offered.map((frame) => frame.values)).toEqual([
+      [10, 30, 20, 5], [10, 30, 20, 5], [10, 5, 20, 30],
+      [10, 5, 20, 30], [5, 10, 20, 30], [5, 10, 20, 30],
+    ])
+    const polled = heapOperation(offered.at(-1)!.values, { type: 'poll' })
+    expect(polled.map((frame) => frame.values)).toEqual([
+      [30, 10, 20], [30, 10, 20], [30, 10, 20], [10, 30, 20], [10, 30, 20],
+    ])
+    for (const trace of [offered, polled]) {
+      expect(trace[0].settled).toBe(false)
+      expect(trace.slice(0, -1).every((frame) => !frame.settled)).toBe(true)
+      expect(trace.at(-1)!.settled).toBe(true)
+      expect(isMinHeap(trace.at(-1)!.values)).toBe(true)
+      const snapshots = trace.map((frame) => [...frame.values])
+      for (let cursor = trace.length - 1; cursor >= 0; cursor--) expect(trace[cursor].values).toEqual(snapshots[cursor])
+    }
+  })
+
   it('maintains the stable invariant and sorted poll results for duplicate/negative inputs', () => {
     let seed = 276
     const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed }

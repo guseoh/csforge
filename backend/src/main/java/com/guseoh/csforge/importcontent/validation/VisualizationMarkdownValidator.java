@@ -1,64 +1,52 @@
 package com.guseoh.csforge.importcontent.validation;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.guseoh.csforge.importcontent.application.ImportValidationError;
 import lombok.RequiredArgsConstructor;
+import org.commonmark.node.FencedCodeBlock;
+import org.commonmark.node.Node;
+import org.commonmark.parser.Parser;
 import org.springframework.stereotype.Component;
 
-/** Markdown의 예약 도식 fence를 찾아 기존 코드 블록과 분리하여 검증한다. */
+/** CommonMark AST의 실제 fenced code block만 학습 도식 선언으로 검증한다. */
 @Component
 @RequiredArgsConstructor
 public class VisualizationMarkdownValidator {
-    private static final Pattern OPENING = Pattern.compile("^ {0,3}(`{3,}|~{3,})(.*)$");
     private static final int MAX_BLOCKS = 8;
     private final LearningVisualizationValidator payloadValidator;
+    private final Parser parser = Parser.builder().build();
 
     public List<ImportValidationError> validate(String markdown, String path) {
-        if (markdown == null || !markdown.contains("csforge-viz")) return List.of();
+        if (markdown == null || markdown.isBlank()) return List.of();
         List<ImportValidationError> errors = new ArrayList<>();
-        String marker = null;
-        boolean visualization = false;
-        boolean validInfo = true;
+        Deque<Node> pending = new ArrayDeque<>();
+        pending.push(parser.parse(markdown));
         int count = 0;
-        StringBuilder payload = new StringBuilder();
-        for (String rawLine : markdown.split("\\R", -1)) {
-            // Common quote/list containers may surround a fenced block. JSON indentation is immaterial.
-            String line = rawLine.replaceFirst("^\\s*(?:> ?)+", "")
-                    .replaceFirst("^\\s*(?:(?:[-+*]|\\d+[.)]) +)+", "");
-            if (marker == null) {
-                Matcher opening = OPENING.matcher(line);
-                if (!opening.matches()) {
-                    // Conservatively validate reserved declarations in deeply indented list content too.
-                    // Literal examples of this reserved language belong inside an outer ordinary fence.
-                    opening = OPENING.matcher(line.stripLeading());
-                    if (!opening.matches() || !opening.group(2).strip().matches("csforge-viz(?:[ \\t].*)?")) continue;
-                }
-                String info = opening.group(2).strip();
-                // A backtick cannot occur in a backtick fence's info string.
-                if (opening.group(1).charAt(0) == '`' && info.contains("`")) continue;
-                marker = opening.group(1);
-                visualization = info.equals("csforge-viz") || info.startsWith("csforge-viz ") || info.startsWith("csforge-viz\t");
-                validInfo = info.equals("csforge-viz");
-                payload.setLength(0);
-                if (visualization && ++count > MAX_BLOCKS) {
+        while (!pending.isEmpty()) {
+            Node node = pending.pop();
+            if (node instanceof FencedCodeBlock block) {
+                String info = block.getInfo();
+                String language = info.split("\\s+", 2)[0];
+                if (!language.equals("csforge-viz")) continue;
+                if (++count > MAX_BLOCKS) {
                     errors.add(new ImportValidationError(path, "학습 도식은 필드당 최대 8개입니다"));
                     return errors;
                 }
-            } else if ((visualization ? line.stripLeading() : line).matches(" {0,3}" + Pattern.quote(marker.substring(0, 1)) + "{" + marker.length() + ",}[ \\t]*")) {
-                if (visualization && (!validInfo || !payloadValidator.isValid(payload.toString()))) {
+                if (!info.equals("csforge-viz") || block.getClosingFenceLength() == null
+                        || !payloadValidator.isValid(block.getLiteral())) {
                     errors.add(error(path, count));
                 }
-                marker = null;
-            } else if (visualization && payload.length() <= LearningVisualizationValidator.MAX_SOURCE_LENGTH) {
-                int remaining = LearningVisualizationValidator.MAX_SOURCE_LENGTH + 1 - payload.length();
-                payload.append(line, 0, Math.min(line.length(), remaining)).append('\n');
+            } else {
+                // Iterative traversal preserves document order without recursing through untrusted nesting.
+                for (Node child = node.getLastChild(); child != null; child = child.getPrevious()) {
+                    pending.push(child);
+                }
             }
         }
-        if (marker != null && visualization) errors.add(error(path, count));
         return errors;
     }
 
