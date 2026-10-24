@@ -44,6 +44,7 @@ import './step7-result-width.css'
 import './step8-review.css'
 import './step8-wrong-note-alignment.css'
 import './markdown-renderer.css'
+import './public-learning.css'
 
 const queryClient = new QueryClient({
   defaultOptions: {
