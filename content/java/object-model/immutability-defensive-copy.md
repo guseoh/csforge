@@ -20,7 +20,7 @@ references:
     referenceType: KOREAN_BLOG
     language: ko
     displayOrder: 2
-    relationNote: "`final` 필드만으로 끝나지 않는 불변 객체 설계의 한국어 예시 보충"
+    relationNote: "final 필드만으로 끝나지 않는 불변 객체 설계의 한국어 예시 보충. 글의 stack/heap·주소 비유는 Java 언어의 물리 배치 보장으로 읽지 않으며 실제 복사 계약은 Java 25 API를 기준으로 판단한다."
 ---
 # 불변 객체와 방어적 복사
 
@@ -48,14 +48,7 @@ Team team = new Team(names);
 names.add("lee");
 ```
 
-```text
-호출자 names ─────┐
-                  ├────▶ ArrayList ["kim"]
-Team.members ─────┘
-                        ▲
-                        │ names.add("lee")
-                        └─ 같은 객체가 변경됨
-```
+`names.add("lee")`는 호출자와 Team이 함께 보는 같은 목록을 바꿉니다. `Team.members`를 재대입하지 않아도 외부의 변경을 내부에서 관찰하게 됩니다.
 
 문제는 참조 필드가 `final`인지가 아니라 **가변 객체의 소유권을 외부와 공유하고 있다는 점**입니다.
 
@@ -73,27 +66,41 @@ class Team {
 
 이제 호출자가 원본 리스트의 구조를 바꾸더라도 `Team`이 보관한 리스트에는 그 변경이 그대로 전달되지 않습니다.
 
-```text
-호출자 names ─────────▶ 원본 가변 List
-
-Team.members ─────────▶ 수정 불가능한 복사 결과
-```
+이 경우 목록 구조의 소유권을 분리했습니다. 단, 원소까지 새로 복제한 것은 아니고 `copyOf`가 모든 입력에서 새 객체를 할당한다는 뜻도 아닙니다.
 
 `List.copyOf`는 이런 소유권 경계에 유용하지만 **깊은 복사(deep copy)** 를 해 주는 것은 아닙니다.
 
-```java
-List<MutableMember> members = ...;
-List<MutableMember> copy = List.copyOf(members);
-```
+다음 독립 예제에서는 가변 원소를 사용해 목록 구조와 원소 참조의 경계를 나눠 확인합니다.
 
 리스트 구조 자체는 수정할 수 없어도 원소인 `MutableMember` 객체는 양쪽 리스트에서 같은 객체를 가리킬 수 있습니다.
 
-```text
-copy     ─▶ [ ref ─────▶ MutableMember ]
-original ─▶ [ ref ───────────┘
+```java
+class MutableMember {
+    String name; // 원소 공유를 확인하기 위한 가변 예제
+    MutableMember(String name) { this.name = name; }
+}
+
+MutableMember member = new MutableMember("kim");
+List<MutableMember> original = new ArrayList<>(List.of(member));
+List<MutableMember> shared = original;
+List<MutableMember> copy = List.copyOf(original);
+original.add(new MutableMember("lee"));
+member.name = "park";
+// shared는 [park, lee], copy는 [park]를 관찰합니다.
+// copy.add(new MutableMember("x")); // 실행하면 UnsupportedOperationException
 ```
 
-따라서 불변성을 어디까지 보장하려는지에 따라 원소 타입의 가변성도 함께 봐야 합니다.
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-object-model",
+  "example": "defensive-copy",
+  "title": "목록 구조 복사와 가변 원소 공유 6단계",
+  "description": "원본 목록 L1과 shared는 같은 구조를 봅니다. copy의 후속 구조 변경은 막히지만 공유 원소 M의 name 변경은 보입니다. 마지막 add 실패는 기존 상태를 유지합니다."
+}
+```
+
+따라서 불변성을 어디까지 보장하려는지에 따라 원소 타입의 가변성도 함께 봐야 합니다. `String` 원소는 불변이므로 앞의 Team 예제에서는 안전하게 공유할 수 있지만, 가변 원소에는 그 결론을 그대로 적용할 수 없습니다. `List.copyOf`는 입력 컬렉션이나 원소가 `null`이면 거부한다는 계약도 가지므로, 도메인이 null을 허용한다면 그 정책과 맞는 복사 방식을 선택해야 합니다.
 
 ### 반환 경계에서도 내부 가변 상태를 노출하지 않는다
 

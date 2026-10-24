@@ -46,16 +46,14 @@ animal.sound(); // dog
 
 `animal`의 선언 타입은 `Animal`이고 실제 객체는 `Dog`입니다. 호출 가능한 메서드를 컴파일러가 판단할 때는 선언 타입이 중요하고, 재정의된 인스턴스 메서드의 실제 구현을 선택할 때는 실행 시점의 객체 타입이 중요합니다.
 
-```text
-1. 컴파일 시점
-Animal 타입에서 sound() 호출이 가능한가?
-        │
-        ▼
-2. 실행 시점
-실제 객체가 어떤 구현을 가지고 있는가?
-        │
-        ▼
-Dog.sound() 실행
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-object-model",
+  "example": "dispatch",
+  "title": "호출 검사부터 실제 구현 실행까지",
+  "description": "선언 타입 Animal에서 sound() 호출을 검사하고 실제 Dog 객체의 재정의 구현을 실행해 dog를 출력합니다. 같은 한 번의 호출을 세 단계로 나눕니다."
+}
 ```
 
 이처럼 실행 시점의 실제 객체를 기준으로 재정의된 메서드 구현을 고르는 것을 **동적 디스패치(dynamic dispatch)** 라고 합니다.
@@ -89,10 +87,10 @@ class Child extends Parent {
 }
 
 Parent value = new Child();
-System.out.println(value.name); // 선언 타입 기준의 필드 접근
+System.out.println(value.name); // parent: 선언 타입 기준의 필드 접근
 ```
 
-따라서 “실제 객체가 `Child`니까 모든 접근이 `Child` 기준이다”라고 일반화하면 안 됩니다.
+따라서 “실제 객체가 `Child`니까 모든 접근이 `Child` 기준이다”라고 일반화하면 안 됩니다. 이 규칙은 JVM이 반드시 특정한 메서드 테이블 배치를 사용한다는 주장이 아닙니다. 또한 수신 참조가 `null`이면 인스턴스 메서드를 실행하기 전에 `NullPointerException`으로 실패합니다.
 
 ### 다형성의 가치는 같은 계약으로 다른 구현을 다루는 데 있다
 

@@ -34,44 +34,35 @@ class OrderService {
         this.discountPolicy = discountPolicy;
     }
 
-    Money calculatePrice(Order order) {
+    Money calculateDiscount(Order order) {
         return discountPolicy.discount(order);
     }
 }
 ```
 
-`OrderService`가 할인 계산 구현을 상속받은 것이 아닙니다. `DiscountPolicy`라는 협력 객체에게 할인 계산을 요청합니다.
+`OrderService`가 할인 계산 구현을 상속받은 것이 아닙니다. `DiscountPolicy`라는 계약의 협력 객체에게 할인 금액 계산을 요청합니다. 도식의 `FixedDiscountPolicy`와 `RateDiscountPolicy`는 같은 계약을 구현하는 정액·비율 정책입니다.
 
-```text
-OrderService
-    │
-    │ discount(order)
-    ▼
-DiscountPolicy
-    ▲
- ┌──┴─────────────┐
- │                │
-FixedDiscount   RateDiscount
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-object-model",
+  "example": "composition",
+  "title": "할인 계약에 위임하는 객체 협력",
+  "description": "OrderService는 DiscountPolicy 참조로 할인 계산을 요청합니다. FixedDiscountPolicy와 RateDiscountPolicy는 그 계약을 구현하며 호출 위임과 타입 관계는 서로 다른 간선입니다."
+}
 ```
 
 ### 상속과 합성은 관계의 의미가 다르다
 
-```text
-상속                               합성
-
-DiscountBase                       OrderService
-     ▲                                  │
-     │ extends                            │ has-a / 위임
-     │                                  ▼
-OrderService                       DiscountPolicy
-```
+합성은 협력 객체를 보유해 호출하는 관계이고, 상속은 상위 타입의 하위 타입이 되는 관계입니다. 정책을 사용하는 서비스 자체가 할인 정책의 한 종류가 될 필요는 없습니다.
 
 상속에서는 하위 클래스가 상위 타입 계층과 구현 관계에 들어갑니다. 합성에서는 객체의 정체성을 바꾸지 않고 **다른 책임을 가진 객체와 협력**합니다.
 
-이 차이 때문에 필요한 것이 단순한 기능 재사용이나 정책 교체라면 합성이 더 자연스러운 경우가 많습니다. 할인 정책을 정액에서 비율 방식으로 바꾸더라도 `OrderService` 자체를 다른 하위 타입으로 만들 필요 없이 협력 객체를 바꿀 수 있습니다.
+이 차이 때문에 필요한 것이 단순한 기능 재사용이나 정책 교체라면 합성이 더 자연스러운 경우가 많습니다. 할인 정책을 정액에서 비율 방식으로 바꾸더라도 `OrderService` 자체를 다른 하위 타입으로 만들 필요 없이 새 서비스를 생성할 때 다른 정책 구현을 전달할 수 있습니다. 이 예제의 참조는 `final`이므로 실행 중 재대입하는 기능까지 제공하는 것은 아닙니다.
 
 ```java
-DiscountPolicy policy = new RateDiscountPolicy(...);
+// 무인자 생성자를 제공하는 비율 정책 구현을 조합하는 호출 예제
+DiscountPolicy policy = new RateDiscountPolicy();
 OrderService service = new OrderService(policy);
 ```
 

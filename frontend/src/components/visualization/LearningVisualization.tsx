@@ -6,6 +6,7 @@ import { HeapDiagram } from './InteractiveDiagram'
 import { LanguageValueDiagram } from './LanguageValueDiagram'
 import { ArrayStoreDiagram } from './ArrayStoreDiagram'
 import { DefiniteAssignmentDiagram } from './DefiniteAssignmentDiagram'
+import { ObjectModelDiagram } from './ObjectModelDiagram'
 
 export function DiagramFallback({ description }: { description?: string }) {
   return <div className="diagram-fallback" role="note"><p>학습 도식을 표시할 수 없습니다. 본문 설명을 계속 읽어주세요.</p>{description && <p>{description}</p>}</div>
@@ -34,6 +35,7 @@ const renderers = {
   'java-value-reference': (data: VisualizationOf<'java-value-reference'>) => <LanguageValueDiagram data={data} />,
   'java-array-store': () => <ArrayStoreDiagram />,
   'java-definite-assignment': () => <DefiniteAssignmentDiagram />,
+  'java-object-model': (data: VisualizationOf<'java-object-model'>) => <ObjectModelDiagram data={data} />,
 }
 
 function RegisteredDiagram({ data }: { data: Visualization }) {
@@ -45,6 +47,7 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
     case 'java-value-reference': return renderers[data.type](data)
     case 'java-array-store': return renderers[data.type]()
     case 'java-definite-assignment': return renderers[data.type]()
+    case 'java-object-model': return renderers[data.type](data)
   }
 }
 

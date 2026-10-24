@@ -41,6 +41,8 @@ public class LearningVisualizationValidator {
                 case "java-value-reference" -> exactKeys(data, "example")
                         && Set.of("assignment-copy", "final-list", "string-intern").contains(data.get("example"));
                 case "java-array-store", "java-definite-assignment" -> exactKeys(data);
+                case "java-object-model" -> exactKeys(data, "example")
+                        && Set.of("static-members", "initialization", "inheritance", "composition", "dispatch", "casting", "defensive-copy").contains(data.get("example"));
                 default -> false;
             };
         } catch (RuntimeException exception) {

@@ -163,18 +163,18 @@ topics:
     level: 1
     objective: "`static` 멤버는 클래스에 속하고 인스턴스 멤버는 객체 상태에 속한다는 차이와 접근·공유 특성을 이해한다."
     density: CORE
-    visualization: TEXT
-    visualizationNote: "여러 인스턴스가 하나의 `static` 상태를 공유하는 구조와 각 인스턴스의 개별 상태를 비교한다."
+    visualization: DIAGRAM
+    visualizationNote: "V1 관계도로 같은 클래스의 totalCount 공유와 객체별 name을 구별한다. 물리 메모리 위치나 원자적 증가를 보장하지 않는다."
   - key: java.core.object-model.initialization-order-constructor-chaining
     title: "초기화 순서와 생성자 연결"
     order: 30
     level: 2
     objective: "클래스 초기화와 인스턴스 필드·초기화 블록·생성자의 실행 순서, `this`·`super` 생성자 연결을 예측한다."
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
     prerequisites:
     - java.core.object-model.static-vs-instance-members
-    visualizationNote: "클래스 초기화와 객체 생성 단계를 시간 순서로 보여 준다."
+    visualizationNote: "Java 25의 전반부·this/super 위임·필드/블록·후반부를 V2로 추적한다. 같은 객체의 초기화가 중복되지 않는다."
   - key: java.core.object-model.encapsulation-invariants
     title: "캡슐화와 객체의 불변 조건"
     order: 40
@@ -195,8 +195,8 @@ topics:
     level: 2
     objective: "상속을 의미 있는 하위 타입(subtype)·is-a 관계에 사용할 때의 장점과 강한 결합·취약한 기반 클래스 문제를 이해한다."
     density: STANDARD
-    visualization: TEXT
-    visualizationNote: "is-a 계층과 has-a 협력 구조를 비교한다."
+    visualization: DIAGRAM
+    visualizationNote: "V1에서 CardPayment→Payment 타입 관계와 Report→FileUtil 기능 위임을 다른 선으로 구별한다."
   - key: java.core.object-model.composition-collaboration
     title: "합성과 객체 협력"
     order: 70
@@ -204,17 +204,17 @@ topics:
     objective: "독립적으로 바뀌어야 하는 행동은 상속보다 객체 협력과 합성으로 분리하는 이유와 장단점을 설명한다."
     density: CORE
     visualization: DIAGRAM
-    visualizationNote: "상속으로 구현을 물려받는 구조와 협력 객체에 위임하는 구조를 비교한다."
+    visualizationNote: "V1에서 OrderService의 위임과 Fixed/RateDiscountPolicy의 구현 관계를 구별한다."
   - key: java.core.object-model.polymorphism-dynamic-dispatch
     title: "다형성과 런타임 메서드 선택"
     order: 80
     level: 2
     objective: "선언 타입과 런타임 객체 타입을 구분하고 재정의된 인스턴스 메서드가 실행 시점에 선택되는 동작을 예측한다."
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
     prerequisites:
     - java.core.object-model.inheritance-is-a
-    visualizationNote: "선언 타입과 실제 객체 타입을 따라 재정의된 메서드가 선택되는 흐름을 나타낸다."
+    visualizationNote: "V2에서 선언 Animal의 호출 검사→실제 Dog의 재정의 선택→dog 출력을 한 호출의 단계로 구별한다."
   - key: java.core.object-model.overload-vs-override
     title: "오버로딩과 오버라이딩"
     order: 90
@@ -230,10 +230,10 @@ topics:
     level: 2
     objective: "상향·하향 형변환(upcasting·downcasting), `ClassCastException`, `instanceof`와 패턴 매칭의 타입 검사 의미를 이해한다."
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
     prerequisites:
     - java.core.object-model.polymorphism-dynamic-dispatch
-    visualizationNote: "상위 타입 참조가 하위 객체를 가리킬 때 안전하거나 위험한 하향 형변환 경로를 비교한다."
+    visualizationNote: "V1에서 실제 Dog 성공과 실제 Cat 실패를 비교한다. 캐스트가 객체를 변환하거나 복제하지 않는다."
   - key: java.core.object-model.interface-vs-abstract-class
     title: "인터페이스와 추상 클래스 선택"
     order: 110
@@ -250,7 +250,7 @@ topics:
     visualization: DIAGRAM
     prerequisites:
     - java.core.language-types.final-reference-and-immutability
-    visualizationNote: "변경 가능한 컬렉션을 그대로 공유할 때와 복사해 소유권을 분리할 때를 비교한다."
+    visualizationNote: "V2에서 목록 공유→구조 복사→후속 추가 분리→가변 원소 공유→변경 거부를 추적한다. 할당 횟수를 일반화하지 않는다."
 - key: java.core.api-design
   title: "객체 생성과 API 설계"
   order: 30

@@ -129,9 +129,9 @@
     "choices":[
       {"key":"A","content":"현재 인스턴스의 필드를 읽고 인스턴스 메서드를 호출하는 것도 모두 허용된다","displayOrder":0,"rationaleMarkdown":"초기 생성 문맥에서는 생성자 인자를 검증하고 현재 객체의 필드를 허용된 방식으로 초기화할 수 있지만, 필드 값을 읽거나 인스턴스 메서드를 호출하는 데에는 제약이 있다."},
       {"key":"B","content":"어떤 문장도 명시적 생성자 호출 앞에 둘 수 없다","displayOrder":1,"rationaleMarkdown":"Java 25의 유연한 생성자 본문은 생성자 호출 앞에 제한된 문장을 허용한다."},
-      {"key":"C","content":"인자 검증 같은 문장을 둘 수 있고 현재 객체의 필드를 대입해 초기화할 수 있지만, 해당 필드를 읽거나 인스턴스 메서드를 호출하는 데에는 제약이 있다","displayOrder":2,"rationaleMarkdown":"초기 생성 문맥은 상위 클래스 생성 전에 현재 객체가 부적절하게 외부로 노출되거나 미초기화 상태가 사용되는 것을 제한하면서 일부 인자 검사와 직접 필드 대입을 허용한다."},
+      {"key":"C","content":"인자 검증 같은 문장을 둘 수 있고 현재 객체의 필드를 대입해 초기화할 수 있지만, 해당 필드를 읽거나 인스턴스 메서드를 호출하는 데에는 제약이 있다","displayOrder":2,"rationaleMarkdown":"초기 생성 문맥은 일부 인자 검사와 직접 필드 대입을 허용합니다. 직접 대입은 현재 클래스에 선언되고 초기화 식이 없는 필드에 대한 단순 대입이어야 하며, 상속된 필드나 초기화 식이 있는 필드는 대상이 아닙니다."},
       {"key":"D","content":"`this(...)`와 `super(...)`를 한 생성자에서 연속으로 둘 다 호출할 수 있다","displayOrder":3,"rationaleMarkdown":"한 생성자는 `this(...)`로 같은 클래스의 다른 생성자에 위임하거나 `super(...)`를 호출하는 생성 경로 중 하나를 따른다. 둘을 연이어 호출할 수 없다."}
-    ],"correctChoiceKey":"C","explanationMarkdown":"Java SE 25의 유연한 생성자 본문은 명시적 생성자 호출 앞부분에 일부 문장을 허용한다. 초기 생성 문맥에서는 현재 객체를 읽거나 인스턴스 메서드를 호출하는 등의 동작이 제한되지만, 허용된 형태로 현재 객체의 필드를 초기화하는 것은 가능하다."
+    ],"correctChoiceKey":"C","explanationMarkdown":"Java SE 25는 명시적 생성자 호출 앞부분에 인자 검증 등의 문장을 허용합니다. 현재 클래스에 선언되고 선언 시 초기화 식이 없는 필드에는 단순 대입할 수 있습니다. 반면 현재 객체의 필드 읽기, 인스턴스 메서드 호출, this의 외부 노출은 제한되며, 상속된 필드나 초기화 식이 있는 필드에도 전반부에서 대입할 수 없습니다."
   },
   {
     "kind":"question","contentKey":"java.core.object-model.initialization-order-constructor-chaining.q5","promptMarkdown":"다음 코드를 실행한다.\n\n```java\nclass A {\n    A() {\n        System.out.print(\"A\");\n    }\n}\n\nclass B extends A {\n    B() {\n        this(1);\n        System.out.print(\"B\");\n    }\n\n    B(int x) {\n        System.out.print(\"X\");\n    }\n}\n\nnew B();\n```\n\n출력 순서는 무엇인가?","questionType":"MULTIPLE_CHOICE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["java.core.object-model.initialization-order-constructor-chaining"],
@@ -413,7 +413,7 @@
     ],"correctChoiceKey":"C","explanationMarkdown":"먼저 컴파일 시점의 오버로드 해석을 본다. `p`의 정적 타입은 `P`이므로 `P`에서 보이는 `f(Object)`가 선택된다. 그다음 실행 시 동적 디스패치가 적용되어 실제 객체 `C`의 `f(Object)`가 실행된다. `C.f(String)`은 첫 단계의 오버로드 후보가 아니다."
   },
   {
-    "kind":"question","contentKey":"java.core.object-model.overload-vs-override.q4","promptMarkdown":"다음 두 메서드를 한 클래스에 함께 선언할 수 없는 이유는 무엇인가요?\n\n```java\nint parse(String s)\nlong parse(String s)\n```","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.object-model.overload-vs-override"],
+    "kind":"question","contentKey":"java.core.object-model.overload-vs-override.q4","promptMarkdown":"다음 두 메서드를 한 클래스에 함께 선언할 수 없는 이유는 무엇인가요?\n\n```java\nint parse(String s) { return 0; }\nlong parse(String s) { return 0L; }\n```","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.object-model.overload-vs-override"],
     "choices":[
       {"key":"A","content":"long은 반환할 수 없는 타입이기 때문이다","displayOrder":0,"rationaleMarkdown":"`long`은 유효한 반환 타입이며 문제는 메서드 시그니처를 구분할 수 없다는 점이다."},
       {"key":"B","content":"String 매개변수는 오버로드에 사용할 수 없다","displayOrder":1,"rationaleMarkdown":"`String` 매개변수도 오버로드에 사용할 수 있다. 두 선언의 매개변수 목록이 완전히 같다는 점이 문제다."},

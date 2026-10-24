@@ -203,5 +203,80 @@
     "name": "language-types-invalid-7",
     "valid": false,
     "source": "{\"version\":2,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"string-intern\"}"
+  },
+  {
+    "name": "object-model-static-members",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"static-members\"}"
+  },
+  {
+    "name": "object-model-initialization",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"initialization\"}"
+  },
+  {
+    "name": "object-model-inheritance",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"inheritance\"}"
+  },
+  {
+    "name": "object-model-composition",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"composition\"}"
+  },
+  {
+    "name": "object-model-dispatch",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"dispatch\"}"
+  },
+  {
+    "name": "object-model-casting",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"casting\"}"
+  },
+  {
+    "name": "object-model-defensive-copy",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"defensive-copy\"}"
+  },
+  {
+    "name": "object-model-invalid-missing",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\"}"
+  },
+  {
+    "name": "object-model-invalid-null",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":null}"
+  },
+  {
+    "name": "object-model-invalid-object",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":{}}"
+  },
+  {
+    "name": "object-model-invalid-unknown",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"execute-code\"}"
+  },
+  {
+    "name": "object-model-invalid-coordinates",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"dispatch\",\"x\":0}"
+  },
+  {
+    "name": "object-model-invalid-code",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"dispatch\",\"code\":\"eval(x)\"}"
+  },
+  {
+    "name": "object-model-invalid-version",
+    "valid": false,
+    "source": "{\"version\":2,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"dispatch\"}"
+  },
+  {
+    "name": "object-model-invalid-html",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"<script>\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"dispatch\"}"
   }
 ]

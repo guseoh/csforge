@@ -17,6 +17,7 @@ export const visualizationSchema = z.discriminatedUnion('type', [
   z.object({ ...common, type: z.literal('java-value-reference'), example: z.enum(['assignment-copy', 'final-list', 'string-intern']) }).strict(),
   z.object({ ...common, type: z.literal('java-array-store') }).strict(),
   z.object({ ...common, type: z.literal('java-definite-assignment') }).strict(),
+  z.object({ ...common, type: z.literal('java-object-model'), example: z.enum(['static-members', 'initialization', 'inheritance', 'composition', 'dispatch', 'casting', 'defensive-copy']) }).strict(),
 ])
 
 export type Visualization = z.infer<typeof visualizationSchema>

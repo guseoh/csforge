@@ -31,6 +31,11 @@ references:
 ```java
 class Stock {
     private int quantity;
+
+    Stock(int quantity) {
+        if (quantity < 0) throw new IllegalArgumentException();
+        this.quantity = quantity;
+    }
 }
 ```
 
@@ -58,7 +63,9 @@ void decrease(int amount) {
 }
 ```
 
-이제 외부에서는 `quantity`에 임의의 값을 넣는 대신 `decrease`라는 동작을 요청합니다. 객체는 그 과정에서 자신이 지켜야 할 조건을 확인합니다.
+이제 외부에서는 `quantity`에 임의의 값을 넣는 대신 `Stock`에 정의한 `decrease`라는 동작을 요청합니다. `new Stock(5)`에서 `decrease(2)`를 호출하면 3이 남고, 이어 `decrease(4)`를 호출하면 부족 검증에서 실패해 수량은 3을 유지합니다. 생성 검증과 변경 검증이 같은 불변 조건을 보호합니다.
+
+이 예제는 한 실행 흐름의 상태 변경을 설명합니다. 캡슐화만으로 동시 접근의 검사·변경이 원자적으로 되는 것은 아니므로 공유 객체의 동시성은 별도로 설계해야 합니다.
 
 객체가 항상 지켜야 하는 조건을 **불변 조건(invariant)** 이라고 합니다. “재고는 0 이상이다”, “완료된 주문은 다시 결제 대기 상태로 돌아갈 수 없다” 같은 규칙이 이에 해당합니다.
 

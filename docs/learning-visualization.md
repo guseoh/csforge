@@ -30,6 +30,7 @@ Markdown의 예약 fenced code 언어 `csforge-viz`에 JSON 객체 하나를 넣
 | `java-value-reference` | V2 또는 V1 | `example` | `assignment-copy`는 본문의 원시 복사·참조 공유·재대입 9단계. `final-list`, `string-intern`은 각각 고정 관계를 보여 주는 V1 |
 | `java-array-store` | V2 단계형 | 없음 | 본문의 String[2] 생성→Object[] 별칭→String 저장→Integer 검사→저장 거부 5단계 |
 | `java-definite-assignment` | V1 정적 SVG | 없음 | score 조건의 양쪽 분기에서 result를 대입하고 합류하는 고정 if/else 예제 |
+| `java-object-model` | V1 또는 V2 | `example` | V1: `static-members`, `inheritance`, `composition`, `casting`. V2: `initialization`(8단계), `dispatch`(3단계), `defensive-copy`(6단계) |
 
 모든 타입은 `version: 1`, `title`(1~100자), `description`(1~600자)을 요구한다.
 설명은 조작 없이도 핵심 계약·결과를 읽을 수 있는 요약이어야 한다. 알 수 없는 필드는 거부한다.
@@ -150,3 +151,19 @@ SVG는 컴포넌트에서 생성하므로 외부 SVG fetch 실패나 외부 이�
 
 Pack별 변경·정확성 근거·Import 및 브라우저 검증은
 [J-language-types 완료 기록](content-corrections/issue-278/J-language-types/README.md)에 남긴다.
+
+## 객체 모델 Pack 확장 (#278)
+
+`java-object-model`은 두 번째 Pack에 필요한 위 일곱 고정 예제만 받는다. 기존 JSON 버전·필드 제한·일곱 타입은 유지한다.
+제목/설명 외에는 `example`만 선언하며, 코드·좌표·노드·호출 조건을 콘텐츠에서 받지 않는다.
+V1/V2 모두 기존 `DiagramPrimitives`와 흑백 토큰을 재사용한다. 범용 그래프/Java 실행기나 새로운 조작 엔진은 추가하지 않는다.
+
+`object-model-models.ts`는 생성자 위치·필드/블록 실행 횟수·누적 출력, 한 메서드 호출의 검사/선택/실행,
+목록 구조와 가변 원소 공유의 고정 snapshot을 제공한다. 표시 상태는 Reader에만 있으며 개인 이력에는 저장하지 않는다.
+생성자 도식은 클래스 초기화가 끝난 정상 생성 예제로, 매개변수와 객체 필드, 같은 객체의 상위 초기화 경로를 구분한다.
+전반부 직접 대입은 선언 시 초기화 식이 없는 현재 클래스 필드에만 허용되는 별도 조건이며,
+도식의 `name` 필드에는 그런 대입이 없다. null→unset→kim 순서를 모든 프로그램의 보장으로 일반화하지 않는다.
+복사 도식의 L1/L2/M/N도 논리적 구분이며 일반적인 객체 할당 수·JVM 배치·GC 시각을 뜻하지 않는다.
+
+실제 본문/문항의 Java 컴파일·실행과 공유 계약·개인 이력 보존 검증은
+[J-object-model 완료 기록](content-corrections/issue-278/J-object-model/README.md)을 따른다.
