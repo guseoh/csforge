@@ -43,7 +43,7 @@ export function PublicAreaPage() {
   })
   if (area.isPending) return <PageSkeleton rows={5} />
   if (area.isError) return <ErrorState onRetry={() => void area.refetch()} />
-  return <section className="page-section">
+  return <section className="page-section public-area-page">
     <nav className="breadcrumb" aria-label="탐색 경로"><Link to="/learning" search={defaultLearningSearch}>학습 영역</Link><span>/</span><strong>{area.data.name}</strong></nav>
     <h1>{area.data.name}</h1><p className="lead">{area.data.description}</p>
     <form key={`${areaSlug}:${search.topic}:${search.level}:${search.q}:${search.sort}`} className="public-filters" onSubmit={(event) => {
@@ -58,15 +58,15 @@ export function PublicAreaPage() {
       <label>정렬<select name="sort" defaultValue={search.sort}><option value="curriculum">커리큘럼 순</option><option value="title">제목 순</option></select></label>
       <button className="secondary-button" type="submit">적용</button>
     </form>
-    <nav className="public-reader-actions" aria-label="주제 목차">{area.data.topics.map((t) => <Link key={t.id} to="/learning/$areaSlug" params={{ areaSlug }}
+    <nav className="public-topic-navigation" aria-label="주제 목차">{area.data.topics.map((t) => <Link key={t.id} to="/learning/$areaSlug" params={{ areaSlug }}
       search={{ ...defaultLearningSearch, topic: t.id }}>{t.title}</Link>)}</nav>
     {concepts.isPending ? <PageSkeleton rows={4} /> : concepts.isError ? <ErrorState onRetry={() => void concepts.refetch()} /> : <>
       {concepts.data.items.length === 0 && <EmptyState message="조건에 맞는 공개 개념이 없습니다." />}
-      <div className="public-curriculum">{concepts.data.items.map((c) => <article key={c.id}>
+      <div className="public-curriculum public-concept-list">{concepts.data.items.map((c) => <article key={c.id}>
         <span className="helper-text">{c.topicTitle} · 레벨 {c.level}</span>
         <h2><Link to="/concepts/$conceptId" params={{ conceptId: String(c.id) }}>{c.title} →</Link></h2><p>{c.summary}</p>
       </article>)}</div>
-      <nav className="public-reader-actions" aria-label="개념 페이지">
+      <nav className="public-page-navigation" aria-label="개념 페이지">
         <button className="secondary-button" disabled={!concepts.data.page.hasPrevious} onClick={() => void navigate({ search: { ...search, page: search.page - 1 } })}>이전</button>
         <span>{search.page + 1} / {Math.max(1, concepts.data.page.totalPages)}</span>
         <button className="secondary-button" disabled={!concepts.data.page.hasNext} onClick={() => void navigate({ search: { ...search, page: search.page + 1 } })}>다음</button>
