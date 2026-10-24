@@ -79,12 +79,3 @@
 .login-modal .auth-card { position: relative; width: 100%; box-sizing: border-box; padding-top: 3rem; }
 .login-modal h2 { margin: 0; font-size: 1.5rem; }
 .login-modal-close { position: absolute; top: 0.6rem; right: 0.6rem; min-width: 2.75rem; min-height: 2.75rem; }
-.public-curriculum { display: grid; gap: 1rem; }
-.public-curriculum > article { padding-block: 1rem; border-bottom: 1px solid var(--border-subtle); }
-.public-curriculum h2, .public-curriculum h3 { margin-block: 0 0.5rem; }
-.public-reader { max-width: 72rem; margin-inline: auto; }
-.public-reader .concept-reading-content { max-width: 46rem; margin-inline: auto; }
-.public-reader-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-block: 1.5rem; }
-.public-reader nav { display: flex; flex-wrap: wrap; gap: 1rem; margin-block: 1rem; }
-.public-filters { display: flex; flex-wrap: wrap; align-items: end; gap: 1rem; margin-block: 1.5rem; }
-.public-filters label { display: grid; gap: 0.3rem; }
