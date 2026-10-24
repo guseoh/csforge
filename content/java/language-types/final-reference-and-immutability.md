@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: final 클래스와 final 메서드 규칙 확인
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)"
+    title: "Java SE 25 API: List.copyOf"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 3
+    relationNote: 구조 변경 불가와 원본 변경 비반영, 가변 원소 공유의 경계 확인
 ---
 # final과 불변 객체는 같은 말이 아니다
 
@@ -59,12 +65,14 @@ names.add("kim");       // 가능
 
 여기서 `final`이 막는 것은 `names` 변수에 새로운 `List` 참조를 넣는 일입니다. 이미 가리키고 있는 `ArrayList`의 `add`를 막지는 않습니다.
 
-```text
-final names ─────> ArrayList
-    │                │
-    │ 재대입 금지     └─ 내부 원소 변경 가능
-    ▼
-다른 List 참조 X
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-value-reference",
+  "example": "final-list",
+  "title": "고정된 참조와 변경 가능한 대상",
+  "description": "final names는 같은 ArrayList를 계속 가리킵니다. names의 재대입은 금지되지만 names.add는 현재 객체를 변경할 수 있습니다."
+}
 ```
 
 따라서 `final List`를 “불변 리스트”라고 부르면 안 됩니다.
@@ -88,6 +96,8 @@ final class MemberNames {
 ```
 
 외부에서 받은 가변 리스트를 그대로 저장하면 호출자가 나중에 그 리스트를 바꾸면서 객체 상태까지 바꿀 수 있습니다. 그래서 필요하면 복사해서 소유권을 분리해야 합니다. 또한 내부 객체 자체가 가변이면 깊은 수준의 불변성은 별도로 검토해야 합니다.
+
+위 예제의 `List.copyOf` 결과에는 원소를 추가·제거할 수 없고, 원본 목록의 후속 구조 변경도 반영되지 않습니다. 원소가 불변인 `String`이므로 이 예제는 그 원소의 변경 경로도 차단합니다. 가변 객체를 원소로 사용하면 참조는 공유되므로 같은 결론을 그대로 적용할 수 없습니다. 또한 `copyOf`가 항상 새 객체를 할당한다는 보장과 혼동하지 않아야 합니다.
 
 ### final 메서드와 final 클래스는 의미가 다르다
 

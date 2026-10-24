@@ -26,8 +26,6 @@ references:
 
 Java에서 변수를 이해할 때 가장 먼저 구분할 것은 **변수 자체와 객체는 같은 것이 아니라는 점**입니다. `int`, `long`, `boolean` 같은 원시 타입 변수에는 해당 타입의 원시 값이 들어갑니다. 클래스·인터페이스·배열 타입 변수에는 객체나 배열에 접근하기 위한 **참조 값(reference value)**이 들어갑니다.
 
-![원시 값과 참조 값의 복사 비교](/learning/java/values-and-references.svg)
-
 | 코드 | 변수에 들어 있는 것 | 대입할 때 복사되는 것 |
 | --- | --- | --- |
 | `int count = 10` | 정수 값 `10` | `10` |
@@ -68,29 +66,17 @@ System.out.println(first.name); // lee
 
 `second = first`는 `Member` 객체를 하나 더 만들지 않습니다. `first`가 가진 **참조 값**을 `second`에 복사합니다. 따라서 변수는 둘이지만 두 변수가 같은 객체를 가리킬 수 있습니다.
 
-```text
-1) first = new Member()
-
-first ───────▶ Member { name = null }
-
-2) first.name = "kim"
-
-first ───────▶ Member { name = "kim" }
-
-3) second = first
-
-first  ──┐
-         ├────▶ Member { name = "kim" }
-second ──┘
-
-4) second.name = "lee"
-
-first  ──┐
-         ├────▶ Member { name = "lee" }
-second ──┘
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-value-reference",
+  "example": "assignment-copy",
+  "title": "값 복사·객체 공유·참조 재대입",
+  "description": "원시 값의 복사와 참조 값의 복사는 모두 별도 변수에 값을 넣습니다. 공유 객체의 상태 변경과 second의 재대입을 단계별로 구분합니다."
+}
 ```
 
-마지막 줄에서 바뀐 것은 `first`나 `second` 변수의 참조 값이 아닙니다. 두 변수가 함께 가리키는 **객체의 상태**가 바뀌었습니다.
+앞의 `second.name = "lee"` 문장에서 바뀐 것은 `first`나 `second` 변수의 참조 값이 아닙니다. 두 변수가 함께 가리키는 **객체의 상태**가 바뀌었습니다. 도식의 뒤쪽 단계에서는 이 변경과 `second`의 참조 재대입을 비교할 수 있습니다.
 
 ### 참조 값의 재대입과 객체 상태 변경은 다르다
 

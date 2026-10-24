@@ -38,6 +38,9 @@ public class LearningVisualizationValidator {
                 case "tcp-handshake" -> exactKeys(data, "clientIsn", "serverIsn")
                         && integer(data.get("clientIsn"), 0, 4_294_967_295L)
                         && integer(data.get("serverIsn"), 0, 4_294_967_295L);
+                case "java-value-reference" -> exactKeys(data, "example")
+                        && Set.of("assignment-copy", "final-list", "string-intern").contains(data.get("example"));
+                case "java-array-store", "java-definite-assignment" -> exactKeys(data);
                 default -> false;
             };
         } catch (RuntimeException exception) {

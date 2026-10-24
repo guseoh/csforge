@@ -21,6 +21,12 @@ references:
     language: en
     displayOrder: 2
     relationNote: 정수 연산과 오버플로 규칙 확인
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Math.html#toIntExact(long)"
+    title: "Java SE 25 API: Math.toIntExact"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 3
+    relationNote: long을 int로 바꿀 때 범위를 벗어나면 ArithmeticException으로 거부하는 계약 확인
 ---
 # 숫자 변환과 오버플로
 
@@ -43,6 +49,8 @@ int count = (int) total;
 ```
 
 이 코드는 컴파일되지만 `count`가 `3_000_000_000`이 되는 것은 아닙니다. 좁은 타입이 표현할 수 없는 상위 비트가 버려지면서 다른 값이 됩니다. 따라서 `(int)`를 적었다는 사실은 “안전하다”는 뜻이 아니라 **개발자가 정보 손실 가능성을 알고 변환을 요청했다**는 뜻에 가깝습니다.
+
+이 예제의 `count`는 `-1_294_967_296`입니다. 외부 ID처럼 잘못된 값이 다른 대상을 가리킬 수 있는 경계에서는 `Math.toIntExact(total)`로 범위를 벗어난 변환을 `ArithmeticException`으로 거부하거나, 허용 범위를 먼저 검사해야 합니다. 형변환 자체는 범위 검증이 아닙니다.
 
 ### `byte + byte`가 왜 `int`가 될까
 
@@ -88,12 +96,14 @@ long wrong = a + b;          // int 연산에서 이미 오버플로
 long right = (long) a + b;   // 한쪽을 long으로 올린 뒤 long 연산
 ```
 
+`wrong`은 `-294_967_296L`, `right`는 `4_000_000_000L`입니다. 이미 계산된 결과를 `(long) (a + b)`로 바꾸어도 `wrong`과 같은 값이 됩니다. 또한 `int`에서 `float`으로의 변환도 언어상 확장 변환이지만 큰 정수의 정밀도는 잃을 수 있으므로, **확장 변환이면 항상 정확하다**고 일반화하면 안 됩니다.
+
 ### 실수 타입은 다른 문제를 가진다
 
 `float`와 `double`은 매우 큰 범위를 표현할 수 있지만 모든 십진수를 정확하게 표현하는 것은 아닙니다.
 
 ```java
-System.out.println(0.1 + 0.2); // 보통 기대하는 0.3과 정확히 같지 않게 보일 수 있음
+System.out.println(0.1 + 0.2); // 0.30000000000000004
 ```
 
 이것은 정수 오버플로와 다른 문제입니다. 금액처럼 십진수 정확성이 중요한 영역에서는 단순히 `double`을 사용하는 것보다 `BigDecimal` 같은 타입을 검토해야 합니다. 자세한 숫자 모델링은 별도 주제에서 다룹니다.

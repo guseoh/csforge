@@ -245,14 +245,14 @@
   {
     "kind": "question",
     "contentKey": "java.core.language-types.numeric-conversion-overflow.q2",
-    "promptMarkdown": "다음 코드의 `total`이 기대한 `4_000_000_000L`이 되지 않을 수 있는 이유는 무엇인가요?\n\n```java\nlong total = 2_000_000_000 + 2_000_000_000;\n```",
+    "promptMarkdown": "다음 코드의 `total`이 기대한 `4_000_000_000L`이 되지 않는 이유는 무엇인가요?\n\n```java\nlong total = 2_000_000_000 + 2_000_000_000;\n```",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["java.core.language-types.numeric-conversion-overflow"],
     "choices": [
       {"key": "A", "content": "대입 대상이 `long`이므로 오른쪽 계산도 처음부터 `long`이라 항상 정확하다", "displayOrder": 0, "rationaleMarkdown": "대입 대상이 `long`이라는 사실이 이미 수행한 덧셈을 사후에 승격시키지는 않는다. 덧셈은 먼저 `int`로 계산된다."},
-      {"key": "B", "content": "오른쪽 두 `int` 값의 덧셈이 `int`로 먼저 계산되어 그 단계에서 오버플로가 발생할 수 있다", "displayOrder": 1, "rationaleMarkdown": "두 정수 리터럴이 `int`이므로 합이 `int`로 계산되고 `long` 대입 전에 오버플로가 발생할 수 있다."},
+      {"key": "B", "content": "오른쪽 두 `int` 값의 덧셈이 `int`로 먼저 계산되어 그 단계에서 오버플로가 발생한다", "displayOrder": 1, "rationaleMarkdown": "두 정수 리터럴이 `int`이므로 합이 `int`로 계산되고 `long` 대입 전에 오버플로가 발생한다."},
       {"key": "C", "content": "컴파일러가 자동으로 `BigInteger`로 변환한다", "displayOrder": 2, "rationaleMarkdown": "Java가 이 `int` 표현식을 `BigInteger`로 암시적으로 변환하지 않는다. 큰 정수 연산에는 명시적으로 알맞은 타입을 사용한다."},
       {"key": "D", "content": "`long`에는 정수 결과를 대입할 수 없다", "displayOrder": 3, "rationaleMarkdown": "`int`에서 `long`으로의 대입은 확장 변환이므로 가능하다. 문제는 이미 오버플로가 발생한 중간 `int` 결과다."}
     ],
@@ -342,7 +342,7 @@
       {"key": "D", "content": "`equals` 또는 `null`을 고려한 값 비교를 사용한다", "displayOrder": 3, "rationaleMarkdown": "숫자 값 비교가 목적이면 `equals`를 사용한다. `null`이 가능하다면 그 경우도 명시적으로 처리한다."}
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "`Integer` 객체에 대한 `==`는 객체 동일성을 비교하므로 숫자 값 비교 수단으로 삼으면 안 된다. 작은 값은 래퍼 캐시 때문에 우연히 같은 객체가 될 수 있지만 이 코드의 `1000`에 그런 결과를 기대할 수 없다. 값의 동등성이 목적이면 `equals` 등을 사용한다."
+    "explanationMarkdown": "`Integer` 객체끼리의 `==`는 객체 동일성을 비교하므로 숫자 값 비교 수단으로 삼으면 안 됩니다. -128~127 범위의 `int` 상수 표현식을 박싱할 때의 동일성은 JLS가 보장하지만, 이 코드의 `1000`에는 그 보장이 없습니다. 작은 값이 같아지는 경우를 모두 우연이라고 하거나, `1000`의 동일성을 항상 `false`라고 단정해서도 안 됩니다. 값의 동등성이 목적이면 `equals` 등을 사용합니다."
   },
   {
     "kind": "question",
@@ -813,7 +813,7 @@
     "conceptKeys": ["java.core.language-types.string-pool-interning"],
     "choices": [
       {"key": "A", "content": "내용 비교 목적이면 `==`의 객체 동일성 결과에 기대지 말고 `equals`를 사용한다", "displayOrder": 0, "rationaleMarkdown": "문자 내용 비교가 목적이라면 문자열 결합이 컴파일 시점에 계산되든 실행 시점에 수행되든 `equals`를 사용한다."},
-      {"key": "B", "content": "`+` 결과는 언제나 리터럴과 같은 객체 동일성을 가진다", "displayOrder": 1, "rationaleMarkdown": "변수가 포함된 실행 시점 문자열 결합이 문자열 풀의 리터럴과 같은 참조 동일성을 갖는다고 보장되지 않습니다."},
+      {"key": "B", "content": "`+` 결과는 언제나 리터럴과 같은 객체 동일성을 가진다", "displayOrder": 1, "rationaleMarkdown": "이 코드의 `a`는 상수 변수가 아닙니다. 비상수 문자열 연결은 새 `String`을 만들므로 `b`와 리터럴의 참조 동일성은 `false`입니다. 내용 비교에는 `equals`를 사용합니다."},
       {"key": "C", "content": "`+` 결과는 절대 `String`이 아니다", "displayOrder": 2, "rationaleMarkdown": "문자열 연결 결과도 `String` 값이다. 쟁점은 타입이 아니라 객체 동일성이다."},
       {"key": "D", "content": "`intern()`을 호출하면 `String`이 변경 가능해진다", "displayOrder": 3, "rationaleMarkdown": "`intern()`은 `String`을 바꾸지 않는다. `String`은 불변이고 내용 비교는 intern 없이 `equals`로 수행한다."}
     ],

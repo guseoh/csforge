@@ -63,15 +63,15 @@ topics:
     objective: 원시 값과 참조 값을 구분하고 참조를 보장된 물리 메모리 주소와 동일시하지 않는다.
     density: CORE
     visualization: DIAGRAM
-    visualizationNote: 원시 값 복사와 두 변수가 같은 객체를 가리키는 상황을 비교한다.
+    visualizationNote: 원시 값 복사·공유 객체 변경·참조 재대입을 같은 코드의 V2 단계 도식으로 비교한다. 참조는 물리 주소로 표시하지 않는다.
   - key: java.core.language-types.variables-scope-definite-assignment
     title: "변수, 범위와 확정 할당"
     order: 20
     level: 1
     objective: "필드·지역 변수·매개변수의 차이, 범위(scope), 초기화와 확정 할당(definite assignment) 규칙을 구분한다."
     density: CORE
-    visualization: TEXT
-    visualizationNote: 작은 범위 구조와 변수를 사용할 수 있는 시점을 표시한다.
+    visualization: DIAGRAM
+    visualizationNote: 두 분기에서 result를 대입한 뒤 합류하는 V1 도식으로 확정 할당을 보여 주며 범위·수명과 구별한다.
   - key: java.core.language-types.numeric-conversion-overflow
     title: "숫자 변환과 오버플로"
     order: 30
@@ -105,14 +105,15 @@ topics:
     visualization: DIAGRAM
     prerequisites:
     - java.core.language-types.primitive-reference-values
-    visualizationNote: "`Object[]` 변수가 `String[]` 배열을 가리킬 때 잘못된 저장이 실행 시점에 차단되는 흐름을 보여 준다."
+    visualizationNote: "같은 String[]의 두 참조와 성공한 String 저장·실패한 Integer 저장을 V2 도식으로 추적한다. null 허용과 앞선 저장 보존을 표시한다."
   - key: java.core.language-types.final-reference-and-immutability
     title: "final과 불변 객체는 같은 말이 아니다"
     order: 70
     level: 1
     objective: "`final`이 변수의 재대입을 제한하는 것과 객체의 불변성을 보장하는 것은 다름을 구분하고, 메서드와 클래스에 적용할 때의 의미도 이해한다."
     density: CORE
-    visualization: NONE
+    visualization: DIAGRAM
+    visualizationNote: "V1 참조 관계도에서 final names의 재대입 금지와 가변 ArrayList 내용 변경 허용을 구별한다."
   - key: java.core.language-types.string-immutability-equality
     title: "String의 불변성과 문자열 비교"
     order: 80
@@ -129,10 +130,10 @@ topics:
     level: 2
     objective: "문자열 리터럴(string literal)의 재사용, 문자열 풀(string pool), `intern()`의 의미를 이해하되 이를 모든 `String` 생성과 메모리 동작에 대한 단순한 규칙으로 일반화하지 않는다."
     density: STANDARD
-    visualization: TEXT
+    visualization: DIAGRAM
     prerequisites:
     - java.core.language-types.string-immutability-equality
-    visualizationNote: "문자열 리터럴이 재사용되는 경우와 실행 시점에 별도 String 객체가 만들어지는 경우를 구분한다."
+    visualizationNote: "V1 관계도에서 리터럴과 intern 반환의 같은 대표 참조, new의 별도 객체를 구별한다. pool의 물리 위치는 고정하지 않는다."
   - key: java.core.language-types.stringbuilder-mutable-text
     title: "StringBuilder와 반복 문자열 조립"
     order: 100
@@ -142,7 +143,7 @@ topics:
     visualization: DIAGRAM
     prerequisites:
     - java.core.language-types.string-immutability-equality
-    visualizationNote: "String은 연결할 때마다 새 결과를 만들 수 있고 StringBuilder는 하나의 변경 가능한 버퍼에 `append`한 뒤 String으로 확정하는 흐름을 비교한다."
+    visualizationNote: "기존 static-flow V1으로 같은 builder의 append 누적과 toString 시점의 불변 String 결과를 연결한다. 성능·성장률을 고정하지 않는다."
 - key: java.core.object-model
   title: "객체 생성, 상태와 객체지향"
   order: 20

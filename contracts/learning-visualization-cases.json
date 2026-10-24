@@ -138,5 +138,70 @@
     "name": "trailing-json",
     "valid": false,
     "source": "{\"version\": 1, \"title\": \"\\ud559\\uc2b5 \\ub3c4\\uc2dd\", \"description\": \"\\uc0c1\\ud0dc \\ubcc0\\ud654\\uc640 \\uacb0\\uacfc\\ub97c \\ubcf8\\ubb38\\uacfc \\ud568\\uaed8 \\ud655\\uc778\\ud569\\ub2c8\\ub2e4.\", \"type\": \"static-flow\", \"labels\": [\"\\uc694\\uccad\", \"\\ucc98\\ub9ac\", \"\\uc751\\ub2f5\"]} {}"
+  },
+  {
+    "name": "language-types-valid-0",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"assignment-copy\"}"
+  },
+  {
+    "name": "language-types-valid-1",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"final-list\"}"
+  },
+  {
+    "name": "language-types-valid-2",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"string-intern\"}"
+  },
+  {
+    "name": "language-types-valid-3",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-array-store\"}"
+  },
+  {
+    "name": "language-types-valid-4",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-definite-assignment\"}"
+  },
+  {
+    "name": "language-types-invalid-0",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\"}"
+  },
+  {
+    "name": "language-types-invalid-1",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":null}"
+  },
+  {
+    "name": "language-types-invalid-2",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"unsupported\"}"
+  },
+  {
+    "name": "language-types-invalid-3",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"assignment-copy\",\"nodes\":[]}"
+  },
+  {
+    "name": "language-types-invalid-4",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-array-store\",\"elements\":[1]}"
+  },
+  {
+    "name": "language-types-invalid-5",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-definite-assignment\",\"condition\":\"eval(code)\"}"
+  },
+  {
+    "name": "language-types-invalid-6",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"<script>\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-array-store\"}"
+  },
+  {
+    "name": "language-types-invalid-7",
+    "valid": false,
+    "source": "{\"version\":2,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"string-intern\"}"
   }
 ]

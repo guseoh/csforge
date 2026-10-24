@@ -27,6 +27,9 @@ Markdown의 예약 fenced code 언어 `csforge-viz`에 JSON 객체 하나를 넣
 | `java-pass-by-value` | V2 단계형 | `initialName`, `replacementName` | 한글·영문·숫자·공백·`_ . -` 중 1~12자, 공백만은 거부 |
 | `tcp-handshake` | V2 단계형 | `clientIsn`, `serverIsn` | 각각 0~4294967295 정수 |
 | `min-heap` | V3 조작형 | `initialValues` | 최대 15개, -99~99 정수. 입력 순서대로 offer하여 초기 힙 구성 |
+| `java-value-reference` | V2 또는 V1 | `example` | `assignment-copy`는 본문의 원시 복사·참조 공유·재대입 9단계. `final-list`, `string-intern`은 각각 고정 관계를 보여 주는 V1 |
+| `java-array-store` | V2 단계형 | 없음 | 본문의 String[2] 생성→Object[] 별칭→String 저장→Integer 검사→저장 거부 5단계 |
+| `java-definite-assignment` | V1 정적 SVG | 없음 | score 조건의 양쪽 분기에서 result를 대입하고 합류하는 고정 if/else 예제 |
 
 모든 타입은 `version: 1`, `title`(1~100자), `description`(1~600자)을 요구한다.
 설명은 조작 없이도 핵심 계약·결과를 읽을 수 있는 요약이어야 한다. 알 수 없는 필드는 거부한다.
@@ -35,7 +38,7 @@ Markdown의 예약 fenced code 언어 `csforge-viz`에 JSON 객체 하나를 넣
 
 좌표·색상·SVG 문자열·HTML·URL·임의 코드·컴포넌트 경로를 콘텐츠에서 받지 않는다.
 새 타입은 명시적인 Zod 계약, 서버 계약, 순수 상태 모델, 승인된 렌더러를 함께 추가한다.
-현재 V1은 순차 흐름만 지원하며 범용 그래프 편집기나 V4 정책 실험 엔진은 구현하지 않는다.
+V1은 순차 흐름과 승인된 고정 관계/분기 예제를 지원하며 범용 그래프 편집기나 V4 정책 실험 엔진은 구현하지 않는다.
 
 ## 구현 책임
 
@@ -46,6 +49,7 @@ Markdown의 예약 fenced code 언어 `csforge-viz`에 JSON 객체 하나를 넣
 - `StepDiagram`: 참조 값 복사·TCP 메시지/상태 표시와 단계 이동.
 - `InteractiveDiagram`: 정수 입력, 실제 힙 연산 호출, 배열/트리/기록의 동일 snapshot 표시.
 - `visualization-models.ts`: 브라우저·React와 독립적인 상태 및 알고리즘 계산. 조작 상태는 해당 Reader에서만 유지하며 DB의 진도·평가·복습 상태와 섞지 않는다.
+- `language-type-models.ts`: 첫 Java Pack의 값·참조 및 배열 저장 snapshot. `LanguageValueDiagram`, `ArrayStoreDiagram`, `DefiniteAssignmentDiagram`은 같은 canvas/노드/간선/컨트롤과 테마 토큰을 재사용한다.
 
 ## Import와 오류 경로
 
@@ -132,3 +136,17 @@ SVG는 컴포넌트에서 생성하므로 외부 SVG fetch 실패나 외부 이�
 - PostgreSQL Import 통합 테스트는 일반 들여쓰기 코드와 정상 리스트 fence의 Preview→Apply→재수입 UNCHANGED 및 잘못된 리스트 선언의 Apply 거부/저장 본문 보존을 검증하고 통과했다. canonical bootstrap 멱등성 테스트도 통과했다.
 - 격리 API의 Guest/Owner 브라우저 검증에서 offer `[10,30,20,5]`→비교/교환→`[5,10,20,30]`, poll `[30,10,20]`→비교/교환→`[10,30,20]`를 확인했다. 완료 전 조작 차단, 역이동, 초기화, Owner autosave 후 `1/6` 유지, 1440px light/390px dark에서 기존 읽기·권한·넘침 처리를 확인했다.
 - 전체 Repository Validation은 push로 실행되는 기존 CI의 Backend tests/build, Frontend lint/test/build, Compose validation 단계로 확인한다. Production 배포 job은 main에만 해당하므로 refactor에서는 실행하지 않는다.
+
+## 첫 Content Pack 확장 (#278)
+
+새 세 타입은 `J-language-types`에 실제 필요한 예제만 다룬다. 공통 JSON `version: 1`, 길이·개수 제한,
+기존 네 타입과 CommonMark fence 인식은 유지했다. `example`은 위 세 문자열만 받으며 좌표·객체 목록·조건식·실행 코드를 받지 않는다.
+추가 옵션이 없는 두 타입도 공통 필드 외의 속성을 거부한다. Java/TypeScript는 같은 정상·오류 fixture를 읽는다.
+
+값/참조의 A/B는 논리적 식별자이며 물리 주소, stack/heap 배치, GC 회수 시점을 뜻하지 않는다.
+배열의 선언 타입과 실제 원소 타입을 분리하고, 실패한 두 번째 저장이 앞선 성공한 저장을 되돌리지 않는다는 것을 표시한다.
+확정 할당 도식은 본문의 고정 if/else 예제를 설명하며 임의 Java 코드의 컴파일 가능성을 판정하는 도구가 아니다.
+새 상태도 Reader의 일시적인 표시 상태이며 학습 이력이나 Import 데이터 모델에 저장하지 않는다.
+
+Pack별 변경·정확성 근거·Import 및 브라우저 검증은
+[J-language-types 완료 기록](content-corrections/issue-278/J-language-types/README.md)에 남긴다.

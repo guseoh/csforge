@@ -10,8 +10,12 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
@@ -426,6 +430,69 @@ class ContentImportIntegrationTest {
         assertEquals(200, applied.get("status").asInt());
         assertEquals(100, jdbc.queryForObject(
                 "select count(*) from topic where content_key like 'batch.topic.%'", Integer.class));
+    }
+
+    @Test
+    void languageTypesPackPreviewUpdateAndExactReimportPreservePersonalHistory() throws Exception {
+        List<Part> pack = new ArrayList<>();
+        var topics = objectMapper.readTree(Files.readString(Path.of("../content/java/topics.json")));
+        for (var topic : topics) {
+            if (topic.get("contentKey").asText().equals("java.core.language-types")) {
+                pack.add(new Part("topic.json", "application/json", topic.toString()));
+            }
+        }
+        try (var paths = Files.list(Path.of("../content/java/language-types"))) {
+            for (Path path : paths.sorted().toList()) {
+                pack.add(new Part(path.getFileName().toString(), path.toString().endsWith(".md") ? "text/markdown" : "application/json", Files.readString(path)));
+            }
+        }
+        assertEquals(12, pack.size());
+        // Seed the same canonical identities with older bodies, then exercise real UPDATE paths.
+        List<Part> older = pack.stream().map(part -> part.type().equals("text/markdown")
+                ? new Part(part.name(), part.type(), part.content().split("\\r?\\n---\\r?\\n", 2)[0] + "\n---\n# 이전 본문\n")
+                : part).toList();
+        JsonNode initial = json(post("/api/imports/preview", older, null)).get("body");
+        assertEquals(0, initial.get("totals").get("errors").asInt(), initial::toString);
+        assertEquals(200, post("/api/imports/apply", older, initial.get("previewDigest").asText()).statusCode());
+        assertEquals(10, jdbc.queryForObject("select count(*) from concept", Integer.class));
+        assertEquals(56, jdbc.queryForObject("select count(*) from question", Integer.class));
+        List<Map<String, Object>> identities = jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id");
+        List<Map<String, Object>> links = jdbc.queryForList("select * from question_concept order by question_id, concept_id");
+        for (var concept : identities) {
+            long conceptId = ((Number) concept.get("id")).longValue();
+            jdbc.update("insert into concept_progress (concept_id, status, bookmarked) values (?, 'LEARNING', true)", conceptId);
+            jdbc.update("insert into personal_note (concept_id, content) values (?, ?)", conceptId, "보존할 노트: " + concept.get("content_key"));
+            long questionId = jdbc.queryForObject("select id from question where content_key = ?", Long.class, concept.get("content_key") + ".q1");
+            long attemptId = insertAttempt(questionId);
+            jdbc.update("insert into quiz_question (quiz_session_id, question_id, position) select quiz_session_id, question_id, 0 from attempt where id = ?", attemptId);
+            jdbc.update("insert into wrong_note (question_id, status, wrong_count, first_wrong_at, last_wrong_at, last_wrong_attempt_id) values (?, 'ACTIVE', 1, current_timestamp, current_timestamp, ?)", questionId, attemptId);
+            jdbc.update("insert into review_schedule (question_id, status, stage, due_at, last_processed_attempt_id) values (?, 'SCHEDULED', 1, current_timestamp + interval '1 day', ?)", questionId, attemptId);
+            jdbc.update("insert into review_history (question_id, quiz_session_id, attempt_id, result, stage_before, stage_after, reviewed_at, next_due_at) select question_id, quiz_session_id, id, 'WRONG', 1, 1, current_timestamp, current_timestamp + interval '1 day' from attempt where id = ?", attemptId);
+        }
+        Map<String, List<Map<String, Object>>> before = languageTypesHistorySnapshot();
+        JsonNode preview = json(post("/api/imports/preview", pack, null)).get("body");
+        assertTrue(preview.get("canApply").asBoolean(), preview::toString);
+        assertEquals(0, preview.get("totals").get("errors").asInt());
+        assertEquals(10, preview.get("totals").get("updated").asInt());
+        assertEquals(200, post("/api/imports/apply", pack, preview.get("previewDigest").asText()).statusCode());
+        assertEquals(before, languageTypesHistorySnapshot());
+        assertEquals(identities, jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id"));
+        assertEquals(links, jdbc.queryForList("select * from question_concept order by question_id, concept_id"));
+        JsonNode repeated = json(post("/api/imports/preview", pack, null)).get("body");
+        assertEquals(67, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
+        assertEquals(0, repeated.get("totals").get("updated").asInt());
+        assertEquals(0, repeated.get("totals").get("created").asInt());
+        assertEquals(0, repeated.get("totals").get("errors").asInt());
+        assertEquals(200, post("/api/imports/apply", pack, repeated.get("previewDigest").asText()).statusCode());
+        assertEquals(before, languageTypesHistorySnapshot());
+    }
+
+    private Map<String, List<Map<String, Object>>> languageTypesHistorySnapshot() {
+        Map<String, List<Map<String, Object>>> result = new LinkedHashMap<>();
+        for (String table : List.of("concept_progress", "personal_note", "quiz_session", "quiz_question", "attempt", "wrong_note", "review_schedule", "review_history")) {
+            result.put(table, jdbc.queryForList("select * from " + table + " order by 1"));
+        }
+        return result;
     }
 
     @Test
