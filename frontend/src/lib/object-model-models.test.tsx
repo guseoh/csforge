@@ -13,6 +13,31 @@ describe('Java object model snapshots', () => {
     expect(initializationFrames[0].output).toEqual([])
     for (let i = 1; i < initializationFrames.length; i++) expect(initializationFrames[i].output.slice(0, -1)).toEqual(initializationFrames[i - 1].output)
   })
+  it('maps each initialization frame to the actual Markdown example and its cumulative output', () => {
+    const source = readFileSync(new URL('../../../content/java/object-model/initialization-order-constructor-chaining.md', import.meta.url), 'utf8')
+    const example = [...source.matchAll(/```java\r?\n([\s\S]*?)```/g)].map((match) => match[1]).find((code) => code.includes('noarg prologue'))
+    expect(example).toBeDefined()
+    const steps = [
+      ['기본값', ['new Child();'], []],
+      ['Child() 전반부', ['System.out.println("noarg prologue");', 'this("kim");'], ['noarg prologue']],
+      ['Child(String) 전반부', ['if (name == null) throw new IllegalArgumentException();', 'System.out.println("target prologue");'], ['noarg prologue', 'target prologue']],
+      ['Parent() 실행', ['super();', 'Parent() { System.out.println("parent"); }'], ['noarg prologue', 'target prologue', 'parent']],
+      ['Child 필드 초기화 식', ['String name = initialName();'], ['noarg prologue', 'target prologue', 'parent', 'field']],
+      ['Child 인스턴스 초기화 블록', ['{ System.out.println("block:" + name); }'], ['noarg prologue', 'target prologue', 'parent', 'field', 'block:unset']],
+      ['Child(String) 후반부', ['this.name = name;', 'System.out.println("target epilogue:" + this.name);'], ['noarg prologue', 'target prologue', 'parent', 'field', 'block:unset', 'target epilogue:kim']],
+      ['Child() 후반부', ['System.out.println("noarg epilogue");'], ['noarg prologue', 'target prologue', 'parent', 'field', 'block:unset', 'target epilogue:kim', 'noarg epilogue']],
+    ] as const
+    expect(initializationFrames).toHaveLength(steps.length)
+    steps.forEach(([location, statements, output], index) => {
+      const frame = initializationFrames[index]
+      expect(frame.location).toBe(location)
+      expect(frame.code.split('\n')).toEqual(statements)
+      for (const statement of statements) expect(example).toContain(statement)
+      expect(frame.output).toEqual(output)
+    })
+    expect(example).toContain('System.out.println("field");')
+    expect(example).toContain('return "unset";')
+  })
   it('keeps static call checking separate from the same invocation dispatch and output', () => {
     expect(dispatchFrames.map((f) => f.result)).toEqual(['아직 실행 전', 'Dog.sound() 선택', 'dog'])
   })
