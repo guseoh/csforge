@@ -312,7 +312,7 @@ topics:
     level: 2
     objective: "equals와 hashCode의 계약을 함께 지키고 위반 시 해시 기반 컬렉션에서 발생하는 문제를 설명한다."
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
     prerequisites:
     - java.core.object-contracts.equals-contract
     visualizationNote: "같은 객체가 같은 해시 후보 영역으로 이동한 뒤 equals로 확인되는 과정을 보여 준다."
@@ -336,7 +336,7 @@ topics:
     level: 2
     objective: "여러 기준을 안전하게 조합한 사용자 정의 순서를 만들고 뺄셈 기반 비교의 오버플로 위험을 피한다."
     density: CORE
-    visualization: NONE
+    visualization: DIAGRAM
 - key: java.core.enum-modeling
   title: "열거형(Enum)과 타입 안전한 모델링"
   order: 50
@@ -457,7 +457,7 @@ topics:
     level: 1
     objective: "순서, 중복 허용 여부, 원소 포함 여부와 키-값 대응 요구에 따라 `List`·`Set`·`Map` 추상화를 선택한다."
     density: CORE
-    visualization: NONE
+    visualization: DIAGRAM
   - key: java.core.collections.arraylist-linkedlist-tradeoff
     title: "ArrayList와 LinkedList의 실제 선택 기준"
     order: 20
@@ -502,7 +502,7 @@ topics:
     level: 1
     objective: "선입선출 큐, 양끝 큐, 스택의 동작을 구분하고 여러 상황에서 ArrayDeque가 좋은 기본 선택인 이유를 설명한다."
     density: CORE
-    visualization: NONE
+    visualization: DIAGRAM
   - key: java.core.collections.priorityqueue
     title: "PriorityQueue와 우선순위 처리"
     order: 70
@@ -519,7 +519,7 @@ topics:
     level: 2
     objective: "`Iterable`·`Iterator`와 확장 `for` 문의 관계, 순회 중 안전한 수정 방법, 빠른 실패(fail-fast) 동작의 계약 범위를 설명한다."
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
     visualizationNote: "`Iterator`의 커서와 구조 변경 검사 방식을 단순화해 보여 준다."
   - key: java.core.collections.immutable-unmodifiable-collections
     title: "변경 불가 컬렉션과 수정 불가 뷰"
@@ -527,7 +527,7 @@ topics:
     level: 2
     objective: "`List.of`·`copyOf`처럼 변경할 수 없는 컬렉션과 원본을 감싼 수정 불가 뷰를 구분하고, 소유권과 변경 전파의 차이를 설명한다."
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
     prerequisites:
     - java.core.object-model.immutability-defensive-copy
     visualizationNote: "원본 컬렉션 변경이 변경 불가 뷰와 독립 복사본에 각각 어떻게 반영되는지 비교한다."
@@ -550,7 +550,7 @@ topics:
     level: 2
     objective: "`List<Integer>`가 `List<Number>`의 하위 타입이 아닌 이유를 잘못된 값 쓰기 가능성과 연결해 설명한다."
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
     prerequisites:
     - java.core.language-types.arrays-covariance-runtime-check
     visualizationNote: "배열 공변성과 제네릭 불공변성을 안전하지 않은 값 쓰기 관점에서 비교한다."
@@ -587,7 +587,7 @@ topics:
     level: 3
     objective: "제네릭 가변 인자에서 힙 오염이 발생할 수 있는 이유와 `@SafeVarargs`를 사용할 수 있는 조건을 설명한다."
     density: STANDARD
-    visualization: NONE
+    visualization: DIAGRAM
     prerequisites:
     - java.core.generics.type-erasure-reifiable-types
 - key: java.core.exceptions-resources
@@ -917,7 +917,7 @@ topics:
     level: 1
     objective: "바이트와 문자, 문자셋 인코딩·디코딩을 구분하고 잘못된 문자셋 경계에서 문자열이 깨지는 이유를 설명한다."
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
     visualizationNote: "바이트 열이 명시된 문자셋을 거쳐 문자로 바뀌는 경계를 보여 준다."
   - key: java.core.io-nio.input-output-reader-writer
     title: "입출력과 Reader·Writer"
@@ -932,7 +932,7 @@ topics:
     level: 1
     objective: "버퍼링이 작은 하위 I/O 호출 횟수를 줄여 처리 효율을 높이는 원리와 `flush` 시점을 이해한다."
     density: CORE
-    visualization: NONE
+    visualization: DIAGRAM
   - key: java.core.io-nio.path-files-api
     title: "Path와 Files API"
     order: 40

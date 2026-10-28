@@ -32,14 +32,18 @@ references:
 
 파일과 네트워크가 실제로 주고받는 것은 바이트입니다. 반면 Java의 `String`은 문자 정보를 다룹니다. 따라서 외부 바이트와 문자열 사이를 오갈 때는 **어떤 규칙으로 바이트와 문자를 서로 변환할지**가 필요하고, 그 규칙이 문자셋입니다.
 
-```text
-문자열
-  │ charset으로 encode
-  ▼
-바이트
-  │ charset으로 decode
-  ▼
-문자열
+```csforge-viz
+{
+  "version": 1,
+  "type": "static-flow",
+  "title": "바이트와 문자 사이의 경계",
+  "description": "InputStreamReader가 지정 Charset으로 바이트를 디코딩합니다. 모든 Reader가 바이트 변환기를 내장하는 것은 아닙니다.",
+  "labels": [
+    "InputStream: bytes",
+    "InputStreamReader: Charset decode",
+    "Reader: UTF-16 코드 단위"
+  ]
+}
 ```
 
 문자에서 바이트로 바꾸는 것을 인코딩(encoding), 바이트에서 문자로 바꾸는 것을 디코딩(decoding)이라고 합니다.
@@ -53,12 +57,7 @@ String restored = new String(bytes, StandardCharsets.UTF_8);
 
 같은 문자도 문자셋에 따라 서로 다른 바이트열로 표현될 수 있습니다. 반대로 같은 바이트열을 다른 문자셋으로 디코딩하면 다른 문자나 디코딩 오류가 생길 수 있습니다.
 
-```text
-UTF-8로 만든 바이트
-      │
-      ├─ UTF-8로 decode  → 의도한 문자
-      └─ 다른 charset    → 다른 문자 또는 디코딩 오류
-```
+UTF-8로 만든 바이트를 같은 문자셋으로 해석해야 의도한 문자를 얻습니다. 다른 문자셋은 다른 결과나 디코딩 오류를 만들 수 있습니다.
 
 그래서 파일이나 HTTP 페이로드를 읽을 때는 "문자열로 바꾼다"보다 먼저 **그 바이트가 어떤 문자셋으로 만들어졌는가**를 확인해야 합니다.
 
@@ -99,17 +98,6 @@ byte[] bytes = text.getBytes(StandardCharsets.UTF_8);
 
 `InputStream`은 바이트를 읽고 `Reader`는 문자를 읽습니다. 바이트 기반 입력을 문자 기반 입력으로 바꾸는 지점에서 문자셋 디코딩이 필요합니다.
 
-```text
-파일 / 네트워크
-    │ bytes
-    ▼
-InputStream
-    │ Charset으로 decode
-    ▼
-Reader
-    │ characters
-    ▼
-Java 코드
-```
+바이트 입력과 Reader 사이의 디코딩은 InputStreamReader 같은 변환기가 담당합니다. StringReader처럼 이미 문자를 읽는 Reader에는 이 변환이 필요하지 않습니다.
 
 인코딩 문제를 찾을 때는 "문자가 깨졌다"는 결과만 보지 말고 **어디에서 바이트가 `String`으로 바뀌었는지**를 찾는 것이 가장 중요합니다. 그 경계의 문자셋이 생산자와 소비자의 계약과 일치해야 합니다.

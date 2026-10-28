@@ -278,5 +278,90 @@
     "name": "object-model-invalid-html",
     "valid": false,
     "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"<script>\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"dispatch\"}"
+  },
+  {
+    "name": "java-api hash-contract",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"hash-contract\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api comparator",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"comparator\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api invariance",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"invariance\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api pecs",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"pecs\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api heap-pollution",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"heap-pollution\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api map-views",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"map-views\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api list-layout",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"list-layout\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api hash-lookup",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"hash-lookup\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api deque",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"deque\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api iterator",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"iterator\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api view-copy",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"view-copy\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api buffer",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"buffer\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api selector",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"selector\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "invalid java-api unknown{}",
+    "valid": false,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"unknown\", \"title\": \"Java API 계약\", \"description\": \"고정 예제입니다.\"}"
+  },
+  {
+    "name": "invalid java-api buffer{'code': 'evil()'}",
+    "valid": false,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"buffer\", \"title\": \"Java API 계약\", \"description\": \"고정 예제입니다.\", \"code\": \"evil()\"}"
+  },
+  {
+    "name": "invalid java-api selector{'nodes': []}",
+    "valid": false,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"selector\", \"title\": \"Java API 계약\", \"description\": \"고정 예제입니다.\", \"nodes\": []}"
+  },
+  {
+    "name": "invalid java-api {}",
+    "valid": false,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"\", \"title\": \"Java API 계약\", \"description\": \"고정 예제입니다.\"}"
   }
 ]

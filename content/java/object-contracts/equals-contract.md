@@ -21,6 +21,8 @@ references:
 참조 타입에서 `==`는 두 참조가 같은 객체를 가리키는지 비교합니다. 반면 `equals`는 타입이 정의한 **논리적 동등성**을 표현할 수 있습니다.
 
 ```java
+record Money(long amount) {}
+
 Money a = new Money(10_000);
 Money b = new Money(10_000);
 
@@ -43,6 +45,8 @@ System.out.println(a.equals(b));  // 값 동등성 계약에 따라 true 가능
 이 규칙이 깨지면 비교 순서에 따라 결과가 달라지거나 컬렉션이 기대하는 “같은 값”의 의미가 불안정해질 수 있습니다.
 
 ### 가장 중요한 설계는 비교에 사용할 상태를 정하는 것이다
+
+아래는 통화까지 값의 의미에 포함하는 별도 설계의 필드 골격입니다. 앞의 단일 금액 record와 같은 선언을 함께 사용하는 코드는 아닙니다.
 
 ```java
 final class Money {
@@ -70,11 +74,7 @@ voucher.equals(money)  → false
 
 `HashSet`, `HashMap` 같은 자료구조는 `equals`와 `hashCode`를 함께 사용합니다. 논리적으로 같은 객체라면 같은 hashCode를 반환해야 합니다.
 
-```text
-논리적 동등성을 결정하는 상태
-        ├─ equals
-        └─ hashCode에도 일관되게 반영
-```
+`equals`와 `hashCode`는 같은 논리적 동등성을 기준으로 설계해야 합니다.
 
 정확한 해시 계약과 충돌 문제는 다음 Concept에서 다룹니다. 여기서는 `equals`를 바꿨다면 `hashCode`도 같은 동등성 의미를 따르는지 반드시 확인해야 한다는 점만 연결하면 됩니다.
 

@@ -27,6 +27,8 @@ public class LearningVisualizationValidator {
                     || !text(data.get("title"), 100) || !text(data.get("description"), 600)
                     || !(data.get("type") instanceof String type)) return false;
             return switch (type) {
+                case "java-api-contract" -> exactKeys(data, "example")
+                        && Set.of("hash-contract", "comparator", "invariance", "pecs", "heap-pollution", "map-views", "list-layout", "hash-lookup", "deque", "iterator", "view-copy", "buffer", "selector").contains(data.get("example"));
                 case "static-flow" -> exactKeys(data, "labels")
                         && data.get("labels") instanceof List<?> labels && labels.size() >= 2 && labels.size() <= 6
                         && labels.stream().allMatch(label -> text(label, 40));

@@ -85,11 +85,14 @@ System.out.println(map.containsKey("A")); // false
 
 `keys.remove("A")`는 뷰만 바꾸는 것이 아니라 기반 Map의 매핑도 제거합니다. 반대로 Map이 바뀌면 이미 얻어 둔 뷰에서도 그 변화를 볼 수 있습니다.
 
-```text
-Map
- ├─ keySet()  ─┐
- ├─ values()   ├─ backing mapping을 바라보는 view
- └─ entrySet() ┘
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "map-views",
+  "title": "Map 뷰의 기반 매핑",
+  "description": "keySet, values, entrySet은 같은 Map을 바라봅니다. 지원되는 제거는 기반 매핑에도 반영됩니다."
+}
 ```
 
 그래서 컬렉션을 API 밖으로 전달할 때는 타입 이름만 보고 독립된 값 모음이라고 가정하지 말고 **스냅샷인지 실행 중인 뷰인지**를 확인해야 합니다.

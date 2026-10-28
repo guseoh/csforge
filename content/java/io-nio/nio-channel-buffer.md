@@ -28,7 +28,15 @@ NIO 코드에서 `flip()`, `clear()`, `compact()`가 헷갈리는 이유는 같�
 
 Channel은 데이터가 오가는 통로이고 Buffer는 그 데이터를 애플리케이션이 읽고 쓰는 영역입니다.
 
-![NIO Buffer의 쓰기 mode와 읽기 mode 전환](/learning/java/nio-buffer-flip.svg)
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "buffer",
+  "title": "8칸 Buffer의 상태 추적",
+  "description": "같은 8칸에서 쓰기, flip, 부분 소비, compact, clear를 추적합니다. clear는 데이터를 지우지 않습니다."
+}
+```
 
 ### Buffer의 상태는 position·limit·용량으로 읽는다
 
@@ -38,15 +46,7 @@ Channel은 데이터가 오가는 통로이고 Buffer는 그 데이터를 애플
 
 8칸짜리 `ByteBuffer`를 만들면 개념적으로 다음과 같습니다.
 
-```text
-capacity = 8
-limit    = 8
-position = 0
-
-[ _ _ _ _ _ _ _ _ ]
-  ^               ^
-position         limit
-```
+초기 상태는 position=0, limit=8, capacity=8입니다.
 
 ### Channel에서 데이터를 읽어 Buffer에 쓰면 position이 이동한다
 
@@ -57,11 +57,7 @@ int count = channel.read(buffer);
 
 5 바이트가 들어왔다면 앞 5칸이 채워지고 다음 쓰기 위치인 `position`은 5가 됩니다.
 
-```text
-[ A B C D E _ _ _ ]
-            ^     ^
-         position limit=8
-```
+A·B·C·D·E를 쓴 뒤에는 position=5, limit=8입니다.
 
 이 상태는 아직 "A부터 읽기" 위한 상태가 아닙니다. 다음 접근 위치가 5이기 때문입니다.
 
@@ -73,14 +69,7 @@ buffer.flip();
 
 `flip()`은 기존 position을 새 limit으로 두고 position을 0으로 옮깁니다.
 
-```text
-flip 전: position=5, limit=8
-flip 후: position=0, limit=5
-
-[ A B C D E _ _ _ ]
-  ^         ^
-position   limit
-```
+flip 후에는 position=0, limit=5로 바뀌며 바이트 내용은 유지됩니다.
 
 데이터를 뒤집거나 복사하는 메서드가 아니라 **방금 쓴 범위를 읽을 수 있도록 상태 값을 바꾸는 연산**입니다.
 
@@ -96,14 +85,7 @@ buffer.clear();
 
 반면 아직 읽지 않은 데이터가 있고 다음 입력과 이어서 처리해야 한다면 `compact()`가 필요할 수 있습니다.
 
-```text
-읽고 남은 값: [ D E ]
-
-compact 후
-[ D E _ _ _ _ _ _ ]
-      ^
-   position
-```
+A·B·C를 소비했다면 D·E가 남습니다. compact는 D·E를 index 0·1로 옮기고 position=2, limit=8로 설정합니다. 이후 영역을 0으로 지우는 계약은 없습니다.
 
 남은 값을 앞쪽으로 옮기고 그 뒤에 새 데이터를 쓸 공간을 만듭니다.
 
@@ -116,6 +98,8 @@ while (buffer.hasRemaining()) {
     channel.write(buffer);
 }
 ```
+
+이 반복은 쓰기가 진행되거나 기다릴 수 있는 블로킹 채널의 단순 예시입니다. 논블로킹 채널에서 `write()`가 0을 반환하면 같은 반복을 즉시 계속하는 대신 남은 데이터를 보존하고, 쓰기 준비 통지 등을 이용해 나중에 재시도해야 합니다. 그렇지 않으면 아무 진전 없이 CPU를 사용하는 busy loop가 될 수 있습니다.
 
 실제 반복 방식은 블로킹/논블로킹 모드와 프로토콜에 따라 달라질 수 있지만, 코드 추론에서는 **I/O 반환값과 Buffer의 현재 position/limit을 함께 추적**해야 합니다.
 

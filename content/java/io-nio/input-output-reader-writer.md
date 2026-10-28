@@ -40,15 +40,7 @@ try (InputStream input = Files.newInputStream(path)) {
 
 이미지, 압축 파일, 암호화된 페이로드처럼 바이트 자체의 값이 중요한 데이터는 중간에 문자로 바꾸지 않고 바이트로 처리해야 합니다.
 
-```text
-바이너리 파일
-    │
-    ▼
-InputStream
-    │ bytes
-    ▼
-애플리케이션
-```
+바이너리 입력은 InputStream에서 읽은 바이트를 문자 변환 없이 애플리케이션에 전달합니다.
 
 바이너리 데이터를 임의의 문자셋으로 문자열로 바꿨다가 다시 바이트로 만드는 과정은 원래 데이터를 보존하지 못할 수 있습니다.
 
@@ -69,13 +61,7 @@ try (Reader reader = Files.newBufferedReader(
 
 바이트 스트림과 문자 스트림 사이에는 문자셋 변환이 들어갑니다.
 
-```text
-InputStream(bytes)
-       │
-       │ 문자셋 디코딩
-       ▼
-Reader(characters)
-```
+바이트 입력에서 Reader로 연결할 때 InputStreamReader 등의 디코딩 경계에 문자셋을 지정합니다.
 
 ### 텍스트인지 바이너리인지 먼저 결정해야 한다
 

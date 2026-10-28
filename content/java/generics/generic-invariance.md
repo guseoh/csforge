@@ -42,14 +42,14 @@ values.add(Integer.valueOf(10));
 
 하지만 실제 객체는 `String`을 담는다고 약속한 `List<String>`입니다. 이제 `names.get(0)`을 `String`으로 읽는 계약이 깨집니다.
 
-```text
-List<String> names
-       │
-       └── 같은 List를 List<Object>로 허용했다고 가정
-                  │
-                  └── Integer 저장 가능
-                         ↓
-             List<String> 계약 붕괴
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "invariance",
+  "title": "불공변성이 막는 잘못된 쓰기",
+  "description": "금지된 대입을 허용했다고 가정한 반례입니다. 실제 Java 코드가 허용하는 실행 흐름이 아닙니다."
+}
 ```
 
 그래서 컴파일러가 애초에 `List<String> → List<Object>` 대입을 막습니다.

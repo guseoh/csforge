@@ -55,11 +55,14 @@ System.out.println(view); // 원본 변경이 보임
 
 `view.add()`는 막히지만 원본 `source`가 변경되면 뷰에서도 그 변경을 볼 수 있습니다.
 
-```text
-source ─────> 실제 가변 List
-                 ▲
-                 │
-unmodifiable view┘
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "view-copy",
+  "title": "뷰와 스냅샷의 구조 관계",
+  "description": "수정 불가 뷰는 원본 구조에 연결되고 copyOf는 이후 구조 변경과 분리됩니다. 가변 원소 자체는 공유할 수 있습니다."
+}
 ```
 
 즉 “뷰를 수정할 수 없다”와 “데이터가 절대 변하지 않는다”는 같은 말이 아닙니다.

@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { javaApiExamples } from './java-api-models'
 
 export const MAX_VISUALIZATION_LENGTH = 12_000
 export const MAX_HEAP_SIZE = 15
@@ -10,6 +11,7 @@ const sequenceNumber = z.number().int().min(0).max(4_294_967_295)
 const memberName = z.string().regex(/^[가-힣A-Za-z0-9 _.-]{1,12}$/).refine((value) => value.trim().length > 0)
 
 export const visualizationSchema = z.discriminatedUnion('type', [
+  z.object({ ...common, type: z.literal('java-api-contract'), example: z.enum(javaApiExamples) }).strict(),
   z.object({ ...common, type: z.literal('static-flow'), labels: z.array(plainText(40)).min(2).max(6) }).strict(),
   z.object({ ...common, type: z.literal('java-pass-by-value'), initialName: memberName, replacementName: memberName }).strict(),
   z.object({ ...common, type: z.literal('min-heap'), initialValues: z.array(integer).max(MAX_HEAP_SIZE) }).strict(),
