@@ -30,15 +30,14 @@ Semaphore slots = new Semaphore(3);
 
 처음에는 permit이 3개 있습니다.
 
-```text
-permit = 3
-작업 A 획득 -> 2
-작업 B 획득 -> 1
-작업 C 획득 -> 0
-Task D acquire -> 기다림
-
-작업 B 반환 -> 1
-Task D 진행 가능
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "permit 소진과 반환",
+  "description": "세 permit을 소진한 뒤 대기하고, 성공한 acquire에 대응하는 release 뒤 다시 획득하는 경로입니다. 소유권이나 실제 연결 생성을 뜻하지 않습니다.",
+  "example": "semaphore-permits"
+}
 ```
 
 `acquire()`는 permit 하나를 얻고, 사용할 permit이 없으면 기다립니다. 작업이 끝나면 `release()`로 permit을 돌려줍니다.

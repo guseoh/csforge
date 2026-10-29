@@ -20,7 +20,7 @@ references:
 
 하위 계층의 예외 타입이 상위 계층의 관심사와 맞지 않을 수 있습니다. 예를 들어 주문 서비스가 JDBC 드라이버의 세부 예외 타입까지 알아야 한다면 저장 기술을 바꾸기 어렵고 비즈니스 코드의 의미도 흐려집니다.
 
-이럴 때 낮은 수준 예외를 상위 계층의 의미에 맞는 예외로 바꾸는 것을 **예외 변환(exception translation)** 이라고 합니다.
+이럴 때 낮은 수준 예외를 상위 계층의 의미에 맞는 예외로 바꾸는 것을 **예외 변환(exception translation)** 이라고 합니다. 아래의 `SqlConstraintException`은 특정 주문 유일성 제약 위반임을 이미 식별한 저장 경계의 예외라고 가정합니다. 모든 제약 위반이 중복 주문은 아니므로 외래 키·필수값 위반까지 같은 의미로 바꾸면 안 됩니다.
 
 ```java
 try {
@@ -50,10 +50,14 @@ catch (IOException e) {
 
 `cause`를 보존하면 상위에서는 추상화된 실패를 다루면서도 운영·디버깅 시 원래 원인까지 따라갈 수 있습니다.
 
-```text
-ImportException
-   └─ cause: IOException
-         └─ cause: 실제 하위 원인 ...
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "의미 변환과 원인 사슬",
+  "description": "ImportException의 cause로 원래 IOException을 보존합니다. 화살표는 호출 순서가 아닌 원인 참조입니다.",
+  "example": "exception-cause"
+}
 ```
 
 ### 모든 예외를 사용자 정의 예외로 바꿀 필요는 없다

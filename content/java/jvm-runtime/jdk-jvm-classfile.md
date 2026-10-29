@@ -26,19 +26,15 @@ references:
 
 CPU가 Java 소스 코드를 그대로 실행하는 것은 아닙니다. 일반적인 실행 흐름은 **소스 코드를 클래스 파일로 컴파일하고, JVM이 클래스 파일의 의미를 실행하는 것**입니다.
 
-![Java 소스에서 JVM 실행까지의 경계](/learning/java/java-execution-boundary.svg)
 
-```text
-Java 소스(.java)
-      │ javac
-      ▼
-클래스 파일(.class)
-      │ JVM 로딩·링킹·실행
-      ▼
-JVM 구현
-      │ 인터프리터(interpreter)·JIT 등의 실행 전략
-      ▼
-네이티브 기계어 / CPU 실행
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "빌드와 실행의 경계",
+  "description": "Java 소스에서 javac의 클래스 파일 산출물과 JVM 구현의 실행 전략을 구분합니다. 클래스 파일은 바이트코드와 메타데이터를 포함합니다.",
+  "example": "jdk-classfile"
+}
 ```
 
 ### JDK는 JVM보다 넓은 개발·실행 도구 모음이다

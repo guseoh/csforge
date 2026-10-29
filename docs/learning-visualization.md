@@ -31,7 +31,7 @@ Markdown의 예약 fenced code 언어 `csforge-viz`에 JSON 객체 하나를 넣
 | `java-array-store` | V2 단계형 | 없음 | 본문의 String[2] 생성→Object[] 별칭→String 저장→Integer 검사→저장 거부 5단계 |
 | `java-definite-assignment` | V1 정적 SVG | 없음 | score 조건의 양쪽 분기에서 result를 대입하고 합류하는 고정 if/else 예제 |
 | `java-object-model` | V1 또는 V2 | `example` | V1: `static-members`, `inheritance`, `composition`, `casting`. V2: `initialization`(8단계), `dispatch`(3단계), `defensive-copy`(6단계) |
-| `java-api-contract` | V1 또는 V2 | `example` | V1: `hash-contract`, `comparator`, `invariance`, `pecs`, `map-views`, `list-layout`, `deque`, `iterator`, `view-copy`. V2: `heap-pollution`(4단계), `hash-lookup`(3단계), `buffer`(6단계), `selector`(6단계) |
+| `java-api-contract` | V1 또는 V2 | `example` | V1: `hash-contract`, `comparator`, `invariance`, `pecs`, `map-views`, `list-layout`, `deque`, `iterator`, `view-copy`, `lambda-capture`, `stream-shapes`, `parallel-costs`. V2: `heap-pollution`(4단계), `hash-lookup`(3단계), `buffer`(6단계), `selector`(6단계), `stream-laziness`(4단계) |
 
 모든 타입은 `version: 1`, `title`(1~100자), `description`(1~600자)을 요구한다.
 설명은 조작 없이도 핵심 계약·결과를 읽을 수 있는 요약이어야 한다. 알 수 없는 필드는 거부한다.
@@ -41,7 +41,20 @@ Markdown의 예약 fenced code 언어 `csforge-viz`에 JSON 객체 하나를 넣
 좌표·색상·SVG 문자열·HTML·URL·임의 코드·컴포넌트 경로를 콘텐츠에서 받지 않는다.
 새 타입은 명시적인 Zod 계약, 서버 계약, 순수 상태 모델, 승인된 렌더러를 함께 추가한다.
 
-`java-api-contract`는 #278의 네 Topic에서 감사된 고정 예제만 받는다. 공통 JSON 외에는 위 `example` 문자열 하나만 허용하며 코드·좌표·자유 노드·외부 데이터는 받지 않는다. PECS는 두 데이터 경계 사이의 값 이동, List는 참조 슬롯/이중 연결의 두 행, Buffer는 같은 8칸과 커서, 나머지 계약은 구분된 상태·관계 레인으로 표시한다. 기존 중성 다크/라이트 토큰과 단계 컨트롤을 사용하며 범용 엔진·Reader·Quiz 구조를 바꾸지 않는다. 기존 ArrayList/PECS SVG는 구조를 보존해 inline으로 RESTYLE했고, HashMap/Buffer/Selector는 REBUILD했다. 외부 SVG 파일은 기존 사용처 호환을 위해 보존한다. Pack별 증거는 `docs/content-corrections/issue-278/J-{object-contracts,generics,collections,io-nio}/`에 기록한다.
+`java-api-contract`는 #278에서 감사된 고정 예제만 받는다. 공통 JSON 외에는 위 `example` 문자열 하나만 허용하며 코드·좌표·자유 노드·외부 데이터는 받지 않는다. PECS는 두 데이터 경계 사이의 값 이동, List는 참조 슬롯/이중 연결의 두 행, Buffer는 같은 8칸과 커서, 나머지 계약은 구분된 상태·관계 레인으로 표시한다. 기존 중성 다크/라이트 토큰과 단계 컨트롤을 사용하며 범용 엔진·Reader·Quiz 구조를 바꾸지 않는다. 기존 ArrayList/PECS SVG는 구조를 보존해 inline으로 RESTYLE했고, HashMap/Buffer/Selector는 REBUILD했다. 외부 SVG 파일은 기존 사용처 호환을 위해 보존한다. Pack별 증거는 `docs/content-corrections/issue-278/J-{object-contracts,generics,collections,io-nio}/`에 기록한다.
+
+잔여 Java 51개 Concept는 같은 계약에 아래 고정 예제를 추가한다. 코딩 테스트의 ArrayDeque는 기존 `deque`를 재사용하므로 새 `example`은 50개다. 관계 그래프의 노드·격자 위치·간선·snapshot은 TypeScript 소스에만 있으며 콘텐츠 JSON에서는 받지 않는다. 실선·점선의 의미는 각 그림의 설명에서 정의한다. 범용 편집기나 Java 실행기는 추가하지 않는다.
+
+| 모델 파일 | 고정 예제와 표시 수준 |
+| --- | --- |
+| `java-pattern-models.ts` | V1 `dependency-injection`, `strategy`, `adapter`, `decorator`, `proxy`, `state`; V2 `observer` |
+| `java-resource-models.ts` | V1 `throwable-tree`, `exception-boundary`, `exception-cause`, `resource-ownership`; V2 `failure-atomicity`, `resource-suppressed` |
+| `java-time-models.ts` | V1 `instant-zones`, `duration-period`; V2 `zone-dst`. Java 25·tzdb 2026b의 고정 날짜만 사용 |
+| `java-concurrency-models.ts` | V1 `concurrency-parallelism`; V2 `thread-lifecycle`, `virtual-carrier`, `lost-update`, `monitor`, `happens-before`, `safe-publication`, `volatile-handoff`, `cas-retry`, `condition-await`, `executor-admission`, `bounded-queue`, `latch-gate`, `semaphore-permits`, `threadlocal-reuse`, `scoped-binding`, `future-completion`, `deadlock-progress` |
+| `java-runtime-models.ts` | V1 `jdk-classfile`, `loader-identity`, `runtime-areas`, `reference-strength`, `collector-tradeoffs`, `process-memory`, `jit-profile`; V2 `bytecode-stack`, `class-initialization`, `gc-roots`, `retained-path` |
+| `java-metadata-models.ts` | V1 `processing-reflection`, `serialization-boundary`, `module-boundary`, `binary-evolution`; V2 `dynamic-proxy` |
+
+여기서 구현 목록은 브라우저 QA 완료 판정이 아니다. 최종 상태와 남은 검증은 `docs/content-corrections/issue-278/java-remaining-checkpoint.md`에 기록한다.
 V1은 순차 흐름과 승인된 고정 관계/분기 예제를 지원하며 범용 그래프 편집기나 V4 정책 실험 엔진은 구현하지 않는다.
 
 ## 구현 책임

@@ -24,6 +24,13 @@ class JavaApiContractTest {
         assertFalse(compiles("import java.util.*; class Probe { void process(List<String> x) {} void process(List<Integer> x) {} }"));
     }
 
+    @Test
+    void lambdaCaptureRequiresBothEffectiveFinalityAndDefiniteAssignment() throws Exception {
+        assertTrue(compiles("import java.util.function.*; class Probe { void run(boolean strict) { int threshold; if (strict) threshold = 100; else threshold = 10; Predicate<Integer> p = n -> n >= threshold; } }"));
+        assertFalse(compiles("import java.util.function.*; class Probe { void run(boolean strict) { int threshold; if (strict) threshold = 100; Predicate<Integer> p = n -> n >= threshold; } }"));
+        assertFalse(compiles("import java.util.function.*; class Probe { void run() { int threshold = 10; Predicate<Integer> p = n -> n >= threshold; threshold = 20; } }"));
+    }
+
     private boolean compiles(String source) throws Exception {
         Path file = compilation.resolve("Probe.java");
         Files.writeString(file, source);
@@ -48,6 +55,30 @@ class JavaApiContractTest {
         b.clear();
         assertEquals(0, b.position());
         assertEquals(68, b.get(0));
+    }
+
+    @Test
+    void streamIteratorAndSpliteratorAllowClientControlledTraversal() {
+        var iterator = List.of(1, 2, 3).stream().filter(n -> n > 1).iterator();
+        assertEquals(2, iterator.next());
+        assertEquals(3, iterator.next());
+        assertFalse(iterator.hasNext());
+        var spliterator = List.of(1, 2, 3).stream().map(n -> n * 2).spliterator();
+        var values = new ArrayList<Integer>();
+        assertTrue(spliterator.tryAdvance(values::add));
+        assertEquals(List.of(2), values);
+        spliterator.forEachRemaining(values::add);
+        assertEquals(List.of(2, 4, 6), values);
+    }
+
+    @Test
+    void sequentialStreamExampleStopsAfterMatchingEvenValue() {
+        var visited = new ArrayList<Integer>();
+        boolean found = List.of(90, 101, 102, 104).stream()
+                .filter(n -> n > 100)
+                .anyMatch(n -> { visited.add(n); return n % 2 == 0; });
+        assertTrue(found);
+        assertEquals(List.of(101, 102), visited);
     }
 
     @Test

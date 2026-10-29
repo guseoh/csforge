@@ -1,0 +1,49 @@
+{
+  "suites": 5,
+  "tests": 14,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "suiteResults": [
+    {
+      "name": "com.guseoh.csforge.importcontent.CanonicalBootstrapIdempotencyIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "226.758"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.ContentImportIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "66.745"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.JavaApiContractTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "23.451"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.JavaReferenceFullMigrationIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "196.196"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.LearningVisualizationValidationTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.059"
+    }
+  ]
+}

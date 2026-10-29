@@ -17,6 +17,21 @@ public class LearningVisualizationValidator {
     public static final int MAX_SOURCE_LENGTH = 12_000;
     private static final Pattern UNSAFE_TEXT = Pattern.compile("[<>\\x00-\\x1f]|javascript:|data:", Pattern.CASE_INSENSITIVE);
     private static final Pattern MEMBER_NAME = Pattern.compile("[가-힣A-Za-z0-9 _.-]{1,12}");
+    private static final Set<String> JAVA_API_EXAMPLES = Set.of(
+            "hash-contract", "comparator", "invariance", "pecs", "heap-pollution",
+            "map-views", "list-layout", "hash-lookup", "deque", "iterator",
+            "view-copy", "buffer", "selector", "lambda-capture", "stream-shapes",
+            "parallel-costs", "stream-laziness", "dependency-injection", "strategy", "adapter",
+            "decorator", "proxy", "observer", "state", "throwable-tree",
+            "exception-boundary", "exception-cause", "failure-atomicity", "resource-suppressed", "resource-ownership",
+            "instant-zones", "zone-dst", "duration-period", "concurrency-parallelism", "thread-lifecycle",
+            "virtual-carrier", "lost-update", "monitor", "happens-before", "safe-publication",
+            "volatile-handoff", "cas-retry", "condition-await", "executor-admission", "bounded-queue",
+            "latch-gate", "semaphore-permits", "threadlocal-reuse", "scoped-binding", "future-completion",
+            "deadlock-progress", "jdk-classfile", "bytecode-stack", "class-initialization", "loader-identity",
+            "runtime-areas", "gc-roots", "reference-strength", "collector-tradeoffs", "retained-path",
+            "process-memory", "jit-profile", "dynamic-proxy", "processing-reflection", "serialization-boundary",
+            "module-boundary", "binary-evolution");
     private final ObjectMapper objectMapper;
 
     public boolean isValid(String source) {
@@ -28,7 +43,7 @@ public class LearningVisualizationValidator {
                     || !(data.get("type") instanceof String type)) return false;
             return switch (type) {
                 case "java-api-contract" -> exactKeys(data, "example")
-                        && Set.of("hash-contract", "comparator", "invariance", "pecs", "heap-pollution", "map-views", "list-layout", "hash-lookup", "deque", "iterator", "view-copy", "buffer", "selector").contains(data.get("example"));
+                        && JAVA_API_EXAMPLES.contains(data.get("example"));
                 case "static-flow" -> exactKeys(data, "labels")
                         && data.get("labels") instanceof List<?> labels && labels.size() >= 2 && labels.size() <= 6
                         && labels.stream().allMatch(label -> text(label, 40));

@@ -20,7 +20,6 @@ references:
 
 예외가 발생한 메서드에서 바로 `catch`해야 한다고 생각하기 쉽지만, 그 위치가 실패를 처리할 책임을 가진 곳이 아닐 수 있습니다. Java는 현재 실행 지점에서 적절한 처리기를 찾지 못하면 호출 스택을 따라 예외를 위로 전달합니다.
 
-![예외가 책임 있는 경계까지 전파되는 흐름](/learning/java/exception-boundaries.svg)
 
 ### 잡는 이유가 없으면 전파하는 편이 낫다
 
@@ -45,17 +44,14 @@ Order load(long id) {
 
 ### 계층별 책임을 나눠 본다
 
-```text
-Repository
-  │ SQLException 등 낮은 수준 실패
-  ▼
-애플리케이션 서비스
-  │ 필요하면 application 의미로 변환
-  ▼
-API boundary
-  │ HTTP status / error body로 변환
-  ▼
-Client
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "실패 전파와 경계 책임",
+  "description": "저장소 실패는 서비스를 거쳐 API 경계로 전파됩니다. 실제 복구·의미 변환·응답 변환 책임이 있는 위치에서 처리합니다.",
+  "example": "exception-boundary"
+}
 ```
 
 모든 계층이 같은 예외를 로그로 남기면 한 번의 실패가 여러 줄의 중복 스택 trace로 쌓일 수 있습니다. **실제로 운영 판단에 필요한 경계에서 한 번 충분한 정보로 기록**하는 편이 더 나을 수 있습니다.

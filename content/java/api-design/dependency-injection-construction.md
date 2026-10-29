@@ -63,15 +63,14 @@ EmailSender sender = new SmtpEmailSender(config);
 OrderService service = new OrderService(sender);
 ```
 
-```text
-조립하는 코드
- ├─ 구현 선택
- ├─ 객체 생성
- └─ 협력자 전달
-        │
-        ▼
-OrderService
- └─ EmailSender 계약을 사용
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "생성·주입과 협력 참조",
+  "description": "조립 코드가 EmailSender 구현을 선택하고 OrderService 생성자로 전달합니다.",
+  "example": "dependency-injection"
+}
 ```
 
 이처럼 객체가 필요한 협력자를 외부에서 제공받는 구성을 **의존성 주입(Dependency Injection, DI)** 이라고 합니다. Spring 같은 컨테이너가 없어도 순수 Java로 구현할 수 있습니다. 프레임워크는 객체 조립을 자동화할 수 있지만 DI라는 설계 관계 자체를 만드는 것은 아닙니다.

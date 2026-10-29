@@ -1,12 +1,65 @@
 import { useState } from 'react'
 import { javaApiScenes, type JavaApiExample } from '../../lib/java-api-models'
-import { DiagramArrow, DiagramCanvas, DiagramControls } from './DiagramPrimitives'
+import { DiagramArrow, DiagramCanvas, DiagramControls, DiagramNode } from './DiagramPrimitives'
 
 export function JavaApiDiagram({ example }: { example: JavaApiExample }) {
   const [index, setIndex] = useState(0)
   const scenes = javaApiScenes[example]
   const scene = scenes[index]
+  if (scene.graph) {
+    const { nodes, edges } = scene.graph
+    const width = 48 + (Math.max(...nodes.map((node) => node.column)) + 1) * 390 - 40
+    const height = 110 + (Math.max(...nodes.map((node) => node.row)) + 1) * 145
+    return <div className="java-api-diagram">
+      <DiagramCanvas label={`${scene.title}. ${nodes.map((node) => node.lines.join(': ')).join('. ')}. ${edges.map((edge) => `${edge.from} → ${edge.to}: ${edge.label}`).join('. ')}`} width={width} height={height}>
+        <text x={24} y={35} fontWeight="700">{scene.title}</text>
+        {edges.map((edge, i) => {
+          const from = nodes.find((node) => node.id === edge.from)!
+          const to = nodes.find((node) => node.id === edge.to)!
+          const dx = (to.column - from.column) * 390
+          const dy = (to.row - from.row) * 145
+          const boundary = Math.max(Math.abs(dx) / 125, Math.abs(dy) / 34)
+          const paired = edges.some((other) => other.from === edge.to && other.to === edge.from)
+          const offset = paired && dy === 0 ? (dx > 0 ? -14 : 14) : 0
+          const x1 = 149 + from.column * 390 + dx / boundary
+          const y1 = 106 + from.row * 145 + dy / boundary + offset
+          const x2 = 149 + to.column * 390 - dx / boundary
+          const y2 = 106 + to.row * 145 - dy / boundary + offset
+          return <g key={`${edge.from}-${edge.to}-${i}`}>
+            <DiagramArrow x1={x1} y1={y1} x2={x2} y2={y2} dashed={edge.dashed} />
+            <text className="diagram-index" x={(x1 + x2) / 2} y={(y1 + y2) / 2 - 8} textAnchor="middle">{edge.label}</text>
+          </g>
+        })}
+        {nodes.map((node) => <DiagramNode key={node.id} x={24 + node.column * 390} y={72 + node.row * 145} width={250} lines={node.lines} active={node.active} />)}
+      </DiagramCanvas>
+      {scenes.length > 1 && <DiagramControls index={index} count={scenes.length} onChange={setIndex} onReset={() => setIndex(0)} />}
+      <p role="status" className="diagram-status">{scene.note}</p>
+    </div>
+  }
   const bufferState = scene.cells ? `position ${scene.position}, limit ${scene.limit}, capacity 8. 칸 내용 ${scene.cells.join(', ')}.` : ''
+  if (example === 'lambda-capture') return <div className="java-api-diagram">
+    <DiagramCanvas label="names 지역 변수의 참조는 재대입되지 않지만 같은 ArrayList의 내용은 변경할 수 있습니다" width={680} height={240}>
+      <text x={24} y={36} fontWeight="700">캡처된 참조와 같은 가변 목록</text>
+      <text x={34} y={93}>names</text>
+      <text className="diagram-index" x={34} y={122}>재대입 없음</text>
+      <DiagramArrow x1={150} y1={91} x2={278} y2={91} />
+      <g className="diagram-node"><rect x={290} y={60} width={270} height={70} rx={8} /></g>
+      <text x={310} y={88}>ArrayList</text><text x={310} y={113}>[] → ["java"]</text>
+      <text className="diagram-index" x={24} y={195}>names.add("java")는 같은 객체의 상태를 바꿉니다.</text>
+    </DiagramCanvas><p>{scene.note}</p>
+  </div>
+  if (example === 'stream-laziness') return <div className="java-api-diagram">
+    <DiagramCanvas label={`${scene.title}. ${scene.lanes.map(([a, b]) => `${a}: ${b}`).join('. ')}`} width={680} height={220}>
+      <text x={24} y={35} fontWeight="700">{scene.title}</text>
+      {[90, 101, 102, 104].map((value, i) => <g key={value} className={`diagram-node${index > 0 && i === index - 1 ? ' diagram-active' : ''}`}>
+        <circle cx={80 + i * 145} cy={104} r={28} />
+        <text x={80 + i * 145} y={110} textAnchor="middle">{value}</text>
+      </g>)}
+      <text x={24} y={175}>{scene.lanes[scene.lanes.length - 1][1]}</text>
+    </DiagramCanvas>
+    <DiagramControls index={index} count={scenes.length} onChange={setIndex} onReset={() => setIndex(0)} />
+    <p role="status" className="diagram-status">{scene.lanes.map(([a, b]) => `${a}: ${b}`).join('. ')}. {scene.note}</p>
+  </div>
   if (example === 'pecs') return <div className="java-api-diagram">
     <DiagramCanvas label="extends 원본에서 T를 읽어 super 대상에 T를 씁니다" width={680} height={290}>
       <text x={24} y={36} fontWeight="700">타입 경계를 넘는 값 T의 방향</text>

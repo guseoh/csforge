@@ -75,14 +75,14 @@ final class PriceCalculator {
 }
 ```
 
-```text
-정책 선택
-   │
-   ▼
-PriceCalculator
-   │ DiscountPolicy만 사용
-   ▼
-구체 Strategy
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "정책 계약과 선택된 구현",
+  "description": "PriceCalculator는 주입된 DiscountPolicy에 계산을 위임합니다.",
+  "example": "strategy"
+}
 ```
 
 ### Strategy를 적용해도 선택 분기는 남을 수 있다

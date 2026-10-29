@@ -36,8 +36,6 @@ references:
 
 JMM은 특정 CPU 캐시 구조를 설명하는 문서가 아니라, 여러 스레드가 공유 변수에 접근할 때 어떤 실행 결과를 Java 프로그램이 허용하는지를 정의합니다. 그 핵심 추론 도구가 **happens-before**입니다.
 
-![happens-before와 동기화 경계](/learning/java/happens-before.svg)
-
 ### happens-before는 관찰 가능성과 정렬 순서를 추론하는 관계다
 
 JLS는 동작 `x`가 `y`보다 happens-before한다면 `x`가 `y`에 대해 visible하고 ordered before라고 설명합니다. 하지만 이것을 "벽시계상 x가 반드시 먼저 실행된다"로 읽으면 안 됩니다. 구현은 결과가 JMM이 허용하는 실행과 일치한다면 내부적으로 동작을 재배치할 수 있습니다.
@@ -60,13 +58,14 @@ void publish() {
 
 같은 스레드에서 프로그램 순서상 앞선 동작은 뒤 동작보다 happens-before합니다.
 
-```text
-스레드 A
-
-data = 42
-   │ 프로그램 순서(program order)
-   ▼
-ready = true
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "program order와 HB 연결",
+  "description": "data 쓰기와 volatile 공개, 해당 공개를 관찰한 reader의 읽기를 연결합니다. 순서 간선은 물리 시간이나 cache flush가 아닙니다.",
+  "example": "happens-before"
+}
 ```
 
 하지만 이 관계만으로 다른 스레드의 읽기까지 연결되지는 않습니다. Thread 사이에는 동기화 동작이 만드는 edge가 필요합니다.
@@ -74,16 +73,6 @@ ready = true
 ### 모니터와 volatile은 대표적인 스레드 간 간선(edge)를 만든다
 
 한 모니터의 unlock은 동기화 순서상 그 뒤에 오는 같은 모니터의 lock과 synchronizes-with 관계를 만들고, 따라서 happens-before edge가 됩니다.
-
-```text
-스레드 A                     스레드 B
-data 쓰기
-   │
-unlock M ────────────────▶ lock M
-                              │
-                              ▼
-                           data 읽기
-```
 
 Volatile도 같은 방식으로 추론할 수 있습니다. 같은 volatile 필드에 대한 쓰기는 동기화 순서상 그 뒤의 읽기와 synchronizes-with 관계를 만듭니다.
 
@@ -103,39 +92,11 @@ void consume() {
 }
 ```
 
-```text
-스레드 A                         스레드 B
-data 쓰기
-   │ 프로그램 순서(program order)
-write ready=true (volatile)
-   │ synchronizes-with
-   └────────────────────────▶ ready 읽기
-                                │ 프로그램 순서(program order)
-                                ▼
-                              data 읽기
-```
-
 Happens-before는 transitive하므로 이 경로를 통해 `data = 42`에서 reader의 `data` 접근까지 관계를 연결할 수 있습니다.
 
 ### start와 join도 스레드 사이의 경계를 만든다
 
-`Thread.start()` 호출은 시작된 스레드의 동작보다 happens-before하고, 한 스레드의 모든 동작은 다른 스레드가 그 스레드에 대한 `join()`에서 성공적으로 반환한 이후 동작보다 happens-before합니다.
-
-```text
-caller의 준비 작업
-      │
-   start()
-      │
-      ▼
-작업 스레드의 동작
-      │
-작업 스레드 종료
-      │
- join() returns
-      │
-      ▼
-caller의 후속 작업
-```
+`Thread.start()` 호출은 시작된 스레드의 동작보다 happens-before하고, 한 스레드의 모든 동작은 다른 스레드가 그 종료를 관찰한 뒤의 동작보다 happens-before합니다. 시간 제한 없는 `join()`의 정상 반환은 종료를 관찰하는 경계입니다. 반면 시간 제한이 있는 join이 종료 전에 반환했다면 같은 보장을 바로 적용할 수 없습니다.
 
 `java.util.concurrent`의 여러 API도 이보다 높은 수준의 메모리 consistency 효과를 계약으로 제공합니다. 예를 들어 Executor에 작업을 제출하기 전의 동작과 작업 실행, 비동기 계산과 `Future.get()`, `CountDownLatch.countDown()`과 성공적인 `await()` 사이의 관계를 공식 API 문서에서 정의합니다.
 

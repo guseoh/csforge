@@ -30,9 +30,14 @@ references:
 
 ### 큐가 두 작업의 속도 차이를 흡수한다
 
-```text
-생산자(producer) ──▶ [ 작업 ][ 작업 ][     ] ──▶ 소비자(consumer)
-                 BlockingQueue
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "용량 1의 큐와 대기",
+  "description": "빈 큐의 take 대기, 가득 찬 큐의 put 대기, 소비 뒤 공간 확보를 비교합니다. 큐 수용은 업무 완료나 영속 저장이 아닙니다.",
+  "example": "bounded-queue"
+}
 ```
 
 생산자가 잠깐 더 빠르면 큐에 작업이 쌓이고 소비자가 나중에 처리할 수 있습니다. 하지만 소비자가 계속 더 느리다면 큐가 무한히 커져서는 안 됩니다. 그래서 실무에서는 용량이 있는 bounded 큐가 중요한 경우가 많습니다.
@@ -56,18 +61,6 @@ Task consume() throws InterruptedException {
 ```
 
 `put`은 큐가 가득 찼다면 자리가 생길 때까지 기다립니다. `take`는 큐가 비었다면 원소가 들어올 때까지 기다립니다.
-
-```text
-대기열 가득 참
-Producer -- put --> [기다림]
-                       │
-소비자 -- take ------┘ 자리 발생
-
-대기열 비어 있음
-Consumer -- take --> [기다림]
-                       │
-생산자 -- put -------┘ 작업 도착
-```
 
 이 기다림은 CPU를 계속 돌며 `isEmpty()`를 확인하는 busy waiting과 다릅니다. 정확히 어떤 OS 대기 방식이 사용되는지는 구현 영역이지만, Java API 관점에서는 호출 스레드가 조건이 충족될 때까지 진행하지 않는 블로킹 연산입니다.
 
@@ -98,19 +91,6 @@ Consumer -- take --> [기다림]
 `put`을 쓰면 생산자가 기다리고, `offer`를 쓰면 호출자가 실패를 처리할 수 있습니다. 이것이 시스템에 유입되는 속도를 제어하는 backpressure 설계의 한 부분이 될 수 있지만, `BlockingQueue` 하나만 둔다고 전체 시스템의 backpressure 전략이 자동으로 완성되는 것은 아닙니다.
 
 ### 큐에 넣은 것과 작업 완료는 다르다
-
-```text
-Producer
-  │ put(task)
-  ▼
-Queue
-  │ take()
-  ▼
-Consumer
-  │ 실제 처리
-  ▼
-외부 DB/API 변경
-```
 
 `put()`이 성공했다는 것은 큐가 작업을 받아들였다는 뜻입니다. 소비자가 그 작업을 성공적으로 처리했다는 뜻이 아닙니다. 소비자가 예외로 실패할 수 있고 프로세스가 종료될 수도 있습니다.
 

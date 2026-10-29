@@ -31,14 +31,14 @@ void cancel() {
 
 문제는 상태가 늘어나면서 여러 메서드가 같은 `switch(status)`를 반복하고, 상태별 허용 행동과 전이 규칙이 여러 곳에 흩어질 때입니다. State 패턴은 **현재 상태를 객체로 표현하고 그 상태에서 가능한 행동과 다음 상태를 가까이 모으는 방식**입니다.
 
-```text
-문서 객체
-   │ 현재 상태
-   ▼
-DocumentState
-   ├─ DraftState
-   ├─ PublishedState
-   └─ ArchivedState
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "현재 상태 참조와 허용 전이",
+  "description": "Document는 현재 상태 객체를 참조합니다. Draft의 publish, Published의 revise와 archive만 전이로 허용합니다.",
+  "example": "state"
+}
 ```
 
 ### 먼저 상태 전이를 명확히 한다

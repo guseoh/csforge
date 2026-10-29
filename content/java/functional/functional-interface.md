@@ -49,12 +49,14 @@ long result = tenPercent.discount(10_000);
 interface Checker {
     boolean test(String value); // 유일한 abstract method
 
-    default Checker negate() { ... }
-    static Checker always() { ... }
+    default Checker negate() { return value -> !test(value); }
+    static Checker always() { return value -> true; }
 }
 ```
 
-핵심은 lambda가 구현할 **단 하나의 추상 계약(SAM, Single Abstract Method)** 이 있다는 것입니다. `Object`의 public 메서드와 대응되는 선언 등 세부 규칙도 있어 단순히 소스에 메서드가 몇 줄인지 세는 것으로 판단하면 안 됩니다.
+핵심은 lambda가 구현할 **단 하나의 추상 계약(SAM, Single Abstract Method)** 이 있다는 것입니다. `Object`의 public 인스턴스 메서드와 같은 시그니처의 선언은 이 계약을 셀 때 제외합니다. 여러 상위 인터페이스에서 같은 시그니처의 메서드를 상속해도 반환 타입까지 호환되어 하나의 계약으로 통합되면 함수형 인터페이스일 수 있습니다.
+
+다만 `sealed`로 선언한 인터페이스는 추상 계약이 하나여도 함수형 인터페이스가 아닙니다. 따라서 메서드 선언의 줄 수만으로 판단하지 말고, 상속된 계약과 인터페이스 선언 조건까지 확인해야 합니다.
 
 ### @FunctionalInterface는 무엇을 해 주나
 

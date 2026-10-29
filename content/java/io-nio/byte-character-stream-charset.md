@@ -26,7 +26,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: "Unicode 코드 포인트·UTF-8 및 한글의 바이트 인코딩 예시를 보충한다. 2012년 글의 Unicode 버전·기본 charset·String.getBytes() 결과는 Java 25의 현행 규칙과 구분한다."
+    relationNote: "Unicode 코드 포인트·UTF-8 및 한글 바이트 인코딩 예시를 보충한다. 글의 Unicode 31비트 설명, String의 물리 저장을 UTF-16BE로 단정한 설명, 기본 charset과 getBytes() 결과는 Java 25의 Character·String·Charset 계약과 구분한다. UTF-16 코드 단위의 언어/API 모델은 내부 저장 형식과 다르다."
 ---
 # 바이트·문자 스트림과 Charset
 

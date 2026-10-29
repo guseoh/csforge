@@ -64,7 +64,9 @@ EnumSet.range(OrderStatus.READY, OrderStatus.PAID);
 EnumSet.complementOf(terminal);
 ```
 
-가능한 값 전체가 이미 enum으로 닫혀 있기 때문에 이런 집합 생성 연산을 자연스럽게 제공할 수 있습니다.
+`range`는 양 끝을 포함한 선언 순서 범위이며 `complementOf`는 같은 enum의 전체 상수 중 현재 집합에 없는 값을 선택합니다. 상수를 추가하면 여집합 결과도 바뀌므로 보안상 허용할 기능을 명시한 집합과 의미가 같은지 확인해야 합니다.
+
+빈 일반 컬렉션을 `EnumSet.copyOf(collection)`으로 복사하면 원소에서 enum 타입을 알아낼 수 없어 `IllegalArgumentException`이 발생합니다. 비어 있을 수 있는 입력은 `EnumSet.noneOf(OrderStatus.class)`로 타입을 지정한 뒤 `addAll`하는 방법을 사용할 수 있습니다. 빈 EnumSet 자체를 복사하는 경우에는 타입 정보가 있어 이 문제와 구분됩니다.
 
 ### 언제 사용할까
 

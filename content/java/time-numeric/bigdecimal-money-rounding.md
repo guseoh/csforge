@@ -97,12 +97,7 @@ BigDecimal result = BigDecimal.ONE.divide(
 
 `100.00`만으로는 KRW인지 USD인지 알 수 없고, 통화마다 허용하는 소수 단위와 반올림 규칙도 다를 수 있습니다.
 
-```text
-Money
-├─ amount: BigDecimal
-├─ currency
-└─ 필요한 scale / rounding rule
-```
+`Money`는 금액(`BigDecimal`)과 통화를 함께 표현하고, 필요한 scale·반올림 규칙을 명시한다.
 
 BigDecimal은 정확한 십진 계산을 위한 값 타입이지 통화 규칙까지 자동으로 제공하는 도메인 모델은 아닙니다.
 

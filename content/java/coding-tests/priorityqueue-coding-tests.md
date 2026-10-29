@@ -35,7 +35,7 @@ System.out.println(queue.poll()); // 1
 System.out.println(queue.poll()); // 3
 ```
 
-`peek()`은 헤드를 조회만 하고, `poll()`은 헤드를 제거해서 반환합니다.
+`peek()`은 헤드를 조회만 하고, `poll()`은 헤드를 제거해서 반환합니다. API 계약상 offer·poll 계열은 O(log n), peek·size는 O(1)이지만 `contains`와 특정 객체를 찾는 `remove(Object)`는 O(n)입니다. 헤드를 꺼내는 연산과 임의의 원소를 찾아 지우는 연산을 같은 비용으로 생각하면 안 됩니다.
 
 최대값을 먼저 꺼내고 싶다면 비교자를 바꿉니다.
 

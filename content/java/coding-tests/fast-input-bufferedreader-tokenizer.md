@@ -42,15 +42,7 @@ for (int i = 0; i < n; i++) {
 
 `readLine()`은 한 줄을 문자열로 읽고, `StringTokenizer`는 그 문자열 안의 토큰을 순서대로 제공합니다.
 
-```text
-"10 20 30"
-     │
-     ▼
-StringTokenizer
- ├─ "10"
- ├─ "20"
- └─ "30"
-```
+`StringTokenizer`는 입력 줄 `"10 20 30"`에서 `"10"`, `"20"`, `"30"`을 차례로 반환한다.
 
 ### 토큰은 문자열이므로 숫자 범위를 따로 결정한다
 
@@ -59,7 +51,7 @@ int value = Integer.parseInt(st.nextToken());
 long large = Long.parseLong(st.nextToken());
 ```
 
-문제의 입력 범위뿐 아니라 **계산 결과의 범위**도 확인해야 합니다. 각 입력값은 `int`여도 N개를 더하거나 곱한 결과는 `long`이 필요할 수 있습니다.
+문제의 입력 범위뿐 아니라 **계산 결과의 범위**도 확인해야 합니다. 각 입력값은 `int`여도 N개를 더하거나 곱한 결과는 `long`이 필요할 수 있습니다. 특히 `long product = a * b`에서 a와 b가 int라면 곱셈은 먼저 int로 계산됩니다. 대입 대상만 long으로 바꾸지 말고 `long product = (long) a * b`처럼 연산 전에 승격해야 합니다. long 범위까지 넘을 수 있다면 더 넓은 정수 표현이나 범위 검증이 필요합니다.
 
 ```java
 long sum = 0;

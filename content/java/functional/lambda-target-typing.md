@@ -55,7 +55,7 @@ stream.filter(x -> x.active());
 void use(Function<String, Integer> f) { }
 void use(ToIntFunction<String> f) { }
 
-// use(s -> s.length()); // 모호할 수 있음
+// use(s -> s.length()); // 암시적 매개변수 타입으로는 오버로드가 모호함
 ```
 
 두 함수형 인터페이스가 모두 lambda body와 호환되고 더 구체적인 하나를 선택할 수 없다면 컴파일 오류가 날 수 있습니다. 이때 변수나 명시적인 캐스팅으로 대상을 분명히 할 수 있습니다.
@@ -65,7 +65,7 @@ Function<String, Integer> length = s -> s.length();
 use(length);
 ```
 
-하지만 호출부마다 캐스팅이 반복된다면 overload 설계 자체가 지나치게 비슷한 함수형 계약을 노출하는 것은 아닌지도 검토할 수 있습니다.
+이 예제에서는 `(String s) -> s.length()`처럼 매개변수 타입을 명시하면 원시 타입 결과를 반환하는 `ToIntFunction<String>` 쪽이 선택될 수 있습니다. 따라서 본문의 결과 타입만 보고 암시적 타입 람다의 오버로드도 항상 결정된다고 일반화하면 안 됩니다. 호출부마다 캐스팅이 반복된다면 overload 설계 자체가 지나치게 비슷한 함수형 계약을 노출하는지도 검토할 수 있습니다.
 
 ### 검사 예외도 대상의 추상 메서드 계약을 따른다
 

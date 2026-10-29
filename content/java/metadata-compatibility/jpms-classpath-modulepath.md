@@ -30,14 +30,14 @@ JPMS(Java Platform Module System)는 **의존성과 패키지 접근 경계를 �
 
 ### Classpath에서는 클래스 탐색 경로를 지정한다
 
-```text
-classpath
-├─ app.jar
-├─ lib-a.jar
-└─ lib-b.jar
-      │
-      ▼
-ClassLoader가 클래스 탐색
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "모듈의 읽기·공개·reflection 경계",
+  "description": "requires의 readability, exports와 public 접근, 깊은 reflection의 opens 조건을 구분합니다.",
+  "example": "module-boundary"
+}
 ```
 
 Classpath에 JAR가 있다는 것은 클래스를 찾을 위치가 있다는 뜻입니다. 하지만 `app.jar`가 어느 라이브러리에 의존하고 어떤 패키지만 공개 API인지까지 나타내지는 않습니다.
@@ -58,16 +58,6 @@ module com.example.library {
 }
 ```
 
-```text
-com.example.app
-      │ requires
-      ▼
-com.example.library
-      │ exports
-      ▼
-com.example.library.api
-```
-
 `requires`는 다른 모듈에 대한 의존성과 가독성(readability)을, `exports`는 자신의 어떤 패키지를 다른 모듈의 일반 코드에 공개할지를 나타냅니다.
 
 ### `public`과 `exports`는 서로 다른 접근 경계다
@@ -78,13 +68,6 @@ public class InternalEngine {
 ```
 
 클래스가 `public`이어도 해당 패키지가 명명 모듈에서 export되지 않았다면 모듈 밖의 일반 코드는 접근할 수 없습니다.
-
-```text
-모듈 library
-├─ exports api.package
-└─ internal.package
-      └─ public InternalEngine
-```
 
 Java 접근 제어자와 모듈의 패키지 경계를 모두 만족해야 합니다.
 
@@ -103,31 +86,11 @@ opens   -> 실행 시점 심층 리플렉션 허용
 
 명명 모듈에 속하지 않는 타입은 이를 정의한 `ClassLoader`의 비명명 모듈에 속합니다. Java 25 `Module` API에 따르면 비명명 모듈은 이름이 없으며, 일반적으로 클래스패스에서 로드된 타입이 여기에 속합니다.
 
-```text
-classpath의 클래스·JAR
-       │
-       ▼
-비명명 모듈
-```
-
 비명명 모듈은 기존 클래스패스 애플리케이션과의 호환성을 위해 명명 모듈보다 느슨한 접근 모델을 가집니다. 따라서 `module-info.java`를 사용하지 않는 Spring Boot 애플리케이션도 Java 실행 환경의 모듈 개념과 완전히 무관하지는 않습니다.
 
 ### Module path에서는 모듈 그래프를 해석한다
 
-명명 모듈을 module path에 두면 실행 도구와 컴파일러가 모듈 디스크립터를 읽고 의존성 그래프를 구성합니다.
-
-```text
-모듈 경로
-├─ app.jar
-├─ library.jar
-└─ ...
-     │
-     ▼
-모듈 해석
-     │
-     ▼
-모듈 그래프
-```
+module path에서는 실행 도구와 컴파일러가 루트 모듈에서 필요한 의존성을 해석해 모듈 그래프를 구성합니다. 경로에 둔 모든 모듈이 무조건 해석되는 것은 아닙니다. module-info.class가 없는 일반 JAR도 module path에 두면 자동 모듈로 취급될 수 있으므로, 디스크립터가 없다는 이유만으로 비명명 모듈이라고 판단하면 안 됩니다. 같은 JAR를 classpath에 두면 모듈 디스크립터를 명명 모듈 선언으로 사용하지 않는다는 차이도 있습니다.
 
 따라서 클래스패스와 module path는 옵션 이름만 다른 클래스 검색 경로가 아닙니다. 모듈 경로에는 모듈 식별성(module identity), 가독성(readability), `exports`·`opens` 같은 추가 계약이 있습니다.
 

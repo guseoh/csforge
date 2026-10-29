@@ -1,8 +1,30 @@
+import { javaRuntimeExamples, javaRuntimeScenes } from './java-runtime-models'
+import { javaMetadataExamples, javaMetadataScenes } from './java-metadata-models'
+import { javaConcurrencyExamples, javaConcurrencyScenes } from './java-concurrency-models'
+import { javaPatternExamples, javaPatternScenes, type RelationGraph } from './java-pattern-models'
+import { javaResourceExamples, javaResourceScenes } from './java-resource-models'
+import { javaTimeExamples, javaTimeScenes } from './java-time-models'
+
 // Fixed teaching examples: neither arbitrary Java execution nor JDK memory layouts.
-export const javaApiExamples = ['hash-contract', 'comparator', 'invariance', 'pecs', 'heap-pollution', 'map-views', 'list-layout', 'hash-lookup', 'deque', 'iterator', 'view-copy', 'buffer', 'selector'] as const
+export const javaApiExamples = ['hash-contract', 'comparator', 'invariance', 'pecs', 'heap-pollution', 'map-views', 'list-layout', 'hash-lookup', 'deque', 'iterator', 'view-copy', 'buffer', 'selector', 'lambda-capture', 'stream-shapes', 'parallel-costs', 'stream-laziness', ...javaPatternExamples, ...javaResourceExamples, ...javaTimeExamples, ...javaConcurrencyExamples, ...javaRuntimeExamples, ...javaMetadataExamples] as const
 export type JavaApiExample = typeof javaApiExamples[number]
-type Scene = { readonly title: string; readonly lanes: readonly (readonly [string, string])[]; readonly note: string; readonly cells?: readonly string[]; readonly position?: number; readonly limit?: number }
+type Scene = { readonly title: string; readonly lanes: readonly (readonly [string, string])[]; readonly note: string; readonly cells?: readonly string[]; readonly position?: number; readonly limit?: number; readonly graph?: RelationGraph }
 export const javaApiScenes: Record<JavaApiExample, readonly Scene[]> = {
+  ...javaPatternScenes,
+  ...javaResourceScenes,
+  ...javaTimeScenes,
+  ...javaConcurrencyScenes,
+  ...javaRuntimeScenes,
+  ...javaMetadataScenes,
+  'lambda-capture': [{ title: '고정된 참조와 가변 객체', lanes: [['지역 변수 names', '재대입하지 않아 캡처 가능'], ['가리키는 ArrayList', 'names.add("java")로 내용 변경 가능'], ['동시성', '캡처 자체가 동기화나 깊은 복사를 보장하지 않음']], note: '제약은 지역 변수에 적용되며 객체의 불변성을 뜻하지 않습니다.' }],
+  'stream-shapes': [{ title: '연산에 따른 원소와 타입', lanes: [['filter · Stream<Order>', '조건을 만족하는 Order만 남음'], ['map · Stream<Long>', '각 Order를 id로 변환'], ['flatMap · Stream<Item>', '각 주문의 상품 Stream을 한 흐름으로 펼침']], note: 'flatMap은 원래 주문별 그룹을 유지하지 않습니다.' }],
+  'parallel-costs': [{ title: '병렬 축약의 판단', lanes: [['분할', '원본을 나누는 비용과 특성'], ['독립 계산', '상태 비의존 연산과 부분 결과'], ['결합', '결합법칙과 결과 병합 비용']], note: '분할·작업자 수·시간은 고정하지 않습니다. 정확성 확인 후 실제 작업 부하를 측정합니다.' }],
+  'stream-laziness': [
+    { title: '파이프라인 구성', lanes: [['원본', '90, 101, 102, 104'], ['중간 연산', 'filter(n > 100) 구성'], ['최종 연산', '아직 호출 전']], note: '중간 연산은 지연되며 아직 결과를 요구하지 않았습니다.' },
+    { title: 'anyMatch가 결과를 요구', lanes: [['최종 연산', 'anyMatch(n → n % 2 == 0)'], ['첫 값', '90은 filter 조건 불일치'], ['결과', '아직 결정되지 않음']], note: '이 고정 예제는 순차 Stream을 추적합니다.' },
+    { title: '101은 홀수', lanes: [['filter', '101 > 100: 통과'], ['anyMatch', '101은 짝수가 아님'], ['결과', '아직 결정되지 않음']], note: '다음 원소를 확인합니다.' },
+    { title: '102에서 결과 확정', lanes: [['filter', '102 > 100: 통과'], ['anyMatch', '102는 짝수: true'], ['남은 값', '104는 이 예제에서 필요 없음']], note: '순차 anyMatch는 일치하는 원소에서 조기 종료할 수 있습니다. peek 호출 횟수나 병렬 실행 순서를 보장하지 않습니다.' },
+  ],
   'hash-contract': [{ title: '후보와 동등성은 다른 판정입니다', lanes: [['같은 값', 'equals = true  ⇒  같은 hashCode'], ['충돌 가능', '같은 hashCode  ⇏  equals = true'], ['조회', '해시로 후보를 좁힌 뒤 키 동등성을 확인']], note: '해시는 유일 ID도 물리 주소도 아닙니다. equals 호출 횟수는 보장하지 않습니다.' }],
   comparator: [{ title: '금액 우선, 동률이면 ID', lanes: [['① amount 비교', '음수·양수이면 여기서 결과 확정'], ['② 금액 비교 결과 = 0', '이 경우에만 id 비교 결과 사용'], ['방향', '전체 reversed()는 id 순서도 뒤집음']], note: '두 기준 모두 같으면 결과는 0입니다. thenComparing이 고유성을 자동 보장하지 않습니다.' }],
   invariance: [{ title: '허용되지 않는 대입의 반례', lanes: [['실제 규칙', 'List<String> → List<Object> 대입 거부'], ['가정만', '같은 리스트를 List<Object>로 허용한다면'], ['모순', 'Integer 쓰기가 String 읽기 계약을 깨뜨림']], note: '아래 두 줄은 허용된 실행 경로가 아니라 대입을 막는 이유입니다.' }],

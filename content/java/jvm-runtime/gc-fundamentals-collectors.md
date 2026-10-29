@@ -26,7 +26,7 @@ references:
     referenceType: COMPANY_TECH_BLOG
     language: ko
     displayOrder: 3
-    relationNote: "2012년 HotSpot의 Young/Old 세대, GC·STW 및 카드 테이블 설명을 역사적 구현 사례로 읽는다. Permanent Generation, 수집기 옵션과 세대별 동작을 Java 25 공통 GC 모델로 취급하지 않는다."
+    relationNote: "2011년 글의 HotSpot Young/Old 세대, GC·STW 및 카드 테이블 설명을 역사적 구현 사례로 읽는다. Permanent Generation, 수집기 옵션과 세대별 동작을 Java 25 공통 GC 모델로 취급하지 않는다."
 ---
 # GC 기본 원리와 수집기(Collector)
 
@@ -38,12 +38,14 @@ GC가 있다는 사실은 메모리 문제를 신경 쓰지 않아도 된다는 
 
 앞 Concept에서 본 것처럼 수집기는 살아 있는 root에서 객체 그래프를 따라 reachability를 판단합니다.
 
-```text
-GC 루트
- ├─▶ A ─▶ B
- └─▶ C
-
-D ─▶ E   // root에서 도달 불가
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "GC 작업과 pause의 구간 예시",
+  "description": "앱 실행·STW pause·동시 GC 작업을 구분한 예시입니다. 도형 길이는 측정값이 아니며 특정 수집기의 고정 성능을 보장하지 않습니다.",
+  "example": "collector-tradeoffs"
+}
 ```
 
 D와 E처럼 더 이상 루트에서 도달할 수 없는 객체는 저장 공간 회수 후보가 될 수 있습니다. 실제 수집기는 살아 있는 객체를 추적하고 빈 공간을 재사용할 수 있도록 관리하며, 구현에 따라 객체를 이동하거나 힙을 압축할 수도 있습니다.
@@ -53,14 +55,6 @@ D와 E처럼 더 이상 루트에서 도달할 수 없는 객체는 저장 공�
 ### GC 작업과 애플리케이션 실행은 일부 구간에서 겹칠 수 있다
 
 Collector에 따라 어떤 작업은 애플리케이션 스레드를 멈춘 상태에서 수행되고, 어떤 작업은 애플리케이션과 concurrently 진행될 수 있습니다.
-
-```text
-시간 ─────────────────────────▶
-애플리케이션  ██████░░██████░████
-GC work         ███      █████
-               ↑        ↑
-             pause 가능 구간
-```
 
 `Stop-The-World`는 JVM이 특정 GC 작업을 위해 애플리케이션 스레드의 진행을 멈추는 구간을 설명합니다. 하지만 모든 수집기가 모든 GC phase를 같은 방식으로 멈추는 것은 아닙니다.
 
@@ -77,16 +71,6 @@ Batch 작업에서는 높은 총 처리량이 더 중요할 수 있고, 사용�
 ### G1과 ZGC는 HotSpot 구현 선택이다
 
 G1, ZGC 같은 이름은 Java 언어의 메모리 모델이 아니라 HotSpot JVM이 제공하는 수집기입니다.
-
-```text
-Java/JVMS 명세
-  └─ 힙(heap)과 자동 메모리 관리(automatic storage management)에 관한 추상 계약
-
-HotSpot
-  ├─ G1
-  ├─ ZGC
-  └─ 기타 지원 collector
-```
 
 G1은 힙을 지역 단위로 관리하며 일시 중지 시간 목표와 처리량 사이에서 균형을 잡도록 설계된 수집기입니다. ZGC는 많은 GC work를 concurrent하게 수행해 낮은 일시 중지 시간을 중요한 목표로 둡니다.
 

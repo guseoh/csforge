@@ -30,7 +30,7 @@ references:
     depth: article
     recommendation: "JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다."
     displayOrder: 3
-    relationNote: "'스레드 상태'와 '스레드 덤프 유형별 패턴'의 BLOCKED·WAITING, monitor 소유자/대기자 분석 사례를 읽는다. 오래된 HotSpot 덤프 형식과 API 사용법은 Java 25 공식 도구 문서로 다시 확인한다."
+    relationNote: "'스레드 덤프 유형별 패턴'의 monitor 소유자/대기자 분석 사례를 읽는다. 글의 RUNNABLE을 CPU 점유와 동일시하거나 OS 자원 분배가 Java WAITING으로 바꾼다는 설명은 Java 25 Thread.State 계약으로 받아들이지 않는다. 덤프 형식과 도구 사용법도 현행 공식 문서로 확인한다."
 ---
 # Thread 생명주기와 중단
 
@@ -47,13 +47,14 @@ worker.start();
 
 `start()`는 해당 Thread가 독립적으로 실행되도록 schedule하고 그 Thread에서 `run()`이 수행되게 합니다. 한 Thread 객체는 한 번만 시작할 수 있으며 종료한 뒤 다시 `start()`할 수 없습니다.
 
-```text
-호출자
-  │
-  └─ start()
-       │
-       ▼
-작업자 스레드 -> run() -> 종료
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "Thread 시작·종료와 join",
+  "description": "start 전, 실행 중, 종료를 확인한 join 반환을 비교합니다. 인터럽트는 협력적 신호이며 timed join의 timeout에는 종료 보장이 없습니다.",
+  "example": "thread-lifecycle"
+}
 ```
 
 `run()`은 Thread가 실행할 본문이지 Thread 시작 API가 아닙니다. Java 25 `Thread` 문서는 direct `run()` 호출을 의도된 사용으로 보지 않습니다. Runnable 작업으로 만든 플랫폼 스레드에서는 호출자가 직접 `run()`하면 그 호출자에서 작업이 실행될 수 있고, 가상 스레드의 `run()`을 직접 호출하면 아무 동작도 하지 않습니다. 새 Thread 실행이 목적이라면 `start()`를 사용해야 합니다.
@@ -79,20 +80,7 @@ worker.join();
 useResult();
 ```
 
-`join()`이 성공적으로 반환하면 호출자는 작업자가 종료된 뒤 다음 코드로 진행합니다. JMM에서는 시작과 종료 관찰에 별도의 happens-before 관계를 정의합니다.
-
-```text
-호출자의 `start` 이전 동작
-      │
-      ├─ start() ─────▶ worker actions
-      │                    │
-      │                 terminate
-      │                    │
-      └──────────── `join`의 정상 반환
-                           │
-                           ▼
-                    호출자의 후속 동작
-```
+위처럼 시간 제한 없는 `join()`이 정상 반환하면 작업자의 종료를 관찰한 뒤 다음 코드로 진행합니다. 시간 제한이 있는 `join(timeout)`은 제한 시간이 지나서 반환할 수도 있으므로 정상 반환만으로 종료를 단정하면 안 됩니다. 이 경우에는 `isAlive()` 등으로 종료 여부를 구분해야 합니다. JMM에서는 시작과 종료 관찰에 별도의 happens-before 관계를 정의합니다.
 
 따라서 `join()`은 단순한 시간 대기 이상의 메모리-정렬 순서 의미를 가집니다.
 
@@ -104,7 +92,7 @@ worker.interrupt();
 
 `interrupt()`는 대상 스레드를 임의의 명령 위치에서 즉시 종료하지 않습니다. 현재 스레드가 무엇을 하고 있는지에 따라 interruption을 관찰하는 방식이 달라집니다.
 
-`wait`, `join`, `sleep`에서 기다리는 스레드가 interrupt되면 `InterruptedException`이 발생하고 interrupted status는 clear됩니다. 일반 실행 중이라면 interrupted status가 집합되며 코드가 이를 확인해 협력적으로 종료할 수 있습니다.
+`wait`, `join`, `sleep`에서 기다리는 스레드가 interrupt되면 `InterruptedException`이 발생하고 인터럽트 상태는 해제됩니다. 일반 실행 중이라면 인터럽트 상태가 설정되며 코드가 이를 확인해 협력적으로 종료할 수 있습니다.
 
 ```java
 while (!Thread.currentThread().isInterrupted()) {

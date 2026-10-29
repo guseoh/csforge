@@ -41,12 +41,14 @@ int result = future.get();
 
 `submit()`이 반환됐다고 작업이 완료된 것은 아닙니다. `future.get()`을 호출한 시점에도 결과가 준비되지 않았다면 현재 스레드는 완료될 때까지 기다릴 수 있습니다.
 
-```text
-호출자 ─ submit ─▶ executor/작업
-  │                    │
-  │ 다른 작업           │ 계산 중
-  │                    ▼
-  └──── get() ◀──── result
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "결과 완료와 후속 단계",
+  "description": "미완료에서 정상 변환·단계 연결·결합 경로와 예외·취소 경로를 구분합니다. cancel(true)는 실행 스레드를 인터럽트하지 않습니다.",
+  "example": "future-completion"
+}
 ```
 
 그래서 Future를 사용한다고 코드 전체가 자동으로 논블로킹이 되는 것은 아닙니다. 어디에서 `get()`으로 기다리는지가 중요합니다.
@@ -61,16 +63,6 @@ CompletableFuture<String> nameFuture = userFuture
 ```
 
 `thenApply`는 앞 단계의 결과가 생기면 그 값을 다른 값으로 바꿉니다.
-
-```text
-CompletableFuture<User>
-        │ complete
-        ▼
-    thenApply
-        │
-        ▼
-CompletableFuture<String>
-```
 
 호출자가 중간마다 `get()`해서 기다리기보다 "결과가 생기면 무엇을 할지"를 연결할 수 있습니다.
 
@@ -140,7 +132,7 @@ CompletableFuture<Void> both = CompletableFuture.allOf(user, order);
 
 여러 독립 작업을 동시에 시작한 뒤 모두 끝날 때까지 기다리는 구조를 만들 수 있습니다. 하지만 `allOf` 결과 자체가 각 결과값을 리스트로 자동 모아 주는 것은 아닙니다. 원래 future들의 값을 별도로 읽어야 합니다.
 
-또 하나가 실패했을 때 나머지 작업을 취소해야 하는지, 모두 끝난 뒤 실패를 모을지 같은 정책은 업무 요구사항입니다.
+`allOf`는 하나가 먼저 실패해도 입력 Future 전체가 완료될 때까지 기다립니다. 실패 즉시 반환하거나 나머지를 자동 취소하는 연산이 아닙니다. 입력 하나가 끝내 완료되지 않으면 allOf도 완료되지 않을 수 있습니다. 실패 즉시 중단, 시간 제한, 여러 실패 수집이 필요하다면 각각의 정책을 별도로 설계해야 합니다.
 
 ### cancellation은 실행 중인 모든 일을 강제로 멈추는 마법이 아니다
 
@@ -148,19 +140,13 @@ CompletableFuture<Void> both = CompletableFuture.allOf(user, order);
 future.cancel(true);
 ```
 
-`Future`의 cancellation과 실제 작업이 자원을 정리하고 중단되는 것은 구분해야 합니다. 특히 `CompletableFuture`의 cancellation은 해당 future의 완료 상태를 바꾸는 의미가 중심이며, 이미 실행 중인 외부 HTTP 요청이나 DB 작업을 반드시 강제로 끊는다고 생각하면 안 됩니다.
+`Future`의 cancellation과 실제 작업이 자원을 정리하고 중단되는 것은 구분해야 합니다. 특히 `CompletableFuture.cancel`은 mayInterruptIfRunning 인자를 사용해 실행 스레드를 중단하지 않습니다. true를 줘도 실행 중인 supplier나 외부 HTTP·DB 작업이 중단된다는 뜻은 아닙니다. 반면 ExecutorService.submit이 반환한 Future의 cancel(true)는 실행 중인 작업에 인터럽트를 시도할 수 있으므로 두 구현의 계약을 구분합니다.
 
 작업 코드가 interruption/cancellation에 어떻게 협력하는지, 사용하는 I/O API가 cancellation을 어떻게 지원하는지 별도로 봅니다.
 
 ### 공유 상태보다 결과 전달을 우선 생각한다
 
 비동기 작업 여러 개가 같은 가변 컬렉션을 직접 수정하게 만들기보다 각 future가 결과를 만들고 마지막 단계에서 합치는 구조가 이해하기 쉬운 경우가 많습니다.
-
-```text
-작업 A -> 결과 A ┐
-                   ├─ combine -> Final Result
-작업 B -> 결과 B ┘
-```
 
 이런 구조는 경합을 줄이고 실패가 어느 단계에서 났는지 추적하기도 쉽습니다.
 
