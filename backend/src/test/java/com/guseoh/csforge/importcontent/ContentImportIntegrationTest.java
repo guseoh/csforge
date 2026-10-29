@@ -10,13 +10,18 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import com.guseoh.csforge.test.PostgresIntegrationTestSupport;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +56,7 @@ class ContentImportIntegrationTest {
         jdbc.execute("drop function if exists test_import_failure()");
         jdbc.update("delete from review_history"); jdbc.update("delete from review_schedule"); jdbc.update("delete from wrong_note");
         jdbc.update("delete from attempt"); jdbc.update("delete from quiz_question"); jdbc.update("delete from quiz_session");
+        jdbc.update("delete from concept_view_history");
         jdbc.update("delete from question_concept"); jdbc.update("delete from question_answer"); jdbc.update("delete from question_choice");
         jdbc.update("delete from question"); jdbc.update("delete from concept_reference"); jdbc.update("delete from personal_note");
         jdbc.update("delete from concept_progress"); jdbc.update("delete from concept"); jdbc.update("delete from reference"); jdbc.update("delete from topic");
@@ -77,6 +83,60 @@ class ContentImportIntegrationTest {
         assertEquals(topicId, jdbc.queryForObject("select id from topic where content_key = 'test.topic'", Long.class));
         assertEquals(createdAt, jdbc.queryForObject("select created_at::text from topic where content_key = 'test.topic'", String.class));
         assertEquals(updatedAt, jdbc.queryForObject("select updated_at::text from topic where content_key = 'test.topic'", String.class));
+    }
+
+    @Test
+    void validatesVisualizationBeforeApplyAndPreservesItsCanonicalPayload() throws Exception {
+        String payload = """
+                {"version":1,"type":"min-heap","title":"최소 힙","description":"부모 값은 자식 이하입니다.","initialValues":[30,10,20]}
+                """.strip();
+        List<Part> base = sampleParts();
+        String source = base.get(1).content() + "\n```csforge-viz\n" + payload + "\n```\n";
+        List<Part> valid = List.of(base.getFirst(), new Part("concept.md", "text/markdown", source), base.get(2));
+        JsonNode preview = json(post("/api/imports/preview", valid, null)).get("body");
+        assertTrue(preview.get("canApply").asBoolean());
+        assertEquals(200, post("/api/imports/apply", valid, preview.get("previewDigest").asText()).statusCode());
+
+        JsonNode list = json(get("/api/public/concepts?area=java&page=0&size=10&sort=CURRICULUM")).get("body");
+        long id = list.get("items").get(0).get("id").asLong();
+        String stored = json(get("/api/public/concepts/" + id)).get("body").get("contentMarkdown").asText();
+        assertTrue(stored.contains(payload));
+        JsonNode repeated = json(post("/api/imports/preview", valid, null)).get("body");
+        assertEquals(3, repeated.get("totals").get("unchanged").asInt());
+
+        List<Part> invalid = List.of(base.getFirst(), new Part("concept.md", "text/markdown", source.replace("\"version\":1", "\"version\":99")), base.get(2));
+        JsonNode rejected = json(post("/api/imports/preview", invalid, null)).get("body");
+        assertFalse(rejected.get("canApply").asBoolean());
+        assertTrue(rejected.get("items").toString().contains("contentMarkdown.visualizations[0]"));
+        assertNotEquals(200, post("/api/imports/apply", invalid, rejected.get("previewDigest").asText()).statusCode());
+        assertEquals(stored, json(get("/api/public/concepts/" + id)).get("body").get("contentMarkdown").asText());
+    }
+
+    @Test
+    void preservesIndentedLiteralsAndValidListFencesAcrossImportAndReimport() throws Exception {
+        List<Part> base = sampleParts();
+        String literal = "\n    ```csforge-viz\n    {}\n    ```\n";
+        String payload = "{\"version\":1,\"type\":\"min-heap\",\"title\":\"힙\",\"description\":\"최소 힙\",\"initialValues\":[30,10,20]}";
+        String listFence = "\n- 목록\n\n    ```csforge-viz\n    " + payload + "\n    ```\n";
+        for (String suffix : List.of(literal, listFence)) {
+            String source = base.get(1).content() + suffix;
+            List<Part> parts = List.of(base.getFirst(), new Part("concept.md", "text/markdown", source), base.get(2));
+            JsonNode preview = json(post("/api/imports/preview", parts, null)).get("body");
+            assertTrue(preview.get("canApply").asBoolean());
+            assertEquals(200, post("/api/imports/apply", parts, preview.get("previewDigest").asText()).statusCode());
+            JsonNode repeated = json(post("/api/imports/preview", parts, null)).get("body");
+            assertEquals(3, repeated.get("totals").get("unchanged").asInt());
+        }
+        JsonNode list = json(get("/api/public/concepts?area=java&page=0&size=10&sort=CURRICULUM")).get("body");
+        long id = list.get("items").get(0).get("id").asLong();
+        String stored = json(get("/api/public/concepts/" + id)).get("body").get("contentMarkdown").asText();
+        assertTrue(stored.contains(listFence.stripTrailing()));
+        List<Part> invalid = List.of(base.getFirst(), new Part("concept.md", "text/markdown",
+                base.get(1).content() + listFence.replace(payload, "{}")), base.get(2));
+        JsonNode rejected = json(post("/api/imports/preview", invalid, null)).get("body");
+        assertFalse(rejected.get("canApply").asBoolean());
+        assertNotEquals(200, post("/api/imports/apply", invalid, rejected.get("previewDigest").asText()).statusCode());
+        assertEquals(stored, json(get("/api/public/concepts/" + id)).get("body").get("contentMarkdown").asText());
     }
 
     @Test
@@ -372,6 +432,242 @@ class ContentImportIntegrationTest {
         assertEquals(200, applied.get("status").asInt());
         assertEquals(100, jdbc.queryForObject(
                 "select count(*) from topic where content_key like 'batch.topic.%'", Integer.class));
+    }
+
+    @Test
+    void languageTypesPackPreviewUpdateAndExactReimportPreservePersonalHistory() throws Exception {
+        List<Part> pack = new ArrayList<>();
+        var topics = objectMapper.readTree(Files.readString(Path.of("../content/java/topics.json")));
+        for (var topic : topics) {
+            if (topic.get("contentKey").asText().equals("java.core.language-types")) {
+                pack.add(new Part("topic.json", "application/json", topic.toString()));
+            }
+        }
+        try (var paths = Files.list(Path.of("../content/java/language-types"))) {
+            for (Path path : paths.sorted().toList()) {
+                pack.add(new Part(path.getFileName().toString(), path.toString().endsWith(".md") ? "text/markdown" : "application/json", Files.readString(path)));
+            }
+        }
+        assertEquals(12, pack.size());
+        // Seed the same canonical identities with older bodies, then exercise real UPDATE paths.
+        List<Part> older = new ArrayList<>(pack.stream().map(part -> part.type().equals("text/markdown")
+                ? new Part(part.name(), part.type(), part.content().split("\\r?\\n---\\r?\\n", 2)[0] + "\n---\n# 이전 본문\n")
+                : part).toList());
+        String correctedQuestionKey = "java.core.language-types.primitive-reference-values.q1";
+        for (int i = 0; i < older.size(); i++) {
+            Part part = older.get(i);
+            if (!part.name().equals("questions.json")) continue;
+            var questions = objectMapper.readTree(part.content());
+            for (var question : questions) {
+                if (question.get("contentKey").asText().equals(correctedQuestionKey)) {
+                    ((ObjectNode) question).put("promptMarkdown", "다음 코드에서 마지막 표현식의 평가 결과는 무엇인가요?\n\n```java\nString a = new String(\"cs\");\nString b = a;\n\na == b\n```");
+                    ((ObjectNode) question).put("explanationMarkdown", "`new String(\"cs\")`로 만든 객체의 참조 값이 먼저 `a`에 저장되고, `b = a`에서 **그 참조 값이 `b`에 복사**됩니다. 따라서 두 변수는 같은 `String` 객체를 가리키고 참조 동일성을 비교하는 `a == b`는 `true`입니다. `b = a`는 `String` 객체를 한 번 더 복제하는 코드가 아닙니다.");
+                    for (var choice : question.get("choices")) {
+                        if (choice.get("key").asText().equals("C")) {
+                            ((ObjectNode) choice).put("rationaleMarkdown", "`String` 참조값을 다른 `String` 변수에 대입하는 것은 허용된다.");
+                        }
+                    }
+                }
+            }
+            older.set(i, new Part(part.name(), part.type(), questions.toString()));
+        }
+        JsonNode initial = json(post("/api/imports/preview", older, null)).get("body");
+        assertEquals(0, initial.get("totals").get("errors").asInt(), initial::toString);
+        assertEquals(200, post("/api/imports/apply", older, initial.get("previewDigest").asText()).statusCode());
+        assertEquals(10, jdbc.queryForObject("select count(*) from concept", Integer.class));
+        assertEquals(56, jdbc.queryForObject("select count(*) from question", Integer.class));
+        List<Map<String, Object>> identities = jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id");
+        List<Map<String, Object>> links = jdbc.queryForList("select * from question_concept order by question_id, concept_id");
+        long correctedQuestionId = jdbc.queryForObject("select id from question where content_key = ?", Long.class, correctedQuestionKey);
+        List<Map<String, Object>> choices = jdbc.queryForList("select id, choice_key, display_order from question_choice where question_id = ? order by id", correctedQuestionId);
+        for (var concept : identities) {
+            long conceptId = ((Number) concept.get("id")).longValue();
+            jdbc.update("insert into concept_progress (concept_id, status, bookmarked) values (?, 'LEARNING', true)", conceptId);
+            jdbc.update("insert into personal_note (concept_id, content) values (?, ?)", conceptId, "보존할 노트: " + concept.get("content_key"));
+            long questionId = jdbc.queryForObject("select id from question where content_key = ?", Long.class, concept.get("content_key") + ".q1");
+            long attemptId = insertAttempt(questionId);
+            jdbc.update("insert into quiz_question (quiz_session_id, question_id, position) select quiz_session_id, question_id, 0 from attempt where id = ?", attemptId);
+            jdbc.update("insert into wrong_note (question_id, status, wrong_count, first_wrong_at, last_wrong_at, last_wrong_attempt_id) values (?, 'ACTIVE', 1, current_timestamp, current_timestamp, ?)", questionId, attemptId);
+            jdbc.update("insert into review_schedule (question_id, status, stage, due_at, last_processed_attempt_id) values (?, 'SCHEDULED', 1, current_timestamp + interval '1 day', ?)", questionId, attemptId);
+            jdbc.update("insert into review_history (question_id, quiz_session_id, attempt_id, result, stage_before, stage_after, reviewed_at, next_due_at) select question_id, quiz_session_id, id, 'WRONG', 1, 1, current_timestamp, current_timestamp + interval '1 day' from attempt where id = ?", attemptId);
+        }
+        jdbc.update("update attempt set selected_choice_id = (select id from question_choice where question_id = ? and choice_key = 'B') where question_id = ?", correctedQuestionId, correctedQuestionId);
+        Map<String, List<Map<String, Object>>> before = personalHistorySnapshot();
+        JsonNode preview = json(post("/api/imports/preview", pack, null)).get("body");
+        assertTrue(preview.get("canApply").asBoolean(), preview::toString);
+        assertEquals(0, preview.get("totals").get("errors").asInt());
+        assertEquals(11, preview.get("totals").get("updated").asInt());
+        assertEquals(200, post("/api/imports/apply", pack, preview.get("previewDigest").asText()).statusCode());
+        assertEquals(before, personalHistorySnapshot());
+        assertEquals(identities, jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id"));
+        assertEquals(links, jdbc.queryForList("select * from question_concept order by question_id, concept_id"));
+        assertEquals(choices, jdbc.queryForList("select id, choice_key, display_order from question_choice where question_id = ? order by id", correctedQuestionId));
+        assertTrue(jdbc.queryForObject("select prompt_markdown from question where id = ?", String.class, correctedQuestionId).contains("System.out.println(a == b);"));
+        JsonNode repeated = json(post("/api/imports/preview", pack, null)).get("body");
+        assertEquals(67, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
+        assertEquals(0, repeated.get("totals").get("updated").asInt());
+        assertEquals(0, repeated.get("totals").get("created").asInt());
+        assertEquals(0, repeated.get("totals").get("errors").asInt());
+        assertEquals(200, post("/api/imports/apply", pack, repeated.get("previewDigest").asText()).statusCode());
+        assertEquals(before, personalHistorySnapshot());
+    }
+
+    @Test
+    void objectModelPackPreviewUpdateAndReimportPreserveIdentitiesAndPersonalHistory() throws Exception {
+        List<Part> pack = new ArrayList<>();
+        for (var topic : objectMapper.readTree(Files.readString(Path.of("../content/java/topics.json")))) {
+            if (topic.get("contentKey").asText().equals("java.core.object-model")) pack.add(new Part("topic.json", "application/json", topic.toString()));
+        }
+        try (var paths = Files.list(Path.of("../content/java/object-model"))) {
+            for (Path path : paths.sorted().toList()) pack.add(new Part(path.getFileName().toString(), path.toString().endsWith(".md") ? "text/markdown" : "application/json", Files.readString(path)));
+        }
+        assertEquals(14, pack.size());
+        List<Part> older = new ArrayList<>();
+        for (Part part : pack) {
+            if (part.type().equals("text/markdown")) {
+                older.add(new Part(part.name(), part.type(), part.content().split("\\r?\\n---\\r?\\n", 2)[0] + "\n---\n# 이전 본문\n"));
+            } else if (part.name().equals("questions.json")) {
+                var questions = objectMapper.readTree(part.content());
+                for (var question : questions) {
+                    String key = question.get("contentKey").asText();
+                    if (key.endsWith(".overload-vs-override.q4")) {
+                        ((ObjectNode) question).put("promptMarkdown", "다음 두 메서드를 한 클래스에 함께 선언할 수 없는 이유는 무엇인가요?\n\n```java\nint parse(String s)\nlong parse(String s)\n```");
+                    } else if (key.endsWith(".initialization-order-constructor-chaining.q4")) {
+                        ((ObjectNode) question).put("explanationMarkdown", "Java SE 25의 유연한 생성자 본문은 명시적 생성자 호출 앞부분에 일부 문장을 허용한다. 초기 생성 문맥에서는 현재 객체를 읽거나 인스턴스 메서드를 호출하는 등의 동작이 제한되지만, 허용된 형태로 현재 객체의 필드를 초기화하는 것은 가능하다.");
+                        for (var choice : question.get("choices")) {
+                            if (choice.get("key").asText().equals("C")) ((ObjectNode) choice).put("rationaleMarkdown", "초기 생성 문맥은 상위 클래스 생성 전에 현재 객체가 부적절하게 외부로 노출되거나 미초기화 상태가 사용되는 것을 제한하면서 일부 인자 검사와 직접 필드 대입을 허용한다.");
+                        }
+                    }
+                }
+                older.add(new Part(part.name(), part.type(), questions.toString()));
+            } else older.add(part);
+        }
+        JsonNode initial = json(post("/api/imports/preview", older, null)).get("body");
+        assertEquals(0, initial.get("totals").get("errors").asInt(), initial::toString);
+        assertEquals(200, post("/api/imports/apply", older, initial.get("previewDigest").asText()).statusCode());
+        assertEquals(12, jdbc.queryForObject("select count(*) from concept", Integer.class));
+        assertEquals(68, jdbc.queryForObject("select count(*) from question", Integer.class));
+        var concepts = jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id");
+        var questions = jdbc.queryForList("select id, content_key, question_type, difficulty, status from question order by id");
+        var links = jdbc.queryForList("select * from question_concept order by question_id, concept_id");
+        var choices = jdbc.queryForList("select id, question_id, choice_key, display_order from question_choice order by id");
+        var answers = jdbc.queryForList("select * from question_answer order by id");
+        for (var concept : concepts) {
+            long conceptId = ((Number) concept.get("id")).longValue();
+            String key = concept.get("content_key").toString();
+            String suffix = key.endsWith(".overload-vs-override") || key.endsWith(".initialization-order-constructor-chaining") ? ".q4" : ".q1";
+            long questionId = jdbc.queryForObject("select id from question where content_key = ?", Long.class, key + suffix);
+            jdbc.update("insert into concept_progress (concept_id, status, bookmarked) values (?, 'LEARNING', true)", conceptId);
+            jdbc.update("insert into personal_note (concept_id, content) values (?, ?)", conceptId, "보존할 노트: " + key);
+            long attemptId = insertAttempt(questionId);
+            if (suffix.equals(".q4")) jdbc.update("update attempt set selected_choice_id = (select id from question_choice where question_id = ? and choice_key = 'A') where id = ?", questionId, attemptId);
+            jdbc.update("insert into quiz_question (quiz_session_id, question_id, position) select quiz_session_id, question_id, 0 from attempt where id = ?", attemptId);
+            jdbc.update("insert into wrong_note (question_id, status, wrong_count, first_wrong_at, last_wrong_at, last_wrong_attempt_id) values (?, 'ACTIVE', 1, current_timestamp, current_timestamp, ?)", questionId, attemptId);
+            jdbc.update("insert into review_schedule (question_id, status, stage, due_at, last_processed_attempt_id) values (?, 'SCHEDULED', 1, current_timestamp + interval '1 day', ?)", questionId, attemptId);
+            jdbc.update("insert into review_history (question_id, quiz_session_id, attempt_id, result, stage_before, stage_after, reviewed_at, next_due_at) select question_id, quiz_session_id, id, 'WRONG', 1, 1, current_timestamp, current_timestamp + interval '1 day' from attempt where id = ?", attemptId);
+        }
+        var history = personalHistorySnapshot();
+        JsonNode preview = json(post("/api/imports/preview", pack, null)).get("body");
+        assertTrue(preview.get("canApply").asBoolean(), preview::toString);
+        assertEquals(0, preview.get("totals").get("errors").asInt());
+        assertEquals(14, preview.get("totals").get("updated").asInt());
+        assertEquals(200, post("/api/imports/apply", pack, preview.get("previewDigest").asText()).statusCode());
+        assertEquals(concepts, jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id"));
+        assertEquals(questions, jdbc.queryForList("select id, content_key, question_type, difficulty, status from question order by id"));
+        assertEquals(links, jdbc.queryForList("select * from question_concept order by question_id, concept_id"));
+        assertEquals(choices, jdbc.queryForList("select id, question_id, choice_key, display_order from question_choice order by id"));
+        assertEquals(answers, jdbc.queryForList("select * from question_answer order by id"));
+        assertEquals(history, personalHistorySnapshot());
+        JsonNode repeated = json(post("/api/imports/preview", pack, null)).get("body");
+        assertEquals(81, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
+        for (String count : List.of("created", "updated", "errors")) assertEquals(0, repeated.get("totals").get(count).asInt());
+        assertEquals(200, post("/api/imports/apply", pack, repeated.get("previewDigest").asText()).statusCode());
+        assertEquals(history, personalHistorySnapshot());
+    }
+
+    @Test
+    void javaTopicBatchPreviewApplyReimportPreservesCanonicalIdentitiesAndHistory() throws Exception {
+        int expectedQuestions = 0;
+        int expectedConcepts = 0;
+        int expectedTopics = 0;
+        for (var topicRow : objectMapper.readTree(Files.readString(Path.of("../content/java/topics.json")))) {
+            String topic = topicRow.get("contentKey").asText().substring("java.core.".length());
+            List<Part> pack = new ArrayList<>();
+            pack.add(new Part("topic.json", "application/json", topicRow.toString()));
+            try (var paths = Files.list(Path.of("../content/java/" + topic))) {
+                for (Path path : paths.sorted().toList()) pack.add(new Part(path.getFileName().toString(), path.toString().endsWith(".md") ? "text/markdown" : "application/json", Files.readString(path)));
+            }
+            List<Part> older = new ArrayList<>();
+            int topicQuestions = 0;
+            for (Part part : pack) {
+                if (part.type().equals("text/markdown")) {
+                    older.add(new Part(part.name(), part.type(), part.content().split("\\r?\\n---\\r?\\n", 2)[0] + "\n---\n# 이전 본문\n"));
+                } else if (part.name().equals("questions.json")) {
+                    var rows = objectMapper.readTree(part.content());
+                    topicQuestions = rows.size();
+                    for (var row : rows) ((ObjectNode) row).put("explanationMarkdown", "이전 해설");
+                    older.add(new Part(part.name(), part.type(), rows.toString()));
+                } else older.add(part);
+            }
+            JsonNode initial = json(post("/api/imports/preview", older, null)).get("body");
+            assertEquals(0, initial.get("totals").get("errors").asInt(), initial::toString);
+            assertEquals(200, post("/api/imports/apply", older, initial.get("previewDigest").asText()).statusCode());
+            expectedQuestions += topicQuestions;
+            expectedTopics++;
+            assertEquals(expectedQuestions, jdbc.queryForObject("select count(*) from question", Integer.class));
+            var concepts = jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id");
+            var questions = jdbc.queryForList("select id, content_key, question_type, difficulty, status from question order by id");
+            var links = jdbc.queryForList("select * from question_concept order by question_id, concept_id");
+            var choices = jdbc.queryForList("select id, question_id, choice_key, display_order from question_choice order by id");
+            var answers = jdbc.queryForList("select * from question_answer order by id");
+            var addedConcepts = jdbc.queryForList("select c.id from concept c join topic t on t.id = c.topic_id where t.content_key = ? order by c.id", "java.core." + topic);
+            expectedConcepts += addedConcepts.size();
+            for (var concept : addedConcepts) {
+                long id = ((Number) concept.get("id")).longValue();
+                long questionId = jdbc.queryForObject("select question_id from question_concept where concept_id = ? order by question_id limit 1", Long.class, id);
+                jdbc.update("insert into concept_progress (concept_id, status, bookmarked) values (?, 'LEARNING', true)", id);
+                jdbc.update("insert into personal_note (concept_id, content) values (?, '보존할 개인 노트')", id);
+                jdbc.update("insert into concept_view_history (concept_id, viewed_at) values (?, current_timestamp)", id);
+                long attemptId = insertAttempt(questionId);
+                jdbc.update("update attempt set selected_choice_id = (select id from question_choice where question_id = ? order by display_order limit 1) where id = ?", questionId, attemptId);
+                jdbc.update("insert into quiz_question (quiz_session_id, question_id, position) select quiz_session_id, question_id, 0 from attempt where id = ?", attemptId);
+                jdbc.update("insert into wrong_note (question_id, status, wrong_count, first_wrong_at, last_wrong_at, last_wrong_attempt_id) values (?, 'ACTIVE', 1, current_timestamp, current_timestamp, ?)", questionId, attemptId);
+                jdbc.update("insert into review_schedule (question_id, status, stage, due_at, last_processed_attempt_id) values (?, 'SCHEDULED', 1, current_timestamp + interval '1 day', ?)", questionId, attemptId);
+                jdbc.update("insert into review_history (question_id, quiz_session_id, attempt_id, result, stage_before, stage_after, reviewed_at, next_due_at) select question_id, quiz_session_id, id, 'WRONG', 1, 1, current_timestamp, current_timestamp + interval '1 day' from attempt where id = ?", attemptId);
+            }
+            var history = personalHistorySnapshot();
+            JsonNode preview = json(post("/api/imports/preview", pack, null)).get("body");
+            assertTrue(preview.get("canApply").asBoolean(), preview::toString);
+            assertEquals(0, preview.get("totals").get("errors").asInt());
+            assertEquals(200, post("/api/imports/apply", pack, preview.get("previewDigest").asText()).statusCode());
+            assertEquals(concepts, jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id"));
+            assertEquals(questions, jdbc.queryForList("select id, content_key, question_type, difficulty, status from question order by id"));
+            assertEquals(links, jdbc.queryForList("select * from question_concept order by question_id, concept_id"));
+            assertEquals(choices, jdbc.queryForList("select id, question_id, choice_key, display_order from question_choice order by id"));
+            assertEquals(answers, jdbc.queryForList("select * from question_answer order by id"));
+            assertEquals(history, personalHistorySnapshot());
+            JsonNode repeated = json(post("/api/imports/preview", pack, null)).get("body");
+            assertEquals(1 + addedConcepts.size() + topicQuestions, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
+            for (String count : List.of("created", "updated", "errors")) assertEquals(0, repeated.get("totals").get(count).asInt());
+            assertEquals(200, post("/api/imports/apply", pack, repeated.get("previewDigest").asText()).statusCode());
+            assertEquals(history, personalHistorySnapshot());
+        }
+        assertEquals(18, expectedTopics);
+        assertEquals(145, expectedConcepts);
+        assertEquals(843, expectedQuestions);
+        assertEquals(expectedTopics, jdbc.queryForObject("select count(*) from topic", Integer.class));
+        assertEquals(expectedConcepts, jdbc.queryForObject("select count(*) from concept", Integer.class));
+        for (var history : personalHistorySnapshot().entrySet()) {
+            assertEquals(expectedConcepts, history.getValue().size(), history.getKey());
+        }
+    }
+
+    private Map<String, List<Map<String, Object>>> personalHistorySnapshot() {
+        Map<String, List<Map<String, Object>>> result = new LinkedHashMap<>();
+        for (String table : List.of("concept_progress", "personal_note", "concept_view_history", "quiz_session", "quiz_question", "attempt", "wrong_note", "review_schedule", "review_history")) {
+            result.put(table, jdbc.queryForList("select * from " + table + " order by 1"));
+        }
+        return result;
     }
 
     @Test

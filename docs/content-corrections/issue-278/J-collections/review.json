@@ -1,0 +1,488 @@
+{
+  "baseline": "786b25a9",
+  "reviewedAt": "2026-10-28",
+  "topic": "J-collections",
+  "counts": {
+    "concepts": 9,
+    "questions": 51
+  },
+  "concepts": [
+    {
+      "path": "content/java/collections/arraylist-linkedlist-tradeoff.md",
+      "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff",
+      "baselineSha256": "81b947b23099bf60adef5d321434530c1f2426c41f6aa0bc5875b9320462e4da",
+      "reviewedSha256": "61613173263030213435693084aa31782a012184e6c7d63f1b20f56a8ff02ca2",
+      "targetTier": "V1",
+      "auditDecision": "RESTYLE",
+      "result": "DONE",
+      "review": "참조 슬롯/연결 두 행 구조 inline RESTYLE, 탐색+연결 비용과 물리 배치 경계",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "java-api-contract",
+          "example": "list-layout",
+          "title": "접근과 삽입 비용의 분해",
+          "description": "배열의 참조 슬롯 이동과 연결 리스트의 위치 탐색을 구별합니다. 물리 객체 배치 그림은 아닙니다."
+        }
+      ]
+    },
+    {
+      "path": "content/java/collections/hashmap-hashing-collision.md",
+      "contentKey": "java.core.collections.hashmap-hashing-collision",
+      "baselineSha256": "40591bd43d596228d6aec8d1aabf28d70700bb312b2ffa0bff39d682d1db4f0f",
+      "reviewedSha256": "27549ea3e7442e24b7d0626849a349d2119697699293e89dd6e43aea3e9e47e6",
+      "targetTier": "V2",
+      "auditDecision": "REBUILD",
+      "result": "DONE",
+      "review": "Aa/BB 고정 입력과 충돌·동등성·value 반환·miss V2; 특정 bucket·equals 호출 횟수 비보장",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "java-api-contract",
+          "example": "hash-lookup",
+          "title": "충돌 후보에서 값 찾기",
+          "description": "Aa와 BB는 같은 해시를 갖지만 다른 키입니다. get은 동등한 키의 값을 반환하며 매핑을 교체하지 않습니다."
+        }
+      ]
+    },
+    {
+      "path": "content/java/collections/hashset-set-semantics.md",
+      "contentKey": "java.core.collections.hashset-set-semantics",
+      "baselineSha256": "316391492b7f932d6ffa869af86920872e142692290c4d96760132c00b546e56",
+      "reviewedSha256": "316391492b7f932d6ffa869af86920872e142692290c4d96760132c00b546e56",
+      "targetTier": "NONE",
+      "auditDecision": "NONE",
+      "result": "NO_VISUAL_NEEDED",
+      "review": "add 반환값·충돌과 중복·가변 원소·순회 순서 검토; 중복 도식 없음",
+      "visualizations": []
+    },
+    {
+      "path": "content/java/collections/immutable-unmodifiable-collections.md",
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections",
+      "baselineSha256": "20615425b623bdb9c0abea9325dba148e9f83f22622441c01b6cda7af1549358",
+      "reviewedSha256": "4b0cf97e907cf1c77c62829b6d41d0c148f8e29ad7dec95f5465ef0abd33efd5",
+      "targetTier": "V1",
+      "auditDecision": "REPLACE_TEXT",
+      "result": "DONE",
+      "review": "view의 구조 공유와 copyOf의 구조 분리/가변 원소 공유 V1; 깊은 복사·새 할당 비보장",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "java-api-contract",
+          "example": "view-copy",
+          "title": "뷰와 스냅샷의 구조 관계",
+          "description": "수정 불가 뷰는 원본 구조에 연결되고 copyOf는 이후 구조 변경과 분리됩니다. 가변 원소 자체는 공유할 수 있습니다."
+        }
+      ]
+    },
+    {
+      "path": "content/java/collections/iterable-iterator-foreach-modification.md",
+      "contentKey": "java.core.collections.iterable-iterator-foreach-modification",
+      "baselineSha256": "dcfb89bbd22d5846e03419d8c3b852b7237a67c43f7561c72408a32cf975f5bd",
+      "reviewedSha256": "eae296f1374ffe89954d86a4a0d9e7ca22b78b4ef506cd726f92cbc5858bb6e4",
+      "targetTier": "V1",
+      "auditDecision": "REPLACE_TEXT",
+      "result": "DONE",
+      "review": "remove 지원 반복자의 유효 순서 V1, optional 연산·best-effort fail-fast·배열 foreach 분리",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "java-api-contract",
+          "example": "iterator",
+          "title": "반복자 삭제의 유효 상태",
+          "description": "next 뒤에 지원되는 remove를 한 번 호출할 수 있습니다. 직접 구조 변경과 fail-fast 보장은 별개입니다."
+        }
+      ]
+    },
+    {
+      "path": "content/java/collections/list-set-map-contracts.md",
+      "contentKey": "java.core.collections.list-set-map-contracts",
+      "baselineSha256": "2ffe15b55901dc0ec214bb43e1b3c5af53b2523131bd7e59a23ecb8151f4ab1e",
+      "reviewedSha256": "d66b03777b1055987059218316cbc25da5535cece4fab0ebdcfde675f4960d1c",
+      "targetTier": "V1",
+      "auditDecision": "REPLACE_TEXT",
+      "result": "DONE",
+      "review": "List 순서/중복·Set 동등성·Map 세 뷰의 기반 관계 검토, view V1",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "java-api-contract",
+          "example": "map-views",
+          "title": "Map 뷰의 기반 매핑",
+          "description": "keySet, values, entrySet은 같은 Map을 바라봅니다. 지원되는 제거는 기반 매핑에도 반영됩니다."
+        }
+      ]
+    },
+    {
+      "path": "content/java/collections/priorityqueue.md",
+      "contentKey": "java.core.collections.priorityqueue",
+      "baselineSha256": "18d8f668a33d220ad33d004298ec5d1dc3be322e8a000d5ed18eb26ca960864e",
+      "reviewedSha256": "3f92e71ee3ba656ecb5b203b9172a97b1fc014e0be5ee8e197c07ceca4e741ee",
+      "targetTier": "V3",
+      "auditDecision": "KEEP",
+      "result": "DONE",
+      "review": "기존 V3 KEEP, 중복 ASCII 제거; head·동률·순회·원소 변경·JDK 배열 경계",
+      "visualizations": [
+        {
+          "version": 1,
+          "title": "최소 힙의 트리와 배열",
+          "description": "부모 값은 자식 값 이하입니다. 루트가 최솟값이지만 배열 전체가 정렬된 것은 아닙니다. poll을 반복하면 원본 큐가 소모됩니다.",
+          "type": "min-heap",
+          "initialValues": [
+            30,
+            10,
+            20
+          ]
+        }
+      ]
+    },
+    {
+      "path": "content/java/collections/queue-deque-arraydeque.md",
+      "contentKey": "java.core.collections.queue-deque-arraydeque",
+      "baselineSha256": "68df015b6204fd5e94ba6d63a03c3bcc05d3bbf1c9d97843fff7cd2ea543b652",
+      "reviewedSha256": "ddcccda52bc733f5b2c78ceae1071515f669e782ab35f18251ef7d9b4c540caa",
+      "targetTier": "V1",
+      "auditDecision": "REPLACE_TEXT",
+      "result": "DONE",
+      "review": "Queue 전체=FIFO 일반화 교정, 앞/뒤 V1과 예외/특별값·null·동시성 계약",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "java-api-contract",
+          "example": "deque",
+          "title": "Deque의 앞과 뒤",
+          "description": "offerLast와 pollFirst는 FIFO, push와 pop은 같은 앞쪽 끝을 사용하는 LIFO입니다."
+        }
+      ]
+    },
+    {
+      "path": "content/java/collections/sorted-collections-tree.md",
+      "contentKey": "java.core.collections.sorted-collections-tree",
+      "baselineSha256": "b0d18dd0dfa9c5ba2897d70acfd6f0d24d0562d81d28050ae44e371ec7e2dbd4",
+      "reviewedSha256": "340cec814959f6d0fd70b900c69cb425ff87ca6c68c0eeb0217338aa3254bebb",
+      "targetTier": "NONE",
+      "auditDecision": "NONE",
+      "result": "NO_VISUAL_NEEDED",
+      "review": "비교 0·범위 조회·복잡도 확인; equals 불일치 시 일반 Set 계약 위반 명시",
+      "visualizations": []
+    }
+  ],
+  "questions": [
+    {
+      "contentKey": "java.core.collections.list-set-map-contracts.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "f332198baf5c4e2c71c7891d23e380cd7254335a6d142e739278c7de73f4f75f"
+    },
+    {
+      "contentKey": "java.core.collections.list-set-map-contracts.q2",
+      "result": "CORRECTED",
+      "changedFields": [
+        "explanationMarkdown"
+      ],
+      "reviewedSha256": "ee28488eb977db1cb43bbaedd7c0ac018e80a6e17870384e81b0a7cbc887ef5f"
+    },
+    {
+      "contentKey": "java.core.collections.list-set-map-contracts.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5e953ed75981311c3b64a0bf1bc766a1f142022349cf4ff8fc01c147c4f740d8"
+    },
+    {
+      "contentKey": "java.core.collections.list-set-map-contracts.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "e101068eb121fdaf2d4f15c3b1d2b41f39825a64f0ec2cf773c1b63609b53cba"
+    },
+    {
+      "contentKey": "java.core.collections.list-set-map-contracts.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "87faec727e6fb82e059d0cc6ce0dbe682491a3f8d1673b3812e4fc669b6e0457"
+    },
+    {
+      "contentKey": "java.core.collections.list-set-map-contracts.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "a6f60baffae2056c886eed27862e293f50437a3656ca0709679cb9254711d895"
+    },
+    {
+      "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "bbfd68c2886c56b2027a7c0dcbab6559b7378038f2bbafd73ecbbb6efd529ce4"
+    },
+    {
+      "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "e2b60f70976c3b093626e8748594b05b39cd521ac17f16fee36ff2b46f00ef25"
+    },
+    {
+      "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "3b7d0f034ed82f2bc8fe52156b8eb4267244693ec30ea7775898f41b55b20f38"
+    },
+    {
+      "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "e2f3931974b811b86282248e625637294162e0e1a71f19ed7252c0687dc314f5"
+    },
+    {
+      "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "014f13270b52960eb0735fe7a6f641f902f30afea8a71b1c421082201608cf49"
+    },
+    {
+      "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "7849b8900afa8a60802ee1389caa7e452c0923fd3eb28ff433a039fa86216cb2"
+    },
+    {
+      "contentKey": "java.core.collections.hashmap-hashing-collision.q1",
+      "result": "CORRECTED",
+      "changedFields": [
+        "choices[3].content",
+        "choices[3].rationaleMarkdown",
+        "explanationMarkdown"
+      ],
+      "reviewedSha256": "305efab00614ff8d9e7d7d891044924c265a5428c72c8e8f419b9c85cf3a3c90"
+    },
+    {
+      "contentKey": "java.core.collections.hashmap-hashing-collision.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "c21f544f2fad937ab7d8c78c32ac8826d77a93c66c7be0bc6791ed731b850761"
+    },
+    {
+      "contentKey": "java.core.collections.hashmap-hashing-collision.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "eabbc9a32a04c36f8d64b7bf9b8b3ee453520bdb6ea8c328352dffef5c57155c"
+    },
+    {
+      "contentKey": "java.core.collections.hashmap-hashing-collision.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "04f4033a2a1977cc7f10629b0e5eed2f35206ee4501a9bce8cf0d933d8992d08"
+    },
+    {
+      "contentKey": "java.core.collections.hashmap-hashing-collision.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "bab5311242f5fd165f1b5d307b4479580c97ee909bece8c79d9d896bf6793a27"
+    },
+    {
+      "contentKey": "java.core.collections.hashmap-hashing-collision.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "6a9bcd1d648c9dad44e0b84349e9a98325d5b86f23efc81408ea68e0c7e7e4cb"
+    },
+    {
+      "contentKey": "java.core.collections.hashset-set-semantics.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "9b79363cff23101c63d9c5800815c9d11f7947bb11a92b9ccfb23ca5b6a571b6"
+    },
+    {
+      "contentKey": "java.core.collections.hashset-set-semantics.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "3bc19a354daa9bbc96c0d196184b4de3f3c2043d498833e7ad7e1777bcb2b643"
+    },
+    {
+      "contentKey": "java.core.collections.hashset-set-semantics.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "63d460e69c2c0e9c0f8e08039985c5495fcc44e192108e497f11e04a807c2fb9"
+    },
+    {
+      "contentKey": "java.core.collections.hashset-set-semantics.q4",
+      "result": "CORRECTED",
+      "changedFields": [
+        "choices[2].rationaleMarkdown"
+      ],
+      "reviewedSha256": "c83647b3c066c76359bf46051e886c720170036f470278bb44e8277aa0635ec7"
+    },
+    {
+      "contentKey": "java.core.collections.sorted-collections-tree.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "30f1120d107c38b13fc9b848c03bdee978586bc474e1e5ab8c059ef8c7a872ec"
+    },
+    {
+      "contentKey": "java.core.collections.sorted-collections-tree.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "80dbab46467ff71606ef0c07105d8983767f87baea838258af477b452839af4c"
+    },
+    {
+      "contentKey": "java.core.collections.sorted-collections-tree.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5664e97a076ecb2e1b12aaa6cff163744862782e19860f5d53cc4f4af5bc1c16"
+    },
+    {
+      "contentKey": "java.core.collections.sorted-collections-tree.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "505511b6ad50604f7de79b888e102d84bbe75157f803a766a17125918ec83714"
+    },
+    {
+      "contentKey": "java.core.collections.queue-deque-arraydeque.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "328f460c7dcb9746579db475848a8011f2d4cf82a2ded51dfa2c97a482e1da5c"
+    },
+    {
+      "contentKey": "java.core.collections.queue-deque-arraydeque.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "6158603d1bcc9bba10c9fca95683466225887d4629d039d498ef90e8671fb69f"
+    },
+    {
+      "contentKey": "java.core.collections.queue-deque-arraydeque.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "3dcbfedf09687172328ef3e2ff10c161abc464572ac3afc4cc82fafe22c99e5b"
+    },
+    {
+      "contentKey": "java.core.collections.queue-deque-arraydeque.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "02e6926454485a3a3d67b3d8b9e1b871d4c5ce0370e0d0cf6aa4af430ac825da"
+    },
+    {
+      "contentKey": "java.core.collections.queue-deque-arraydeque.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "d6e2f7bc23e04e3e3b8ebb5401e4ca8113990f0ce8c703a8ff01dee647c9f247"
+    },
+    {
+      "contentKey": "java.core.collections.priorityqueue.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "386712494e4343266324d108cf981b8c74a34012cd0cd6bd67dd234dd394e160"
+    },
+    {
+      "contentKey": "java.core.collections.priorityqueue.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "528a89d5f51fb9944e2dac35e57dfb972853c5119c3a9fdd24130cca9cb3a6d4"
+    },
+    {
+      "contentKey": "java.core.collections.priorityqueue.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5e45d08e88eceade6eddc40d5c51df48fd4b0b6f3f737610a9bdd51dadbe33eb"
+    },
+    {
+      "contentKey": "java.core.collections.priorityqueue.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "450eee2c6c7cb0d0fb7efc55cc6d3b8a95ec9f95a4a0593723645037b91fcf1a"
+    },
+    {
+      "contentKey": "java.core.collections.priorityqueue.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "7d7f211eadf250ef542caf48577310bfc77833676346330ef8f854bbc7017cd2"
+    },
+    {
+      "contentKey": "java.core.collections.iterable-iterator-foreach-modification.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "e4c94c06b4852d5426835cfa2e27087ffdc089cece942a2f66671eed1b3564f1"
+    },
+    {
+      "contentKey": "java.core.collections.iterable-iterator-foreach-modification.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5eae384df2d9e3523e147d5665da3f1c5a5b21e85f713432516e4bf215cb1e56"
+    },
+    {
+      "contentKey": "java.core.collections.iterable-iterator-foreach-modification.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "b796b3dfd707784384b6b29ba1685fc5281d4ec9d2ed08ddab53c27976856ac1"
+    },
+    {
+      "contentKey": "java.core.collections.iterable-iterator-foreach-modification.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "8ad925bef1abf523691c4b87c83dda1441e4340cb050da425ea600488cf518e5"
+    },
+    {
+      "contentKey": "java.core.collections.iterable-iterator-foreach-modification.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "f3d09c94916ed2c6ee6013df0d4c69298fa167f6caa052b3b7d9951c4fa3662e"
+    },
+    {
+      "contentKey": "java.core.collections.iterable-iterator-foreach-modification.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "e5c6df9d8c7839185458d071b209dfcfb02e85992d837341c00b607c107e6889"
+    },
+    {
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "192ded7aa3e8ee33b9a5695dcb3871b064d0289d7324f53a1e4b466fd36a9534"
+    },
+    {
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5143b2dd75ce7bb74e62d4a686b2cc1f9c9210d526d542f4ed1081077520e38e"
+    },
+    {
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "e1d927e7d77181fd67cac32644fa3f9358112f860e7b08151a3a158ffb71ee55"
+    },
+    {
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "c84531d6c8ddfdc7398eb266ef5401aeb5870a40b3d3c783c600f7ea7242f0d6"
+    },
+    {
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "156a53dffc74c72e585d1f80928205ffb62787684612edb281ab581e51fcb97b"
+    },
+    {
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "c2b0694441d8cb1888c950c523006a09bf41d3b4dd4b0cea198721af14ee908a"
+    },
+    {
+      "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff.q7",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "384b079bdd1612b31f1b21b98f9a8f7712af1cd682295ff2e54437b8638e878e"
+    },
+    {
+      "contentKey": "java.core.collections.list-set-map-contracts.q7",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "a1df1d387d1d79be6394bfbfc09f4964b7d2721e821d1c47e8c850fbb3361a7f"
+    },
+    {
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections.q7",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "c23ffd2247e4f34cd74bc23591828013860b4fe2bcce31467f276acc83a391f2"
+    }
+  ],
+  "questionFileSha256": "a10b0e2bc95fe59defe88ebcb2a20c0c08556ba05c26e6881692d9a0526f85d8",
+  "stableMetadataAndAnswerKeysPreserved": true
+}

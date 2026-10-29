@@ -1,0 +1,451 @@
+{
+  "suites": 54,
+  "tests": 193,
+  "failures": 1,
+  "errors": 0,
+  "skipped": 1,
+  "failedSuites": [
+    {
+      "name": "com.guseoh.csforge.importcontent.JavaReferenceFullMigrationIntegrationTest",
+      "tests": "1",
+      "failures": "1",
+      "errors": "0",
+      "skipped": "0",
+      "time": "60.068"
+    }
+  ],
+  "suiteResults": [
+    {
+      "name": "com.guseoh.csforge.ai.application.WrongAnswerAnalysisCommandServiceTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.406"
+    },
+    {
+      "name": "com.guseoh.csforge.ai.application.WrongAnswerAnalysisResultValidatorTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.021"
+    },
+    {
+      "name": "com.guseoh.csforge.ai.config.AiAnalysisConfigurationTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.826"
+    },
+    {
+      "name": "com.guseoh.csforge.ai.domain.WrongAnswerAnalysisTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.394"
+    },
+    {
+      "name": "com.guseoh.csforge.ai.WrongAnswerAnalysisIntegrationTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "13.256"
+    },
+    {
+      "name": "com.guseoh.csforge.CsforgeApplicationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.546"
+    },
+    {
+      "name": "com.guseoh.csforge.dashboard.application.DashboardQueryServiceTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.136"
+    },
+    {
+      "name": "com.guseoh.csforge.dashboard.DashboardIntegrationTest",
+      "tests": "8",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.619"
+    },
+    {
+      "name": "com.guseoh.csforge.dashboard.DashboardMigrationIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "2.722"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.application.QuestionStructureComparatorTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.021"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.CaFloatingPointReferenceCorrectionIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "146.833"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.CaJmhReferenceCorrectionIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "126.81"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.CanonicalBootstrapBatchPlannerTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "4.054"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.CanonicalBootstrapIdempotencyIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "280.95"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.CanonicalBootstrapServiceTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "2.538"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.CapAuthorManuscriptIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "79.127"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.CaReadableReferencesIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "136.898"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.ContentImportIntegrationTest",
+      "tests": "23",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "271.886"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.ContentImportParserTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.087"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.DsaReferenceScopeCorrectionIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "72.762"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.InfraNistReferenceCorrectionIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "87.354"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.JavaApiContractTest",
+      "tests": "7",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "39.554"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.JavaReferenceCorrectionIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "74.24"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.JavaReferenceFullMigrationIntegrationTest",
+      "tests": "1",
+      "failures": "1",
+      "errors": "0",
+      "skipped": "0",
+      "time": "60.068"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.LanguageTypesQuestionTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "4.743"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.LearningVisualizationValidationTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.072"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.NetworkCookieReferenceCorrectionIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "215.271"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.ObjectModelJavaTest",
+      "tests": "5",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "118.916"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.OsSourceScopeReferenceCorrectionIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "184.593"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.OsThreadReferenceScopeIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "115.698"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.R2Remaining45CombinedIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "127.146"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.SecurityUserDetailsReferenceCorrectionIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "136.591"
+    },
+    {
+      "name": "com.guseoh.csforge.importcontent.ShortAnswerCanonicalUpdateIntegrationTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.837"
+    },
+    {
+      "name": "com.guseoh.csforge.learning.ConceptUnderstandingPolicyTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.006"
+    },
+    {
+      "name": "com.guseoh.csforge.learning.LearningIntegrationTest",
+      "tests": "22",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "9.095"
+    },
+    {
+      "name": "com.guseoh.csforge.learning.RefactorV16UpgradeIntegrationTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "3.916"
+    },
+    {
+      "name": "com.guseoh.csforge.performance.DailyRouteQueryAuditTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "1",
+      "time": "0.001"
+    },
+    {
+      "name": "com.guseoh.csforge.question.domain.QuestionRationaleContractTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.854"
+    },
+    {
+      "name": "com.guseoh.csforge.question.domain.QuestionShortAnswerExplanationContractTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.011"
+    },
+    {
+      "name": "com.guseoh.csforge.quiz.application.grading.ShortAnswerGradingStrategyTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.032"
+    },
+    {
+      "name": "com.guseoh.csforge.quiz.application.QuizPerformanceTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.007"
+    },
+    {
+      "name": "com.guseoh.csforge.quiz.application.QuizSessionDataLoaderTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "9.653"
+    },
+    {
+      "name": "com.guseoh.csforge.quiz.infrastructure.QuestionSelectionRepositoryTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.005"
+    },
+    {
+      "name": "com.guseoh.csforge.quiz.QuizIntegrationTest",
+      "tests": "20",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "31.599"
+    },
+    {
+      "name": "com.guseoh.csforge.review.ReviewDomainTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.019"
+    },
+    {
+      "name": "com.guseoh.csforge.review.ReviewQueryServiceTest",
+      "tests": "1",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.394"
+    },
+    {
+      "name": "com.guseoh.csforge.review.ReviewTimeWindowTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.008"
+    },
+    {
+      "name": "com.guseoh.csforge.review.Slice3PersistenceIntegrationTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.715"
+    },
+    {
+      "name": "com.guseoh.csforge.search.application.SearchCriteriaTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.005"
+    },
+    {
+      "name": "com.guseoh.csforge.search.application.SearchQueryServiceTest",
+      "tests": "3",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.816"
+    },
+    {
+      "name": "com.guseoh.csforge.search.PostgresSearchIntegrationTest",
+      "tests": "4",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.816"
+    },
+    {
+      "name": "com.guseoh.csforge.security.AllowedEmailPolicyTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.003"
+    },
+    {
+      "name": "com.guseoh.csforge.security.CloudSecurityIntegrationTest",
+      "tests": "11",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "12.77"
+    },
+    {
+      "name": "com.guseoh.csforge.security.LocalSessionContextIntegrationTest",
+      "tests": "2",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "0.073"
+    }
+  ]
+}

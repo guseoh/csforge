@@ -60,11 +60,11 @@ Map<Boolean, List<Order>> partition = orders.stream()
         .collect(Collectors.partitioningBy(Order::isPaid));
 ```
 
-`groupingBy`가 여러 키를 만들 수 있는 일반 분류라면 `partitioningBy`는 조건 함수 결과 `true/false` 두 그룹으로 나누는 용도입니다.
+`groupingBy`가 여러 키를 만들 수 있는 일반 분류라면 `partitioningBy`는 조건 함수 결과 `true/false` 두 그룹으로 나누는 용도입니다. 입력이 비어 있거나 한쪽 조건을 만족하는 원소가 없어도 두 키가 모두 존재하며, 위 오버로드에서는 해당 값이 빈 List입니다. 반면 `groupingBy`는 입력에서 한 번도 나타나지 않은 키의 그룹을 자동으로 만들지 않습니다.
 
 ### 결과 Map의 구체 구현을 함부로 가정하지 않는다
 
-`groupingBy` 결과가 항상 `HashMap`이고 순서가 특정 방식이라고 코드가 의존하면 안 됩니다. 필요한 Map 구현이나 정렬이 있다면 해당 overload에서 명시적으로 공급해야 합니다.
+`groupingBy` 결과가 항상 `HashMap`이고 순서가 특정 방식이라고 코드가 의존하면 안 됩니다. 필요한 Map 구현이나 정렬이 있다면 해당 overload에서 명시적으로 공급해야 합니다. `Collectors.toList()`도 결과 List의 구체 타입·변경 가능성·스레드 안전성을 보장하지 않습니다. 수정 가능한 ArrayList가 필요하다면 `Collectors.toCollection(ArrayList::new)`를 사용하고, 변경할 수 없는 List가 목적이라면 `Stream.toList()`의 계약을 선택합니다.
 
 ### 너무 복잡한 수집기는 loop보다 읽기 어려울 수 있다
 

@@ -61,16 +61,14 @@ final class VendorPaymentAdapter implements PaymentGateway {
 }
 ```
 
-```text
-애플리케이션
-Money / PaymentResult / PaymentGateway
-        │
-        ▼
-어댑터(Adapter)
-타입 · 단위 · 예외 번역
-        │
-        ▼
-벤더 SDK
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "내부 계약과 외부 계약의 변환 경계",
+  "description": "호출은 내부 서비스에서 Adapter를 거쳐 Vendor로 향하며 변환 책임은 경계에 모읍니다.",
+  "example": "adapter"
+}
 ```
 
 ### Adapter는 메서드 이름만 바꾸는 래퍼가 아니다

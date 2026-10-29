@@ -24,7 +24,7 @@ references:
 ---
 # Queue, Deque와 ArrayDeque
 
-데이터를 넣은 순서대로 처리해야 할 때는 **Queue**가 자연스럽습니다. 가장 먼저 들어온 값이 가장 먼저 나오는 FIFO(First-In, First-Out) 구조입니다.
+데이터를 넣은 순서대로 처리해야 할 때는 **FIFO Queue**가 자연스럽습니다. 아래 `ArrayDeque` 예제는 가장 먼저 들어온 값을 가장 먼저 꺼냅니다. 다만 `Queue` 인터페이스 전체가 FIFO를 보장하는 것은 아닙니다. `PriorityQueue`처럼 별도의 우선순위로 헤드를 정하는 구현도 있습니다.
 
 ```java
 Queue<String> queue = new ArrayDeque<>();
@@ -75,10 +75,14 @@ stack.pop(); // 20
 
 ### 문제에서는 이름보다 방향을 그린다
 
-```text
-Queue:   [A][B][C] → A부터 제거
-Deque: ← [A][B][C] → 양쪽 모두 접근
-Stack:   push/pop 같은 한쪽 끝 사용
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "deque",
+  "title": "Deque의 앞과 뒤",
+  "description": "offerLast와 pollFirst는 FIFO, push와 pop은 같은 앞쪽 끝을 사용하는 LIFO입니다."
+}
 ```
 
 어느 쪽에서 넣고 어느 쪽에서 빼는지만 표시하면 API 결과 문제를 훨씬 쉽게 풀 수 있습니다.

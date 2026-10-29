@@ -64,6 +64,8 @@ if (stock > 0) { // stock이 null이면 비교 전에 언박싱하다 실패
 }
 ```
 
+반면 `stock == null`은 참조의 `null` 여부를 비교하므로 언박싱하지 않습니다. `Map<String, Integer>`의 `get` 결과도 주의해야 합니다. 값이 `null`이거나 키가 없으면 모두 `null`일 수 있고, `getOrDefault(key, 0)`도 **키가 명시적으로 `null`에 매핑된 경우**에는 `0`으로 바꾸지 않습니다. 부재와 `null`을 구분하려면 `containsKey`까지 확인하고, 둘을 모두 0으로 취급하는 정책이라면 `Objects.requireNonNullElse(counts.get(key), 0)`처럼 그 의도를 표현합니다.
+
 ### `Integer`의 `==`는 값 비교가 아니다
 
 ```java

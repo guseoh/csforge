@@ -66,7 +66,7 @@ Predicate<Order> expensive = order -> order.totalPrice() >= 100_000;
 Predicate<Order> target = paid.and(expensive);
 ```
 
-`and`, `or`, `negate`를 사용하면 조건의 의미를 이름 붙여 조합할 수 있습니다.
+`and`, `or`, `negate`를 사용하면 조건의 의미를 이름 붙여 조합할 수 있습니다. `paid.and(expensive)`는 `paid`가 거짓이면 `expensive`를 평가하지 않고, `or`는 앞 조건이 참이면 뒤 조건을 평가하지 않습니다. 앞 조건이 예외를 던지는 경우에도 뒤 조건은 실행되지 않으므로, 두 조건이 항상 호출된다고 가정하고 부수 효과를 넣으면 안 됩니다.
 
 ### Function도 앞뒤 변환을 연결할 수 있다
 
@@ -77,7 +77,7 @@ Function<String, Integer> parse = Integer::parseInt;
 Function<String, Integer> trimAndParse = trim.andThen(parse);
 ```
 
-입력과 출력 타입이 이어질 수 있어야 조합이 가능합니다.
+입력과 출력 타입이 이어질 수 있어야 조합이 가능합니다. `trimAndParse.apply(" 42 ")`는 공백을 제거한 다음 숫자 42를 반환합니다. `parse.compose(trim)`도 같은 순서이지만 `andThen`은 뒤에 붙일 변환을, `compose`는 먼저 실행할 변환을 받습니다. 어느 단계에서 예외가 발생하면 다음 단계는 실행되지 않으며, 합성 자체가 예외 복구나 재시도를 제공하지는 않습니다.
 
 ### 간결함보다 읽기 쉬운지가 우선이다
 

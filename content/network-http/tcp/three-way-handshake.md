@@ -21,11 +21,17 @@ references:
 
 TCP로 데이터를 주고받기 전에 양쪽 종단점은 **서로의 초기 시퀀스 번호를 알리고 확인하면서 연결 상태를 맞춰야 한다.** 일반적인 능동 연결 수립에서 이 과정이 `SYN → SYN-ACK → ACK`의 3방향 핸드셰이크다.
 
-```text
-클라이언트                     서버
-  | -------- SYN, seq=x ------> |
-  | <--- SYN,ACK seq=y ack=x+1 -|
-  | -------- ACK ack=y+1 ------>|
+초기 시퀀스 번호를 클라이언트 100, 서버 300으로 두고 전송과 수신 시점을 나누어 확인합니다. 마지막 ACK가 전송 중일 때 클라이언트는 이미 ESTABLISHED이지만 서버는 아직 SYN-RECEIVED입니다. 이 모델은 데이터 없는 일반 연결 수립만 다루며 동시 열기·재전송·TCP Fast Open은 포함하지 않습니다.
+
+```csforge-viz
+{
+  "version": 1,
+  "title": "TCP 연결 수립의 메시지와 양쪽 상태",
+  "description": "SYN은 시퀀스 번호 하나를 차지합니다. SYN-ACK는 ack=101, 마지막 ACK는 seq=101·ack=301이며, 서버가 이 ACK를 받은 뒤 양쪽이 ESTABLISHED가 됩니다.",
+  "type": "tcp-handshake",
+  "clientIsn": 100,
+  "serverIsn": 300
+}
 ```
 
 첫 SYN은 클라이언트가 자신의 초기 시퀀스 번호 `x`를 알린다. 서버는 SYN-ACK로 이를 확인하면서 자신의 초기 시퀀스 번호 `y`를 보낸다. 클라이언트가 마지막 ACK로 서버의 SYN까지 확인하면 양쪽은 데이터 교환이 가능한 연결 상태로 들어갈 수 있다.

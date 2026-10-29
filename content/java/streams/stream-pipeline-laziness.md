@@ -31,6 +31,16 @@ long count = names.stream()
 
 ![Stream 파이프라인의 지연 실행 흐름](/learning/java/stream-pipeline.svg)
 
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "stream-laziness",
+  "title": "지연 구성과 조기 종료",
+  "description": "순차 예제의 구성과 anyMatch 평가를 단계별로 봅니다."
+}
+```
+
 ### 중간 연산은 바로 소스 전체를 처리하지 않는다
 
 ```java
@@ -41,22 +51,13 @@ Stream<String> filtered = names.stream()
         });
 ```
 
-이 단계에서는 일반적으로 `filter`가 모든 원소에 즉시 실행되는 것이 아니라 **어떤 처리를 할지 파이프라인을 구성**합니다. 최종 연산이 결과를 요구할 때 평가가 시작됩니다.
+이 단계에서는 `filter`를 즉시 실행하지 않고 **어떤 처리를 할지 파이프라인을 구성**합니다. 일반적인 최종 연산은 호출될 때 결과를 계산합니다. 다만 `iterator()`와 `spliterator()`는 예외적인 탈출구로, 이후 호출자가 직접 순회할 때 평가가 진행될 수 있습니다.
 
 ```java
 long count = filtered.count();
 ```
 
-```text
-원본
-  │
-  ▼
-filter ──> map ──> ...
-  │
-  ▼
-최종 연산
-  └─ 결과를 요구하며 파이프라인 평가
-```
+파이프라인을 구성한 뒤 최종 연산이 필요한 결과를 요구합니다.
 
 다만 최종 연산(terminal 연산)을 호출했다고 모든 중간 lambda가 모든 원소에 정확히 한 번씩 실행된다고 가정해서는 안 됩니다. Stream 구현은 결과에 영향을 주지 않는 단계를 생략할 수 있고 short-circuit 연산은 필요한 원소까지만 소비할 수 있습니다.
 
@@ -76,6 +77,7 @@ names.stream()
 ### short-circuit는 소스 전체를 소비하지 않을 수 있다
 
 ```java
+List<Integer> numbers = List.of(90, 101, 102, 104);
 boolean found = numbers.stream()
         .filter(n -> n > 100)
         .anyMatch(n -> n % 2 == 0);
@@ -83,11 +85,7 @@ boolean found = numbers.stream()
 
 조건을 만족하는 원소를 찾으면 `anyMatch`는 이후 원소를 더 볼 필요 없이 끝날 수 있습니다. `findFirst`, `limit` 같은 연산도 전체 소스 소비가 필요하지 않을 수 있습니다.
 
-```text
-원소 1 ─ 조건 실패
-원소 2 ─ 조건 통과 ─ anyMatch 성공
-원소 3 ─ 평가할 필요 없음
-```
+위 순차 예제에서는 102에서 결과가 true로 결정되어 104를 확인할 필요가 없습니다.
 
 그래서 lambda 호출 횟수를 추론할 때는 파이프라인에 어떤 연산이 있는지만 보지 말고 **최종 연산(terminal 연산)이 어떤 결과를 요구하는지**까지 확인해야 합니다.
 
@@ -113,4 +111,4 @@ stream.count();
 
 최종 연산(terminal 연산)을 수행한 같은 Stream을 다시 사용하려 하면 실패할 수 있습니다. 여러 번 처리해야 한다면 원래 소스에서 새 Stream을 만들거나 필요한 결과를 따로 저장합니다.
 
-Stream 코드를 읽을 때는 `source → intermediate operations → terminal operation` 순서로 적고, short-circuit 가능 지점을 확인하세요. **중간 연산은 파이프라인을 구성하고 실제 평가 요구는 최종 연산(terminal 연산)에서 발생한다**는 흐름이 지연 실행의 핵심입니다.
+Stream 코드를 읽을 때는 `source → intermediate operations → terminal operation` 순서로 적고, short-circuit 가능 지점을 확인하세요. **중간 연산은 파이프라인을 구성하고 일반적인 최종 연산은 결과를 요구한다**는 흐름이 지연 실행의 핵심입니다. `iterator()`와 `spliterator()`를 반환받는 경우에는 호출자가 실제로 순회하는 시점도 확인합니다.

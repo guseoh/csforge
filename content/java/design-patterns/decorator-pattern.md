@@ -56,17 +56,14 @@ DataReader reader = new LoggingReader(
 );
 ```
 
-```text
-클라이언트
-  │
-  ▼
-로깅 리더(LoggingReader)
-  │
-  ▼
-캐시 리더(CachingReader)
-  │
-  ▼
-파일 데이터 리더(FileDataReader)
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "감싸는 순서와 측정 범위",
+  "description": "Metrics와 Retry의 중첩 순서에 따라 전체 재시도 또는 개별 시도를 측정합니다.",
+  "example": "decorator"
+}
 ```
 
 ### 같은 계약을 유지하기 때문에 조합할 수 있다

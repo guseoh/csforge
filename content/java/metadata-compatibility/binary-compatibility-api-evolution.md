@@ -30,25 +30,17 @@ references:
 
 소스 호환성은 기존 소스 코드를 새 라이브러리와 다시 컴파일할 수 있는지를 봅니다.
 
-```text
-클라이언트 소스(client.java) + 라이브러리 v2
-        │
-        ▼
-      javac 컴파일 성공?
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "소스 재컴파일과 기존 바이너리 링크",
+  "description": "새 소스 컴파일과 기존 class를 새 library에 연결하는 검사는 다릅니다. 링크 성공도 의미 호환성을 보장하지 않습니다.",
+  "example": "binary-evolution"
+}
 ```
 
 바이너리 호환성은 v1을 기준으로 이미 컴파일된 클라이언트 바이너리가 v2와 **재컴파일하지 않고도** 연결되는지를 봅니다.
-
-```text
-클라이언트 클래스 파일(client.class)
-(v1로 컴파일됨)
-        │
-        ▼
-v2 라이브러리로 실행
-        │
-        ▼
-JVM 연결 성공?
-```
 
 이 차이는 배포 후 `NoSuchMethodError`, `NoSuchFieldError` 같은 오류를 이해하는 데 중요합니다.
 
@@ -73,14 +65,6 @@ String find(Long id)
 `NoSuchMethodException`은 리플렉션 API가 요청한 메서드를 찾지 못했을 때 발생할 수 있는 검사 예외입니다.
 
 반면 `NoSuchMethodError`는 이미 컴파일된 코드가 실행 시 연결 과정에서 기대한 메서드를 찾지 못할 때 나타나는 `LinkageError` 계열 오류입니다.
-
-```text
-리플렉션 조회 실패
-  -> NoSuchMethodException 가능
-
-컴파일된 바이너리의 연결 실패
-  -> NoSuchMethodError 가능
-```
 
 운영 중 `NoSuchMethodError`가 발생하면 컴파일 때 사용한 의존성과 실행 시 실제로 로드된 의존성의 버전이 같은지부터 확인합니다.
 

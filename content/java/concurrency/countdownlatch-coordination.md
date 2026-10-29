@@ -30,13 +30,14 @@ CountDownLatch done = new CountDownLatch(3);
 
 초기 count가 3이면 세 번의 `countDown()`이 필요합니다.
 
-```text
-초기 count = 3
-worker A 완료 -> 2
-worker B 완료 -> 1
-worker C 완료 -> 0
-                    │
-                    └─ `await` 중인 스레드 진행 가능
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "일회용 완료 gate",
+  "description": "count 3에서 두 신호 뒤 1, 마지막 신호 뒤 0으로 진행합니다. gate는 성공 여부나 CPU 동시 실행을 집계하지 않습니다.",
+  "example": "latch-gate"
+}
 ```
 
 `countDown()`을 호출한 스레드가 특별한 소유권을 갖는 것은 아닙니다. 여러 스레드가 각각 완료 시점을 알릴 수 있습니다.
@@ -78,7 +79,7 @@ try {
 
 만약 `task.run()`이 예외로 끝났는데 `countDown()`이 실행되지 않으면 주 스레드는 영원히 기다릴 수 있습니다. 그래서 "작업 시도가 끝났음"을 latch count로 표현한다면 `finally`가 자연스럽습니다.
 
-하지만 이 경우 latch가 0이 됐다고 작업이 성공한 것은 아니므로 실패 결과는 따로 수집해야 합니다.
+하지만 이 경우 latch가 0이 됐다고 작업이 성공한 것은 아니므로 실패 결과는 따로 수집해야 합니다. 위 코드는 모든 execute 호출이 접수된다는 전제입니다. 제출 단계에서 거부된 작업은 본문의 finally에 도달하지 않으므로, 처음 tasks.size()로 잡은 count가 남을 수 있습니다. 접수 실패를 처리하거나 실패 신호와 제한 시간까지 함께 관리해야 합니다.
 
 ```text
 Latch의 의미: 모든 작업이 종료됨

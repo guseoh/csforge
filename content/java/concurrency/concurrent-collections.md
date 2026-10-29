@@ -61,7 +61,9 @@ counts.computeIfAbsent("java", key -> new LongAdder())
 
 `putIfAbsent`, `compute`, `computeIfAbsent`, `merge`처럼 API가 제공하는 복합 연산(compound operation)을 사용하면 `containsKey → put`을 별도로 조합하는 것보다 의도를 명확하게 표현할 수 있습니다.
 
-다만 재매핑 함수(remapping function) 안에서 오래 걸리는 외부 I/O를 하거나 다른 복잡한 상태를 건드리는 것은 별개의 설계 문제입니다. 메서드가 동시성을 지원한다는 이유로 콜백 안에 임의의 업무 트랜잭션을 넣는 것이 자동으로 좋은 설계가 되지는 않습니다.
+이 빈도 예제는 같은 키의 LongAdder를 누적 중 삭제·교체하지 않는다는 전제입니다. Map 조회 뒤 increment 전에 다른 스레드가 매핑을 제거하면 Map에서 더는 조회되지 않는 예전 Adder에 증가분을 기록할 수 있습니다. 또한 LongAdder.sum()은 갱신 중의 원자적 스냅샷이 아니므로 정확한 정산 경계와 실시간 통계 집계를 구분합니다.
+
+재매핑 함수(remapping function) 안에서 오래 걸리는 외부 I/O를 하거나 다른 복잡한 상태를 건드리는 것도 별개의 설계 문제입니다. 메서드가 동시성을 지원한다는 이유로 콜백 안에 임의의 업무 트랜잭션을 넣는 것이 자동으로 좋은 설계가 되지는 않습니다.
 
 ### 컬렉션이 안전해도 값 객체는 별개다
 
@@ -73,11 +75,7 @@ order.changeStatus(...);
 
 Map이 `Order` 참조를 안전하게 저장하고 조회한다고 해서 `Order`의 변경 가능한 필드를 여러 스레드가 동시에 수정해도 안전해지는 것은 아닙니다.
 
-```text
-ConcurrentHashMap
-   └─ 항목 자체의 동시 접근 계약
-        └─ Order 내부의 변경 가능한 상태는 별도 문제
-```
+`ConcurrentHashMap`의 항목 접근에 대한 동시성 계약과 값인 `Order` 내부의 가변 상태 보호는 별개다.
 
 컬렉션의 스레드 안전성과 원소 객체의 스레드 안전성을 분리해서 봅니다.
 

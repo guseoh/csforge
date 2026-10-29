@@ -71,19 +71,14 @@ JVM 메서드 프레임에는 지역 변수 배열(local variable array)과 피�
 
 간단한 덧셈은 다음처럼 이해할 수 있습니다.
 
-```text
-지역 변수
-[ this ][ a ][ b ]
-          │    │
-          └────┴── load
-                 ▼
-피연산자 스택 [a][b]
-                 │
-                iadd
-                 ▼
-              [a+b]
-                 │
-               return
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "add(3, 4)의 피연산자 스택",
+  "description": "지역 변수 값을 차례로 load한 뒤 iadd로 합을 만들고 ireturn으로 7을 반환하는 JVM 추상 프레임 예제입니다.",
+  "example": "bytecode-stack"
+}
 ```
 
 이 흐름을 알면 바이트코드에서 load/store와 스택 연산이 자주 보이는 이유를 이해하기 쉽습니다.
@@ -129,19 +124,6 @@ Java source 1줄 = bytecode 1개
 ### 바이트코드는 JIT가 만든 최종 네이티브 코드가 아니다
 
 `javap`는 클래스 파일을 해석해 보여 주는 도구입니다. 실행 중 JVM이 프로파일링을 통해 어떤 메서드를 JIT 컴파일했고 어떤 기계어를 만들었는지 직접 보여 주지는 않습니다.
-
-```text
-소스 코드
-  │ javac
-  ▼
-클래스 파일의 바이트코드  <-- javap가 보는 대상
-  │
-  ▼
-JVM 실행 시점
-  │ 인터프리터(interpreter) / JIT
-  ▼
-네이티브 코드
-```
 
 성능을 분석하려면 JFR, profiler, JIT log, disassembly 같은 다른 근거가 필요할 수 있습니다.
 

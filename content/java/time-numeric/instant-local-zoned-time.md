@@ -34,7 +34,6 @@ references:
 
 Java Time API는 이 차이를 서로 다른 타입으로 표현합니다.
 
-![하나의 Instant와 여러 지역 시간 표현](/learning/java/instant-zones.svg)
 
 ### `Instant`는 하나의 실제 시점을 표현한다
 
@@ -44,11 +43,14 @@ Instant createdAt = Instant.parse("2026-08-31T05:00:00Z");
 
 `Instant`는 시간축의 한 지점을 표현합니다. 같은 Instant를 서울 시간으로 보든 뉴욕 시간으로 보든 **사건이 발생한 순간 자체는 동일**합니다.
 
-```text
-2026-08-31T05:00:00Z
-        │ 같은 Instant
-        ├─ Asia/Seoul       -> 지역 시각 A
-        └─ America/New_York -> 지역 시각 B
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "같은 Instant와 지역 시간",
+  "description": "2026-08-31T05:00Z는 서울 14:00+09:00, 뉴욕 01:00-04:00으로 표현됩니다. Java 25·tzdb 2026b로 확인한 같은 순간입니다.",
+  "example": "instant-zones"
+}
 ```
 
 생성 시각, 결제 승인 시각, 만료 시각처럼 사건의 순서와 경과를 비교해야 하는 값에 잘 맞습니다.

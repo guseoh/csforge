@@ -28,8 +28,6 @@ references:
 
 그 배경에 있는 대표적인 연산이 비교 후 설정(compare-and-set, CAS)입니다.
 
-![CAS 성공과 재시도 흐름](/learning/java/cas-retry.svg)
-
 ### CAS는 예상값과 현재 값이 같을 때만 갱신한다
 
 ```java
@@ -39,10 +37,14 @@ boolean changed = count.compareAndSet(0, 1);
 
 `compareAndSet(expectedValue, newValue)`는 현재 값이 `expectedValue`와 같을 때만 값을 `newValue`로 원자적으로 바꾸고 성공 여부를 반환합니다.
 
-```text
-현재 값 == 예상값 ?
-    ├─ 예 -> 갱신 적용, true
-    └─ 아니오 -> 변경 없음, false
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "CAS의 성공·실패·재시도",
+  "description": "같은 expected를 준비한 두 작업 중 A가 성공하면 B는 실패합니다. B는 최신 값을 읽고 재계산해 다시 시도합니다.",
+  "example": "cas-retry"
+}
 ```
 
 Java SE 25 `AtomicInteger`의 `compareAndSet`은 이 조건부 변경 자체가 원자적이라고 계약하고, 메모리 효과는 `VarHandle.compareAndSet`에 정의된 의미론을 따릅니다.
@@ -50,15 +52,6 @@ Java SE 25 `AtomicInteger`의 `compareAndSet`은 이 조건부 변경 자체가 
 ### 경쟁에서 졌다면 실패 결과를 보고 다시 계산할 수 있다
 
 두 스레드가 모두 0을 읽었다고 해 보겠습니다.
-
-```text
-초기값 = 0
-
-스레드 A                    스레드 B
-0 읽기                      0 읽기
-CAS(0, 1) -> 성공           CAS(0, 1) -> 실패
-실제값 1                    실제값이 이미 1
-```
 
 B의 실패는 예외 상황이라기보다 **내가 읽은 이후 다른 스레드가 값을 먼저 바꿨다**는 경쟁 결과입니다. 현재 값을 다시 읽고 새 결과를 계산해 재시도할 수 있습니다.
 

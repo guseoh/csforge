@@ -36,14 +36,17 @@ synchronized (lock) {
 
 Thread는 본문에 들어가기 전에 `lock` 객체의 모니터를 획득해야 합니다. 다른 스레드가 같은 모니터를 소유하고 있다면 획득할 때까지 기다립니다.
 
-```text
-             같은 모니터
-                 │
-스레드 A -> [ 잠금 ] -> 임계 영역 -> [ 잠금 해제 ]
-스레드 B -> [              대기             ] -> 진입
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "monitor의 소유·재진입·해제",
+  "description": "같은 monitor의 소유와 대기, 재진입 횟수, 해제 뒤 획득의 HB를 비교합니다. 다음 획득자의 공정 순서는 보장하지 않습니다.",
+  "example": "monitor"
+}
 ```
 
-JLS는 Java의 각 객체가 모니터와 연결되고 한 시점에 하나의 스레드만 그 모니터 lock을 소유한다고 정의합니다.
+JLS는 Java의 각 객체가 모니터와 연결되고 한 시점에 하나의 스레드만 그 모니터 lock을 소유한다고 정의합니다. 본문이 정상 완료되거나 예외로 끝나면 획득한 모니터는 해제됩니다. 다만 해제되는 것과 본문의 상태 변경이 취소되는 것은 별개이므로 예외 전에 바꾼 필드는 그대로 남을 수 있습니다.
 
 ### 인스턴스와 static synchronized는 서로 다른 모니터를 사용할 수 있다
 
@@ -75,13 +78,6 @@ void increment() {
 
 매 호출마다 새 lock 객체를 만든다면 서로 다른 스레드가 서로 다른 모니터를 획득할 수 있습니다. 둘 다 synchronized block 안에 있어도 `value++`에 대한 상호 배제(mutual exclusion)는 만들어지지 않습니다.
 
-```text
-스레드 A -> 모니터 A -> value++
-스레드 B -> 모니터 B -> value++
-
-monitor가 다르므로 서로 막지 않음
-```
-
 따라서 어떤 객체 동일성을 lock으로 사용할지와 그 lock의 수명이 동기화 설계의 일부입니다.
 
 ### critical section은 실제 불변 조건 전체를 포함해야 한다
@@ -102,16 +98,6 @@ synchronized (lock) {
 ### synchronized는 가시성/순서에도 JMM 의미가 있다
 
 한 모니터의 unlock은 동기화 순서상 그 뒤의 같은 모니터 lock과 synchronizes-with 관계를 만들고, 따라서 happens-before edge가 됩니다.
-
-```text
-스레드 A                         스레드 B
-공유 상태 쓰기
-      │
-unlock M ───────────────────▶ lock M
-                                │
-                                ▼
-                           공유 상태 읽기
-```
 
 같은 스레드의 프로그램 순서와 이 edge를 연결하면 unlock 전에 수행한 쓰기를 이후 같은 모니터를 획득한 스레드의 후속 읽기와 연결할 수 있습니다.
 

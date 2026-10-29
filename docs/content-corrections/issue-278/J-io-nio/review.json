@@ -1,0 +1,345 @@
+{
+  "baseline": "786b25a9",
+  "reviewedAt": "2026-10-28",
+  "topic": "J-io-nio",
+  "counts": {
+    "concepts": 6,
+    "questions": 35
+  },
+  "concepts": [
+    {
+      "path": "content/java/io-nio/blocking-nonblocking-selector.md",
+      "contentKey": "java.core.io-nio.blocking-nonblocking-selector",
+      "baselineSha256": "a54f84997a17a92863f071cd0c474d45c29f8f99e34bbe408220d7a663f97cce",
+      "reviewedSha256": "0be9b7335df70acb127701e7e71130ccc2620426f197c9adf6a7207b15d696f8",
+      "targetTier": "V2",
+      "auditDecision": "REBUILD",
+      "result": "DONE",
+      "review": "P0: key별 interest/ready 비트와 selected-key set 분리, 누적/제거/취소 6단계와 부분 I/O·EOF 경계",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "java-api-contract",
+          "example": "selector",
+          "title": "선택된 키와 준비 비트의 생명주기",
+          "description": "전통적인 selectedKeys 방식입니다. 선택 집합은 현재 준비 상태의 순수 목록이 아니며 처리 후 제거를 직접 관리합니다."
+        }
+      ]
+    },
+    {
+      "path": "content/java/io-nio/buffered-io.md",
+      "contentKey": "java.core.io-nio.buffered-io",
+      "baselineSha256": "8553ae18b91b2603a201770f7300364ef311812327c066d002f3f1890fcaec6e",
+      "reviewedSha256": "b668b162f8a3f776c1519d0598a56e5153495359aae01af99464b418b0e714eb",
+      "targetTier": "V1",
+      "auditDecision": "REPLACE_TEXT",
+      "result": "DONE",
+      "review": "Java 버퍼/flush/하위 계층 V1, 내구성·원격 수신 완료와 구분",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "static-flow",
+          "title": "작은 출력 요청의 버퍼링",
+          "description": "flush는 하위 계층으로 출력 데이터를 전달합니다. 디스크 영구 저장이나 원격 애플리케이션의 수신 완료까지 보장하지 않습니다.",
+          "labels": [
+            "write A · B · C",
+            "Java 출력 버퍼",
+            "flush → 하위 출력 계층"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "content/java/io-nio/byte-character-stream-charset.md",
+      "contentKey": "java.core.io-nio.byte-character-stream-charset",
+      "baselineSha256": "55db5942bf5640ca61995258e336962a2d4f302b7472fce72224d416a1738653",
+      "reviewedSha256": "f0b01f16c9013bb0ae108c4910ff86deff034e0c2f86180e04c6e1f973c91fe1",
+      "targetTier": "V1",
+      "auditDecision": "REPLACE_TEXT",
+      "result": "DONE",
+      "review": "InputStreamReader 디코딩 경계 V1, UTF-16 unit·byte·기본 charset·잘못된 디코딩/청크 잔여 바이트",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "static-flow",
+          "title": "바이트와 문자 사이의 경계",
+          "description": "InputStreamReader가 지정 Charset으로 바이트를 디코딩합니다. 모든 Reader가 바이트 변환기를 내장하는 것은 아닙니다.",
+          "labels": [
+            "InputStream: bytes",
+            "InputStreamReader: Charset decode",
+            "Reader: UTF-16 코드 단위"
+          ]
+        }
+      ]
+    },
+    {
+      "path": "content/java/io-nio/input-output-reader-writer.md",
+      "contentKey": "java.core.io-nio.input-output-reader-writer",
+      "baselineSha256": "eb1396b3a44245bc1f7d94910f876e762f97a57ed31171fac7468c26ffedd010",
+      "reviewedSha256": "3a28de44734e07fc4644a7b299a0ce530f1ce9f3e018c8a79330f4a0d8fdfd9f",
+      "targetTier": "NONE",
+      "auditDecision": "REPLACE_TEXT",
+      "result": "NO_VISUAL_NEEDED",
+      "review": "바이트/문자 API와 실제 codec 경계, 부분 read·EOF·자원 소유권 확인, 중복 ASCII 통합",
+      "visualizations": []
+    },
+    {
+      "path": "content/java/io-nio/nio-channel-buffer.md",
+      "contentKey": "java.core.io-nio.nio-channel-buffer",
+      "baselineSha256": "b33a3945627dbfea76b4498cb229833db6114fa8d6ae5c3dc91e6782e3805a3c",
+      "reviewedSha256": "ddcd6240fd547b67f029d69ebe2d1c6802d4849bfe86870225e26182a99aafd6",
+      "targetTier": "V2",
+      "auditDecision": "REBUILD",
+      "result": "DONE",
+      "review": "capacity=8 고정 V2, partial I/O·flip·compact·clear와 논블로킹 0 busy-loop 교정",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "java-api-contract",
+          "example": "buffer",
+          "title": "8칸 Buffer의 상태 추적",
+          "description": "같은 8칸에서 쓰기, flip, 부분 소비, compact, clear를 추적합니다. clear는 데이터를 지우지 않습니다."
+        }
+      ]
+    },
+    {
+      "path": "content/java/io-nio/path-files-api.md",
+      "contentKey": "java.core.io-nio.path-files-api",
+      "baselineSha256": "2e23b83f2251f2add2204c9532d39efbe0787e5f62beb85da57c059924ade104",
+      "reviewedSha256": "b6d1fa73bbe7b1832a1990e0110cb75252d94c844b86cc9d09a1731b865964d2",
+      "targetTier": "NONE",
+      "auditDecision": "REPLACE_TEXT",
+      "result": "NO_VISUAL_NEEDED",
+      "review": "경로 값/실제 I/O·상대 기준·exists 경합·bounded 처리·symlink/인가 경계, ASCII를 문장으로 통합",
+      "visualizations": []
+    }
+  ],
+  "questions": [
+    {
+      "contentKey": "java.core.io-nio.byte-character-stream-charset.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "21581f82ce0769713e45e19546fb63a17a1ca6801f3b654ca12ffc958347614d"
+    },
+    {
+      "contentKey": "java.core.io-nio.byte-character-stream-charset.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "05d1329142601031e79e886e2ac032e894bdbe28a5412c82abe9aa3e13d6d436"
+    },
+    {
+      "contentKey": "java.core.io-nio.byte-character-stream-charset.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "fde5ab0688e471bf5646f3f5b506f40e25a2ea22cbf3a375740621e7bd5b9fd4"
+    },
+    {
+      "contentKey": "java.core.io-nio.byte-character-stream-charset.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "fa44d93072178e76760c37839d334816baba863d5102fafe85e8f49753aa0a02"
+    },
+    {
+      "contentKey": "java.core.io-nio.byte-character-stream-charset.q5",
+      "result": "CORRECTED",
+      "changedFields": [
+        "choices[0].content",
+        "choices[0].rationaleMarkdown",
+        "explanationMarkdown"
+      ],
+      "reviewedSha256": "3a5534150ae798844ca4b8d698e326e8e8a38172e3ff9e3d3b813b39fb4acf0e"
+    },
+    {
+      "contentKey": "java.core.io-nio.byte-character-stream-charset.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "d6c139e2fb89fde214b6b76ae9c294cb7c44394ae889a952b0580c9c81544c13"
+    },
+    {
+      "contentKey": "java.core.io-nio.input-output-reader-writer.q1",
+      "result": "CORRECTED",
+      "changedFields": [
+        "choices[0].rationaleMarkdown"
+      ],
+      "reviewedSha256": "6258c03af0a241f7a4cb64c9fabf264c05646cb8d2b4c0e9721ad5441946062b"
+    },
+    {
+      "contentKey": "java.core.io-nio.input-output-reader-writer.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "bd9a8628276cd63777e3a26e56f0d76ebad28448cd2599389081dc027b6adcd3"
+    },
+    {
+      "contentKey": "java.core.io-nio.input-output-reader-writer.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "d6e0db65e9e17ef43085096e776f47118840ebfe6cd86ed80dd11dc288a99e5e"
+    },
+    {
+      "contentKey": "java.core.io-nio.input-output-reader-writer.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "02fa69cf373f23d6a1afa793732aba81abdfef36bd807fbd5ea497f5b99b0209"
+    },
+    {
+      "contentKey": "java.core.io-nio.buffered-io.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "1e440dd1e6165271f9e6b686816ae7352d701e3fe5c85bf0ef9c89af0a3eb4b1"
+    },
+    {
+      "contentKey": "java.core.io-nio.buffered-io.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "bad8cd70b4786d2f558971631a8c4054a2e124455a93296ff3e727883fb27ae7"
+    },
+    {
+      "contentKey": "java.core.io-nio.buffered-io.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "a80c7457320346c38ea624a3339aa20a348d22fa7e8b8abc52ca3e6d85925670"
+    },
+    {
+      "contentKey": "java.core.io-nio.buffered-io.q4",
+      "result": "CORRECTED",
+      "changedFields": [
+        "choices[0].rationaleMarkdown"
+      ],
+      "reviewedSha256": "3caa8ea20b579c3cfd3744a247b7eb6cbed910750d6080e97e57f859dc5745b0"
+    },
+    {
+      "contentKey": "java.core.io-nio.path-files-api.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5e9d65d1dba813a47d28b2672788b482ced0783c6a8453e0023f78ff340724b7"
+    },
+    {
+      "contentKey": "java.core.io-nio.path-files-api.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5c2e463e81e917cdb9c089726d25de45baa1b1a0868b2767d375fc3ebbc19126"
+    },
+    {
+      "contentKey": "java.core.io-nio.path-files-api.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "82e3dc5a16c307fdf74abc22fb2479ce812a3487e588df86a3f77684d64ae3e9"
+    },
+    {
+      "contentKey": "java.core.io-nio.path-files-api.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "448aca190f5fc2bfb9e46bb3ff93ef64401d1c3354444fc151939942956cc63e"
+    },
+    {
+      "contentKey": "java.core.io-nio.path-files-api.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5e2e74662fb678f65be490c459d7cf8b0828a467ef5a79893a0611b8facf2a52"
+    },
+    {
+      "contentKey": "java.core.io-nio.path-files-api.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "9209299468e5b2c260e11bbbafc9feb43b5ef62a1660155bb40589ff25fbdb99"
+    },
+    {
+      "contentKey": "java.core.io-nio.path-files-api.q7",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "7a2bab02710c41cb8c9df15adc5d86f46439c46a88575a8b5a149cdd976ba5d7"
+    },
+    {
+      "contentKey": "java.core.io-nio.nio-channel-buffer.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "8100fca60a76839005190380b0923df35ea78ce0bc10b373659a7b8b1feb3530"
+    },
+    {
+      "contentKey": "java.core.io-nio.nio-channel-buffer.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "727159e5b8e0dcd63933df1a191a3cac646eec280353fa47f9d2264a26334a7b"
+    },
+    {
+      "contentKey": "java.core.io-nio.nio-channel-buffer.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "882d17e192ad6484678e38ff1eea03d9b896e93f7a80ffa8f89bbf0622a4981b"
+    },
+    {
+      "contentKey": "java.core.io-nio.nio-channel-buffer.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "eb4cccc0fa798959d57b2732e935b7bee4f26abc8404bd13dac77dfe2818fe0c"
+    },
+    {
+      "contentKey": "java.core.io-nio.nio-channel-buffer.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "801a12fbf9a1a890bb27aa47a0272645cd761568bdf36b986899f591375efda5"
+    },
+    {
+      "contentKey": "java.core.io-nio.nio-channel-buffer.q6",
+      "result": "CORRECTED",
+      "changedFields": [
+        "choices[2].rationaleMarkdown"
+      ],
+      "reviewedSha256": "a93fe9a8929d26c91a01187e73881cb08c8daf3f236b12c8ba41a819d63988d9"
+    },
+    {
+      "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "e6d9df3af01fb71e4422c81de2698ced9554a8230fcff6f69538c8d59c754264"
+    },
+    {
+      "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "cd6d2445dcfc2ea2721bf201796bbd509d1670679cb1fdcfbb80e1fc7dd802cb"
+    },
+    {
+      "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "0e424d4ff6927a938e4655cc8b85523998afead2c3df0fa05973f3960cd5fa2f"
+    },
+    {
+      "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q4",
+      "result": "CORRECTED",
+      "changedFields": [
+        "choices[0].content",
+        "choices[0].rationaleMarkdown",
+        "explanationMarkdown"
+      ],
+      "reviewedSha256": "948bcfbcd33f9aac0ff4898c439265ecff3e417cd0654cf3655defacd696c0d3"
+    },
+    {
+      "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "09ec9d2689e17cfaedc551b6bac36257a74812fbfff7157220d0dd9e9df22fb2"
+    },
+    {
+      "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5453630e5e016c9d73ac4b556511915a10dc3100e47b33f63f529e40ac007634"
+    },
+    {
+      "contentKey": "java.core.io-nio.blocking-nonblocking-selector.q7",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "f45d44b3d5fc3831dd41509f8cb3097d0d4ea093d956d2bd0e3bcc7306e31e28"
+    },
+    {
+      "contentKey": "java.core.io-nio.byte-character-stream-charset.q7",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "a6b4ce88b0815c85e4c081787b81df97704f73b99db7ea8ecd7f5c987e631409"
+    }
+  ],
+  "questionFileSha256": "4a347c36c1049c02fb3cc94d70eac810a12ffa5197e75e98d2ef3b8bce7853e3",
+  "stableMetadataAndAnswerKeysPreserved": true
+}

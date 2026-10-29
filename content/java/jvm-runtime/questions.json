@@ -894,7 +894,7 @@
       }
     ],
     "correctChoiceKey": "C",
-    "explanationMarkdown": "프레임은 각 메서드 invocation의 실행 문맥다."
+    "explanationMarkdown": "프레임은 각 메서드 호출의 실행 문맥입니다. 정상 반환 시 호출 다음 지점으로 돌아가지만, 예외 종료 시에는 호출자에서 예외 처리가 이어지고 처리기가 없으면 바깥 프레임으로 전파됩니다."
   },
   {
     "kind": "question",
@@ -1397,11 +1397,11 @@
         "key": "D",
         "content": "원래 객체를 다시 얻는 방식으로 사용할 수 없다",
         "displayOrder": 3,
-        "rationaleMarkdown": "팬텀 참조로 원래 객체를 되살릴 수는 없다. 정리 시점은 `ReferenceQueue`로 관찰할 수 있다."
+        "rationaleMarkdown": "`PhantomReference.get()`은 항상 `null`을 반환한다. 큐 등록은 대상이 팬텀 도달 가능 상태로 판정된 뒤의 알림이며, 애플리케이션이 관리하는 외부 자원까지 이미 정리됐다는 보장은 아니다."
       }
     ],
     "correctChoiceKey": "D",
-    "explanationMarkdown": "팬텀 참조로 객체를 되살릴 수는 없다. 대신 `ReferenceQueue`를 이용해 객체 정리 시점을 관찰할 수 있다."
+    "explanationMarkdown": "`PhantomReference.get()`은 항상 `null`을 반환한다. `ReferenceQueue` 알림을 정리 작업의 계기로 사용할 수 있지만, 알림 시점이나 외부 자원 정리 완료를 보장하지 않으므로 명시적인 `close()`를 대신하지 않는다."
   },
   {
     "kind": "question",
@@ -1679,7 +1679,7 @@
   {
     "kind": "question",
     "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors.q6",
-    "promptMarkdown": "Java 코드의 결과가 G1과 ZGC에서 달라져도 된다고 주장하는 설명의 문제는?",
+    "promptMarkdown": "GC 시점이나 참조 큐 알림에 의존하지 않는 동일한 결정적 계산에서, G1과 ZGC가 임의로 다른 계산 결과를 내도 된다는 설명의 문제는?",
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
@@ -1947,7 +1947,7 @@
       }
     ],
     "correctChoiceKey": "B",
-    "explanationMarkdown": "정상적인 reclamation과 unwanted reachability는 동시에 관찰될 수 있다."
+    "explanationMarkdown": "정상적인 메모리 회수와 불필요한 객체의 참조 유지는 동시에 관찰될 수 있습니다. 다만 old 세대 증가만으로 누수를 확정할 수는 없으므로 정상 부하·캐시 준비·작업 누적과 구분하고 유지 경로를 조사합니다."
   },
   {
     "kind": "question",

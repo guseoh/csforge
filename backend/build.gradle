@@ -34,6 +34,7 @@ dependencies {
     implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
     implementation 'org.flywaydb:flyway-database-postgresql'
     implementation 'org.yaml:snakeyaml:2.4'
+    implementation 'org.commonmark:commonmark:0.31.0'
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'

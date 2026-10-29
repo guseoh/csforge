@@ -92,7 +92,9 @@ target.call(value);
 1. 컴파일 시점: `target`은 `Parent`, `value`는 `Object`이므로 `call(Object)` 오버로드가 선택됩니다.
 2. 실행 시점: 실제 객체는 `Child`이고 `call(Object)`를 재정의했으므로 `Child.call(Object)`가 실행됩니다.
 
-결과는 `C-Object`입니다.
+결과는 `C-Object`입니다. 같은 객체에 `target.call((String) value);`로 호출하면 컴파일 시 인자 타입이 `String`이 되어 `call(String)`이 선택됩니다. `Child`가 그 서명을 재정의하지 않았으므로 상속된 구현이 `P-String`을 출력합니다.
+
+`call(null)`에서는 적용 가능한 후보 중 더 구체적인 매개변수 타입을 고릅니다. `Object`와 `String`만 있으면 `String`이 선택되지만, 서로 무관한 참조 타입 후보 사이에서는 모호해서 컴파일 오류가 날 수 있습니다. 실행 시 실제 인자를 보고 오버로드를 다시 고르는 과정은 없습니다.
 
 ### 반환 타입만 바꿔서는 오버로드할 수 없다
 

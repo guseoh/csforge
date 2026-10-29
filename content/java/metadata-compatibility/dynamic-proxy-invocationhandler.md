@@ -28,8 +28,6 @@ references:
 
 JDK 동적 프록시는 실행 시 인터페이스를 구현하는 프록시 객체를 만들고, 프록시 메서드 호출을 `InvocationHandler` 하나로 전달합니다.
 
-![호출자가 JDK 프록시와 InvocationHandler를 거쳐 대상 객체를 호출하는 흐름](/learning/java/dynamic-proxy-flow.svg)
-
 ### 호출자는 대상 객체가 아니라 같은 인터페이스의 프록시를 사용한다
 
 ```java
@@ -50,17 +48,14 @@ Greeter proxy = (Greeter) Proxy.newProxyInstance(
 
 JDK `Proxy`는 전달된 인터페이스를 구현하는 프록시 클래스를 실행 시점에 구성합니다. 핵심은 **임의의 구체 클래스를 상속하는 API가 아니라 인터페이스 기반 프록시**라는 점입니다.
 
-```text
-호출자
-  │
-  ▼
-프록시 (Greeter)
-  │
-  ▼
-InvocationHandler
-  │
-  ▼
-대상 객체
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "동적 프록시의 호출·반환·실패",
+  "description": "호출자에서 proxy·handler·target으로 위임하고 결과를 호출자까지 반환하는 예제입니다. 원인 unwrap과 인터페이스 예외 계약을 구분합니다.",
+  "example": "dynamic-proxy"
+}
 ```
 
 ### 실제 메서드 호출은 `InvocationHandler.invoke`로 전달된다
@@ -76,14 +71,20 @@ final class LoggingHandler implements InvocationHandler {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         System.out.println("before");
-        Object result = method.invoke(target, args);
-        System.out.println("after");
-        return result;
+        try {
+            Object result = method.invoke(target, args);
+            System.out.println("after success");
+            return result;
+        } catch (InvocationTargetException e) {
+            throw e.getCause();
+        }
     }
 }
 ```
 
-`proxy.hello("Kim")`을 호출하면 핸들러는 프록시 객체, 호출된 `Method`, 인수 배열을 받습니다. 대상 객체는 자동으로 전달되지 않으므로 핸들러가 직접 보유하거나 다른 방법으로 찾아야 합니다.
+`proxy.hello("Kim")`을 호출하면 핸들러는 프록시 객체, 호출된 `Method`, 인수 배열을 받습니다. 대상 객체는 자동으로 전달되지 않으므로 핸들러가 직접 보유하거나 다른 방법으로 찾아야 합니다. 인자가 없는 메서드는 args가 null일 수 있습니다.
+
+`Method.invoke`는 대상이 던진 예외를 `InvocationTargetException`으로 감쌉니다. 그대로 밖으로 던지면 대상의 RuntimeException조차 검사 예외인 래퍼 때문에 `UndeclaredThrowableException`으로 다시 감싸질 수 있습니다. 위 코드는 원인을 꺼내 전파해 원래 인터페이스의 실패 계약을 유지합니다. `after success`는 성공한 호출에만 실행하며, 실패에도 필요한 정리는 별도 finally에 둡니다.
 
 ### 대상 객체 대신 프록시를 다시 호출하면 재귀할 수 있다
 
@@ -92,14 +93,6 @@ method.invoke(proxy, args);
 ```
 
 위처럼 핸들러가 같은 프록시를 다시 호출하면 호출이 `invoke()`로 되돌아와 무한 재귀가 생길 수 있습니다.
-
-```text
-프록시 호출
- -> handler
-    -> 프록시 호출
-       -> handler
-          -> ...
-```
 
 공통 로직 뒤에 실제 대상 객체를 호출하려는지, 다른 프록시 체인을 의도적으로 거치려는지 분명히 해야 합니다.
 

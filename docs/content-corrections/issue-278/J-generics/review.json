@@ -1,0 +1,329 @@
+{
+  "baseline": "786b25a9",
+  "reviewedAt": "2026-10-28",
+  "topic": "J-generics",
+  "counts": {
+    "concepts": 6,
+    "questions": 37
+  },
+  "concepts": [
+    {
+      "path": "content/java/generics/generic-invariance.md",
+      "contentKey": "java.core.generics.generic-invariance",
+      "baselineSha256": "f7dc498e1b23e879a15ea337b3ee084539f8420bda616142dda336d370f6db4f",
+      "reviewedSha256": "11af4f1214a17a77ca75e4bbc86f51904f870ab73066b36f8af2df8c84a31aa5",
+      "targetTier": "V1",
+      "auditDecision": "REPLACE_TEXT",
+      "result": "DONE",
+      "review": "금지된 대입을 실제 실행처럼 표시하지 않는 반례 V1; 배열 공변성과 시점 구분",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "java-api-contract",
+          "example": "invariance",
+          "title": "불공변성이 막는 잘못된 쓰기",
+          "description": "금지된 대입을 허용했다고 가정한 반례입니다. 실제 Java 코드가 허용하는 실행 흐름이 아닙니다."
+        }
+      ]
+    },
+    {
+      "path": "content/java/generics/generic-types-methods.md",
+      "contentKey": "java.core.generics.generic-types-methods",
+      "baselineSha256": "018a4fd597e705b1ad6af393a25612c6b5094e47204d1944485c51d4facee7f4",
+      "reviewedSha256": "921945aa5a7553b3d7cb21fba3c308131eb65653a9b6575253fee572432bdc14",
+      "targetTier": "NONE",
+      "auditDecision": "NONE",
+      "result": "NO_VISUAL_NEEDED",
+      "review": "클래스/메서드 타입 변수 범위·추론·컴파일 검사 검토, 빈 List 예외 조건 추가",
+      "visualizations": []
+    },
+    {
+      "path": "content/java/generics/generic-varargs-heap-pollution.md",
+      "contentKey": "java.core.generics.generic-varargs-heap-pollution",
+      "baselineSha256": "89732772a4c88ecec30a81464abca99155c6c3734c33cbdf470fbb3b52a179b0",
+      "reviewedSha256": "261629b41a6fc136317315311e8897dd2b504649d5f4f21a92e9cf594db6547d",
+      "targetTier": "V2",
+      "auditDecision": "REPLACE_TEXT",
+      "result": "DONE",
+      "review": "List[] 별칭 저장 통과와 String 변환 실패를 4단계로 분리; @SafeVarargs는 주장",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "java-api-contract",
+          "example": "heap-pollution",
+          "title": "배열 저장 성공과 String 읽기 실패",
+          "description": "같은 varargs 배열의 별칭을 통한 쓰기는 통과하지만, 이후 String으로 읽을 때 변환이 실패합니다."
+        }
+      ]
+    },
+    {
+      "path": "content/java/generics/raw-types-unchecked.md",
+      "contentKey": "java.core.generics.raw-types-unchecked",
+      "baselineSha256": "971dc4e31342d3d3008606ac15230fe146bf8b163d15674b67ffb3aa50bbe8b2",
+      "reviewedSha256": "5b76b41c89ef4fc5015aa2d6e6cd3d6b759f3f487fbfc18441826d266d2a85f7",
+      "targetTier": "NONE",
+      "auditDecision": "NONE",
+      "result": "NO_VISUAL_NEEDED",
+      "review": "로 타입과 primitive 용어 구분, 비검사 경고·외부 별칭의 위험 검토",
+      "visualizations": []
+    },
+    {
+      "path": "content/java/generics/type-erasure-reifiable-types.md",
+      "contentKey": "java.core.generics.type-erasure-reifiable-types",
+      "baselineSha256": "47b50da9e2272cad44b681f5ecba2e7dd2f3c62c0499be169873b47b9bca754d",
+      "reviewedSha256": "47b50da9e2272cad44b681f5ecba2e7dd2f3c62c0499be169873b47b9bca754d",
+      "targetTier": "NONE",
+      "auditDecision": "NONE",
+      "result": "NO_VISUAL_NEEDED",
+      "review": "소거·reifiable·선언 메타데이터·Class 토큰/primitive 거절 설명 확인; 기존 설명 유지",
+      "visualizations": []
+    },
+    {
+      "path": "content/java/generics/wildcards-pecs.md",
+      "contentKey": "java.core.generics.wildcards-pecs",
+      "baselineSha256": "aaa289c4a261ac060d5643e3a9fe8eb9a50ccb64528e778b1e301e3d34f5f61d",
+      "reviewedSha256": "f298a7e5210d381e2695f32a8a7c0188b16a2310db7c87162e2c006bac1d2537",
+      "targetTier": "V1",
+      "auditDecision": "RESTYLE",
+      "result": "DONE",
+      "review": "기존 양쪽 경계 구조를 inline RESTYLE, T 값의 읽기/쓰기 방향과 null·clear 예외",
+      "visualizations": [
+        {
+          "version": 1,
+          "type": "java-api-contract",
+          "example": "pecs",
+          "title": "값이 이동하는 PECS 경계",
+          "description": "extends 원본에서 T를 읽어 super 대상에 T를 씁니다. 컬렉션 자체의 불변성을 뜻하지 않습니다."
+        }
+      ]
+    }
+  ],
+  "questions": [
+    {
+      "contentKey": "java.core.generics.generic-types-methods.q1",
+      "result": "CORRECTED",
+      "changedFields": [
+        "choices[3].rationaleMarkdown"
+      ],
+      "reviewedSha256": "3b9362220c0ffabfe49f9073db83ea11f4f7126cfa7f5370257498d6bb6480ed"
+    },
+    {
+      "contentKey": "java.core.generics.generic-types-methods.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "b82c81b6e365a17b89e8c91f8e84693eaaec74eef2757dde366783ae5f8b256d"
+    },
+    {
+      "contentKey": "java.core.generics.generic-types-methods.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "41a3012c5092e0b61f066e26a42bc0a14ef99bdd069284c8dc9db38c56cc7663"
+    },
+    {
+      "contentKey": "java.core.generics.generic-types-methods.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "484cae5688583ac749d252d051457ecc2d4c2c192c50c89a9176a34b4265f9b4"
+    },
+    {
+      "contentKey": "java.core.generics.generic-types-methods.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "9cfd356cb58d7e65a5ddcd08af125dee4c8ebad8ddc8658d36b3548052d5af9f"
+    },
+    {
+      "contentKey": "java.core.generics.generic-invariance.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "f663ff420a169617c264335bb53ac48e5f72f0f434c94204352875a5cea4f66c"
+    },
+    {
+      "contentKey": "java.core.generics.generic-invariance.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "558accce739b53f598bf2004b664b09150b0bac7d24abe38dc56e0809bd7f51b"
+    },
+    {
+      "contentKey": "java.core.generics.generic-invariance.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "f41724ccb5d3d80585957d35561cceb29f122d45fc12c4fd3590e61a8d95272e"
+    },
+    {
+      "contentKey": "java.core.generics.generic-invariance.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "f3263f0d9f74f97c792c3310621a3622a6bb0a499716333e14531a248a76ff70"
+    },
+    {
+      "contentKey": "java.core.generics.generic-invariance.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "32ea9f8c92c6e8ccb729d073cef233e98ff10d37885b6c51261a68ea44ff3bc1"
+    },
+    {
+      "contentKey": "java.core.generics.generic-invariance.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "e2ab2bcd2736df7213ec3482ac1824f2d54f4a25a52df4e3febeda047a452100"
+    },
+    {
+      "contentKey": "java.core.generics.wildcards-pecs.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "b018c4315b1aa0cef36e85e11e1a96d47851d9da02ae2d08c8942b097bb2080b"
+    },
+    {
+      "contentKey": "java.core.generics.wildcards-pecs.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "893e9eff45778bfa84311a06bc978d84a47d7a289b07cbb5d5b9f2ee20e287ab"
+    },
+    {
+      "contentKey": "java.core.generics.wildcards-pecs.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "ead1f881a6b5d07b5414d955c37af4c74823d053f1b62c02ce3be00228b81104"
+    },
+    {
+      "contentKey": "java.core.generics.wildcards-pecs.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "e0451b43001fce4ae84c823e3d8f703b8f62422cb9c178df47d6c0dcb96dbe4b"
+    },
+    {
+      "contentKey": "java.core.generics.wildcards-pecs.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5e30217cf935cf8cece445bd390caacc3a0f98074887f0478d5e6723eb21f755"
+    },
+    {
+      "contentKey": "java.core.generics.wildcards-pecs.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "db4c8cabfef602dc030108fc5e0d9b653fc5a23af00b2eef3037f46784e11571"
+    },
+    {
+      "contentKey": "java.core.generics.raw-types-unchecked.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "a2ea77d01185ebb815f9e83f0513affbaaa99a558529712906542fc4b3ced042"
+    },
+    {
+      "contentKey": "java.core.generics.raw-types-unchecked.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "753fc0fd4389b88a1906df8325e373a04658454dc08db6c3a4d290424230be2f"
+    },
+    {
+      "contentKey": "java.core.generics.raw-types-unchecked.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "4c40620d43d36def53203480cbe46580e0b5c4db11e021616b09b9f71930f503"
+    },
+    {
+      "contentKey": "java.core.generics.raw-types-unchecked.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "ddd3451e94fcd3efd4bf014f6918d2275b3290af0e092de54c6b6544ebceb505"
+    },
+    {
+      "contentKey": "java.core.generics.type-erasure-reifiable-types.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "52b8d16df02172e040fee700d64f4d2bd17c4f75e79e4d4aa773ba55b67cd0f4"
+    },
+    {
+      "contentKey": "java.core.generics.type-erasure-reifiable-types.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "30da2625c8b4f9ab26539c5f3b5024643238d201b402c906bb46e61c101e4d7a"
+    },
+    {
+      "contentKey": "java.core.generics.type-erasure-reifiable-types.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "879f4b287cee9c926be19bfa7a52d1c0d44ec58af56f7ed81da9ae69f519817b"
+    },
+    {
+      "contentKey": "java.core.generics.type-erasure-reifiable-types.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "2d5d7ad322ff5c20602338ab240889f1de0bb50001f2e2ddd735630b9b0e6837"
+    },
+    {
+      "contentKey": "java.core.generics.type-erasure-reifiable-types.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "cbe43a29759b2061ea2af138a289dc2cecc9cbdd1701f0feddab1e38a19b30b7"
+    },
+    {
+      "contentKey": "java.core.generics.type-erasure-reifiable-types.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "7ad73b9e8027300b7f7f0d6d463b19fdf1ebd306ca021129d0709690575d7d9f"
+    },
+    {
+      "contentKey": "java.core.generics.generic-varargs-heap-pollution.q1",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "bb26cf65fd918fc0ac70fbf4d7975e09ca1764bd1ab683ea71d7cbd57f8a4b88"
+    },
+    {
+      "contentKey": "java.core.generics.generic-varargs-heap-pollution.q2",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "1042b50ef9cba5845233fad97cae8e481a5d38a6a5782f72d11c80e383409579"
+    },
+    {
+      "contentKey": "java.core.generics.generic-varargs-heap-pollution.q3",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "d109a3a4de4300a7d16a26d23eb506197b75142b4bc1d83b157eae3d2222394c"
+    },
+    {
+      "contentKey": "java.core.generics.generic-varargs-heap-pollution.q4",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5127c714b271b481f8f386edf8d24e03f64b9699ecdecd5134c479d441214720"
+    },
+    {
+      "contentKey": "java.core.generics.generic-varargs-heap-pollution.q5",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "e2694a85223beb7c330a5ede68ea088e2815b26be952e300f2ead66fa2b6893e"
+    },
+    {
+      "contentKey": "java.core.generics.wildcards-pecs.q7",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "4c658b40540b165e4747a16e9ff5130e471c38086a524b26bd8d4e49d46adc32"
+    },
+    {
+      "contentKey": "java.core.generics.wildcards-pecs.q8",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "80ac1c2a545e916d95b4e4ae19cfacf4cfdb29a9584e576c470eeb8fe734da14"
+    },
+    {
+      "contentKey": "java.core.generics.type-erasure-reifiable-types.q7",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "1f3358b20e29fe31a8c0dce53aaaca36b9ab90e096d16c821e95b228cfa92d7f"
+    },
+    {
+      "contentKey": "java.core.generics.generic-types-methods.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "5ce965abb28f44071ee855eaacea61af20c0aceee4dd1d9b9bdf60d90e100195"
+    },
+    {
+      "contentKey": "java.core.generics.generic-varargs-heap-pollution.q6",
+      "result": "KEEP",
+      "changedFields": [],
+      "reviewedSha256": "7f919aaba4c09f6691c4744760340d13407a7e320904b0ffc05eb9de51506b80"
+    }
+  ],
+  "questionFileSha256": "88f64ce7f29c8f6bda3631cd605c578b77862c8e7ac8852139a50c320672bc2a",
+  "stableMetadataAndAnswerKeysPreserved": true
+}

@@ -32,27 +32,32 @@ references:
 
 `HashMap`의 핵심은 키 전체를 처음부터 순서대로 비교하는 대신 **해시 값을 이용해 비교할 후보를 좁히는 것**입니다. hashCode가 키의 유일한 번호는 아니므로 최종적으로는 논리적 동등성도 확인해야 합니다.
 
-![HashMap의 해시·bucket·equals 조회 흐름](/learning/java/hashmap-buckets.svg)
+아래 독립 예시는 같은 해시를 갖는 서로 다른 문자열 키 두 개를 저장합니다. 도식은 이 조회를 추적하며 실제 JDK의 버킷 번호나 노드 순서를 고정하지 않습니다.
+
+```java
+Map<String, Integer> values = new HashMap<>();
+values.put("Aa", 1);
+values.put("BB", 2);
+System.out.println("Aa".hashCode() == "BB".hashCode()); // true
+System.out.println(values.get("BB")); // 2
+System.out.println(values.get("CC")); // null
+```
+
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "hash-lookup",
+  "title": "충돌 후보에서 값 찾기",
+  "description": "Aa와 BB는 같은 해시를 갖지만 다른 키입니다. get은 동등한 키의 값을 반환하며 매핑을 교체하지 않습니다."
+}
+```
 
 ### 조회는 해시와 동등성을 함께 사용한다
 
 개념적으로 키 조회는 다음 흐름으로 볼 수 있습니다.
 
-```text
-key
- │
- ▼
-hashCode 계산
- │
- ▼
-후보 위치 결정
- │
- ▼
-같은 후보의 key 비교
- │
- ▼
-equals로 실제 key 확인
-```
+해시로 후보 위치를 정하고, 키 동등성이 일치하는 매핑의 값을 찾습니다.
 
 OpenJDK의 `HashMap`은 bucket, 노드, 특정 조건의 tree 같은 구현 기법을 사용합니다. 이런 자료는 현재 구현을 이해하는 데 유용하지만 **`Map` 인터페이스가 영구적으로 그 내부 구조를 보장한다는 뜻은 아닙니다.**
 
@@ -91,11 +96,7 @@ key.value = "lee";
 
 `value`가 해시와 동등성에 참여한다면 저장 당시와 조회 당시의 기준이 달라집니다.
 
-```text
-삽입 시: value="kim" → hash A → 후보 A
-변경 후: value="lee" → hash B → 후보 B에서 검색
-                         └─ 실제 entry는 삽입 당시 위치에 남아 있음
-```
+삽입 당시 kim의 해시로 정한 위치에 매핑이 남아 있어도, lee로 바꾼 뒤에는 새로운 해시 경로에서 찾게 될 수 있습니다.
 
 `HashMap`은 키 객체 내부의 변경을 감지해 entry를 자동으로 재배치하지 않습니다. 그래서 키 동일성을 결정하는 상태는 가능하면 불변으로 유지하는 편이 안전합니다.
 

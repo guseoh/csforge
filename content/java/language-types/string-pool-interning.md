@@ -37,14 +37,24 @@ System.out.println(a == b); // true
 
 Java 언어 명세는 동일한 문자열 리터럴이 같은 `String` 인스턴스를 가리키도록 보장합니다. 따라서 위 코드의 `true`는 특정 JVM이 우연히 문자열을 재사용해서 나오는 결과가 아닙니다.
 
-```text
-"java" 리터럴 ───────────┐
-                          ├──> 문자열 풀의 대표 String 객체
-created.intern() ─────────┘
-new String("java") ─────────> 별도의 String 객체
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-value-reference",
+  "example": "string-intern",
+  "title": "리터럴·새 String·intern 반환 참조",
+  "description": "literal과 pooled는 대표 객체 A를 가리킵니다. new로 만든 created의 별도 객체 B는 intern 호출로 바뀌지 않습니다. A/B는 물리 주소가 아닙니다."
+}
 ```
 
-위 예제에서는 `"java"` 리터럴의 대표 객체가 존재하므로, 내용이 같은 `created.intern()`은 그 대표 객체의 참조를 돌려줍니다. 반면 `new String("java")`는 같은 내용을 가진 새 `String` 객체를 만드는 생성 표현식입니다.
+도식은 아래처럼 리터럴, 새 객체, `intern()` 반환값을 각각 변수로 받은 상태입니다. `created.intern()`은 대표 객체의 참조를 돌려주지만 `created` 변수나 그 객체의 내용을 바꾸지는 않습니다.
+
+```java
+String literal = "java";
+String created = new String("java");
+String pooled = created.intern();
+// literal == pooled는 true, literal == created는 false
+```
 
 ```java
 String a = "java";

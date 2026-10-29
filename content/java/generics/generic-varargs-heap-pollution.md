@@ -59,20 +59,19 @@ static void unsafe(List<String>... lists) {
 
 호출 시 만들어지는 배열의 런타임 구성 요소 타입은 `List[]` 수준이므로 `List<Integer>`를 저장하는 순간 제네릭 타입 argument 차이를 검사하지 못할 수 있습니다. 이후 코드는 `lists[0]`을 `List<String>`이라고 믿고 읽기 때문에 `ClassCastException`이 드러납니다.
 
-```text
-List<String>[]처럼 사용하는 varargs 배열
-          │ Object[]로 별칭
-          ▼
-List<Integer> 저장
-          │ runtime component는 List 수준
-          ▼
-선언상 List<String>이라고 믿고 읽음
-          │
-          ▼
-String 변환 지점에서 실패
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "heap-pollution",
+  "title": "배열 저장 성공과 String 읽기 실패",
+  "description": "같은 varargs 배열의 별칭을 통한 쓰기는 통과하지만, 이후 String으로 읽을 때 변환이 실패합니다."
+}
 ```
 
 이처럼 parameterized 타입 변수의 타입 계약과 실제 가리키는 객체가 어긋나는 상태를 **힙 pollution**이라고 합니다.
+
+도식은 `unsafe(List.of("java"))` 호출을 추적합니다. 이 호출에서 저장 단계의 배열 검사는 통과하지만 이후 실제 `Integer` 값을 `String`으로 읽는 변환에서 `ClassCastException`이 발생합니다. 다른 모든 제네릭 varargs 호출이 실패한다는 뜻은 아닙니다.
 
 ### `@SafeVarargs`는 안전성을 추가하지 않는다
 

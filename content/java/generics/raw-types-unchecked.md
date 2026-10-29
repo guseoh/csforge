@@ -40,7 +40,7 @@ values.add("java");
 values.add(10);
 ```
 
-원시 타입(raw type) List에는 서로 다른 타입이 들어갈 수 있습니다. 이후 이것을 `List<String>`으로 다룬다면 문제가 늦게 드러납니다.
+로 타입(raw type) `List`에는 서로 다른 타입이 들어갈 수 있습니다. 이후 이것을 `List<String>`으로 다룬다면 문제가 늦게 드러납니다. 여기서 raw type은 `int` 같은 원시 타입(primitive type)과 다른 용어입니다.
 
 ```java
 List<String> names = values; // unchecked 경고

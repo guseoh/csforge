@@ -34,17 +34,14 @@ ScopedValue.where(REQUEST_ID, "req-42").run(() -> {
 
 `handleRequest()`와 그 아래에서 같은 스레드로 직접 이어지는 호출은 `REQUEST_ID.get()`으로 현재 바인딩을 읽을 수 있습니다.
 
-```text
-현재 스레드
-    │
-    ├─ bind REQUEST_ID=req-42
-    │      │
-    │      └─ run
-    │          ├─ controller
-    │          ├─ service
-    │          └─ repository
-    │
-    └─ scope 종료 -> 이전 binding 복원 또는 unbound
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "ScopedValue의 중첩 범위",
+  "description": "바깥 바인딩, 안쪽 재바인딩, 복원을 비교합니다. 구조적 상속 예제의 StructuredTaskScope는 Java 25 preview입니다.",
+  "example": "scoped-binding"
+}
 ```
 
 ThreadLocal처럼 `remove()`를 직접 호출해 정리하는 가변 slot이 아니라, 실행 범위가 끝날 때 바인딩 수명도 함께 닫힌다는 점이 핵심입니다.
@@ -82,21 +79,18 @@ ScopedValue의 스레드 간 공유는 **구조화된 방식으로 명시적으�
 Java 25의 `StructuredTaskScope`는 preview API지만, ScopedValue 바인딩 상속을 명시적으로 지원합니다. Scope를 열 때 소유자 스레드의 바인딩을 capture하고 그 범위에서 `fork`한 subtask 스레드에 상속합니다.
 
 ```java
-ScopedValue.where(REQUEST_ID, "req-42").run(() -> {
-    try (var scope = StructuredTaskScope.open()) {
-        scope.fork(() -> childTask());
-        scope.join();
-    }
-});
+void runRequest() throws InterruptedException {
+    ScopedValue.where(REQUEST_ID, "req-42").call(() -> {
+        try (var scope = StructuredTaskScope.open()) {
+            scope.fork(() -> childTask());
+            scope.join();
+            return null;
+        }
+    });
+}
 ```
 
-```text
-소유 스레드: REQUEST_ID=req-42
-       │
-       └─ StructuredTaskScope
-             ├─ subtask A -> binding inherited
-             └─ subtask B -> binding inherited
-```
+위 예제는 Java 25의 preview 기능을 켜서 컴파일·실행해야 합니다. join의 InterruptedException을 전달하기 위해 검사 예외를 허용하는 call을 사용하고, 바깥 메서드에서도 예외를 선언했습니다. Runnable을 받는 run 본문에서 이 검사 예외를 처리 없이 던질 수는 없습니다.
 
 이것은 "ScopedValue는 비동기 작업에 자동 전파된다"는 뜻이 아니라 **StructuredTaskScope가 제공하는 inheritance 계약**입니다. Java 25에서 `ScopedValue`는 정식 API이고 `StructuredTaskScope`는 preview라는 API 상태도 구분해야 합니다.
 

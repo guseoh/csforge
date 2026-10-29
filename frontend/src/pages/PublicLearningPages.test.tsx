@@ -24,7 +24,6 @@ vi.mock('@tanstack/react-query', () => ({
     return { data, isPending: false, isError: false, refetch: vi.fn() }
   },
 }))
-vi.mock('../components/MarkdownContent', () => ({ MarkdownContent: ({ children }: { children: ReactNode }) => <div>{children}</div> }))
 import { PublicAreaPage, PublicConceptPage, PublicLearningPage } from './PublicLearningPages'
 
 const concept: PublicConcept = {
@@ -48,6 +47,18 @@ describe('guest canonical pages', () => {
     expect(html).not.toContain('textarea')
     expect(vi.mocked(fetch).mock.calls.map(([url]) => url)).toEqual(['/api/public/concepts/17'])
     expect(vi.mocked(fetch).mock.calls[0][1]?.method ?? 'GET').toBe('GET')
+  })
+  it('uses the shared reader and keeps Korean emphasis and intentional literals distinct', async () => {
+    mocks.data = { ...concept, contentMarkdown: '**필드(field)**를 읽고 **예시**를 확인합니다. `**예시**`와 \\*\\*예시\\*\\*도 보존합니다.' }
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: false, requestLogin: vi.fn() }}><PublicConceptPage /></AccessContext.Provider>)
+    await Promise.all(mocks.requests)
+    expect(html).toContain('concept-page public-reader')
+    expect(html).toContain('concept-reader-header')
+    expect(html).toContain('<strong>필드(field)</strong>를')
+    expect(html).toContain('<strong>예시</strong>를')
+    expect(html).toContain('<code>**예시**</code>와 **예시**도')
+    expect(html).toContain('공개 읽기')
+    expect(html).not.toContain('학습 중')
   })
   it('renders the public area filters, long topic navigation and paginated concept list', async () => {
     const longTitle = '파이프라이닝과 명령어 수준 병렬성(Pipelining and Instruction-Level Parallelism)'

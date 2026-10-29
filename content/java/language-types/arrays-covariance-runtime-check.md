@@ -30,9 +30,7 @@ references:
 ---
 # 배열 공변성과 저장 시 런타임 타입 검사
 
-Java의 참조형 배열은 `String[]`을 `Object[]`로 다룰 수 있습니다. 문제는 **변수의 선언 타입이 `Object[]`라고 해서 실제 배열 객체까지 `Object[]`로 바뀌는 것은 아니라는 점**입니다. 실제 객체가 `String[]`이라면 그 배열은 여전히 `String`만 저장할 수 있습니다.
-
-![Object[] 변수와 실제 String[] 배열의 실행 시점 저장 검사](/learning/java/array-covariance.svg)
+Java의 참조형 배열은 `String[]`을 `Object[]`로 다룰 수 있습니다. 문제는 **변수의 선언 타입이 `Object[]`라고 해서 실제 배열 객체까지 `Object[]`로 바뀌는 것은 아니라는 점**입니다. 실제 객체가 `String[]`이라면 그 배열은 여전히 `String` 참조 또는 `null`만 저장할 수 있습니다.
 
 ### 배열의 공변성
 
@@ -54,30 +52,27 @@ Object value = values[0];
 ### 왜 저장할 때 실행 시점 검사가 필요한가
 
 ```java
-String[] names = new String[1];
+String[] names = new String[2];
 Object[] values = names;
 
-values[0] = Integer.valueOf(1);
+values[0] = "kim";                 // 성공
+values[1] = Integer.valueOf(1);     // ArrayStoreException
 ```
 
 `values`의 선언 타입은 `Object[]`입니다. 컴파일러는 `Integer`가 `Object`의 하위 타입이므로 이 저장 문장을 타입 규칙상 허용할 수 있습니다.
 
-하지만 `values`가 가리키는 실제 배열 객체는 `new String[1]`로 만들어졌습니다. Java 배열 객체는 실행 중에도 자신의 원소 타입을 유지하므로, 값을 저장할 때 실제 배열에 들어갈 수 있는 타입인지 검사합니다. `String[]`에 `Integer`를 넣으려 하면 `ArrayStoreException`이 발생합니다.
+하지만 `values`가 가리키는 실제 배열 객체는 `new String[2]`로 만들어졌습니다. Java 배열 객체는 실행 중에도 자신의 원소 타입을 유지하므로, 값을 저장할 때 실제 배열에 들어갈 수 있는 타입인지 검사합니다. `String[]`에 `Integer`를 넣으려 하면 `ArrayStoreException`이 발생합니다.
 
-```text
-Object[] values
-      │
-      │ 가리키는 실제 객체
-      ▼
-  String[]
-      │
-      ├─ String 저장   → 허용
-      │
-      └─ Integer 저장  → 실행 시점 검사 실패
-                         → ArrayStoreException
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-array-store",
+  "title": "같은 String[]의 성공한 저장과 실패한 저장",
+  "description": "Object[] values가 가리키는 실제 객체는 String[]입니다. String 저장은 유지되고, 다음 Integer 저장만 ArrayStoreException으로 거절됩니다."
+}
 ```
 
-즉 오류가 실행 중에 발견되는 이유는 **배열을 더 넓은 타입으로 바라보는 것은 허용하면서도 실제 배열 객체의 원소 타입은 지켜야 하기 때문**입니다.
+도식의 실패한 두 번째 저장은 `[1]`에 반영되지 않으므로 그 칸은 `null`을 유지합니다. 앞서 성공한 `[0]`의 `"kim"`까지 되돌리는 것은 아닙니다. 즉 오류가 실행 중에 발견되는 이유는 **배열을 더 넓은 타입으로 바라보는 것은 허용하면서도 실제 배열 객체의 원소 타입은 지켜야 하기 때문**입니다.
 
 | 상황 | 컴파일 시점 | 실행 시점 |
 | --- | --- | --- |

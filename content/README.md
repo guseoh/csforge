@@ -1,5 +1,10 @@
 # CSForge content
 
+Versioned interactive learning diagrams use the reserved `csforge-viz` JSON fence.
+See [the visualization contract](../docs/learning-visualization.md) for supported types,
+required text descriptions, limits, monochrome theme behavior, and Import validation.
+Use ordinary code/image Markdown for content that does not need a diagram.
+
 `examples/` contains a small representative import batch. Markdown uses YAML front matter;
 JSON accepts one object or an array of objects. `references` on a Concept is an explicit
 complete set when present, so omitted links are preserved and declared omissions are removed.

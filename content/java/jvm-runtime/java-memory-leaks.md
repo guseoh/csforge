@@ -28,8 +28,6 @@ Java에 GC가 있어도 메모리 누수(memory leak)는 생길 수 있습니다
 
 따라서 업무상 이미 버려야 하는 객체라도 캐시, 리스너, `ThreadLocal`처럼 수명이 긴 소유자(owner)가 계속 참조하면 GC는 해당 객체를 정상적으로 유지합니다.
 
-![GC 루트부터 불필요한 객체까지 남아 있는 유지 경로(retained path)](/learning/java/java-memory-retained-path.svg)
-
 ### 메모리 누수의 핵심은 불필요한 객체가 여전히 도달 가능하다는 것이다
 
 ```java
@@ -42,14 +40,14 @@ void remember(String id, byte[] payload) {
 
 삭제 정책이 없다면 static map이 모든 페이로드를 계속 붙잡습니다.
 
-```text
-GC 루트
-   │
-정적 캐시
-   │
-   ├─ payload A
-   ├─ payload B
-   └─ payload C ...
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "장수 owner의 유지 경로",
+  "description": "종료된 Session과 Payload를 owner가 보유한 상태와 등록 해제 후를 비교합니다. 소유 수명 문제와 GC 실패를 구분합니다.",
+  "example": "retained-path"
+}
 ```
 
 GC 입장에서는 이 객체들이 여전히 도달 가능하므로 회수하면 안 됩니다. 문제는 수집기가 아니라 **소유자와 생명주기 정책**입니다.
@@ -59,18 +57,6 @@ GC 입장에서는 이 객체들이 여전히 도달 가능하므로 회수하�
 힙 덤프에서 500MB 객체를 발견했다고 바로 근본 원인을 찾은 것은 아닙니다. 중요한 질문은 다음과 같습니다.
 
 > 어떤 살아 있는 소유자가 이 객체를 계속 참조하고 있는가?
-
-```text
-GC 루트
-  │
-레지스트리
-  │
-리스너
-  │
-세션
-  │
-대형 byte[]
-```
 
 작은 `Map`이나 리스너 하나가 거대한 객체 그래프 전체의 수명을 연장할 수도 있습니다. 따라서 얕은 크기(shallow size)보다 객체를 계속 보유하는 참조 관계가 더 중요한 경우가 많습니다.
 

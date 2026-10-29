@@ -26,20 +26,18 @@ references:
 
 Java 실행 시점에 클래스는 이름만으로 식별되지 않습니다. 같은 `com.example.Plugin`이라는 바이너리 이름(binary name)이라도 **서로 다른 `ClassLoader`가 각각 정의하면 별개의 실행 시점 타입**이 될 수 있습니다. 이 규칙은 플러그인, 애플리케이션 서버, 핫 리로드(hot reload) 환경에서 발생하는 `ClassCastException`의 원리를 이해하는 핵심입니다.
 
-![ClassLoader 경계와 런타임 타입 동일성](/learning/java/classloader-type-identity.svg)
-
 ### `ClassLoader`는 클래스를 찾아 정의한다
 
 `ClassLoader`는 바이너리 이름에 대응하는 클래스 정의(class definition)를 찾아 JVM에 제공합니다.
 
-```text
-"com.example.Plugin"
-        │
-        ▼
-   ClassLoader
-        │ 클래스 바이트
-        ▼
-   실행 중인 Class 객체
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "공유 API와 로더별 타입",
+  "description": "공통 API를 부모에서 공유하고 구현 클래스를 로더별로 정의한 예시입니다. 타입 동일성에는 바이너리 이름과 defining loader가 필요합니다.",
+  "example": "loader-identity"
+}
 ```
 
 클래스 바이트는 JAR나 디렉터리뿐 아니라 사용자 정의 로더가 관리하는 다른 출처에서 올 수도 있습니다. 중요한 것은 어느 파일에서 왔는지만이 아니라 **어느 로더가 해당 클래스를 정의했는가**입니다.
@@ -48,19 +46,6 @@ Java 실행 시점에 클래스는 이름만으로 식별되지 않습니다. �
 
 `ClassLoader.loadClass`의 일반적인 기본 구현은 클래스가 이미 로드되었는지 확인한 뒤 부모 로더에 먼저 요청하고, 부모가 찾지 못하면 자신의 `findClass` 경로를 사용합니다.
 
-```text
-애플리케이션 클래스 로더
-       │
-       ├─ parent에게 요청
-       ▼
-플랫폼 / 부트스트랩
-       │
-       └─ 찾지 못함
-             │
-             ▼
-      자식 로더가 직접 탐색
-```
-
 이 구조는 플랫폼 클래스나 공통 라이브러리가 여러 로더에서 제각각 중복 정의되는 일을 줄입니다.
 
 그러나 **모든 사용자 정의 로더가 반드시 부모 우선(parent-first)이어야 하는 것은 아닙니다.** 플러그인이나 컨테이너가 자식 우선(child-first) 정책이나 다른 로더 구조를 사용할 수도 있으므로 실제 환경에서 해당 로더 구현의 계약을 확인해야 합니다.
@@ -68,11 +53,6 @@ Java 실행 시점에 클래스는 이름만으로 식별되지 않습니다. �
 ### 실행 시점 타입의 동일성에는 클래스를 정의한 로더가 포함된다
 
 두 로더가 같은 이름의 클래스를 각각 정의해 보겠습니다.
-
-```text
-Loader A ──▶ com.example.Plugin
-Loader B ──▶ com.example.Plugin
-```
 
 두 `Class`의 이름 문자열은 같아도 실행 시점 타입은 다를 수 있습니다.
 
@@ -96,26 +76,11 @@ System.out.println(a == b);                         // false 가능
 
 플러그인 시스템에서 호스트와 플러그인이 같은 인터페이스로 협력하려면 공통 API를 양쪽이 공유하는 로더에서 정의하는 구조가 자연스럽습니다.
 
-```text
-공유 부모 로더
-   └─ PluginApi 타입
-          ▲
-          │ implements
- ┌────────┴────────┐
-플러그인 로더 A  플러그인 로더 B
-    ImplA             ImplB
-```
-
 반대로 각 플러그인 로더가 `PluginApi`까지 별도로 정의하면 소스에서 보이는 이름은 같아도 실행 시점 타입 동일성이 달라집니다. 이 경우 호스트는 구현체를 자신이 사용하는 `PluginApi`와 같은 타입으로 보지 못할 수 있습니다.
 
 ### Classpath와 `ClassLoader`는 같은 개념이 아니다
 
 클래스패스(classpath)나 모듈 경로(module path)는 클래스를 찾을 위치를 지정하는 경로·설정입니다. `ClassLoader`는 실행 시점에 실제 클래스 정의를 찾아 JVM에 제공하는 주체입니다.
-
-```text
-classpath / module path -> 탐색 경로
-ClassLoader             -> 실행 시점 로딩·정의 주체
-```
 
 따라서 같은 jar가 클래스패스에 있다는 사실만으로 두 객체가 같은 defining 로더의 같은 `Class`라고 결론내릴 수 없습니다.
 

@@ -1,0 +1,15 @@
+{
+  "head": "d357efb491e355299aa389cf6538d47ec4f369db",
+  "sources": {
+    "content/curriculum/java.yaml": "0aad122de20d9205274f96887b562473a3a23de3dd406cbd684031438d4bbe0c",
+    "content/java/topics.json": "2a167f43030df4dfc9742225d86dfcefdcd5cff2fc0d702c0b9101e00e6b172c",
+    "content/curriculum/network-http.yaml": "f6052c268bce2ca53ddcd82a2e77eb197f4ab8a373d73a78b5329413e0e5a144",
+    "content/network-http/topics.json": "6ec11f1493f66d5fc7d1ca09bfd5fe4ad07d6257add6ce10ab13f212e20ded6f"
+  },
+  "knownTitleDifferences": {
+    "network-http.core.request-journey.proxy-gateway-path": {
+      "canonical": "Proxy와 Gateway 경유",
+      "curriculum": "프록시와 게이트웨이 경유"
+    }
+  }
+}

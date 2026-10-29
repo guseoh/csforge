@@ -33,7 +33,7 @@
       "path": "java/concurrency/thread-lifecycle-interruption.md",
       "hunks": [
         {
-          "current": "    depth: article\n    recommendation: \"JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다.\"\n    displayOrder: 3\n    relationNote: \"'스레드 상태'와 '스레드 덤프 유형별 패턴'의 BLOCKED·WAITING, monitor 소유자/대기자 분석 사례를 읽는다. 오래된 HotSpot 덤프 형식과 API 사용법은 Java 25 공식 도구 문서로 다시 확인한다.\"\n---\n# Thread 생명주기와 중단\n\n",
+          "current": "    depth: article\n    recommendation: \"JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다.\"\n    displayOrder: 3\n    relationNote: \"'스레드 덤프 유형별 패턴'의 monitor 소유자/대기자 분석 사례를 읽는다. 글의 RUNNABLE을 CPU 점유와 동일시하거나 OS 자원 분배가 Java WAITING으로 바꾼다는 설명은 Java 25 Thread.State 계약으로 받아들이지 않는다. 덤프 형식과 도구 사용법도 현행 공식 문서로 확인한다.\"\n---\n# Thread 생명주기와 중단\n\n",
           "previous": "    depth: article\n    recommendation: \"JVM thread dump에서 lock owner와 waiter를 연결해 deadlock cycle을 해석하는 실제 사례를 확인한다.\"\n    displayOrder: 3\n    relationNote: thread 상태와 blocked/waiting 진단을 실제 장애 흐름으로 연결\n---\n# Thread 생명주기와 중단\n\n"
         }
       ]
@@ -69,7 +69,7 @@
       "path": "java/io-nio/byte-character-stream-charset.md",
       "hunks": [
         {
-          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"Unicode 코드 포인트·UTF-8 및 한글의 바이트 인코딩 예시를 보충한다. 2012년 글의 Unicode 버전·기본 charset·String.getBytes() 결과는 Java 25의 현행 규칙과 구분한다.\"\n---\n# 바이트·문자 스트림과 Charset\n\n",
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"Unicode 코드 포인트·UTF-8 및 한글 바이트 인코딩 예시를 보충한다. 글의 Unicode 31비트 설명, String의 물리 저장을 UTF-16BE로 단정한 설명, 기본 charset과 getBytes() 결과는 Java 25의 Character·String·Charset 계약과 구분한다. UTF-16 코드 단위의 언어/API 모델은 내부 저장 형식과 다르다.\"\n---\n# 바이트·문자 스트림과 Charset\n\n",
           "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: Unicode와 UTF-8의 바이트 표현, Java 문자열·입출력 인코딩의 배경 이해. 기본 charset 관련 내용은 JDK 18 이전 기준이므로 Java 25 공식 문서를 우선한다.\n---\n# 바이트·문자 스트림과 Charset\n\n"
         }
       ]
@@ -87,7 +87,7 @@
       "path": "java/jvm-runtime/gc-fundamentals-collectors.md",
       "hunks": [
         {
-          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"2012년 HotSpot의 Young/Old 세대, GC·STW 및 카드 테이블 설명을 역사적 구현 사례로 읽는다. Permanent Generation, 수집기 옵션과 세대별 동작을 Java 25 공통 GC 모델로 취급하지 않는다.\"\n---\n# GC 기본 원리와 수집기(Collector)\n\n",
+          "current": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: \"2011년 글의 HotSpot Young/Old 세대, GC·STW 및 카드 테이블 설명을 역사적 구현 사례로 읽는다. Permanent Generation, 수집기 옵션과 세대별 동작을 Java 25 공통 GC 모델로 취급하지 않는다.\"\n---\n# GC 기본 원리와 수집기(Collector)\n\n",
           "previous": "    referenceType: COMPANY_TECH_BLOG\n    language: ko\n    displayOrder: 3\n    relationNote: GC의 세대별 흐름과 stop-the-world 관찰 포인트 보충\n---\n# GC 기본 원리와 수집기(Collector)\n\n"
         }
       ]

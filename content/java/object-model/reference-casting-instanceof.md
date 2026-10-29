@@ -60,16 +60,18 @@ Dog dog = (Dog) animal; // 실제 객체가 Dog이므로 성공
 반면 다음 코드는 컴파일은 가능하지만 실행 중 실패합니다.
 
 ```java
-Animal animal = new Cat();
-Dog dog = (Dog) animal; // ClassCastException
+Animal other = new Cat();
+Dog wrong = (Dog) other; // ClassCastException
 ```
 
-```text
-Animal 참조
-   │
-   ├─ 실제 Dog 객체 → (Dog) 성공
-   └─ 실제 Cat 객체 → (Dog) 실패
-                      → ClassCastException
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-object-model",
+  "example": "casting",
+  "title": "같은 객체에 대한 참조 타입 검사",
+  "description": "실제 Dog를 Dog로 좁히면 같은 객체를 얻습니다. 실제 Cat을 Dog로 좁히면 ClassCastException입니다. 형변환은 객체를 새로 만들거나 타입을 바꾸지 않습니다."
+}
 ```
 
 형변환(cast)이 성공해도 객체가 새로 만들어지거나 다른 종류의 객체로 변하는 것은 아닙니다. **같은 객체를 더 구체적인 참조 타입으로 사용할 수 있는지 확인**하는 것입니다.
@@ -90,7 +92,7 @@ if (animal instanceof Dog) {
 }
 ```
 
-`null instanceof Dog`의 결과는 `false`입니다. 따라서 패턴이 성공한 블록 안에서는 적합한 타입의 실제 객체를 얻었다고 볼 수 있습니다.
+`null`을 `Dog`로 형변환하면 예외 없이 `null`을 얻지만, 그 참조로 인스턴스 메서드를 호출하면 `NullPointerException`이 발생합니다. `null instanceof Dog`의 결과는 `false`입니다. 따라서 패턴이 성공한 블록 안에서는 적합한 타입의 실제 객체를 얻었다고 볼 수 있습니다.
 
 ### 반복적인 하위 타입 검사는 설계 신호가 될 수 있다
 

@@ -28,7 +28,15 @@ references:
 
 이 차이는 서머타임(DST)을 사용하는 지역에서 특히 중요합니다.
 
-![DST 전환의 gap과 overlap](/learning/java/dst-gap-overlap.svg)
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "Paris의 gap과 overlap",
+  "description": "Europe/Paris·tzdb 2026b에서 2026-03-29 02:30의 gap 보정과 2026-10-25 02:30의 두 offset 후보를 비교합니다.",
+  "example": "zone-dst"
+}
+```
 
 ### 고정 오프셋과 지역 규칙을 구분한다
 
@@ -54,7 +62,9 @@ ZoneId paris = ZoneId.of("Europe/Paris");
 
 이때 `02:30`은 지역 날짜·시각으로 적을 수 있지만 대응하는 실제 순간이 없습니다. 이런 구간을 **gap**이라고 합니다.
 
-Java API는 지역 date-time과 시간대를 결합할 때 gap을 처리하는 규칙을 갖고 있지만, API가 값을 만들어 준다는 사실과 그 보정이 예약 정책상 올바르다는 것은 별개입니다. 업무상 허용하지 않아야 한다면 전환 구간을 별도로 검증해야 합니다.
+`LocalDateTime.atZone(zone)`은 gap 안의 값을 **gap 길이만큼 앞으로 이동**해 해석합니다. 예를 들어 런타임 규칙상 Paris의 2026-03-29 02:30은 한 시간 gap 안에 있어 03:30+02:00으로 보정됩니다. 단순히 다음 유효 구간의 시작인 03:00으로 맞추는 규칙은 아닙니다.
+
+입력을 보정하지 않고 거부하려면 `zone.getRules().getValidOffsets(local)`로 후보를 확인하거나, 사용자가 선택한 오프셋과 함께 `ZonedDateTime.ofStrict(local, offset, zone)`으로 유효성을 검사할 수 있습니다. API 기본 보정이 예약 정책상 올바른지는 별도로 결정해야 합니다.
 
 ### DST 종료에는 같은 지역 시간이 두 번 나타날 수 있다
 
@@ -67,7 +77,7 @@ Java API는 지역 date-time과 시간대를 결합할 때 gap을 처리하는 �
 
 이런 **overlap**에서는 `02:30`이라는 `LocalDateTime`만으로 하나의 `Instant`를 정할 수 없습니다. 어떤 오프셋을 사용할지 정책이 필요합니다.
 
-`ZonedDateTime`은 overlap에서 사용할 오프셋을 선택하는 API를 제공하지만, 어떤 후보가 사용자의 의도에 맞는지는 애플리케이션 요구사항이 결정합니다.
+`LocalDateTime.atZone`은 overlap에서 먼저 발생하는 쪽의 오프셋을 기본으로 선택합니다. `withEarlierOffsetAtOverlap()`과 `withLaterOffsetAtOverlap()`으로 후보를 명시할 수 있습니다. 여기서 earlier/later는 오프셋 숫자의 대소를 단순 비교하는 표현이 아니라 겹치는 구간의 두 발생을 구분하는 의미로 읽어야 합니다. 어떤 후보가 사용자의 의도에 맞는지는 애플리케이션 요구사항이 결정합니다.
 
 ### 달력상의 하루와 정확한 24시간은 다를 수 있다
 

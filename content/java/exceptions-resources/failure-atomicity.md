@@ -29,19 +29,14 @@ void transfer(Account target, long amount) {
 
 두 번째 작업이 실패하면 현재 계좌의 잔액은 이미 줄어들었을 수 있습니다.
 
-```text
-호출 전
-source = 100
- target = 50
-    │
-    ▼
-source -= 30        source = 70
-    │
-    ▼
-target.deposit(30)  여기서 실패
-    │
-    ▼
-예외 발생           source = 70, target = 50
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "부분 변경과 임시 불변값 대안",
+  "description": "이체의 부분 실패는 잔액을 자동 복구하지 않습니다. 별도 대안에서는 임시 불변값을 검증한 뒤에만 반영합니다.",
+  "example": "failure-atomicity"
+}
 ```
 
 Java 예외는 제어 흐름을 중단하지만 앞에서 수행된 일반 객체 변경을 자동으로 되감지 않습니다. 실패한 메서드가 호출자를 어떤 상태에 남기는지도 API 계약의 일부로 봐야 합니다.

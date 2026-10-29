@@ -51,12 +51,14 @@ class Worker implements Runnable {
 
 한 스레드의 `stopRequested = true`라는 volatile 쓰기는 동기화 순서상 그 뒤의 같은 필드 volatile 읽기와 synchronizes-with 관계를 만들고, 따라서 happens-before edge가 됩니다.
 
-```text
-스레드 A                         스레드 B
-stopRequested = true
-   `volatile` 쓰기
-        │
-        └──────────────────▶ `volatile` 읽기: stopRequested
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "volatile 공개의 순서",
+  "description": "data를 먼저 쓰고 ready로 공개한 뒤 true를 관찰해 data를 읽는 경로입니다. volatile은 count++ 전체를 원자화하지 않습니다.",
+  "example": "volatile-handoff"
+}
 ```
 
 그래서 volatile을 "항상 RAM에서 읽는다"거나 "CPU 캐시를 끈다"고 정의하면 부정확합니다. Java 코드가 의존할 수 있는 것은 **JMM이 정의한 읽기/쓰기의 메모리 의미론**이고, HotSpot과 CPU가 이를 어떤 명령이나 barrier로 구현하는지는 별도 계층입니다.
@@ -81,16 +83,6 @@ void consume() {
 
 Writer 안에서 `data = 42`는 volatile 쓰기보다 프로그램 순서상 앞에 있고, reader가 그 뒤의 volatile 읽기를 거쳐 `data`를 읽습니다. Program 순서, volatile 동기화 edge, transitivity를 연결하면 `data`의 초기화 쓰기를 reader의 후속 읽기와 happens-before로 연결할 수 있습니다.
 
-```text
-write data=42
-     │
-write ready=true (volatile)
-     │ happens-before
-ready 읽기
-     │
-data 읽기
-```
-
 이것은 "volatile 참조 하나를 읽으면 객체 전체의 모든 미래 변경이 자동으로 안전하다"는 뜻은 아닙니다. Edge 이전의 동작과 이후의 동작을 실제 순서대로 추적해야 합니다.
 
 ### volatile은 복합 읽기-수정-쓰기(read-modify-write)를 하나로 묶지 않는다
@@ -105,14 +97,6 @@ void increment() {
 
 `count++`는 읽기, 계산, 쓰기의 복합 동작입니다. 각 volatile access에 메모리 의미론이 있어도 두 스레드가 같은 이전 값을 읽고 각각 1을 써서 lost update를 만들 수 있습니다.
 
-```text
-A: 0 읽기              B: 0 읽기
-A: compute 1           B: compute 1
-A: 1 쓰기             B: 1 쓰기
-
-최종 count = 1
-```
-
 따라서 volatile은 상호 배제(mutual exclusion)를 제공하지 않고, 복합 갱신 전체를 원자적 연산으로 바꾸지도 않습니다.
 
 ### 여러 값의 불변 조건도 volatile 필드 여러 개로 자동 보호되지 않는다
@@ -125,6 +109,8 @@ invariant: reserved <= available
 ```
 
 각 필드를 `volatile`로 선언하면 개별 읽기·쓰기의 가시성은 강화되지만 두 값을 하나의 일관된 상태 전이로 묶어 주지는 않습니다. 여러 값이 함께 바뀌어야 한다면 같은 잠금으로 보호하거나, 관련 상태를 불변 객체 하나로 묶어 `volatile` 참조 전체를 교체하거나, 요구에 맞는 원자적 추상화(atomic abstraction)를 사용할 수 있습니다.
+
+불변 상태 객체를 교체하는 방식에서도 독자는 volatile 참조를 한 번 읽어 지역 변수에 보관한 뒤 그 스냅샷의 여러 필드를 읽어야 합니다. 참조를 매번 다시 읽으면 서로 다른 버전의 상태를 조합할 수 있습니다. 여러 writer가 이전 상태를 읽어 새 상태를 계산한다면 단순 교체만으로 갱신 유실까지 막지는 못하므로 CAS나 잠금이 추가로 필요할 수 있습니다.
 
 ```text
 volatile이 잘 맞는 질문

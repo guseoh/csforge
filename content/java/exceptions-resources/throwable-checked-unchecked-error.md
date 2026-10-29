@@ -28,14 +28,14 @@ Java의 예외 계층을 볼 때 가장 먼저 구분할 것은 **컴파일러�
 
 ### Throwable 아래에는 Error와 Exception이 있다
 
-```text
-Throwable
-├─ Error                         ┐
-│                               ├─ unchecked
-└─ Exception                    │
-   ├─ RuntimeException ─────────┘
-   │  └─ 여러 unchecked exception
-   └─ 그 밖의 여러 checked exception
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "Throwable의 分類",
+  "description": "Error와 RuntimeException은 비검사 계열입니다. 그 밖의 Throwable 타입은 처리·선언 검사 대상이며 심각도 분류가 아닙니다.",
+  "example": "throwable-tree"
+}
 ```
 
 정확히는 `Throwable`의 하위 타입 가운데 `RuntimeException`이나 `Error`의 하위 타입이 아닌 것이 검사 예외입니다. 보통 `Exception`의 하위 타입이 여기에 해당하지만, 직접 `Throwable`을 상속한 타입도 검사 예외가 될 수 있습니다. 메서드 밖으로 전파된다면 `catch`하거나 `throws`로 선언해야 합니다.

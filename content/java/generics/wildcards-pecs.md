@@ -22,7 +22,15 @@ references:
 
 Wildcard는 이런 데이터 흐름을 타입 계약에 표현합니다.
 
-![Wildcard와 PECS의 읽기·쓰기 방향](/learning/java/generics-pecs.svg)
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "pecs",
+  "title": "값이 이동하는 PECS 경계",
+  "description": "extends 원본에서 T를 읽어 super 대상에 T를 씁니다. 컬렉션 자체의 불변성을 뜻하지 않습니다."
+}
+```
 
 ### 값을 제공하는 쪽이면 `? extends`
 
@@ -79,13 +87,7 @@ static <T> void copy(
 }
 ```
 
-```text
-원본(source)               대상(destination)
-? extends T                  ? super T
-    │                            ▲
-    └────── T를 읽음 ────────────┘
-                   T를 씀
-```
+`source`에서 `T`를 읽고 `destination`에 그 `T`를 추가합니다.
 
 PECS는 모든 제네릭 선언에 기계적으로 붙이는 공식이 아닙니다. 한 컬렉션에서 복잡하게 읽고 쓰며 같은 구체 타입 관계를 유지해야 한다면 와일드카드보다 named 타입 매개변수가 더 자연스러울 수도 있습니다.
 

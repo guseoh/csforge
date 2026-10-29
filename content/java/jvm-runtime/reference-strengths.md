@@ -42,8 +42,14 @@ User user = new User();
 
 살아 있는 루트에서 일반적인 강한 참조 경로가 객체까지 이어지면 그 객체는 **강하게 도달 가능한 상태(strongly reachable)** 입니다.
 
-```text
-살아 있는 GC 루트 ──▶ owner ──▶ User
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "참조 종류와 큐 알림",
+  "description": "강한·소프트·약한 참조와 PhantomReference의 큐 알림을 구분합니다. 큐 알림은 메모리·외부 자원 회수 완료 barrier가 아닙니다.",
+  "example": "reference-strength"
+}
 ```
 
 업무 처리에 반드시 필요한 객체는 보통 이런 강한 참조 관계로 보유합니다. 일반 지역 변수나 필드가 객체를 직접 참조하고 있다면 특별한 `Reference` 객체로 감싸지 않은 한 기본적으로 이 관계를 생각하면 됩니다.
@@ -56,17 +62,9 @@ WeakReference<User> weak = new WeakReference<>(user);
 
 객체가 강한 참조나 소프트 참조로는 더 이상 도달되지 않고 `WeakReference`를 통해서만 도달할 수 있는 **약하게 도달 가능한 상태(weakly reachable)** 가 되면, JVM의 참조 처리 과정에서 해당 약한 참조는 지워질 수 있습니다.
 
-```text
-강한 참조 경로 존재
-GC 루트 ──▶ User
-
-강한/소프트 참조 경로 소멸
-WeakReference ──▶ User
-                   │
-                   └─ 약한 참조로 도달 가능(weakly reachable)
-```
-
 따라서 `weak.get()`은 어느 시점에는 객체를 반환하다가 이후 `null`을 반환할 수 있습니다. 반드시 살아 있어야 하는 업무 상태라면 약한 참조만으로 보유하면 안 됩니다.
+
+대상을 사용할 때는 `get()`의 결과를 지역 변수에 한 번 받아 검사합니다. `if (weak.get() != null) weak.get().work();`처럼 두 번 호출하면 그 사이에 참조가 비워져 두 번째 결과는 `null`일 수 있습니다. `User current = weak.get();` 다음에 `current != null`을 확인하고 사용하면, 사용에 필요한 동안 그 지역 참조가 대상을 강하게 보유합니다.
 
 약한 참조는 원본 객체의 수명을 늘리지 않아야 하는 메타데이터 관계나 `WeakHashMap` 같은 특수한 구조에서 사용할 수 있습니다.
 
@@ -75,13 +73,6 @@ WeakReference ──▶ User
 소프트 참조는 강한 참조는 없지만 `SoftReference`를 통해 도달 가능한 객체를 표현합니다. JVM은 메모리 수요에 따라 소프트 참조를 지울 수 있으며, Java API는 `OutOfMemoryError`를 던지기 전에 소프트 참조로만 도달 가능한 객체에 대한 소프트 참조가 지워져야 한다는 중요한 보장을 둡니다.
 
 반면 **언제 어떤 소프트 참조를 먼저 지우는지에 대한 TTL·LRU·순서 계약은 없습니다.**
-
-```text
-SoftReference 기반 캐시
-   ├─ TTL 보장 없음
-   ├─ 최대 항목 수 보장 없음
-   └─ 제거 순서 보장 없음
-```
 
 그래서 일반 애플리케이션 캐시에는 최대 크기, TTL, 명시적인 제거 정책, 적중/미적중(hit/miss) 관찰처럼 업무 정책을 표현할 수 있는 캐시 추상화가 더 적합한 경우가 많습니다.
 
@@ -100,19 +91,6 @@ PhantomReference<Resource> phantom =
 ### ReferenceQueue를 쓰면 Reference 객체 자체의 수명도 관리해야 한다
 
 참조를 큐에 등록했다고 해서 큐가 해당 `Reference` 객체의 수명을 대신 보장하는 것은 아닙니다. 알림을 처리할 필요가 있는 동안에는 프로그램이 `Reference` 객체 자체도 도달 가능한 상태로 유지해야 합니다.
-
-```text
-참조 대상의 도달 가능성 변화
-        │
-        ▼
-참조 처리(reference processing)
-        │
-        ▼
-ReferenceQueue
-        │
-        ▼
-정리·관리 작업
-```
 
 이 점을 놓치면 "큐에 등록했는데 왜 알림을 못 받았지?" 같은 잘못된 기대를 만들 수 있습니다.
 

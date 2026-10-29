@@ -37,14 +37,14 @@ Comparator<Order> order = Comparator
         .thenComparingLong(Order::id);
 ```
 
-```text
-amount 비교
-   │
-   ├─ 다름 → 결과 확정
-   └─ 같음
-        │
-        ▼
-      id 비교
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "comparator",
+  "title": "비교 기준의 우선순위",
+  "description": "금액을 먼저 비교하고 동률일 때만 ID를 비교합니다. 뒤집는 범위에 따라 동률 순서도 달라집니다."
+}
 ```
 
 앞 기준이 0일 때만 다음 기준을 사용하므로 코드 순서가 곧 비교 우선순위가 됩니다.

@@ -22,17 +22,14 @@ references:
 
 해시 기반 컬렉션은 hashCode를 이용해 탐색 범위를 좁힌 뒤 필요하면 `equals`로 실제 동등성을 확인합니다.
 
-```text
-key
- │
- ▼
-hashCode 계산
- │
- ▼
-후보 범위 선택
- │
- ▼
-equals로 논리적 동등성 확인
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "hash-contract",
+  "title": "해시 계약의 단방향 함의",
+  "description": "같은 값이면 같은 해시를 반환해야 하지만, 같은 해시가 동등성을 보장하지는 않습니다."
+}
 ```
 
 구체적인 `HashMap`의 버킷 구조나 충돌 처리 방식은 컬렉션 Topic에서 다룹니다. 여기서는 객체가 제공해야 하는 계약에 집중합니다.
@@ -41,17 +38,17 @@ equals로 논리적 동등성 확인
 
 가장 중요한 규칙은 다음입니다.
 
-```text
-a.equals(b) == true
-        ↓
-a.hashCode() == b.hashCode() 이어야 함
-```
+`a.equals(b)`가 true이면 두 해시도 같아야 합니다. 역방향은 보장되지 않습니다.
 
 반대 방향은 성립하지 않습니다. 두 객체의 hashCode가 같아도 `equals`는 `false`일 수 있습니다.
 
 ```java
 final class Money {
     private final long amount;
+
+    Money(long amount) {
+        this.amount = amount;
+    }
 
     @Override
     public boolean equals(Object other) {
@@ -119,11 +116,7 @@ map.get(key); // 찾지 못할 수 있음
 
 `Object.hashCode`는 프로그램 실행을 넘어 안정적인 식별 값을 제공한다고 약속하지 않으며 충돌도 허용합니다. 같은 실행 안에서는 `equals` 비교에 사용하는 정보가 바뀌지 않는 한, 같은 객체의 반복 호출이 같은 값을 반환해야 합니다.
 
-```text
-hashCode    → Java 객체 동등성과 hash 기반 자료구조를 위한 계약
-영구 ID     → 저장·실행 경계를 넘어 유지되는 별도 식별자
-암호학적 hash → 충돌 저항성 등 보안 요구를 가진 별도 알고리즘
-```
+객체 해시, 영구 식별자, 암호학적 해시는 목적과 계약이 서로 다릅니다.
 
 이 셋은 목적이 다릅니다.
 

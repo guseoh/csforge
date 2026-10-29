@@ -27,6 +27,17 @@ Predicate<Integer> enough = value -> value >= minimum;
 
 `minimum`에 명시적인 `final`은 없지만 선언 뒤 다시 대입되지 않았기 때문에 **사실상 final(effectively final)** 로 취급됩니다.
 
+초기화 식 없이 선언된 지역 변수는 이후 각 실행 경로에서 처음 대입하더라도 사실상 final일 수 있습니다. 다만 람다 본문에서 사용하기 전에는 모든 경로에서 **반드시 대입되었다고 판정**되어야 합니다. 예를 들어 다음 `threshold`는 어느 분기로 가도 한 번 대입되어 캡처할 수 있습니다.
+
+```java
+int threshold;
+if (strict) threshold = 100;
+else threshold = 10;
+Predicate<Integer> accepted = value -> value >= threshold;
+```
+
+두 조건은 별개입니다. `else` 없이 한 분기에서만 대입하면 사실상 final일 수는 있지만 람다에서 사용할 때 반드시 대입되었다고 판정되지 않아 컴파일할 수 없습니다.
+
 ### 다시 대입되는 지역 변수는 캡처할 수 없다
 
 ```java
@@ -47,11 +58,14 @@ Runnable task = () -> names.add("java");
 
 `names` 변수 자체는 다시 대입되지 않으므로 캡처할 수 있습니다. 하지만 그 참조가 가리키는 `ArrayList`는 가변 객체이므로 `add()`할 수 있습니다.
 
-```text
-캡처된 지역 변수 참조
-names ─────> ArrayList
-   X 재대입      │
-                 └─ 내부 상태 변경 가능
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "lambda-capture",
+  "title": "캡처 변수와 객체 상태",
+  "description": "고정된 참조와 가변 객체를 구분합니다."
+}
 ```
 
 즉 **캡처된 지역 변수의 재대입 제한과 참조 객체의 불변성은 별개의 문제**입니다. lambda가 참조를 캡처한다고 해서 객체 상태가 깊은 복사로 고정되는 것도 아닙니다.

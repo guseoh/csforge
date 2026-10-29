@@ -45,16 +45,14 @@ void write(OutputStream out) throws IOException {
 
 Spring의 transaction-bound 연결이나 container가 관리하는 스트림처럼 외부 프레임워크가 생명주기를 관리하는 자원도 있습니다. 이런 경우 일반 Java 규칙만 보고 직접 close하면 관리 체계를 깨뜨릴 수 있습니다.
 
-```text
-직접 획득
-코드 ── open ──> resource
-코드 <─ close ──┘
-
-빌린 자원
-소유자 ── open ──> 자원(resource)
-             ▲
-             └─ borrower는 사용만
-소유자 <─ close ──┘
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "자원 소유자와 빌린 사용",
+  "description": "이 API 계약에서 소유자는 획득·종료를 담당하고 빌린 메서드는 사용만 합니다. 소유권 이전 여부는 별도 API 계약입니다.",
+  "example": "resource-ownership"
+}
 ```
 
 ### 반환값으로 자원을 넘기면 책임도 함께 넘긴다
@@ -65,7 +63,9 @@ InputStream openFile(Path path) throws IOException {
 }
 ```
 
-이 메서드는 스트림을 닫지 않고 반환합니다. 대신 호출자가 사용 후 닫아야 한다는 계약이 필요합니다. 문서, 타입, 사용 예시에서 소유권이 드러나야 누수가 줄어듭니다.
+이 메서드는 스트림을 닫지 않고 반환합니다. 대신 호출자가 사용 후 닫아야 한다는 계약이 필요합니다. 이 반환을 try-with-resources 안에서 수행하며 닫아 버리면 호출자는 이미 닫힌 스트림을 받게 됩니다. 문서, 타입, 사용 예시에서 소유권이 드러나야 누수가 줄어듭니다.
+
+`AutoCloseable.close()` 자체는 반복 호출의 멱등성을 강제하지 않습니다. `Closeable`처럼 더 구체적인 타입이 반복 닫기의 무효 동작을 보장할 수는 있지만, 임의의 AutoCloseable을 여러 소유자가 중복해서 닫아도 안전하다고 가정하면 안 됩니다.
 
 ### 자원은 메모리 객체만의 문제가 아니다
 

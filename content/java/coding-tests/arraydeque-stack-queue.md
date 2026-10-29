@@ -37,12 +37,14 @@ System.out.println(queue.pollFirst()); // 10
 System.out.println(queue.pollFirst()); // 20
 ```
 
-```text
-front                    back
-  ↓                        ↓
-[10] [20] [30]
-  ↑              ↑
-pollFirst       addLast
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "Deque의 앞·뒤 연산",
+  "description": "push/pop은 앞쪽을 사용합니다. offerLast/pollFirst 조합은 뒤에 넣고 앞에서 꺼내는 FIFO입니다. ArrayDeque는 null을 거부합니다.",
+  "example": "deque"
+}
 ```
 
 `offerLast`/`pollFirst` 조합을 사용할 수도 있습니다. 한 문제 안에서 방향을 섞지만 않으면 됩니다.
@@ -63,14 +65,6 @@ System.out.println(stack.pop()); // 30
 
 `push`와 `pop`은 덱의 앞쪽을 스택 top으로 사용하는 API입니다.
 
-```text
-top
- ↓
-[30] [20] [10]
- ↑
-push / pop
-```
-
 직접 `addLast`/`removeLast`를 한 쌍으로 사용해도 LIFO를 만들 수 있지만, `push/pop`은 스택 의도를 더 바로 보여 줄 수 있습니다.
 
 ### `poll`과 `remove`는 비었을 때 동작이 다르다
@@ -82,7 +76,7 @@ push / pop
 - `peekFirst()`, `peekLast()`: 제거하지 않고 조회, 비어 있으면 `null`
 - `getFirst()`, `getLast()`: 제거하지 않고 조회, 비어 있으면 예외
 
-문제에서 항상 원소가 있다고 보장하면 어떤 계열을 써도 구현할 수 있지만, 보장이 없다면 null/예외 처리를 고려합니다.
+문제에서 항상 원소가 있다고 보장하면 어떤 계열을 써도 구현할 수 있지만, 보장이 없다면 null/예외 처리를 고려합니다. `int value = deque.pollFirst()`도 빈 경우 안전한 코드는 아닙니다. poll이 반환한 null을 int로 언박싱하면서 `NullPointerException`이 발생하므로, 먼저 Integer로 받아 검사하거나 빈 상태를 확인해야 합니다.
 
 ### peek과 poll을 헷갈리지 않는다
 

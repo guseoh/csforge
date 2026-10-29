@@ -43,15 +43,14 @@ try {
 
 `synchronized`와 달리 중괄호를 벗어난다고 자동으로 unlock되지 않습니다. 그래서 성공적으로 lock을 얻은 뒤에는 `finally`에서 반환하는 구조가 기본입니다.
 
-```text
-lock.lock()
-    │
-    ▼
-임계 영역(critical section)
-    │
-    └─ 정상/예외 모두
-          ▼
-     finally unlock()
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "await의 해제와 재획득",
+  "description": "소비자의 조건 검사, await로 lock 해제, 생산자의 signal, 소비자의 lock 재획득과 while 재검사를 비교합니다.",
+  "example": "condition-await"
+}
 ```
 
 Unlock을 놓치면 다른 스레드가 계속 lock을 기다릴 수 있습니다.
@@ -110,16 +109,6 @@ Task take() throws InterruptedException {
 
 `await()`는 기다리는 동안 현재 lock을 release하고, 깨어난 뒤 다시 lock을 획득한 다음 반환합니다. Lock을 계속 들고 기다리면 생산자가 큐에 값을 넣으러 들어올 수 없기 때문입니다.
 
-```text
-소비자: 잠금 -> 대기열 비어 있음 -> `await`
-                            │
-                            └─ lock release + wait
-
-생산자:                   잠금 -> 추가 -> `signal` -> 잠금 해제
-
-consumer:                   wake -> lock reacquire -> condition 재확인
-```
-
 ### `if`가 아니라 `while`로 조건을 다시 확인한다
 
 ```java
@@ -130,7 +119,7 @@ while (queue.isEmpty()) {
 
 깨어났다는 사실만으로 큐가 반드시 원하는 상태라고 가정하면 안 됩니다. 여러 waiter가 경쟁할 수도 있고 spurious wakeup이 허용될 수 있으므로 **조건 함수를 다시 검사**합니다.
 
-Condition은 "signal을 받았으니 작업해도 된다"가 아니라 "상태가 바뀌었을 수 있으니 lock을 다시 얻고 조건을 확인하라"는 구조로 보는 편이 좋습니다.
+Condition은 "signal을 받았으니 작업해도 된다"가 아니라 "상태가 바뀌었을 수 있으니 lock을 다시 얻고 조건을 확인하라"는 구조로 보는 편이 좋습니다. ReentrantLock에서 만든 Condition의 signal·signalAll도 같은 lock을 소유한 상태에서 호출해야 합니다. signal은 lock을 즉시 넘겨주지 않으며, 생산자가 임계 영역을 벗어나야 소비자가 다시 획득할 수 있습니다.
 
 ### 여러 Condition으로 대기 이유를 나눌 수 있다
 
@@ -145,7 +134,7 @@ Bounded 큐라면 하나의 lock 아래에서:
 
 `new ReentrantLock(true)`로 fairness 정책을 요청할 수 있지만 이것이 "모든 스레드가 완벽히 공평한 시간만큼 CPU를 받는다"는 의미는 아닙니다. Lock 획득 대기 정책과 관련한 선택이며 처리량에 비용이 있을 수 있습니다.
 
-따라서 실제 기아 요구가 있는지와 성능 특성을 보고 선택합니다.
+또한 인자가 없는 `tryLock()`은 공정한 ReentrantLock에서도 이미 대기하는 스레드보다 먼저 획득할 수 있습니다. 공정성 설정만 보고 모든 획득 경로가 동일한 대기 순서를 따른다고 해석하면 안 됩니다. 실제 기아 방지 요구와 사용하는 획득 API, 성능 특성을 함께 보고 선택합니다.
 
 ### synchronized보다 항상 좋은 것은 아니다
 

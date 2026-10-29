@@ -1,0 +1,1172 @@
+{
+  "items": [
+    {
+      "id": 6,
+      "topicId": 1,
+      "title": "원시 값과 참조 값",
+      "summary": "Java 변수에 저장되는 원시 값과 참조 값을 구분하고 참조를 물리 메모리 주소와 동일시하지 않는다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 10,
+      "topicId": 1,
+      "title": "변수, 범위와 확정 할당",
+      "summary": "필드·지역 변수·매개변수의 차이와 변수를 사용할 수 있는 범위, 지역 변수의 확정 할당 규칙을 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 4,
+      "topicId": 1,
+      "title": "숫자 변환과 오버플로",
+      "summary": "숫자 타입의 넓히기·좁히기 변환과 연산 시 타입 승격, 정수 범위를 넘을 때의 결과를 코드로 추적한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 2,
+      "topicId": 1,
+      "title": "박싱·언박싱과 래퍼 타입",
+      "summary": "원시 값과 래퍼 객체 사이의 자동 변환, null 언박싱 위험, == 비교와 캐시 오해를 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 5,
+      "topicId": 1,
+      "title": "Java는 항상 값을 전달한다",
+      "summary": "원시 값과 참조 값 모두 값이 복사되어 매개변수에 전달된다는 사실을 변수 재대입과 객체 상태 변경으로 구분한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 1,
+      "topicId": 1,
+      "title": "배열 공변성과 저장 시 런타임 타입 검사",
+      "summary": "참조형 배열을 더 넓은 배열 타입으로 다룰 수 있을 때 왜 실행 시점 저장 검사가 필요한지 코드 흐름으로 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 3,
+      "topicId": 1,
+      "title": "final과 불변 객체는 같은 말이 아니다",
+      "summary": "final이 변수의 재대입을 막는 규칙과 객체 상태의 불변성, final 메서드·클래스의 의미를 구분한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 7,
+      "topicId": 1,
+      "title": "String의 불변성과 문자열 비교",
+      "summary": "String이 불변 객체라는 뜻과 ==의 객체 동일성 비교, equals의 문자열 내용 비교를 구분한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 8,
+      "topicId": 1,
+      "title": "문자열 풀(String Pool)과 intern()",
+      "summary": "문자열 리터럴이 intern되는 규칙과 intern()의 의미를 이해하고 모든 String 생성이 같은 방식이라고 일반화하지 않는다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 9,
+      "topicId": 1,
+      "title": "StringBuilder와 반복 문자열 조립",
+      "summary": "String의 불변성과 StringBuilder의 가변 문자 시퀀스를 비교하고 반복 조립에서 적절한 사용 범위를 판단한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 12,
+      "topicId": 2,
+      "title": "클래스, 객체와 생성자",
+      "summary": "클래스를 객체의 설계로 이해하고 생성자가 새 객체를 유효한 초기 상태로 만드는 역할을 구분한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 22,
+      "topicId": 2,
+      "title": "static 멤버와 인스턴스 멤버",
+      "summary": "객체마다 따로 존재하는 상태와 클래스에 속하는 static 상태를 구분하고 공유 상태의 영향을 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 17,
+      "topicId": 2,
+      "title": "초기화 순서와 생성자 연결",
+      "summary": "클래스 초기화와 객체 초기화 단계를 구분하고 this·super 생성자 호출이 이어지는 순서를 추적한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 14,
+      "topicId": 2,
+      "title": "캡슐화와 객체의 불변 조건",
+      "summary": "객체 상태를 직접 노출하기보다 상태 변경 규칙을 객체의 동작으로 감싸 유효한 상태를 지키는 이유를 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 11,
+      "topicId": 2,
+      "title": "추상화와 객체의 책임",
+      "summary": "추상화를 단순 인터페이스 생성이 아니라 협력자가 알아야 할 책임과 변경 가능한 세부를 분리하는 과정으로 이해하고, 상태·행동·외부 경계의 책임 배치를 판단한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 16,
+      "topicId": 2,
+      "title": "상속과 is-a 관계",
+      "summary": "상속을 코드 재사용 수단만으로 보지 않고 의미 있는 하위 타입 관계와 변경 결합도를 기준으로 판단한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 13,
+      "topicId": 2,
+      "title": "합성과 객체 협력",
+      "summary": "행동을 상속으로 고정하기보다 협력 객체에 위임하여 각 책임을 독립적으로 변경할 수 있는 구조를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 20,
+      "topicId": 2,
+      "title": "다형성과 런타임 메서드 선택",
+      "summary": "변수의 선언 타입과 실제 객체 타입을 구분하고 재정의된 인스턴스 메서드가 실행 시점에 선택되는 이유를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 19,
+      "topicId": 2,
+      "title": "오버로딩과 오버라이딩",
+      "summary": "컴파일 시점의 오버로딩 선택과 실행 시점의 재정의된 인스턴스 메서드 선택을 구분해 호출 결과를 예측한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 21,
+      "topicId": 2,
+      "title": "참조 타입 변환과 instanceof",
+      "summary": "상위 타입으로의 안전한 변환과 하위 타입으로의 검사가 필요한 변환을 구분하고 패턴 매칭을 활용한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 18,
+      "topicId": 2,
+      "title": "인터페이스와 추상 클래스 선택",
+      "summary": "계약 중심의 다형성이 필요한 경우와 공통 상태·구현을 공유하는 클래스 계층이 필요한 경우를 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 15,
+      "topicId": 2,
+      "title": "불변 객체와 방어적 복사",
+      "summary": "가변 객체의 소유권이 외부와 공유될 때 생기는 문제를 이해하고 입력·출력 경계에서 복사해 불변성을 보호한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 27,
+      "topicId": 3,
+      "title": "정적 팩터리 메서드",
+      "summary": "정적 팩터리가 생성 의미·구현 선택·인스턴스 수명·불변 조건을 어떤 경계에 모으는지 이해하고 생성자·Builder·별도 Factory와 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 23,
+      "topicId": 3,
+      "title": "Builder로 복잡한 생성 인자 다루기",
+      "summary": "Builder를 단순한 가독성 도구가 아니라 완성 전의 가변 구성 상태와 유효한 결과 객체를 분리하는 생성 API로 이해하고, 불변식·방어적 복사·재사용·Lombok·도메인/JPA 적용 판단까지 다룬다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 24,
+      "topicId": 3,
+      "title": "의존성을 밖에서 전달하는 설계",
+      "summary": "객체 생성·구현 선택·협력 사용 책임을 분리하고, 생성자 주입이 의존성 가시성·대체 가능성·수명 관리에 어떤 경계를 만드는지 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 26,
+      "topicId": 3,
+      "title": "필요한 범위만 공개하기",
+      "summary": "접근 제어를 단순 숨김이 아니라 외부 의존 가능 범위를 설계하는 도구로 보고, 생성 경로·반환 타입·protected 확장점·호환성 비용까지 함께 판단한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 25,
+      "topicId": 3,
+      "title": "메서드 계약과 매개변수 검증",
+      "summary": "메서드의 사전조건·상태조건·실패 후 상태를 구분하고, 검증과 부수 효과의 순서를 설계해 잘못된 호출이 객체의 불변 조건을 깨뜨리지 않게 한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 30,
+      "topicId": 4,
+      "title": "equals 계약과 논리적 동등성",
+      "summary": "같은 객체인지가 아니라 논리적으로 같은 값인지 판단할 때 equals가 지켜야 하는 규칙과 상태 선택 기준을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 31,
+      "topicId": 4,
+      "title": "hashCode와 equals의 계약",
+      "summary": "논리적으로 같은 객체는 같은 hashCode를 반환해야 하는 이유와 해시 기반 컬렉션에서 계약 위반이 만드는 문제를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 32,
+      "topicId": 4,
+      "title": "toString과 진단용 표현",
+      "summary": "toString을 디버깅에 유용한 사람이 읽는 표현으로 사용하되 직렬화 포맷이나 민감정보 안전성을 자동으로 기대하지 않는다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 28,
+      "topicId": 4,
+      "title": "Comparable과 자연 순서",
+      "summary": "타입 자체가 하나의 대표 순서를 정의할 때 Comparable을 사용하고 compareTo와 equals의 일관성이 정렬 컬렉션에 미치는 영향을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 29,
+      "topicId": 4,
+      "title": "Comparator로 정렬 기준 조합하기",
+      "summary": "타입 밖에서 여러 정렬 기준을 정의하고 comparing·thenComparing으로 안전하게 조합하며 overflow 위험을 피한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 33,
+      "topicId": 5,
+      "title": "enum으로 닫힌 값 집합 모델링하기",
+      "summary": "가능한 값이 정해진 상태를 문자열 상수 대신 enum 타입으로 표현하고 값과 관련 행동을 함께 둘 수 있는 이유를 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 34,
+      "topicId": 5,
+      "title": "enum 순번(ordinal)과 외부 저장값",
+      "summary": "enum의 선언 순서를 나타내는 ordinal을 안정적인 외부 식별자로 사용하기 위험한 이유와 name 기반 저장의 trade-off를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 36,
+      "topicId": 5,
+      "title": "EnumSet으로 enum 집합 표현하기",
+      "summary": "원소 타입이 하나의 enum으로 제한된 집합에서 EnumSet이 타입 의도와 집합 연산을 명확하게 표현하는 이유를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 35,
+      "topicId": 5,
+      "title": "EnumMap으로 enum 키 매핑하기",
+      "summary": "키가 하나의 enum 타입으로 제한된 Map에서 EnumMap을 사용해 키 범위와 의도를 분명하게 표현한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 43,
+      "topicId": 6,
+      "title": "전략(Strategy) 패턴과 정책 교체",
+      "summary": "조건문으로 늘어나는 정책 차이를 공통 계약 뒤의 교체 가능한 객체로 분리하고 언제 패턴이 필요한지 판단한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 44,
+      "topicId": 6,
+      "title": "템플릿 메서드(Template Method) 패턴과 공통 실행 흐름",
+      "summary": "공통 알고리즘의 순서와 변형 지점을 상위 타입에 명시하고, hook·예외·자원 정리·상속 결합·독립 변동 축의 조합 폭증까지 고려해 적용 여부를 판단한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 39,
+      "topicId": 6,
+      "title": "팩터리(Factory)와 객체 생성 책임",
+      "summary": "구체 구현 선택뿐 아니라 dependency 조립·검증·재사용 여부 같은 생성 정책과 객체 수명을 한 경계에 모으고, 사용 책임과 생성 책임을 분리한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 37,
+      "topicId": 6,
+      "title": "어댑터(Adapter)로 외부 인터페이스와 경계 분리하기",
+      "summary": "호환되지 않는 외부 API를 내부 계약으로 번역하면서 타입·단위·예외를 경계에 모으고, Adapter가 business policy까지 삼키지 않도록 책임을 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 38,
+      "topicId": 6,
+      "title": "데코레이터(Decorator)로 책임을 조합하기",
+      "summary": "같은 계약을 유지하는 래퍼 객체를 합성해 부가 책임을 조합하고, 래퍼 순서·예외·상태가 실제 호출 의미를 어떻게 바꾸는지 추적한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 41,
+      "topicId": 6,
+      "title": "프록시(Proxy)와 호출 중개",
+      "summary": "실제 객체 앞의 대리 객체가 접근 조건·지연 생성·캐시·원격 호출을 어떻게 중개하는지, 호출 경로와 검사 순서가 Proxy 의미를 어떻게 결정하는지 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 40,
+      "topicId": 6,
+      "title": "옵저버(Observer)와 상태 변화 알림",
+      "summary": "발행자와 여러 반응을 분리하면서 동기 호출 순서·구독 시점의 구독자 집합·실패 전파·전달 데이터의 소유권·구독 수명까지 추적해 Observer의 실제 절충점을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 42,
+      "topicId": 6,
+      "title": "상태(State) 패턴과 상태별 동작",
+      "summary": "상태별 허용 행동과 전이 규칙을 명시하고, 실패 시 상태 보존·전이 주체·enum 대안·workflow orchestration과의 경계를 함께 판단한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 50,
+      "topicId": 7,
+      "title": "List, Set, Map을 요구사항으로 선택하기",
+      "summary": "순서·중복·포함 여부·key-value 조회 요구를 기준으로 List, Set, Map의 계약을 구분한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 45,
+      "topicId": 7,
+      "title": "ArrayList와 LinkedList의 실제 선택 기준",
+      "summary": "접근·순회·삽입·삭제 비용뿐 아니라 탐색 비용, 객체 할당과 지역성까지 고려해 두 List 구현을 비교한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 46,
+      "topicId": 7,
+      "title": "HashMap 조회와 해시 충돌",
+      "summary": "키의 hashCode로 후보 영역을 좁히고 equals로 실제 키를 확인하는 흐름, 충돌과 변경 가능한 키의 문제를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 47,
+      "topicId": 7,
+      "title": "HashSet과 중복 판단",
+      "summary": "Set의 중복 없음 의미가 equals와 hashCode 계약을 통해 HashSet에서 어떻게 구현되는지 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 53,
+      "topicId": 7,
+      "title": "TreeSet과 TreeMap의 정렬 기준",
+      "summary": "정렬된 Set·Map에서 Comparable 또는 Comparator가 원소 순서뿐 아니라 키·원소 구분에도 영향을 줄 수 있음을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 52,
+      "topicId": 7,
+      "title": "Queue, Deque와 ArrayDeque",
+      "summary": "FIFO queue와 양끝 삽입·삭제가 가능한 deque를 구분하고 stack 용도까지 ArrayDeque로 표현하는 방법을 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 51,
+      "topicId": 7,
+      "title": "PriorityQueue와 우선순위 처리",
+      "summary": "전체 정렬 목록이 아니라 현재 우선순위가 가장 높은 원소를 반복해서 꺼내는 구조로 PriorityQueue를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 49,
+      "topicId": 7,
+      "title": "Iterable, Iterator와 순회 중 수정",
+      "summary": "enhanced for가 Iterator 기반 순회와 어떻게 연결되는지 이해하고 순회 중 구조 변경과 fail-fast의 보장 범위를 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 48,
+      "topicId": 7,
+      "title": "변경 불가 컬렉션과 수정 불가 뷰",
+      "summary": "List.of·copyOf처럼 수정할 수 없는 컬렉션과 원본을 감싼 unmodifiable view의 변경 전파·소유권 차이를 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 55,
+      "topicId": 8,
+      "title": "제네릭 타입과 제네릭 메서드",
+      "summary": "타입을 매개변수처럼 받아 여러 타입에 재사용하면서 컴파일 시점 타입 안전성을 얻는 제네릭의 기본 구조를 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 54,
+      "topicId": 8,
+      "title": "제네릭 불공변성과 잘못된 쓰기 방지",
+      "summary": "String이 Object의 하위 타입이어도 `List<String>`이 `List<Object>`의 하위 타입이 아닌 이유를 안전하지 않은 쓰기 가능성과 연결해 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 59,
+      "topicId": 8,
+      "title": "와일드카드(Wildcard)와 PECS",
+      "summary": "제네릭 API가 값을 주로 읽는지 쓰는지에 따라 extends와 super 경계를 선택하고 PECS를 실제 데이터 흐름으로 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 57,
+      "topicId": 8,
+      "title": "로 타입(raw type)과 비검사 경고(unchecked warning)",
+      "summary": "제네릭 타입 정보를 생략하면 컴파일 시점 타입 안전성을 잃고 비검사 경고가 런타임 오류 가능성을 알리는 이유를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 58,
+      "topicId": 8,
+      "title": "타입 소거와 런타임에 남는 타입 정보",
+      "summary": "Java 제네릭 타입 정보가 컴파일 후 모두 같은 방식으로 남지 않는 이유와 reifiable type, 제네릭 배열 등 실질적 제약을 이해한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 56,
+      "topicId": 8,
+      "title": "제네릭 가변 인자(varargs)와 힙 오염(heap pollution)",
+      "summary": "제네릭 타입과 배열 기반 varargs가 만날 때 타입 안전성이 깨질 수 있는 이유와 SafeVarargs를 붙일 수 있는 조건을 이해한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 66,
+      "topicId": 9,
+      "title": "`Throwable`, 검사 예외(checked exception)·비검사 예외(unchecked exception)·`Error`",
+      "summary": "Java 예외 계층을 컴파일러 검사 관점에서 구분하고 검사 예외와 비검사 예외를 단순히 좋고 나쁨으로 판단하지 않는다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 62,
+      "topicId": 9,
+      "title": "예외 전파와 catch 경계",
+      "summary": "예외를 발생한 곳에서 무조건 잡지 않고 복구·변환·사용자 응답 같은 책임이 있는 경계에서 처리한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 63,
+      "topicId": 9,
+      "title": "예외 변환과 원인 보존",
+      "summary": "낮은 수준의 기술 예외를 상위 계층이 이해할 의미로 바꾸되 원인 예외를 보존해 진단 가능성을 잃지 않는다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 65,
+      "topicId": 9,
+      "title": "표준 예외로 메서드 계약 표현하기",
+      "summary": "잘못된 인자·잘못된 현재 상태·찾을 수 없는 원소처럼 의미에 맞는 표준 예외를 선택하고 불필요한 사용자 정의 예외를 피한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 61,
+      "topicId": 9,
+      "title": "예외와 정상적인 분기 흐름 구분하기",
+      "summary": "예상되는 정상 분기를 반복적인 exception 발생으로 표현할 때 의미와 성능이 나빠질 수 있는 이유를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 64,
+      "topicId": 9,
+      "title": "실패 후 객체 상태와 실패 원자성(failure atomicity)",
+      "summary": "작업이 예외로 실패했을 때 객체가 예상하기 어려운 일부 변경 상태에 남지 않도록 검사와 변경 순서를 설계한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 67,
+      "topicId": 9,
+      "title": "try-with-resources와 억제 예외(suppressed exception)",
+      "summary": "자동 자원 정리 순서와 본문 예외와 close 예외가 동시에 발생할 때 suppressed로 원인을 보존하는 방식을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 60,
+      "topicId": 9,
+      "title": "AutoCloseable과 자원 소유권",
+      "summary": "자원을 획득한 코드와 빌려 쓰는 코드, framework가 관리하는 자원의 책임을 구분해 올바른 위치에서 close한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 69,
+      "topicId": 10,
+      "title": "함수형 인터페이스",
+      "summary": "추상 메서드 하나의 계약을 행동 값의 타입으로 사용하고 Predicate, Function, Consumer, Supplier의 역할을 구분한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 68,
+      "topicId": 10,
+      "title": "행동을 매개변수로 전달하기",
+      "summary": "비슷한 반복 흐름에서 달라지는 조건이나 변환 행동만 함수형 인터페이스로 전달해 중복을 줄이는 설계를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 71,
+      "topicId": 10,
+      "title": "람다의 대상 타입(target type)",
+      "summary": "람다 표현식의 매개변수와 반환 의미가 주변 함수형 인터페이스 문맥에서 결정되는 대상 타입 추론(target typing)을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 70,
+      "topicId": 10,
+      "title": "람다의 지역 변수 캡처와 effectively final",
+      "summary": "lambda가 바깥 지역 변수를 사용할 때 final 또는 사실상 final이어야 하는 규칙과 참조 객체 상태 변경을 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 72,
+      "topicId": 10,
+      "title": "메서드 참조와 함수 조합",
+      "summary": "이미 존재하는 메서드를 lambda 대신 메서드 참조로 표현하고 Predicate·Function 조합을 읽기 쉽게 사용할 기준을 익힌다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 76,
+      "topicId": 11,
+      "title": "Stream 파이프라인(Stream Pipeline)과 지연 실행",
+      "summary": "입력 원본, 중간 연산, 최종 연산을 구분하고 중간 연산이 즉시 모든 데이터를 처리하지 않는 지연 실행과 단락 평가를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 75,
+      "topicId": 11,
+      "title": "filter·map·flatMap으로 데이터 변환하기",
+      "summary": "원소를 거르는 filter, 하나를 다른 하나로 바꾸는 map, 중첩된 여러 값을 펼치는 flatMap의 결과 형태를 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 77,
+      "topicId": 11,
+      "title": "reduce로 여러 값을 하나로 합치기",
+      "summary": "항등값과 결합 연산으로 여러 값을 하나로 축약하는 방식을 이해하고 결합 법칙이 병렬 처리와 결과 안정성에 왜 중요한지 판단한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 73,
+      "topicId": 11,
+      "title": "Collector로 그룹화·분할하기",
+      "summary": "Stream 결과를 List·Map 같은 컨테이너에 모으고 groupingBy와 partitioningBy로 분류 결과 구조를 설계한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 79,
+      "topicId": 11,
+      "title": "toMap의 중복 키 처리",
+      "summary": "여러 원소가 같은 키로 변환될 수 있을 때 toMap의 충돌을 인식하고 업무 의미에 맞는 병합 정책을 명시한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 78,
+      "topicId": 11,
+      "title": "Stream의 부수 효과와 간섭 금지(non-interference)",
+      "summary": "파이프라인이 처리하는 입력 원본을 방해하거나 외부 공유 상태를 변경하면 결과 추론과 병렬 안전성이 어려워지는 이유를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 74,
+      "topicId": 11,
+      "title": "병렬 Stream의 선택 기준",
+      "summary": "병렬 Stream이 자동 성능 향상이 아니며 작업 분할·연산 비용·공유 상태·공통 실행 자원과 실제 측정이 필요한 이유를 이해한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 82,
+      "topicId": 12,
+      "title": "반환 경계에서 Optional 사용하기",
+      "summary": "값이 없을 수 있는 반환 결과를 Optional로 드러내고 null·예외와의 경계를 판단한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 84,
+      "topicId": 12,
+      "title": "Record로 데이터 모델링하기",
+      "summary": "record가 데이터 중심 타입의 반복 코드를 줄이는 방식과 얕은 불변성의 한계를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 85,
+      "topicId": 12,
+      "title": "봉인 타입(sealed type)과 닫힌 계층",
+      "summary": "허용할 하위 타입을 제한해 닫힌 타입 계층을 만들고 누락 없는 처리를 설계한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 81,
+      "topicId": 12,
+      "title": "var와 지역 변수 타입 추론",
+      "summary": "var가 실행 중 타입이 바뀌는 기능이 아니라 지역 변수의 정적 타입을 컴파일러가 추론하는 문법임을 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 86,
+      "topicId": 12,
+      "title": "switch 식(switch expression)으로 값 계산하기",
+      "summary": "switch 식이 값을 반환할 때 모든 경우를 다루는 규칙, 화살표 레이블, `yield`의 의미를 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 83,
+      "topicId": 12,
+      "title": "패턴 매칭으로 타입 분기하기",
+      "summary": "타입 검사와 값 추출을 함께 표현하고 pattern variable의 사용 범위와 switch 분기 규칙을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 87,
+      "topicId": 12,
+      "title": "여러 줄 텍스트(Text Block)로 문자열 쓰기",
+      "summary": "여러 줄 문자열을 읽기 좋게 작성하되 실제 결과 문자열의 들여쓰기·줄바꿈·escape 규칙을 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 80,
+      "topicId": 12,
+      "title": "인터페이스(Interface)의 default·static 메서드",
+      "summary": "인터페이스에 구현을 둘 수 있는 이유와 default 메서드 충돌·static 메서드 호출 규칙을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 93,
+      "topicId": 13,
+      "title": "Instant·LocalDateTime·ZonedDateTime",
+      "summary": "하나의 실제 시점과 지역 달력에 보이는 시간 표현을 구분하고 저장·비교 기준을 판단한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 94,
+      "topicId": 13,
+      "title": "ZoneId와 서머타임 전환",
+      "summary": "고정 오프셋과 지역 시간대 규칙을 구분하고 DST로 생기는 존재하지 않거나 중복되는 시간을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 91,
+      "topicId": 13,
+      "title": "Duration과 Period의 시간 의미",
+      "summary": "정확한 경과 시간과 달력상의 날짜 차이를 구분해 Duration과 Period를 선택한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 89,
+      "topicId": 13,
+      "title": "Clock으로 테스트 가능한 시간 만들기",
+      "summary": "현재 시간이 업무 판단에 영향을 줄 때 Clock으로 시간의 출처를 분리해 테스트 가능하게 만든다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 90,
+      "topicId": 13,
+      "title": "DateTimeFormatter로 시간 파싱·표시하기",
+      "summary": "날짜·시간 객체와 문자열 사이의 변환에서 pattern, Locale, ZoneId가 맡는 역할을 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 92,
+      "topicId": 13,
+      "title": "부동소수점 정밀도와 오차",
+      "summary": "이진 부동소수점이 일부 십진수를 근사해 저장하는 이유와 비교·금액 계산에 미치는 영향을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 88,
+      "topicId": 13,
+      "title": "BigDecimal로 금액과 반올림 다루기",
+      "summary": "정확한 십진 값을 다룰 때 BigDecimal의 생성·scale·비교·반올림 정책을 올바르게 선택한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 97,
+      "topicId": 14,
+      "title": "바이트·문자 스트림과 Charset",
+      "summary": "파일·네트워크의 바이트와 Java 문자열의 문자 사이에서 charset이 왜 필요한지 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 98,
+      "topicId": 14,
+      "title": "입출력과 Reader·Writer",
+      "summary": "데이터가 바이너리인지 텍스트인지에 따라 바이트 스트림과 문자 스트림을 선택하고 자원 수명을 관리한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 96,
+      "topicId": 14,
+      "title": "버퍼링 I/O와 버퍼의 역할",
+      "summary": "작은 I/O 요청을 버퍼에 모으는 이유와 flush·close가 각각 무엇을 의미하는지 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 100,
+      "topicId": 14,
+      "title": "Path와 Files API",
+      "summary": "파일 경로 값과 실제 파일 작업을 구분하고 상대 경로·실패·보안·자원 경계를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 99,
+      "topicId": 14,
+      "title": "NIO Channel과 Buffer",
+      "summary": "Channel로 데이터를 주고받을 때 Buffer의 position·limit·capacity가 어떻게 바뀌는지 상태 변화로 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 95,
+      "topicId": 14,
+      "title": "블로킹·논블로킹 I/O와 Selector",
+      "summary": "Java NIO에서 블로킹(blocking)과 논블로킹(non-blocking) 호출의 차이와 Selector가 여러 채널(channel)의 준비 상태를 관찰하는 방식을 이해한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 104,
+      "topicId": 15,
+      "title": "BufferedReader 입력과 토큰화",
+      "summary": "코딩 테스트 입력을 줄과 토큰 단위로 나누어 읽고 숫자 범위·EOF·입력 형식을 안전하게 처리한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 102,
+      "topicId": 15,
+      "title": "버퍼링 출력과 StringBuilder",
+      "summary": "반복적인 정답 출력을 메모리에서 조립하거나 buffering해 작은 출력 호출을 줄이는 방법을 익힌다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 107,
+      "topicId": 15,
+      "title": "배열과 컬렉션 정렬하기",
+      "summary": "원시 타입 배열, 객체 배열, List에 맞는 정렬 API를 고르고 원본 변경과 Comparator의 사용 범위를 이해한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 103,
+      "topicId": 15,
+      "title": "코딩 테스트용 Comparator",
+      "summary": "여러 정렬 조건을 Comparator로 표현하고 뺄셈의 오버플로와 `reversed()`의 적용 범위를 확인한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 101,
+      "topicId": 15,
+      "title": "ArrayDeque로 스택과 큐 사용하기",
+      "summary": "ArrayDeque의 양 끝 연산을 일관되게 사용해 stack·queue·deque 문제를 구현한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 106,
+      "topicId": 15,
+      "title": "코딩 테스트의 PriorityQueue",
+      "summary": "현재 최우선 원소를 반복해서 꺼내는 문제에서 PriorityQueue의 head·Comparator·동점 처리 규칙을 올바르게 사용한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 105,
+      "topicId": 15,
+      "title": "HashMap·HashSet으로 개수 세기",
+      "summary": "빈도 계산과 방문 여부 문제에서 Map·Set의 getOrDefault·merge·add 반환값을 간결하게 활용한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 110,
+      "topicId": 16,
+      "title": "동시성과 병렬성",
+      "summary": "여러 작업을 겹쳐 진행하는 동시성과 여러 작업이 실제로 동시에 실행되는 병렬성을 구분한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 124,
+      "topicId": 16,
+      "title": "Thread 생명주기와 중단",
+      "summary": "Thread의 시작·대기·종료 흐름과 interrupt가 강제 종료가 아닌 협력적 중단 신호라는 점을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 118,
+      "topicId": 16,
+      "title": "플랫폼 스레드(Platform Thread)와 가상 스레드(Virtual Thread)",
+      "summary": "플랫폼 스레드와 가상 스레드의 자원 모델을 구분하고 I/O 중심 백엔드에서 가상 스레드가 유리한 이유를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 122,
+      "topicId": 16,
+      "title": "공유 가변 상태와 경합 조건(Race Condition)",
+      "summary": "여러 스레드가 같은 변경 가능한 상태를 읽고 쓸 때 실행 순서에 따라 값이 깨지는 이유와 보호할 상태 경계를 찾는다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 123,
+      "topicId": 16,
+      "title": "synchronized와 모니터(Monitor)",
+      "summary": "synchronized가 어떤 monitor를 기준으로 상호 배제와 memory visibility를 제공하는지 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 116,
+      "topicId": 16,
+      "title": "JMM의 happens-before와 가시성",
+      "summary": "여러 스레드 사이에서 어떤 쓰기를 안전하게 관찰할 수 있는지 Java Memory Model의 happens-before 관계로 추론한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 119,
+      "topicId": 16,
+      "title": "안전한 공개와 final 필드",
+      "summary": "완성된 객체 참조를 다른 스레드에 안전하게 전달하는 방법과 `final` 필드가 제공하는 특별한 초기화 규칙을 구분한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 126,
+      "topicId": 16,
+      "title": "volatile과 가시성",
+      "summary": "`volatile`이 제공하는 가시성과 순서를 이해하고 복합 갱신의 원자성과 구분한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 108,
+      "topicId": 16,
+      "title": "Atomic 변수와 CAS",
+      "summary": "CAS가 예상값이 그대로일 때만 갱신하는 원자적 연산이라는 점과 재시도·경쟁·복합 불변 조건의 한계를 이해한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 117,
+      "topicId": 16,
+      "title": "Lock, ReentrantLock과 Condition",
+      "summary": "명시적 Lock이 필요한 경우와 ReentrantLock의 획득·해제·Condition 대기 규칙을 이해한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 114,
+      "topicId": 16,
+      "title": "Executor와 스레드 풀(Thread Pool)",
+      "summary": "작업 제출과 스레드 생명주기를 분리하고 작업자 스레드 수·큐·거부 정책이 처리량과 대기 시간에 미치는 영향을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 109,
+      "topicId": 16,
+      "title": "BlockingQueue와 생산자·소비자",
+      "summary": "생산자와 소비자의 처리 속도가 다를 때 BlockingQueue가 작업을 전달하고 full/empty 상태에서 어떻게 기다리게 하는지 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 112,
+      "topicId": 16,
+      "title": "CountDownLatch로 작업 조율하기",
+      "summary": "여러 작업이 끝날 때까지 기다리는 one-shot 동기화 도구로 CountDownLatch를 사용하고 count·await·실패 처리의 의미를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 121,
+      "topicId": 16,
+      "title": "Semaphore와 동시 실행 허가 수",
+      "summary": "동시에 사용할 수 있는 작업·자원의 수를 permit으로 제한하고 acquire/release·timeout·소유권 차이를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 111,
+      "topicId": 16,
+      "title": "동시성 컬렉션",
+      "summary": "ConcurrentHashMap과 동시성 큐가 어떤 연산을 스레드 안전하게 제공하는지 이해하고 여러 단계의 업무 규칙까지 자동으로 원자화된다고 오해하지 않는다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 125,
+      "topicId": 16,
+      "title": "ThreadLocal과 실행 문맥",
+      "summary": "ThreadLocal이 스레드별로 값을 보관하는 방식과 스레드 풀 재사용·`remove()`·가상 스레드·비동기 경계에서 생기는 문제를 이해한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 120,
+      "topicId": 16,
+      "title": "ScopedValue로 실행 문맥 전달하기",
+      "summary": "Java 25의 ScopedValue가 값을 현재 스레드의 제한된 동적 범위에 바인딩하고 StructuredTaskScope 같은 명시적 구조에서 자식 작업으로 상속하는 방식을 이해한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 115,
+      "topicId": 16,
+      "title": "Future와 CompletableFuture",
+      "summary": "아직 끝나지 않은 작업의 결과를 Future로 다루고 CompletableFuture에서 결과·실패·다음 작업을 stage로 연결하는 방식을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 113,
+      "topicId": 16,
+      "title": "교착 상태·기아·라이브락 구분하기",
+      "summary": "스레드가 진행하지 못하는 원인을 교착 상태·기아·라이브락으로 구분하고 대기 관계와 진행 여부를 기준으로 진단한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 134,
+      "topicId": 17,
+      "title": "JDK·JVM·클래스 파일의 경계",
+      "summary": "Java 소스가 javac를 거쳐 클래스 파일이 되고 JVM이 이를 실행하는 흐름을 이해하며 JDK·JVM·바이트코드·네이티브 코드의 역할을 구분한다",
+      "level": 1,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 127,
+      "topicId": 17,
+      "title": "바이트코드와 javap로 실행 흔적 읽기",
+      "summary": "javap로 class 파일을 살펴 Java 소스가 JVM 명령어로 표현되는 큰 흐름을 읽고, 바이트코드와 JIT가 만드는 네이티브 코드를 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 128,
+      "topicId": 17,
+      "title": "클래스 로딩(Class Loading)·링킹(Linking)·초기화(Initialization)",
+      "summary": "클래스가 실행되기까지 로딩·링킹·초기화가 진행되는 순서와 각 단계의 역할을 이해하고 정적 초기화 시점과 오류를 구분한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 129,
+      "topicId": 17,
+      "title": "클래스 로더(ClassLoader) 위임과 타입 동일성",
+      "summary": "어떤 `ClassLoader`가 클래스를 정의했는지가 실행 시점 타입 동일성의 일부임을 이해하고, 위임 방식이 중복 로딩을 줄이는 원리를 설명한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 136,
+      "topicId": 17,
+      "title": "JVM 런타임 데이터 영역(Runtime Data Area)과 프레임(Frame)",
+      "summary": "JVM 스택·프레임·지역 변수 배열·피연산자 스택·힙·메서드 영역을 JVMS가 정의하는 추상 실행 모델로 이해하고 소스 변수와 물리 메모리를 단순 대응시키지 않는다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 131,
+      "topicId": 17,
+      "title": "GC 도달 가능성과 루트(Root)",
+      "summary": "객체를 가리키던 변수가 소스 코드의 범위를 벗어나는 것과 GC 회수 가능 상태를 구분하고 살아 있는 GC 루트에서 객체까지의 도달 가능성으로 수명을 판단한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 137,
+      "topicId": 17,
+      "title": "강한·소프트·약한·팬텀 참조",
+      "summary": "강한 참조와 SoftReference·WeakReference·PhantomReference가 객체의 도달 가능성과 수명에 어떤 영향을 주는지 구분하고 캐시나 정리 정책에 남용하지 않는다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 130,
+      "topicId": 17,
+      "title": "GC 기본 원리와 수집기(Collector)",
+      "summary": "GC가 더 이상 도달할 수 없는 객체의 메모리를 회수하는 이유와 일시 정지 시간·처리량·지연 시간의 장단점을 이해하고 G1·ZGC 같은 수집기를 JVM 구현 선택으로 구분한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 133,
+      "topicId": 17,
+      "title": "Java 메모리 누수의 원인",
+      "summary": "GC가 있어도 더는 필요하지 않은 객체가 캐시·리스너·ThreadLocal의 참조로 계속 도달 가능한 상태라면 메모리 누수가 생길 수 있음을 진단한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 132,
+      "topicId": 17,
+      "title": "힙(Heap)·Metaspace·네이티브 메모리·스레드 메모리",
+      "summary": "Java 프로세스의 메모리를 힙 하나로만 보지 않고 Metaspace·스레드 스택·직접·네이티브 메모리 할당과 구분해 OOM과 RSS 증가를 진단한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 135,
+      "topicId": 17,
+      "title": "JIT·HotSpot과 워밍업(warm-up)",
+      "summary": "HotSpot이 실행 중 프로파일을 수집하고 JIT 컴파일로 코드를 최적화할 수 있다는 점과 워밍업·최적화 해제가 벤치마크 해석에 미치는 영향을 이해한다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 138,
+      "topicId": 17,
+      "title": "jcmd·jstack·JFR로 JVM 진단하기",
+      "summary": "증상에 따라 스레드 덤프·jcmd·JFR이 제공하는 런타임 진단 근거를 구분하고 하나의 스냅샷만으로 원인을 단정하지 않는 흐름을 익힌다",
+      "level": 3,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 144,
+      "topicId": 18,
+      "title": "리플렉션과 Class API",
+      "summary": "실행 중 Class 정보에서 메서드·필드·생성자를 찾아 호출하는 리플렉션의 목적과 타입 안전성·접근 제어의 한계를 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 140,
+      "topicId": 18,
+      "title": "애너테이션의 보존 정책(Retention)과 적용 대상(Target)",
+      "summary": "애너테이션이 메타데이터라는 점과 `@Target`·`@Retention`이 부착 위치와 보존 기간을 정한다는 점을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 142,
+      "topicId": 18,
+      "title": "동적 프록시와 InvocationHandler",
+      "summary": "JDK 동적 프록시가 인터페이스 호출을 InvocationHandler로 전달하는 구조를 이해하고 대상 객체 호출 전후에 공통 동작을 적용하는 원리를 익힌다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 139,
+      "topicId": 18,
+      "title": "애너테이션 처리(Annotation Processing)와 리플렉션(Reflection)",
+      "summary": "애너테이션을 컴파일 시점에 읽어 코드를 생성하는 처리 방식과 실행 중 메타데이터를 읽는 리플렉션의 시점·결과물·장단점을 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 145,
+      "topicId": 18,
+      "title": "직렬화가 만드는 장기 계약",
+      "summary": "Java 내장 직렬화가 객체 그래프를 바이트 스트림으로 저장하는 계약이라는 점과 transient·serialVersionUID·신뢰하지 않는 역직렬화의 위험을 이해한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 143,
+      "topicId": 18,
+      "title": "JPMS·클래스패스(Classpath)·모듈 경로(Module Path)",
+      "summary": "classpath와 JPMS module path의 차이, named/unnamed module, requires/exports를 이해하고 module 경계가 dependency와 접근 가능성을 어떻게 명시하는지 설명한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    },
+    {
+      "id": 141,
+      "topicId": 18,
+      "title": "바이너리 호환성과 API 진화",
+      "summary": "라이브러리 변경에서 소스를 다시 컴파일할 수 있는지, 기존 바이너리가 새 라이브러리와 계속 연결되는지, 실제 동작이 유지되는지를 별개의 문제로 구분한다",
+      "level": 2,
+      "learningStatus": "UNSEEN"
+    }
+  ],
+  "page": {
+    "page": 0,
+    "size": 200,
+    "totalElements": 145,
+    "totalPages": 1,
+    "hasNext": false,
+    "hasPrevious": false
+  }
+}

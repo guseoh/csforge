@@ -51,7 +51,7 @@ PaymentHandler handler = handlers.get(type);
 
 ### null과 누락 키를 구분한다
 
-Map 조회 결과가 `null`이라면 키가 없거나 값 자체가 null일 수 있습니다. `EnumMap`의 키는 null을 허용하지 않지만 값은 null일 수 있으므로 필요하면 `containsKey`로 구분해야 합니다.
+Map 조회 결과가 `null`이라면 키가 없거나 값 자체가 null일 수 있습니다. `EnumMap`에 null 키를 저장하면 `NullPointerException`이지만, null 키의 존재 확인·삭제는 예외 없이 부재로 처리됩니다. 값은 null일 수 있으므로 필요하면 `containsKey`로 부재와 null 매핑을 구분해야 합니다.
 
 ### 사용 기준
 

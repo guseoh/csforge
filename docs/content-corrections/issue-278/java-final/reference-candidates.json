@@ -1,0 +1,688 @@
+{
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.9": [
+    "content/java/api-design/builder-pattern-construction.md",
+    "content/java/design-patterns/factory-pattern.md"
+  ],
+  "https://projectlombok.org/features/Builder": [
+    "content/java/api-design/builder-pattern-construction.md"
+  ],
+  "https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html": [
+    "content/java/api-design/builder-pattern-construction.md"
+  ],
+  "https://docs.oracle.com/javase/tutorial/java/javaOO/constructors.html": [
+    "content/java/api-design/dependency-injection-construction.md"
+  ],
+  "https://tecoble.techcourse.co.kr/post/2021-04-27-dependency-injection/": [
+    "content/java/api-design/dependency-injection-construction.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Objects.html": [
+    "content/java/api-design/method-contract-parameter-validation.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-6.html#jls-6.6": [
+    "content/java/api-design/minimize-accessibility-api-surface.md",
+    "content/java/object-model/encapsulation-invariants.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html": [
+    "content/java/api-design/static-factory-method.md",
+    "content/java/design-patterns/state-pattern.md",
+    "content/java/language-types/final-reference-and-immutability.md",
+    "content/java/modern-language/record-data-modeling.md",
+    "content/java/modern-language/sealed-types-closed-hierarchy.md",
+    "content/java/object-model/class-object-constructor.md",
+    "content/java/object-model/interface-vs-abstract-class.md",
+    "content/java/object-model/static-vs-instance-members.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html": [
+    "content/java/coding-tests/arraydeque-stack-queue.md",
+    "content/java/collections/queue-deque-arraydeque.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/StringBuilder.html": [
+    "content/java/coding-tests/buffered-output-stringbuilder.md",
+    "content/java/language-types/stringbuilder-mutable-text.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedWriter.html": [
+    "content/java/coding-tests/buffered-output-stringbuilder.md",
+    "content/java/io-nio/buffered-io.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html": [
+    "content/java/coding-tests/comparator-for-coding-tests.md",
+    "content/java/object-contracts/comparator-custom-order.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedReader.html": [
+    "content/java/coding-tests/fast-input-bufferedreader-tokenizer.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/StringTokenizer.html": [
+    "content/java/coding-tests/fast-input-bufferedreader-tokenizer.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html": [
+    "content/java/coding-tests/hashmap-hashset-counting.md",
+    "content/java/collections/hashmap-hashing-collision.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html": [
+    "content/java/coding-tests/hashmap-hashset-counting.md",
+    "content/java/collections/hashset-set-semantics.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html": [
+    "content/java/coding-tests/priorityqueue-coding-tests.md",
+    "content/java/collections/priorityqueue.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Arrays.html": [
+    "content/java/coding-tests/sorting-arrays-collections.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html": [
+    "content/java/coding-tests/sorting-arrays-collections.md",
+    "content/java/collections/list-set-map-contracts.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html": [
+    "content/java/collections/arraylist-linkedlist-tradeoff.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/LinkedList.html": [
+    "content/java/collections/arraylist-linkedlist-tradeoff.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()": [
+    "content/java/collections/hashmap-hashing-collision.md",
+    "content/java/object-contracts/hashcode-contract.md"
+  ],
+  "https://d2.naver.com/helloworld/831311": [
+    "content/java/collections/hashmap-hashing-collision.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#of()": [
+    "content/java/collections/immutable-unmodifiable-collections.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)": [
+    "content/java/collections/immutable-unmodifiable-collections.md",
+    "content/java/language-types/final-reference-and-immutability.md",
+    "content/java/object-model/immutability-defensive-copy.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collections.html#unmodifiableList(java.util.List)": [
+    "content/java/collections/immutable-unmodifiable-collections.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Iterable.html": [
+    "content/java/collections/iterable-iterator-foreach-modification.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Iterator.html": [
+    "content/java/collections/iterable-iterator-foreach-modification.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html": [
+    "content/java/collections/list-set-map-contracts.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html": [
+    "content/java/collections/list-set-map-contracts.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Deque.html": [
+    "content/java/collections/queue-deque-arraydeque.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeSet.html": [
+    "content/java/collections/sorted-collections-tree.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeMap.html": [
+    "content/java/collections/sorted-collections-tree.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/atomic/AtomicInteger.html": [
+    "content/java/concurrency/atomic-cas.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/atomic/package-summary.html": [
+    "content/java/concurrency/atomic-cas.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/BlockingQueue.html": [
+    "content/java/concurrency/blockingqueue-producer-consumer.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ArrayBlockingQueue.html": [
+    "content/java/concurrency/blockingqueue-producer-consumer.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html": [
+    "content/java/concurrency/concurrency-vs-parallelism.md",
+    "content/java/concurrency/platform-virtual-thread.md",
+    "content/java/concurrency/thread-lifecycle-interruption.md",
+    "content/java/concurrency/threadlocal-context.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html": [
+    "content/java/concurrency/concurrency-vs-parallelism.md",
+    "content/java/concurrency/deadlock-starvation-livelock.md",
+    "content/java/concurrency/safe-publication-final-fields.md",
+    "content/java/concurrency/shared-mutable-state-race.md",
+    "content/java/concurrency/synchronized-monitor.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentHashMap.html": [
+    "content/java/concurrency/concurrent-collections.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ConcurrentLinkedQueue.html": [
+    "content/java/concurrency/concurrent-collections.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CountDownLatch.html": [
+    "content/java/concurrency/countdownlatch-coordination.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/Lock.html": [
+    "content/java/concurrency/deadlock-starvation-livelock.md",
+    "content/java/concurrency/locks-reentrantlock-condition.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.management/java/lang/management/ThreadMXBean.html": [
+    "content/java/concurrency/deadlock-starvation-livelock.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/package-summary.html": [
+    "content/java/concurrency/executor-task-thread-pools.md",
+    "content/java/concurrency/jmm-happens-before-visibility.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.html": [
+    "content/java/concurrency/executor-task-thread-pools.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/CompletableFuture.html": [
+    "content/java/concurrency/future-completablefuture.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Future.html": [
+    "content/java/concurrency/future-completablefuture.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.4.5": [
+    "content/java/concurrency/jmm-happens-before-visibility.md",
+    "content/java/concurrency/thread-lifecycle-interruption.md",
+    "content/java/concurrency/volatile.md"
+  ],
+  "https://techblog.lycorp.co.jp/ko/20231216a": [
+    "content/java/concurrency/jmm-happens-before-visibility.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/locks/ReentrantLock.html": [
+    "content/java/concurrency/locks-reentrantlock-condition.md"
+  ],
+  "https://openjdk.org/jeps/491": [
+    "content/java/concurrency/platform-virtual-thread.md"
+  ],
+  "https://d2.naver.com/news/1203723": [
+    "content/java/concurrency/platform-virtual-thread.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.5": [
+    "content/java/concurrency/safe-publication-final-fields.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ScopedValue.html": [
+    "content/java/concurrency/scoped-value-context.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Semaphore.html": [
+    "content/java/concurrency/semaphore-permits.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.19": [
+    "content/java/concurrency/synchronized-monitor.md"
+  ],
+  "https://d2.naver.com/helloworld/10963": [
+    "content/java/concurrency/thread-lifecycle-interruption.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html": [
+    "content/java/concurrency/threadlocal-context.md",
+    "content/java/jvm-runtime/java-memory-leaks.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.3.1.4": [
+    "content/java/concurrency/volatile.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html": [
+    "content/java/design-patterns/adapter-pattern.md",
+    "content/java/design-patterns/strategy-pattern.md",
+    "content/java/modern-language/default-static-interface-methods.md",
+    "content/java/modern-language/sealed-types-closed-hierarchy.md",
+    "content/java/object-model/abstraction-responsibility.md",
+    "content/java/object-model/interface-vs-abstract-class.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Math.html": [
+    "content/java/design-patterns/adapter-pattern.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/FilterInputStream.html": [
+    "content/java/design-patterns/decorator-pattern.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Flow.html": [
+    "content/java/design-patterns/observer-pattern.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/Proxy.html": [
+    "content/java/design-patterns/proxy-pattern.md",
+    "content/java/metadata-compatibility/dynamic-proxy-invocationhandler.md"
+  ],
+  "https://tecoble.techcourse.co.kr/post/2021-10-04-strategy-command-pattern/": [
+    "content/java/design-patterns/strategy-pattern.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.8": [
+    "content/java/design-patterns/template-method-pattern.md",
+    "content/java/object-model/overload-vs-override.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.9": [
+    "content/java/enum-modeling/enum-closed-values-behavior.md"
+  ],
+  "https://techblog.woowahan.com/2527/": [
+    "content/java/enum-modeling/enum-closed-values-behavior.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Enum.html": [
+    "content/java/enum-modeling/enum-ordinal-name-persistence.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumMap.html": [
+    "content/java/enum-modeling/enummap.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/EnumSet.html": [
+    "content/java/enum-modeling/enumset.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/AutoCloseable.html": [
+    "content/java/exceptions-resources/autocloseable-resource-ownership.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-11.html": [
+    "content/java/exceptions-resources/exception-as-control-flow.md",
+    "content/java/exceptions-resources/failure-atomicity.md",
+    "content/java/exceptions-resources/throwable-checked-unchecked-error.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-11.html#jls-11.3": [
+    "content/java/exceptions-resources/exception-propagation-catch-boundary.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Throwable.html#%3Cinit%3E(java.lang.String,java.lang.Throwable)": [
+    "content/java/exceptions-resources/exception-translation-cause.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalArgumentException.html": [
+    "content/java/exceptions-resources/standard-exceptions-contract.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/IllegalStateException.html": [
+    "content/java/exceptions-resources/standard-exceptions-contract.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Throwable.html": [
+    "content/java/exceptions-resources/throwable-checked-unchecked-error.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.20.3": [
+    "content/java/exceptions-resources/try-with-resources-suppressed.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Throwable.html#getSuppressed()": [
+    "content/java/exceptions-resources/try-with-resources-suppressed.md"
+  ],
+  "https://d2.naver.com/helloworld/1219": [
+    "content/java/exceptions-resources/try-with-resources-suppressed.md",
+    "content/java/io-nio/path-files-api.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/package-summary.html": [
+    "content/java/functional/behavior-parameterization.md",
+    "content/java/functional/functional-interface.md"
+  ],
+  "https://d2.naver.com/helloworld/4911107": [
+    "content/java/functional/behavior-parameterization.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.8": [
+    "content/java/functional/functional-interface.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.27.2": [
+    "content/java/functional/lambda-capture-effectively-final.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.27": [
+    "content/java/functional/lambda-target-typing.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.13": [
+    "content/java/functional/method-reference-functional-composition.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/function/Predicate.html": [
+    "content/java/functional/method-reference-functional-composition.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.10": [
+    "content/java/generics/generic-invariance.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5": [
+    "content/java/generics/generic-types-methods.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.4": [
+    "content/java/generics/generic-types-methods.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.2": [
+    "content/java/generics/generic-varargs-heap-pollution.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/SafeVarargs.html": [
+    "content/java/generics/generic-varargs-heap-pollution.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.6.4.7": [
+    "content/java/generics/generic-varargs-heap-pollution.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.8": [
+    "content/java/generics/raw-types-unchecked.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.9": [
+    "content/java/generics/raw-types-unchecked.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.6": [
+    "content/java/generics/type-erasure-reifiable-types.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.7": [
+    "content/java/generics/type-erasure-reifiable-types.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5.1": [
+    "content/java/generics/wildcards-pecs.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/SelectableChannel.html": [
+    "content/java/io-nio/blocking-nonblocking-selector.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/Selector.html": [
+    "content/java/io-nio/blocking-nonblocking-selector.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/SelectionKey.html": [
+    "content/java/io-nio/blocking-nonblocking-selector.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedInputStream.html": [
+    "content/java/io-nio/buffered-io.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html": [
+    "content/java/io-nio/byte-character-stream-charset.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/StandardCharsets.html": [
+    "content/java/io-nio/byte-character-stream-charset.md"
+  ],
+  "https://d2.naver.com/helloworld/76650": [
+    "content/java/io-nio/byte-character-stream-charset.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/InputStream.html": [
+    "content/java/io-nio/input-output-reader-writer.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Reader.html": [
+    "content/java/io-nio/input-output-reader-writer.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/Buffer.html": [
+    "content/java/io-nio/nio-channel-buffer.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/Channel.html": [
+    "content/java/io-nio/nio-channel-buffer.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html": [
+    "content/java/io-nio/path-files-api.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Files.html": [
+    "content/java/io-nio/path-files-api.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/specs/man/javap.html": [
+    "content/java/jvm-runtime/bytecode-javap.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-4.html": [
+    "content/java/jvm-runtime/bytecode-javap.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-5.html": [
+    "content/java/jvm-runtime/class-loading-linking-initialization.md"
+  ],
+  "https://engineering.linecorp.com/en/blog/line-open-jdk/": [
+    "content/java/jvm-runtime/class-loading-linking-initialization.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ClassLoader.html": [
+    "content/java/jvm-runtime/classloader-delegation-type-identity.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-5.html#jvms-5.3": [
+    "content/java/jvm-runtime/classloader-delegation-type-identity.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/gctuning/": [
+    "content/java/jvm-runtime/gc-fundamentals-collectors.md",
+    "content/java/jvm-runtime/heap-metaspace-native-thread-memory.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html#jvms-2.5.3": [
+    "content/java/jvm-runtime/gc-fundamentals-collectors.md",
+    "content/java/jvm-runtime/gc-reachability-roots.md"
+  ],
+  "https://d2.naver.com/helloworld/1329": [
+    "content/java/jvm-runtime/gc-fundamentals-collectors.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ref/package-summary.html": [
+    "content/java/jvm-runtime/gc-reachability-roots.md",
+    "content/java/jvm-runtime/java-memory-leaks.md",
+    "content/java/jvm-runtime/reference-strengths.md"
+  ],
+  "https://d2.naver.com/helloworld/329631": [
+    "content/java/jvm-runtime/gc-reachability-roots.md",
+    "content/java/jvm-runtime/jvm-runtime-data-areas-frames.md",
+    "content/java/jvm-runtime/reference-strengths.md",
+    "content/java/language-types/primitive-reference-values.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jvms/se25/html/jvms-2.html": [
+    "content/java/jvm-runtime/heap-metaspace-native-thread-memory.md",
+    "content/java/jvm-runtime/jit-hotspot-warmup.md",
+    "content/java/jvm-runtime/jvm-runtime-data-areas-frames.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/vm/native-memory-tracking.html": [
+    "content/java/jvm-runtime/heap-metaspace-native-thread-memory.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jvms/se25/html/": [
+    "content/java/jvm-runtime/jdk-jvm-classfile.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/specs/man/javac.html": [
+    "content/java/jvm-runtime/jdk-jvm-classfile.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/vm/index.html": [
+    "content/java/jvm-runtime/jit-hotspot-warmup.md"
+  ],
+  "https://techblog.woowahan.com/2588/": [
+    "content/java/jvm-runtime/jit-hotspot-warmup.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ref/PhantomReference.html": [
+    "content/java/jvm-runtime/reference-strengths.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/specs/man/jcmd.html": [
+    "content/java/jvm-runtime/runtime-diagnostics-jcmd-jstack-jfr.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/specs/man/jstack.html": [
+    "content/java/jvm-runtime/runtime-diagnostics-jcmd-jstack-jfr.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/specs/man/jfr.html": [
+    "content/java/jvm-runtime/runtime-diagnostics-jcmd-jstack-jfr.md"
+  ],
+  "https://d2.naver.com/helloworld/6043": [
+    "content/java/jvm-runtime/runtime-diagnostics-jcmd-jstack-jfr.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html": [
+    "content/java/language-types/arrays-covariance-runtime-check.md",
+    "content/java/language-types/primitive-reference-values.md",
+    "content/java/time-numeric/floating-point-precision.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-10.html": [
+    "content/java/language-types/arrays-covariance-runtime-check.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ArrayStoreException.html": [
+    "content/java/language-types/arrays-covariance-runtime-check.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.7": [
+    "content/java/language-types/boxing-unboxing-wrapper.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.8": [
+    "content/java/language-types/boxing-unboxing-wrapper.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.4": [
+    "content/java/language-types/final-reference-and-immutability.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html": [
+    "content/java/language-types/numeric-conversion-overflow.md",
+    "content/java/object-model/reference-casting-instanceof.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.2.2": [
+    "content/java/language-types/numeric-conversion-overflow.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Math.html#toIntExact(long)": [
+    "content/java/language-types/numeric-conversion-overflow.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12.4.5": [
+    "content/java/language-types/pass-by-value.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html": [
+    "content/java/language-types/string-immutability-equality.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.21.3": [
+    "content/java/language-types/string-immutability-equality.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html#jls-3.10.5": [
+    "content/java/language-types/string-immutability-equality.md",
+    "content/java/language-types/string-pool-interning.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/String.html#intern()": [
+    "content/java/language-types/string-pool-interning.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12": [
+    "content/java/language-types/variables-scope-definite-assignment.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-16.html": [
+    "content/java/language-types/variables-scope-definite-assignment.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.compiler/javax/annotation/processing/package-summary.html": [
+    "content/java/metadata-compatibility/annotation-processing-vs-reflection.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/package-summary.html": [
+    "content/java/metadata-compatibility/annotation-processing-vs-reflection.md",
+    "content/java/metadata-compatibility/reflection-class-api.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/package-summary.html": [
+    "content/java/metadata-compatibility/annotations-retention-target.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/annotation/RetentionPolicy.html": [
+    "content/java/metadata-compatibility/annotations-retention-target.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-13.html": [
+    "content/java/metadata-compatibility/binary-compatibility-api-evolution.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/NoSuchMethodError.html": [
+    "content/java/metadata-compatibility/binary-compatibility-api-evolution.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/InvocationHandler.html": [
+    "content/java/metadata-compatibility/dynamic-proxy-invocationhandler.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-7.html": [
+    "content/java/metadata-compatibility/jpms-classpath-modulepath.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Module.html": [
+    "content/java/metadata-compatibility/jpms-classpath-modulepath.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Class.html": [
+    "content/java/metadata-compatibility/reflection-class-api.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Serializable.html": [
+    "content/java/metadata-compatibility/serialization-contract-risk.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/specs/serialization/index.html": [
+    "content/java/metadata-compatibility/serialization-contract-risk.md"
+  ],
+  "https://techblog.woowahan.com/2550/": [
+    "content/java/metadata-compatibility/serialization-contract-risk.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html": [
+    "content/java/modern-language/local-variable-type-inference-var.md",
+    "content/java/modern-language/pattern-matching.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Optional.html": [
+    "content/java/modern-language/optional-return-boundary.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html": [
+    "content/java/modern-language/pattern-matching.md",
+    "content/java/modern-language/text-blocks.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Record.html": [
+    "content/java/modern-language/record-data-modeling.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.28": [
+    "content/java/modern-language/switch-expressions.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-14.html#jls-14.11.1": [
+    "content/java/modern-language/switch-expressions.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-3.html": [
+    "content/java/modern-language/text-blocks.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html": [
+    "content/java/object-contracts/comparable-natural-order.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)": [
+    "content/java/object-contracts/equals-contract.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#toString()": [
+    "content/java/object-contracts/tostring-diagnostics.md"
+  ],
+  "https://docs.oracle.com/javase/tutorial/java/concepts/object.html": [
+    "content/java/object-model/composition-collaboration.md"
+  ],
+  "https://tecoble.techcourse.co.kr/post/2020-05-18-inheritance-vs-composition/": [
+    "content/java/object-model/composition-collaboration.md",
+    "content/java/object-model/inheritance-is-a.md"
+  ],
+  "https://tecoble.techcourse.co.kr/post/2020-04-28-ask-instead-of-getter/": [
+    "content/java/object-model/encapsulation-invariants.md"
+  ],
+  "https://tecoble.techcourse.co.kr/post/2020-05-18-immutable-object/": [
+    "content/java/object-model/immutability-defensive-copy.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.1.4": [
+    "content/java/object-model/inheritance-is-a.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.4": [
+    "content/java/object-model/initialization-order-constructor-chaining.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.5": [
+    "content/java/object-model/initialization-order-constructor-chaining.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.8.7.1": [
+    "content/java/object-model/initialization-order-constructor-chaining.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-6.html#jls-6.5.6.1": [
+    "content/java/object-model/initialization-order-constructor-chaining.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12": [
+    "content/java/object-model/overload-vs-override.md",
+    "content/java/object-model/polymorphism-dynamic-dispatch.md"
+  ],
+  "https://tecoble.techcourse.co.kr/post/2020-10-27-polymorphism/": [
+    "content/java/object-model/polymorphism-dynamic-dispatch.md"
+  ],
+  "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.20.2": [
+    "content/java/object-model/reference-casting-instanceof.md"
+  ],
+  "https://tecoble.techcourse.co.kr/post/2021-04-26-instanceof/": [
+    "content/java/object-model/reference-casting-instanceof.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collectors.html": [
+    "content/java/streams/collectors-grouping-partitioning.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/BaseStream.html#parallel()": [
+    "content/java/streams/parallel-stream-tradeoffs.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/package-summary.html": [
+    "content/java/streams/parallel-stream-tradeoffs.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html#filter(java.util.function.Predicate)": [
+    "content/java/streams/stream-map-filter-flatmap.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html": [
+    "content/java/streams/stream-pipeline-laziness.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Stream.html#reduce(java.lang.Object,java.util.function.BinaryOperator)": [
+    "content/java/streams/stream-reduce.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/package-summary.html#NonInterference": [
+    "content/java/streams/stream-side-effects-noninterference.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collectors.html#toMap(java.util.function.Function,java.util.function.Function)": [
+    "content/java/streams/tomap-duplicate-keys.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/BigDecimal.html": [
+    "content/java/time-numeric/bigdecimal-money-rounding.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/math/RoundingMode.html": [
+    "content/java/time-numeric/bigdecimal-money-rounding.md"
+  ],
+  "https://tech.kakaopay.com/post/kakaopayins-legacy-improvement-with-aop/": [
+    "content/java/time-numeric/bigdecimal-money-rounding.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Clock.html": [
+    "content/java/time-numeric/clock-testable-time.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/format/DateTimeFormatter.html": [
+    "content/java/time-numeric/datetimeformatter-parsing-formatting.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/format/DateTimeFormatterBuilder.html": [
+    "content/java/time-numeric/datetimeformatter-parsing-formatting.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Duration.html": [
+    "content/java/time-numeric/duration-period.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Period.html": [
+    "content/java/time-numeric/duration-period.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Double.html": [
+    "content/java/time-numeric/floating-point-precision.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/Instant.html": [
+    "content/java/time-numeric/instant-local-zoned-time.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZonedDateTime.html": [
+    "content/java/time-numeric/instant-local-zoned-time.md",
+    "content/java/time-numeric/zoneid-dst.md"
+  ],
+  "https://d2.naver.com/helloworld/645609": [
+    "content/java/time-numeric/instant-local-zoned-time.md"
+  ],
+  "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/time/ZoneId.html": [
+    "content/java/time-numeric/zoneid-dst.md"
+  ]
+}

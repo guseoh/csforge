@@ -30,19 +30,14 @@ references:
 
 애너테이션 프로세서는 `javac`의 처리 단계(processing round)에 참여해 소스·타입 모델을 읽고 검증하거나 새 소스 코드를 생성할 수 있습니다.
 
-```text
-소스 코드 + 애너테이션
-       │
-       ▼
-      javac
-       │
-애너테이션 프로세서
-  ├─ 규칙 검증
-  ├─ 컴파일 오류 보고
-  └─ 소스 코드 생성
-       │
-       ▼
-   클래스 파일 산출물
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "컴파일 처리와 실행 시점 관찰",
+  "description": "processor가 컴파일 시점에 산출물을 만드는 경로와 JVM 로딩 뒤 reflection으로 메타데이터를 읽는 경로를 비교합니다.",
+  "example": "processing-reflection"
+}
 ```
 
 예를 들어 빌드 시점에 매퍼 타입을 모두 알고 있다면 프로세서가 구현체를 생성하고, 실행 시점에는 이미 만들어진 일반 Java 클래스를 사용할 수 있습니다.
@@ -56,19 +51,6 @@ references:
 ```java
 Class<?> type = UserService.class;
 Audited audited = type.getAnnotation(Audited.class);
-```
-
-```text
-클래스 산출물
-      │
-    JVM 로딩
-      │
-      ▼
-   Class<?> object
-      │
-  리플렉션
-      ▼
-실행 시점 메타데이터
 ```
 
 빌드 시점에 어떤 타입이 들어올지 알 수 없는 플러그인이나 프레임워크 확장에서는 이런 동적 성질이 유용합니다.

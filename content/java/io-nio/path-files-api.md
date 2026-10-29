@@ -68,15 +68,7 @@ Files.writeString(backup, text, StandardCharsets.UTF_8);
 
 이 단계에서는 실제 파일 시스템 작업이 시도되므로 파일 없음, 권한 부족, I/O 오류 등이 발생할 수 있습니다.
 
-```text
-Path
- └─ 위치를 표현
-
-Files.readString(path)
- └─ 실제 작업 시도
-      ├─ 성공
-      └─ I/O 실패
-```
+Path는 위치를 표현하며, Files.readString은 실제 읽기를 시도하고 성공하거나 I/O 실패를 보고합니다.
 
 `Files.exists(path)`를 먼저 확인해도 이후 작업 성공이 보장되는 것은 아닙니다. 확인 직후 다른 프로세스가 파일을 삭제하거나 권한 상태가 바뀔 수 있기 때문입니다. 실제 작업 자체가 실패할 수 있다는 계약을 처리해야 합니다.
 

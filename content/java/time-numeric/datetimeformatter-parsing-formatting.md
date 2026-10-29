@@ -40,15 +40,7 @@ LocalDateTime time = LocalDateTime.parse(
 String text = time.format(formatter);
 ```
 
-```text
-String
-  │ parse
-  ▼
-Temporal 값
-  │ format
-  ▼
-String
-```
+파싱은 문자열을 시간 값으로 해석하고, 포매팅은 시간 값을 문자열로 표현한다.
 
 문자열이 formatter가 기대하는 구조와 시간 필드 규칙을 만족하지 않으면 parsing은 실패할 수 있습니다.
 
@@ -67,7 +59,16 @@ mm -> minute
 
 Formatter는 문자열을 시간 값으로 해석할 수 있는지 판단하지만, "예약은 오늘부터 30일 이내여야 한다" 같은 정책까지 검증하지 않습니다.
 
-`DateTimeFormatter`는 resolver style을 통해 날짜·시간 필드 해석 강도를 조정할 수 있습니다. `STRICT`를 사용한다고 해도 그것은 시간 값의 해석 규칙이지 서비스의 비즈니스 규칙을 대신하지 않습니다.
+`ofPattern`으로 만든 formatter의 기본 해석 방식은 `SMART`입니다. 예를 들어 `uuuu-MM-dd` 패턴은 `2026-02-30`을 2월 말일로 보정할 수 있습니다. 존재하지 않는 날짜를 입력 오류로 거부하려면 다음처럼 해석 방식을 명시합니다.
+
+```java
+DateTimeFormatter strict = DateTimeFormatter
+        .ofPattern("uuuu-MM-dd", Locale.ROOT)
+        .withResolverStyle(ResolverStyle.STRICT);
+// LocalDate.parse("2026-02-30", strict); // DateTimeParseException
+```
+
+`STRICT`를 사용해도 그것은 시간 값의 해석 규칙이지 서비스의 비즈니스 규칙을 대신하지 않습니다. `yyyy`는 연호 안의 연도이고 `uuuu`는 연도 자체이므로, 연호 없는 ISO 날짜를 엄격하게 읽는 위 예제에서는 `uuuu`를 사용합니다.
 
 ```text
 formatter 책임

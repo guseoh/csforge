@@ -29,9 +29,14 @@ Stream<Order> paid = orders.stream()
 
 입력도 `Order`, 출력도 `Order`입니다. 조건에 맞지 않는 원소가 빠질 뿐 원소 자체를 다른 타입으로 바꾸지는 않습니다.
 
-```text
-Order A ─ 조건 true  ─> Order A
-Order B ─ 조건 false ─> 제거
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "stream-shapes",
+  "title": "연산별 원소 형태",
+  "description": "filter, map, flatMap의 원소와 타입 변화를 비교합니다."
+}
 ```
 
 ### map은 하나의 원소를 다른 값 하나로 바꾼다
@@ -42,12 +47,6 @@ Stream<Long> ids = orders.stream()
 ```
 
 `Order → Long`으로 원소 타입이 바뀝니다. 원소 하나당 결과 하나를 만드는 변환이라고 생각하면 좋습니다.
-
-```text
-Order → id
-Order → id
-Order → id
-```
 
 ### flatMap은 여러 값이 들어 있는 구조를 한 단계 펼친다
 
@@ -65,11 +64,7 @@ Stream<Item> items = orders.stream()
         .flatMap(order -> order.items().stream());
 ```
 
-```text
-Order A → [A1, A2] ─┐
-Order B → [B1]     ─┼─> A1, A2, B1
-                    ┘
-```
+한 주문에 상품이 두 개이고 다음 주문에 세 개라면 다섯 Item이 흐르게 됩니다. 주문에 상품이 없으면 그 주문에서 나오는 Item도 없습니다. 이 과정에서 원래 주문별 경계는 사라지므로, 결과에서 주문을 식별해야 한다면 Item과 주문 식별자를 함께 보존하는 변환이 필요합니다.
 
 ### Optional과 flatMap에서도 같은 생각을 쓸 수 있다
 

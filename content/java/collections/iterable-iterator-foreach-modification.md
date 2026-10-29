@@ -41,12 +41,14 @@ while (iterator.hasNext()) {
 }
 ```
 
-```text
-Iterable
-  └─ iterator() → Iterator cursor
-                   ├─ hasNext() → 다음 원소가 있는가?
-                   ├─ next()    → 다음 원소를 반환
-                   └─ remove()  → 직전 next 원소를 제거 (지원되는 경우)
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "example": "iterator",
+  "title": "반복자 삭제의 유효 상태",
+  "description": "next 뒤에 지원되는 remove를 한 번 호출할 수 있습니다. 직접 구조 변경과 fail-fast 보장은 별개입니다."
+}
 ```
 
 배열의 enhanced for는 별도 규칙을 사용하지만 Iterable 객체 순회는 이런 반복자 개념으로 이해할 수 있습니다.

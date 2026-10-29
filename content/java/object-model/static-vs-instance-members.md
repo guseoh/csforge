@@ -39,18 +39,19 @@ Member a = new Member("kim");
 Member b = new Member("lee");
 ```
 
-```text
-Member 클래스
-└─ static totalCount = 2   ← 공유
-
-Member 객체 a
-└─ name = "kim"
-
-Member 객체 b
-└─ name = "lee"
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-object-model",
+  "example": "static-members",
+  "title": "클래스의 공유 상태와 객체별 상태",
+  "description": "같은 Member 클래스의 totalCount는 2이고 a.name은 kim, b.name은 lee입니다. 점선은 클래스 상태의 공유를 뜻하며 메모리 위치가 아닙니다."
+}
 ```
 
-`name`은 객체마다 별도 상태를 가지지만 `totalCount`는 클래스에 하나의 상태가 있어 모든 인스턴스가 함께 봅니다.
+`name`은 객체마다 별도 상태를 가지지만 `totalCount`는 같은 클래스에 하나의 상태가 있어 모든 인스턴스가 함께 봅니다. 이 예제는 순차 실행을 전제로 합니다. `totalCount++`는 여러 스레드에서 안전한 원자 연산이라는 보장이 없습니다.
+
+여기서 클래스는 같은 정의를 기준으로 합니다. 서로 다른 클래스 로더가 별도로 정의한 클래스까지 애플리케이션 전체의 단 하나의 `static` 상태를 공유한다고 일반화하지 않습니다.
 
 ### static 메서드에는 `this`가 없다
 

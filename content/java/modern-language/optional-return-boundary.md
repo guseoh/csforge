@@ -38,7 +38,7 @@ String nickname = findByEmail(email)
         .orElse("unknown");
 ```
 
-`map`은 값이 있을 때만 변환 함수를 적용하고, 비어 있으면 빈 상태를 그대로 유지합니다. 그래서 여러 단계에서 `if (value != null)`을 반복하기보다 **값이 존재할 때 무엇을 할지**를 이어서 표현할 수 있습니다.
+`map`은 값이 있을 때만 변환 함수를 적용하고, 비어 있으면 빈 상태를 그대로 유지합니다. 변환 결과가 `null`이어도 빈 Optional이 됩니다. 따라서 위 예제의 `unknown`은 회원이 없을 때뿐 아니라 회원의 별명이 `null`일 때도 사용됩니다. 두 부재를 다르게 처리해야 한다면 `map`으로 합치기 전에 경계를 나눠야 합니다.
 
 Optional을 만들 때는 입력 계약을 구분합니다.
 
@@ -79,7 +79,7 @@ Optional<Address> address = memberOptional
         .flatMap(Member::primaryAddress);
 ```
 
-일반 값을 반환하는 함수에는 `map`이 자연스럽지만, 함수 자체가 `Optional<T>`를 반환한다면 `map`을 사용할 경우 중첩된 `Optional<Optional<T>>` 형태가 생길 수 있습니다. `flatMap`은 그 중첩을 한 단계 평평하게 연결합니다.
+일반 값을 반환하는 함수에는 `map`이 자연스럽지만, 함수 자체가 `Optional<T>`를 반환한다면 `map`을 사용할 경우 중첩된 `Optional<Optional<T>>` 형태가 생길 수 있습니다. `flatMap`은 그 중첩을 한 단계 평평하게 연결합니다. 다만 `map`과 달리 `flatMap`의 변환 함수가 `null`을 반환하면 `NullPointerException`입니다. `primaryAddress()`에 결과가 없으면 `null` 대신 `Optional.empty()`를 반환해야 합니다.
 
 ### Optional은 모든 nullable 값을 감싸는 범용 컨테이너가 아니다
 

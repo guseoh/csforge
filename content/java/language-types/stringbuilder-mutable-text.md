@@ -47,9 +47,23 @@ String result = builder.toString();
 
 개념적으로는 다음 흐름입니다.
 
-![StringBuilder가 하나의 가변 버퍼에 문자열을 누적하는 흐름](/learning/java/stringbuilder-mutable-text.svg?v=2)
+```csforge-viz
+{
+  "version": 1,
+  "type": "static-flow",
+  "title": "같은 builder에 누적하고 String으로 확정하기",
+  "description": "append는 같은 builder의 내용을 바꾸고 toString은 그 시점의 String을 반환합니다. 이후 builder 변경은 이미 만든 String에 반영되지 않습니다.",
+  "labels": [
+    "같은 builder에 append 누적",
+    "toString 호출 시점의 내용",
+    "별도의 불변 String 결과"
+  ]
+}
+```
 
 내부 저장 공간의 정확한 크기 증가 방식 같은 세부는 JDK 구현에 속합니다. 학습의 핵심은 **StringBuilder가 변경 가능한 문자 시퀀스를 제공해 반복 조립을 표현한다**는 API 계약입니다.
+
+`toString()`으로 얻은 결과는 빌더의 실시간 뷰가 아닙니다. 예를 들어 `String snapshot = builder.toString();` 다음에 `builder.append("x")`를 실행해도 이미 만든 `snapshot`은 바뀌지 않습니다. 한 빌더의 상태 변경과 그 시점에 만든 불변 결과를 구분하면 공유 참조가 있어도 무엇이 달라지는지 추적할 수 있습니다.
 
 ### 그렇다고 모든 문자열 연결을 바꿀 필요는 없다
 

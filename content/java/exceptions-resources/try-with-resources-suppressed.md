@@ -53,16 +53,14 @@ try (
 
 종료 시에는 `second`가 먼저, `first`가 나중에 닫힙니다.
 
-```text
-first 열기
-   ↓
-second 열기
-   ↓
-use
-   ↓
-second 닫기
-   ↓
-first 닫기
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "역순 close와 억제 예외",
+  "description": "first 다음 second를 열고 second부터 닫습니다. 본문이 실패하면 close 실패를 suppressed로 보존하며 남은 close도 시도합니다.",
+  "example": "resource-suppressed"
+}
 ```
 
 두 번째 자원을 여는 도중 실패해도 이미 성공적으로 초기화된 첫 번째 자원은 정리 대상이 됩니다. 따라서 "try 본문까지 들어가야만 close된다"고 이해하면 부족합니다.
@@ -77,15 +75,11 @@ try (Resource r = open()) {
 
 본문에서 발생한 `WorkException`을 정리 중 예외가 덮어쓰면 실제 작업 실패 원인을 잃게 됩니다. try-with-resources는 본문의 주 예외를 유지하고, close 중 발생한 추가 예외를 **suppressed 예외**로 연결할 수 있습니다.
 
-```text
-WorkException        ← 주 예외
-└─ 억제된 예외(suppressed exception)
-   └─ CloseException ← 정리 중 예외
-```
-
 추가 예외는 `Throwable.getSuppressed()`로 확인할 수 있습니다.
 
-반대로 본문이 정상 완료되고 `close()`에서만 예외가 발생했다면 그 close 예외가 밖으로 전파될 수 있습니다. suppressed는 "close 예외는 중요하지 않다"는 뜻이 아니라 **이미 주 예외가 있을 때 정리 실패도 함께 보존하는 방식**입니다.
+반대로 본문이 정상 완료되고 `close()`에서만 예외가 발생했다면 그 close 예외가 밖으로 전파됩니다. 본문이 `return`할 값을 계산했어도 정리가 실패하면 그 값이 정상 반환되지 않습니다. 여러 close가 실패하면 역순 정리 중 첫 실패가 주 예외가 되고 이후 실패는 그 예외의 suppressed 목록에 붙습니다. 앞 자원을 닫다 실패해도 나머지 자원 정리는 계속 시도합니다.
+
+suppressed는 "close 예외는 중요하지 않다"는 뜻이 아니라 **이미 주 예외가 있을 때 정리 실패도 함께 보존하는 방식**입니다. `cause`가 원인이 된 실패를 연결한다면 suppressed는 같은 정리 과정에서 추가로 발생한 실패를 연결합니다.
 
 ### 자원 관리와 자원 소유권은 함께 봐야 한다
 

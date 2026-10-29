@@ -2,7 +2,7 @@
 .area-workspace {
   grid-template-columns: max-content minmax(0, 1fr);
   gap: 40px;
-  width: min(1180px, calc(100% - 56px));
+  width: min(1360px, 100%);
   margin: 0 auto;
   text-align: left;
 }
@@ -20,7 +20,7 @@
 }
 
 .concept-learning-rail {
-  width: 236px;
+  width: 280px;
 }
 
 .learning-rail {
@@ -161,11 +161,9 @@
 }
 
 .rail-topic-title > span:last-child {
-  display: -webkit-box;
+  display: block;
   min-width: 0;
-  overflow: hidden;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  overflow: visible;
   line-height: 1.4;
   overflow-wrap: anywhere;
   text-overflow: clip;
@@ -186,13 +184,12 @@
 }
 
 .concept-rail-current-title {
-  overflow: hidden;
+  overflow-wrap: anywhere;
   color: var(--text-default);
   font-size: 0.88rem;
   font-weight: 650;
   line-height: 1.4;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;
 }
 
 .concept-learning-rail .rail-concept-list {
@@ -409,15 +406,15 @@
 @media (max-width: 1120px) {
   .area-workspace {
     gap: 32px;
-    width: min(1040px, calc(100% - 48px));
+    width: 100%;
   }
 
   .area-learning-rail {
-    width: 240px;
+    width: 280px;
   }
 
   .concept-learning-rail {
-    width: 210px;
+    width: 280px;
   }
 
   .learning-rail[data-collapsed='true'] {
@@ -425,30 +422,11 @@
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 1100px) {
   .area-workspace {
     display: block;
-    width: min(100% - 32px, 760px);
+    width: min(100%, 760px);
     padding-top: 24px;
-  }
-
-  .area-workspace .learning-rail {
-    position: static;
-    width: 100%;
-    height: auto;
-    max-height: none;
-    margin-bottom: 28px;
-    padding: 0 0 24px;
-    border-right: 0;
-    border-bottom: 1px solid var(--border-subtle);
-  }
-
-  .area-workspace .learning-rail[data-collapsed='true'] {
-    width: 52px;
-    height: 44px;
-    margin-bottom: 24px;
-    padding: 0;
-    border-bottom: 0;
   }
 
   .area-workspace:has(.area-learning-rail[data-collapsed='true']) .area-guide-page {
@@ -675,4 +653,67 @@
   .topic-understanding-row {
     grid-template-columns: 1fr;
   }
+}
+
+/* Titles own the flexible track; counts and controls keep their own space. */
+.learning-rail .rail-concept-title {
+  overflow: visible;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  line-height: 1.55;
+}
+.learning-rail h2,
+.area-guide-header h1,
+.selected-topic-copy,
+.topic-concept-copy,
+.area-row-copy,
+.recent-concept-copy,
+.topic-sequence-nav strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.learning-rail .rail-topic small,
+.learning-rail .rail-status,
+.learning-rail .rail-concept-index,
+.learning-rail .rail-topic-number { flex-shrink: 0; }
+.learning-rail .rail-concept { align-items: flex-start; min-height: 44px; font-size: 13px; }
+.learning-rail .rail-topic { font-size: 14px; }
+.learning-rail .rail-back-link,
+.learning-rail .rail-muted,
+.learning-rail .rail-progress-copy,
+.learning-rail .rail-section-title { font-size: 13px; }
+.learning-rail a:focus-visible,
+.area-workspace a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.topic-next-concept-link { border-left: 2px solid var(--accent); padding-left: 12px; }
+.topic-level-links { gap: 6px; }
+.topic-level-link { border-color: transparent; padding: 4px 6px; }
+
+@media (max-width: 1100px) {
+  .concept-reading-workspace .learning-rail,
+  .area-workspace .learning-rail,
+  .concept-reading-workspace .learning-rail[data-collapsed='true'],
+  .area-workspace .learning-rail[data-collapsed='true'] {
+    position: static;
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: none;
+    margin: 0 0 24px;
+    padding: 0 0 16px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border-subtle);
+  }
+  .learning-rail .rail-collapse-toggle,
+  .learning-rail[data-collapsed='true'] .rail-collapse-toggle {
+    position: static;
+    width: 100%;
+    height: 44px;
+    justify-content: space-between;
+    padding: 0 12px;
+    margin-bottom: 12px;
+  }
+  .learning-rail .rail-collapse-toggle::before { content: '학습 목차'; }
+  .learning-rail-static { padding-right: 0; }
+  .learning-rail .rail-back-link { margin-bottom: 12px; }
+  .learning-page { width: 100%; }
 }
