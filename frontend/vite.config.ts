@@ -14,6 +14,14 @@ export default defineConfig({
   },
   plugins: [
     react(),
+    {
+      name: 'csforge-release-identity',
+      generateBundle() {
+        this.emitFile({ type: 'asset', fileName: 'build-info.json', source: JSON.stringify({
+          sourceSha: process.env.VERCEL_GIT_COMMIT_SHA ?? 'UNKNOWN',
+        }) })
+      },
+    },
     VitePWA({
       registerType: 'prompt',
       workbox: {

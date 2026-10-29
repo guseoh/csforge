@@ -104,3 +104,19 @@ tasks.named('processResources') {
     }
     from(canonicalContentResourceDirectory)
 }
+
+// Pin the image source independently of operator-supplied Job environment variables.
+tasks.register('generateCanonicalSourceSha') {
+    def output = layout.buildDirectory.file('generated/source-sha/canonical-source.sha')
+    def sourceSha = providers.environmentVariable('CSFORGE_BUILD_SHA').orElse('UNKNOWN')
+    inputs.property('sourceSha', sourceSha)
+    outputs.file(output)
+    doLast {
+        output.get().asFile.parentFile.mkdirs()
+        output.get().asFile.text = sourceSha.get() + '\n'
+    }
+}
+tasks.named('processResources') {
+    dependsOn(tasks.named('generateCanonicalSourceSha'))
+    from(layout.buildDirectory.dir('generated/source-sha'))
+}

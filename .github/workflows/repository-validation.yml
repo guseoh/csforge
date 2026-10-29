@@ -26,6 +26,10 @@ jobs:
           node-version: '22'
           cache: npm
           cache-dependency-path: frontend/package-lock.json
+      - name: Content sync deployment safety
+        run: |
+          python3 infra/content-sync/test_execute.py
+          python3 -m unittest discover -s infra/content-sync -p 'test_recovery.py'
       - name: Backend tests
         working-directory: backend
         run: |
@@ -54,6 +58,9 @@ jobs:
     name: Deploy backend to Cloud Run
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: validate
+    concurrency:
+      group: csforge-production-release
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -66,6 +73,7 @@ jobs:
       IMAGE_URI: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge
       WORKLOAD_IDENTITY_PROVIDER: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
       DEPLOY_SERVICE_ACCOUNT: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
+      CONTENT_SYNC_ENABLED: ${{ vars.CSFORGE_CONTENT_SYNC_ENABLED }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -76,6 +84,12 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Synchronization verifies an exact serving SHA, including frontend-only releases.
+          if [[ "$CONTENT_SYNC_ENABLED" == true ]]; then
             echo "deploy=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -112,7 +126,7 @@ jobs:
 
       - name: Build backend image
         if: steps.changes.outputs.deploy == 'true'
-        run: docker build -f backend/Dockerfile -t "${IMAGE_URI}:${GITHUB_SHA}" .
+        run: docker build --build-arg SOURCE_SHA="${GITHUB_SHA}" -f backend/Dockerfile -t "${IMAGE_URI}:${GITHUB_SHA}" .
 
       - name: Push backend image
         if: steps.changes.outputs.deploy == 'true'

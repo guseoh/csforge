@@ -36,6 +36,7 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class ContentImportApplyService {
     private final ContentImportAnalyzer analyzer;
+    private final ContentImportGuard guard;
     private final TopicRepository topicRepository;
     private final ConceptRepository conceptRepository;
     private final ReferenceRepository referenceRepository;
@@ -45,6 +46,7 @@ public class ContentImportApplyService {
 
     @Transactional
     public ImportApplyResult apply(ImportFilesCommand command, String previewDigest) {
+        guard.acquire();
         ImportAnalysis analysis = analyzer.analyze(command);
         if (!analysis.digest().equals(previewDigest)) throw new ImportPreviewStaleException();
         if (analysis.hasErrors()) throw new IllegalArgumentException("Import preview contains validation errors");
