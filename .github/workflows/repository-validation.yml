@@ -54,6 +54,9 @@ jobs:
     name: Deploy backend to Cloud Run
     if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     needs: validate
+    concurrency:
+      group: csforge-production-release
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -112,7 +115,7 @@ jobs:
 
       - name: Build backend image
         if: steps.changes.outputs.deploy == 'true'
-        run: docker build -f backend/Dockerfile -t "${IMAGE_URI}:${GITHUB_SHA}" .
+        run: docker build --build-arg SOURCE_SHA="${GITHUB_SHA}" -f backend/Dockerfile -t "${IMAGE_URI}:${GITHUB_SHA}" .
 
       - name: Push backend image
         if: steps.changes.outputs.deploy == 'true'

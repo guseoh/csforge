@@ -1,5 +1,8 @@
 FROM eclipse-temurin:25-jdk AS builder
 
+ARG SOURCE_SHA=UNKNOWN
+ENV CSFORGE_BUILD_SHA=${SOURCE_SHA}
+
 WORKDIR /workspace/backend
 
 COPY backend/gradlew .

@@ -56,6 +56,13 @@ class CloudSecurityIntegrationTest {
     }
 
     @Test
+    void auditIsOwnerOnlyAndDoesNotExposeCanonicalPayloads() throws Exception {
+        mockMvc.perform(get("/api/content-sync/audit")).andExpect(status().isUnauthorized());
+        mockMvc.perform(get("/api/content-sync/audit").with(oidcLogin().idToken(token -> token.claim("email", "other@example.com"))))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
     void rejectsUnauthenticatedApiRequestsWith401() throws Exception {
         mockMvc.perform(get("/api/learning-areas"))
                 .andExpect(status().isUnauthorized())

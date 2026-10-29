@@ -112,7 +112,7 @@ class RefactorV16UpgradeIntegrationTest {
         assertEquals(1, before.get("review_history").size());
 
         int migrated = Flyway.configure().dataSource(dataSource)
-                .locations("classpath:db/migration").load().migrate().migrationsExecuted;
+                .locations("classpath:db/migration").target("16").load().migrate().migrationsExecuted;
         assertEquals(1, migrated, "V16 should be the only outstanding version");
         assertEquals(before, snapshot(jdbc), "all historical rows and original values must survive V16");
         assertEquals(3, jdbc.queryForObject("select count(*) from bookmark_category", Integer.class));
@@ -144,7 +144,7 @@ class RefactorV16UpgradeIntegrationTest {
         jdbc.update("delete from bookmark_category_concept where concept_id = ?", concept);
 
         assertEquals(0, Flyway.configure().dataSource(dataSource)
-                .locations("classpath:db/migration").load().migrate().migrationsExecuted,
+                .locations("classpath:db/migration").target("16").load().migrate().migrationsExecuted,
                 "exact second Flyway migration must be unchanged");
         assertEquals(before, snapshot(jdbc));
         assertEquals(16, jdbc.queryForObject(

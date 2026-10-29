@@ -1,0 +1,68 @@
+name: Production content synchronization
+on:
+  workflow_run:
+    workflows: [Repository Validation]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: Audit is read-only; initialization requires exact reconciliation
+        type: choice
+        options: [AUDIT, INITIALIZE, APPLY]
+        default: AUDIT
+      scope:
+        type: choice
+        options: [JAVA_CONCEPTS, JAVA_QUESTIONS]
+        default: JAVA_CONCEPTS
+      recovery_verified_at:
+        description: UTC timestamp of independently verified recovery evidence (write modes only)
+        type: string
+        default: ''
+permissions:
+  contents: read
+  id-token: write
+concurrency:
+  group: csforge-production-release
+  cancel-in-progress: false
+jobs:
+  sync:
+    if: >-
+      vars.CSFORGE_CONTENT_SYNC_ENABLED == 'true' &&
+      (github.event_name == 'workflow_dispatch' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository))
+    runs-on: ubuntu-latest
+    environment: production-content-sync
+    env:
+      SOURCE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+      SYNC_MODE: ${{ inputs.mode || 'APPLY' }}
+      SYNC_SCOPE: ${{ inputs.scope || 'JAVA_CONCEPTS' }}
+      GCP_PROJECT_ID: csforge-508510
+      GCP_REGION: asia-southeast1
+      SYNC_JOB: ${{ vars.CSFORGE_CONTENT_SYNC_JOB }}
+      RECOVERY_VERIFIED_AT: ${{ inputs.recovery_verified_at || vars.CSFORGE_RECOVERY_VERIFIED_AT }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ env.SOURCE_SHA }}
+          fetch-depth: 0
+      - name: Verify trusted target
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
+          if [ "$SYNC_MODE" != AUDIT ]; then
+            test "$(git rev-parse origin/main)" = "$SOURCE_SHA"
+            test "${{ github.ref }}" = refs/heads/main || test "${{ github.event_name }}" = workflow_run
+          fi
+          test -n "$SYNC_JOB"
+      - uses: google-github-actions/auth@v3
+        with:
+          project_id: ${{ env.GCP_PROJECT_ID }}
+          workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
+          service_account: ${{ vars.CSFORGE_CONTENT_SYNC_EXECUTOR }}
+      - uses: google-github-actions/setup-gcloud@v3
+      - name: Verify deployment identity and execute
+        shell: bash
+        run: bash infra/content-sync/execute.sh

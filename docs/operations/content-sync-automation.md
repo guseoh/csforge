@@ -28,3 +28,22 @@ No production synchronization baseline exists yet. The 2026-10-29 Java import co
 ## Recovery
 
 Recheck Neon history coverage at execution time. A historical snapshot is not a fresh backup. Never delete an existing snapshot or upgrade a plan automatically. PITR restoration is not a routine automatic rollback: it can remove newer personal records. Prefer reviewed canonical-only compensation with conflict detection and retained before-images. Keep original source and committed batch outcomes for investigation.
+
+## dev implementation update
+
+- The engine now uses one transaction for the entire bounded Java scope, including all Import batches, the success run record and checkpoint. This deliberately replaces partial-commit/resume with atomic rollback plus exact re-preview. Existing source identities cannot disappear; DB-only drift is blocked. Unchanged files are checked as well as changed files.
+- Manual Apply and automatic Apply acquire `content_import_lock` before analyzing. Attempt creation uses the same lock before persistence so it cannot race Question history checks. Keep all future canonical writers on this guard.
+- Only Java Concepts and Java Questions are supported scopes. This is not a global synchronization baseline. Initialize requires every scoped item already UNCHANGED. Never mark unsupported areas synchronized.
+- Concept relationship/status edits, Question structure edits, all attempted-Question edits, shared Reference metadata edits, deletes/moves, and identity replacement block auto-apply.
+- The non-web Job uses packaged source SHA and file bytes, validates target host/database, and disables Flyway. Deploy/migrate the serving application normally before running the Job. Audit produces safe field-name-only JSON. Failure exits nonzero; failed work has no committed checkpoint or content changes. Job execution logs retain failed execution evidence; the DB ledger contains only committed success outcomes.
+- `Production content synchronization` is disabled unless `CSFORGE_CONTENT_SYNC_ENABLED=true`. Provision the Job and minimum IAM first. `SYNC_APPLY_ENABLED` and `SYNC_QUESTIONS_ENABLED` are independently false in the template. No permission or paid resource is created by the workflow.
+- The execution script checks actual Cloud Run 100% revision digest and the actual production frontend `build-info.json` before write modes. It shares release concurrency with backend deployment. It accepts only the latest main SHA for write modes.
+- Recovery evidence must be independently verified within 15 minutes. The workflow DOES NOT automatically verify Neon recovery configuration; automatic write operation remains blocked until a reliable recovery-evidence producer is configured. Setting a current timestamp without checking the provider is prohibited. This is an unresolved production activation gate, not a completed automation claim.
+
+### Required live activation work (not performed by code changes)
+
+1. CI integration suite must pass, then review/release dev through the normal main path. No dev code was deployed to production by these commits.
+2. Run owner-only full audit on the deployed SHA, review initial Question drift, and store the sanitized report. Java Concept import alone cannot establish all-content baseline.
+3. Render the Job template with the verified current DB target and existing least-privilege runtime identity. The workflow executor needs only the selected Job update/run permissions and artifact/revision inspection; runtime needs access only to selected DB secrets.
+4. Execute AUDIT with apply disabled, verify the Job source hash, target and output. Test first against an isolated DB/Job.
+5. INITIALIZE each supported scope only after zero drift. Configure real recoverability checks, verify serving frontend/backend SHA, then enable Concept Apply. Question Apply stays separately disabled until live scope reconciliation and history-policy tests are approved.

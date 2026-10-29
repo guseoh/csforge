@@ -32,6 +32,7 @@ public class QuizSessionCreationExecutor {
 
     private static final String CREATION_REQUEST_CONSTRAINT = "quiz_session_creation_request_id_uk";
 
+    private final com.guseoh.csforge.importcontent.application.ContentImportGuard contentImportGuard;
     private final QuizSessionRepository sessionRepository;
     private final QuizQuestionRepository quizQuestionRepository;
     private final AttemptRepository attemptRepository;
@@ -72,6 +73,7 @@ public class QuizSessionCreationExecutor {
             Instant expiresAt,
             QuizSessionSource source,
             QuizCreationIdentity creationIdentity) {
+        contentImportGuard.acquire();
         if (questionIds == null || questionIds.isEmpty()) {
             throw new IllegalArgumentException("questionIds must not be empty");
         }
