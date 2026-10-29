@@ -40,7 +40,7 @@
 
 /* The public concept reader should have one consistent reading column. */
 .public-reader {
-  width: min(720px, 100%);
+  width: min(46rem, 100%);
   max-width: 100%;
   min-width: 0;
   margin-inline: auto;
