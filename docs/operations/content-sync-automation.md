@@ -47,3 +47,18 @@ Recheck Neon history coverage at execution time. A historical snapshot is not a 
 3. Render the Job template with the verified current DB target and existing least-privilege runtime identity. The workflow executor needs only the selected Job update/run permissions and artifact/revision inspection; runtime needs access only to selected DB secrets.
 4. Execute AUDIT with apply disabled, verify the Job source hash, target and output. Test first against an isolated DB/Job.
 5. INITIALIZE each supported scope only after zero drift. Configure real recoverability checks, verify serving frontend/backend SHA, then enable Concept Apply. Question Apply stays separately disabled until live scope reconciliation and history-policy tests are approved.
+
+### Current activation evidence
+
+- On 2026-10-29, the production project's Cloud Run Jobs console showed no jobs. The template is therefore an unprovisioned deployment specification, not an existing running service.
+- All implementation commits target `dev`. Production release, V17 migration, full production audit and scope initialization have not been performed by this implementation.
+- CI covers atomic rollback after writes, exact retry, cumulative manifest planning, a stale checkpoint lease, simultaneous synchronization behind the shared guard, non-web Job startup, owner-only audit and read-only history checks. Question integration coverage checks that unattempted text can change and that an attempted Question cannot change or advance its checkpoint.
+- Quiz concurrency tests coordinate at the shared content lock. They still require both real HTTP requests to reach the lock before release and assert one resulting session (or one conflict for a different request body).
+- When synchronization is enabled, backend releases produce an image for every main SHA, including frontend-only commits. The sync runner waits up to roughly ten minutes for the production frontend identity before stopping safely.
+
+### Preserving personal data during recovery
+
+1. Keep synchronization disabled while investigating an unsuccessful execution. Read the execution logs and the last committed scoped checkpoint; failed transactions have no content or checkpoint changes.
+2. Re-preview the packaged source of the last successful run. Use stable keys and existing Import upserts for reviewed canonical-only compensation; never delete and recreate Concepts or Questions.
+3. Before compensating Questions, inspect current Attempts again. Do not restore an answer/choice/type/relationship over later personal history. Resolve those changes explicitly through a separately reviewed content revision.
+4. Do not automatically restore the entire production branch to a historical time. That could discard learning records created after the restore point. If PITR is needed for investigation, restore to an isolated branch and compare canonical records before deciding on compensation.

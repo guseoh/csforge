@@ -36,6 +36,7 @@ class ContentSyncIntegrationTest {
     @Autowired AtomicReference<List<CanonicalContentFile>> input;
     @Autowired ContentImportGuard guard;
     @Autowired org.springframework.transaction.PlatformTransactionManager transactions;
+    @Autowired tools.jackson.databind.ObjectMapper json;
     @MockitoSpyBean ContentImportApplyService apply;
     private static final String A = "a".repeat(40), B = "b".repeat(40);
 
@@ -74,6 +75,40 @@ class ContentSyncIntegrationTest {
         assertEquals(B, jdbc.queryForObject("select source_sha from content_sync_checkpoint", String.class));
         verifyConcurrentLease(changed);
         assertEquals(history, jdbc.queryForList("select * from concept_view_history order by id"));
+        verifyQuestionHistoryPolicy();
+    }
+
+    private void verifyQuestionHistoryPolicy() {
+        var original = packaged.load().stream().filter(f -> f.path().equals("java/language-types/questions.json"))
+                .findFirst().orElseThrow();
+        var question = (tools.jackson.databind.node.ObjectNode) json.readTree(original.content()).get(0).deepCopy();
+        var baseline = questionFile(question);
+        seed(List.of(baseline));
+        input.set(List.of(baseline));
+        sync.synchronize(ContentSyncScope.JAVA_QUESTIONS, A, "", ContentSyncAuditDigest.calculate(input.get()), true);
+        question.put("explanationMarkdown", question.get("explanationMarkdown").asText() + "\n추가 해설입니다.");
+        input.set(List.of(questionFile(question)));
+        assertEquals(1, sync.synchronize(ContentSyncScope.JAVA_QUESTIONS, B, A,
+                ContentSyncAuditDigest.calculate(input.get()), false).updated());
+        var before = jdbc.queryForList("select * from question order by id");
+        long id = ((Number) before.getFirst().get("id")).longValue();
+        long session = jdbc.queryForObject(
+                "insert into quiz_session(started_at, source) values(current_timestamp, 'STANDARD') returning id", Long.class);
+        jdbc.update("insert into attempt(quiz_session_id, question_id, grading_status, correct, answered_at, graded_at) "
+                + "values(?, ?, 'GRADED', false, current_timestamp, current_timestamp)", session, id);
+        var attempts = jdbc.queryForList("select * from attempt order by id");
+        question.put("explanationMarkdown", "풀이 이력이 있는 문제의 변경입니다.");
+        input.set(List.of(questionFile(question)));
+        assertThrows(IllegalStateException.class, () -> sync.synchronize(ContentSyncScope.JAVA_QUESTIONS,
+                "c".repeat(40), B, ContentSyncAuditDigest.calculate(input.get()), false));
+        assertEquals(before, jdbc.queryForList("select * from question order by id"));
+        assertEquals(attempts, jdbc.queryForList("select * from attempt order by id"));
+        assertEquals(B, jdbc.queryForObject(
+                "select source_sha from content_sync_checkpoint where scope = 'JAVA_QUESTIONS'", String.class));
+    }
+
+    private CanonicalContentFile questionFile(tools.jackson.databind.JsonNode question) {
+        return new CanonicalContentFile("java/language-types/questions.json", json.writeValueAsBytes(List.of(question)));
     }
 
     private void verifyConcurrentLease(List<CanonicalContentFile> files) throws Exception {
