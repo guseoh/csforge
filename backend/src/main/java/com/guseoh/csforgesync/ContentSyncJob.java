@@ -19,8 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 @EnableAutoConfiguration
 @EntityScan("com.guseoh.csforge")
 @EnableJpaRepositories("com.guseoh.csforge")
-@ComponentScan(basePackages = "com.guseoh.csforge.importcontent", excludeFilters =
-        @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = RestController.class))
+@ComponentScan(basePackages = "com.guseoh.csforge.importcontent", excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ANNOTATION, classes = RestController.class),
+        @ComponentScan.Filter(type = FilterType.CUSTOM, classes = org.springframework.boot.context.TypeExcludeFilter.class),
+        @ComponentScan.Filter(type = FilterType.CUSTOM, classes = org.springframework.boot.autoconfigure.AutoConfigurationExcludeFilter.class)
+})
 public class ContentSyncJob {
     @Bean Clock syncClock() { return Clock.systemUTC(); }
 

@@ -52,10 +52,9 @@ jobs:
         run: |
           set -euo pipefail
           test "$(git rev-parse HEAD)" = "$SOURCE_SHA"
-          if [ "$SYNC_MODE" != AUDIT ]; then
-            test "$(git rev-parse origin/main)" = "$SOURCE_SHA"
-            test "${{ github.ref }}" = refs/heads/main || test "${{ github.event_name }}" = workflow_run
-          fi
+          # AUDIT still executes an image with production DB access; it requires the same code trust.
+          test "$(git rev-parse origin/main)" = "$SOURCE_SHA"
+          test "${{ github.ref }}" = refs/heads/main
           test -n "$SYNC_JOB"
       - uses: google-github-actions/auth@v3
         with:

@@ -45,6 +45,7 @@ Recheck Neon history coverage at execution time. A historical snapshot is not a 
 1. CI integration suite must pass, then review/release dev through the normal main path. No dev code was deployed to production by these commits.
 2. Run owner-only full audit on the deployed SHA, review initial Question drift, and store the sanitized report. Java Concept import alone cannot establish all-content baseline.
 3. Render the Job template with the verified current DB target and existing least-privilege runtime identity. The workflow executor needs only the selected Job update/run permissions and artifact/revision inspection; runtime needs access only to selected DB secrets.
+   Restrict the GitHub `production-content-sync` environment to `main` and restrict the executor's Workload Identity binding to this repository's main ref and reviewed workflow identity. This applies to AUDIT too: an audit image executes code with DB access. Do not enable the repository switch before verifying those provider-side restrictions. A development workflow's own shell checks are not an IAM boundary.
 4. Execute AUDIT with apply disabled, verify the Job source hash, target and output. Test first against an isolated DB/Job.
 5. INITIALIZE each supported scope only after zero drift. Configure real recoverability checks, verify serving frontend/backend SHA, then enable Concept Apply. Question Apply stays separately disabled until live scope reconciliation and history-policy tests are approved.
 
