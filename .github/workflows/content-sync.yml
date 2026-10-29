@@ -15,10 +15,6 @@ on:
         type: choice
         options: [JAVA_CONCEPTS, JAVA_QUESTIONS]
         default: JAVA_CONCEPTS
-      recovery_verified_at:
-        description: UTC timestamp of independently verified recovery evidence (write modes only)
-        type: string
-        default: ''
 permissions:
   contents: read
   id-token: write
@@ -41,12 +37,12 @@ jobs:
       GCP_PROJECT_ID: csforge-508510
       GCP_REGION: asia-southeast1
       SYNC_JOB: ${{ vars.CSFORGE_CONTENT_SYNC_JOB }}
-      RECOVERY_VERIFIED_AT: ${{ inputs.recovery_verified_at || vars.CSFORGE_RECOVERY_VERIFIED_AT }}
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ env.SOURCE_SHA }}
           fetch-depth: 0
+          persist-credentials: false
       - name: Verify trusted target
         shell: bash
         run: |
@@ -56,12 +52,20 @@ jobs:
           test "$(git rev-parse origin/main)" = "$SOURCE_SHA"
           test "${{ github.ref }}" = refs/heads/main
           test -n "$SYNC_JOB"
-      - uses: google-github-actions/auth@v3
+      - name: Verify live Neon recovery history
+        if: env.SYNC_MODE != 'AUDIT'
+        run: python3 infra/content-sync/verify_recovery.py
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_PROJECT_ID: blue-rice-17834735
+          NEON_BRANCH_ID: br-billowing-fog-b3myvics
+          NEON_DATABASE: neondb
+      - uses: google-github-actions/auth@7c6bc770dae815cd3e89ee6cdf493a5fab2cc093 # v3
         with:
           project_id: ${{ env.GCP_PROJECT_ID }}
           workload_identity_provider: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
           service_account: ${{ vars.CSFORGE_CONTENT_SYNC_EXECUTOR }}
-      - uses: google-github-actions/setup-gcloud@v3
+      - uses: google-github-actions/setup-gcloud@aa5489c8933f4cc7a4f7d45035b3b1440c9c10db # v3
       - name: Verify deployment identity and execute
         shell: bash
         run: bash infra/content-sync/execute.sh
