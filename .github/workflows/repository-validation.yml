@@ -29,6 +29,7 @@ jobs:
       - name: Content sync deployment safety
         run: |
           python3 infra/content-sync/test_execute.py
+          python3 infra/content-sync/test_deploy_backend.py
           python3 -m unittest discover -s infra/content-sync -p 'test_recovery.py'
       - name: Backend tests
         working-directory: backend
@@ -136,18 +137,7 @@ jobs:
         id: deploy
         if: steps.changes.outputs.deploy == 'true'
         shell: bash
-        run: |
-          gcloud run deploy "${CLOUD_RUN_SERVICE}" \
-            --project="${GCP_PROJECT_ID}" \
-            --region="${GCP_REGION}" \
-            --image="${IMAGE_URI}:${GITHUB_SHA}" \
-            --quiet
-
-          service_url="$(gcloud run services describe "${CLOUD_RUN_SERVICE}" \
-            --project="${GCP_PROJECT_ID}" \
-            --region="${GCP_REGION}" \
-            --format='value(status.url)')"
-          echo "url=${service_url}" >> "$GITHUB_OUTPUT"
+        run: bash infra/content-sync/deploy-backend.sh
 
       - name: Verify readiness
         if: steps.changes.outputs.deploy == 'true'
