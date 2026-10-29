@@ -34,6 +34,8 @@ class ContentSyncIntegrationTest {
     @Autowired ClasspathCanonicalContentSource packaged;
     @Autowired JdbcTemplate jdbc;
     @Autowired AtomicReference<List<CanonicalContentFile>> input;
+    @Autowired ContentImportGuard guard;
+    @Autowired org.springframework.transaction.PlatformTransactionManager transactions;
     @MockitoSpyBean ContentImportApplyService apply;
     private static final String A = "a".repeat(40), B = "b".repeat(40);
 
@@ -42,7 +44,7 @@ class ContentSyncIntegrationTest {
         @Bean @Primary CanonicalContentSource testSource(AtomicReference<List<CanonicalContentFile>> source) { return source::get; }
     }
 
-    @Test void baselineFailureRollbackRetryAndHistoryPreservation() {
+    @Test void baselineFailureRollbackRetryAndHistoryPreservation() throws Exception {
         var files = packaged.load();
         var topic = files.stream().filter(f -> f.path().equals("java/topics.json")).findFirst().orElseThrow();
         var concepts = files.stream().filter(f -> f.path().equals("java/language-types/pass-by-value.md")
@@ -70,6 +72,52 @@ class ContentSyncIntegrationTest {
         assertEquals(identity, jdbc.queryForList("select id, content_key from concept order by id"));
         assertEquals(history, jdbc.queryForList("select * from concept_view_history order by id"));
         assertEquals(B, jdbc.queryForObject("select source_sha from content_sync_checkpoint", String.class));
+        verifyConcurrentLease(changed);
+        assertEquals(history, jdbc.queryForList("select * from concept_view_history order by id"));
+    }
+
+    private void verifyConcurrentLease(List<CanonicalContentFile> files) throws Exception {
+        String targetSha = "c".repeat(40);
+        var target = files.stream().map(f -> new CanonicalContentFile(f.path(),
+                (new String(f.content(), StandardCharsets.UTF_8) + "\n동시 실행 검증입니다.\n")
+                        .getBytes(StandardCharsets.UTF_8))).toList();
+        input.set(target);
+        String digest = ContentSyncAuditDigest.calculate(target);
+        var started = new java.util.concurrent.CountDownLatch(2);
+        try (var executor = java.util.concurrent.Executors.newFixedThreadPool(2)) {
+            var pending = new ArrayList<java.util.concurrent.Future<Boolean>>();
+            new org.springframework.transaction.support.TransactionTemplate(transactions).executeWithoutResult(status -> {
+                guard.acquire();
+                for (int index = 0; index < 2; index++) {
+                    pending.add(executor.submit(() -> {
+                        started.countDown();
+                        try {
+                            sync.synchronize(ContentSyncScope.JAVA_CONCEPTS, targetSha, B, digest, false);
+                            return true;
+                        } catch (IllegalStateException stale) {
+                            assertTrue(stale.getMessage().contains("Baseline lease mismatch"));
+                            return false;
+                        }
+                    }));
+                }
+                try {
+                    assertTrue(started.await(5, java.util.concurrent.TimeUnit.SECONDS));
+                    for (var task : pending) {
+                        assertThrows(java.util.concurrent.TimeoutException.class,
+                                () -> task.get(200, java.util.concurrent.TimeUnit.MILLISECONDS));
+                    }
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(e);
+                }
+            });
+            int successes = 0;
+            for (var task : pending) {
+                if (task.get(30, java.util.concurrent.TimeUnit.SECONDS)) successes++;
+            }
+            assertEquals(1, successes);
+        }
+        assertEquals(targetSha, jdbc.queryForObject("select source_sha from content_sync_checkpoint", String.class));
     }
 
     private void seed(List<CanonicalContentFile> files) {

@@ -69,6 +69,7 @@ jobs:
       IMAGE_URI: asia-southeast1-docker.pkg.dev/csforge-508510/csforge/csforge
       WORKLOAD_IDENTITY_PROVIDER: projects/1003183509924/locations/global/workloadIdentityPools/github/providers/csforge
       DEPLOY_SERVICE_ACCOUNT: github-cloud-run-deployer@csforge-508510.iam.gserviceaccount.com
+      CONTENT_SYNC_ENABLED: ${{ vars.CSFORGE_CONTENT_SYNC_ENABLED }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -79,6 +80,12 @@ jobs:
         shell: bash
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "deploy=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Synchronization verifies an exact serving SHA, including frontend-only releases.
+          if [[ "$CONTENT_SYNC_ENABLED" == true ]]; then
             echo "deploy=true" >> "$GITHUB_OUTPUT"
             exit 0
           fi

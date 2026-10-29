@@ -17,11 +17,19 @@ PY
 )
   running=$(gcloud run revisions describe "$revision" --project="$GCP_PROJECT_ID" --region="$GCP_REGION" --format='value(status.imageDigest)')
   [[ "$running" == *"@$digest" ]]
-  curl --fail --silent --show-error --retry 3 "https://csforge-five.vercel.app/build-info.json?sha=$SOURCE_SHA" > /tmp/csforge-frontend.json
-  python3 - <<'PY'
+  frontend_ready=false
+  for attempt in {1..30}; do
+    if curl --fail --silent --show-error --max-time 10 "https://csforge-five.vercel.app/build-info.json?sha=$SOURCE_SHA" > /tmp/csforge-frontend.json && python3 - <<'PY'
 import json,os
 assert json.load(open('/tmp/csforge-frontend.json'))['sourceSha']==os.environ['SOURCE_SHA'], 'Frontend source mismatch'
 PY
+    then
+      frontend_ready=true
+      break
+    fi
+    sleep 10
+  done
+  [[ "$frontend_ready" == true ]]
 fi
 # Job is provisioned separately with fixed DB secrets, least privilege and apply disabled by default.
 gcloud run jobs update "$SYNC_JOB" --project="$GCP_PROJECT_ID" --region="$GCP_REGION" --image="${image%:*}@${digest}" --quiet

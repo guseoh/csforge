@@ -60,6 +60,13 @@ class CloudSecurityIntegrationTest {
         mockMvc.perform(get("/api/content-sync/audit")).andExpect(status().isUnauthorized());
         mockMvc.perform(get("/api/content-sync/audit").with(oidcLogin().idToken(token -> token.claim("email", "other@example.com"))))
                 .andExpect(status().isForbidden());
+        var before = privateCounts();
+        mockMvc.perform(get("/api/content-sync/audit").with(allowedLogin()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.manifestDigest").isNotEmpty())
+                .andExpect(jsonPath("$.items[*].before").doesNotExist())
+                .andExpect(jsonPath("$.items[*].after").doesNotExist());
+        org.junit.jupiter.api.Assertions.assertEquals(before, privateCounts());
     }
 
     @Test
