@@ -49,13 +49,15 @@ Recheck Neon history coverage at execution time. A historical snapshot is not a 
 4. Execute AUDIT with apply disabled, verify the Job source hash, target and output. Test first against an isolated DB/Job.
 5. INITIALIZE each supported scope only after zero drift. Configure real recoverability checks, verify serving frontend/backend SHA, then enable Concept Apply. Question Apply stays separately disabled until live scope reconciliation and history-policy tests are approved.
 
-### Current activation evidence
+### Current activation evidence (2026-10-29)
 
-- On 2026-10-29, the production project's Cloud Run Jobs console showed no jobs. The template is therefore an unprovisioned deployment specification, not an existing running service.
-- All implementation commits target `dev`. Production release, V17 migration, full production audit and scope initialization have not been performed by this implementation.
-- CI covers atomic rollback after writes, exact retry, cumulative manifest planning, a stale checkpoint lease, simultaneous synchronization behind the shared guard, non-web Job startup, owner-only audit and read-only history checks. Question integration coverage checks that unattempted text can change and that an attempted Question cannot change or advance its checkpoint.
-- Quiz concurrency tests coordinate at the shared content lock. They still require both real HTTP requests to reach the lock before release and assert one resulting session (or one conflict for a different request body).
-- When synchronization is enabled, backend releases produce an image for every main SHA, including frontend-only commits. The sync runner waits up to roughly ten minutes for the production frontend identity before stopping safely.
+- PR #282 was merged as `c914b50c599c3e9d831beef53b0800d64ace9f29`. The deployment workflow built its image but left 100% of Cloud Run traffic pinned to old revision `csforge-00089-6kj`; its health check passed against the old revision. The missing audit endpoint was therefore a deployment routing issue, not evidence that the new image lacked the controller.
+- New revision `csforge-00090-v22` was independently tested through a zero-traffic candidate tag. It applied Flyway V17, reported readiness and DB UP, and was promoted to 100%. The audit endpoint subsequently succeeded with 876 source files, 60 updates and zero errors. All 59 Java differences are Questions; Java Concepts have no differences. This does not imply all other content is synchronized.
+- The new deployment workflow tests the candidate image digest and readiness, checks main has not advanced, explicitly promotes that revision, and checks the resulting traffic. The regression tests exercise failed health, wrong image, stale main and unexpected traffic.
+- An isolated production-derived branch accepted V17 DDL with unchanged personal/history table digests. The production migration is now independently confirmed by Flyway logs. Do not restore production wholesale: later personal activity must be preserved.
+- The protected `production-content-sync` environment permits main only and contains the user-supplied `NEON_API_KEY`. Dedicated runtime/executor identities, Job and IAM bindings have been provisioned. The runtime uses the existing production database owner's credential: IAM limits secret access to that Job identity, but database privileges remain broad. Apply and Question flags remain false.
+- The provisioned Job successfully ran a read-only audit from the actual production image, reporting zero audit errors and Java Concept manifest `77e49f516091c3e73ad32455b7210d1aaa324700e4187253cf7dab7cceeabafd`. Live recovery API verification, scoped checkpoint initialization, and enabling automatic Concept application are still pending.
+- Manual `RECOVERY_CHECK` verifies the protected Neon secret and history while the automatic switch is off. It does not invoke the Job or write the database. Initializing the Java Concept baseline requires exact zero drift; Question initialization remains blocked until its separate history review is complete.
 
 ### Preserving personal data during recovery
 
