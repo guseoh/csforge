@@ -54,6 +54,9 @@ jobs:
           test "$(git rev-parse origin/main)" = "$SOURCE_SHA"
           test "${{ github.ref }}" = refs/heads/main
           test -n "$SYNC_JOB"
+      - name: Inspect OIDC subject metadata
+        if: env.SYNC_MODE == 'RECOVERY_CHECK'
+        run: python3 infra/content-sync/oidc_subject.py
       - name: Verify live Neon recovery history
         if: env.SYNC_MODE != 'AUDIT'
         run: python3 infra/content-sync/verify_recovery.py

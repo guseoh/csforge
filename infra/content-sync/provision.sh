@@ -98,6 +98,6 @@ gcloud artifacts repositories add-iam-policy-binding csforge --project="$project
 gcloud iam service-accounts add-iam-policy-binding "$runtime" --project="$project" \
   --member="serviceAccount:$executor" --role=roles/iam.serviceAccountUser >/dev/null
 gcloud iam service-accounts add-iam-policy-binding "$executor" --project="$project" \
-  --member="principal://iam.googleapis.com/projects/$project_number/locations/global/workloadIdentityPools/github/subject/repo:guseoh/csforge:environment:production-content-sync" \
+  --member="principal://iam.googleapis.com/projects/$project_number/locations/global/workloadIdentityPools/github/subject/repo:guseoh@81723538/csforge@1351050764:environment:production-content-sync" \
   --role=roles/iam.workloadIdentityUser >/dev/null
 echo 'Scoped Job and IAM configured. Apply and Question synchronization remain disabled.'
