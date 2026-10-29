@@ -41,6 +41,20 @@ digest=$(gcloud artifacts docker images describe "$image" --project="$project" -
 [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
 serving=$(gcloud run revisions describe "$revision" --project="$project" --region="$region" --format='value(status.imageDigest)')
 [[ "$serving" == *"@$digest" ]]
+# Never replace an existing Job or redefine an existing IAM role. A partial prior
+# run must be reviewed and reconciled explicitly instead of silently overwriting.
+gcloud run jobs list --project="$project" --region="$region" --format='value(metadata.name)' > "$working/jobs"
+if grep -Fxq "$job" "$working/jobs"; then
+  echo 'Existing sync Job requires manual review; refusing to replace it.' >&2
+  exit 1
+fi
+gcloud iam roles list --project="$project" --format='value(name)' > "$working/roles"
+for role in csforgeContentSyncJob csforgeContentSyncRead; do
+  if grep -Fxq "projects/$project/roles/$role" "$working/roles"; then
+    echo 'Existing sync role requires manual review; refusing to modify it.' >&2
+    exit 1
+  fi
+done
 # All validation above is read-only. IAM mutations start below and require operator approval.
 for account in csforge-content-sync-runtime csforge-content-sync-executor; do
   if ! gcloud iam service-accounts describe "${account}@${project}.iam.gserviceaccount.com" --project="$project" >/dev/null 2>&1; then
@@ -73,11 +87,7 @@ read_permissions=run.services.get,run.revisions.get,run.executions.get,run.execu
 for role in csforgeContentSyncJob csforgeContentSyncRead; do
   permissions="$job_permissions"
   if [[ "$role" == csforgeContentSyncRead ]]; then permissions="$read_permissions"; fi
-  if gcloud iam roles describe "$role" --project="$project" >/dev/null 2>&1; then
-    gcloud iam roles update "$role" --project="$project" --permissions="$permissions" --stage=GA --quiet >/dev/null
-  else
-    gcloud iam roles create "$role" --project="$project" --title="$role" --permissions="$permissions" --stage=GA --quiet >/dev/null
-  fi
+  gcloud iam roles create "$role" --project="$project" --title="$role" --permissions="$permissions" --stage=GA --quiet >/dev/null
 done
 gcloud run jobs add-iam-policy-binding "$job" --project="$project" --region="$region" \
   --member="serviceAccount:$executor" --role="projects/$project/roles/csforgeContentSyncJob" >/dev/null
