@@ -1,12 +1,12 @@
 # Canonical content synchronization rollout
 
-## Implementation status
+## Initial implementation status
 
 Stage 1 implementation added on dev: owner-only `GET /api/content-sync/audit` previews every packaged canonical batch in one REPEATABLE_READ transaction. It never applies content or writes a baseline. The report identifies source bytes by a deterministic manifest digest and returns classifications and field names without before/after payloads. Validation and live read-only reconciliation must pass before Stage 1 is complete.
 
-No production synchronization baseline exists yet. The 2026-10-29 Java import covered 145 Concepts only, not Question files. Never mark the entire repository synchronized based on that import.
+At this initial stage no production synchronization baseline existed. The 2026-10-29 Java import covered 145 Concepts only, not Question files. Never mark the entire repository synchronized based on that import; current evidence is recorded below.
 
-## Remaining ordered gates
+## Original ordered gates
 
 1. Validate audit code, verify owner/anonymous access behavior, deploy the diagnostic path, run the full read-only production reconciliation, and review all Question differences. Record the source SHA, manifest digest and scoped result. Do not auto-apply this initial reconciliation.
 2. Add JPA-backed run/batch ledger, fixed source manifest, delta planning from last fully successful baseline, shared locking for manual/automatic imports, and transactional stale-preview checks. Revalidate successful batches on retry; never advance the global baseline after partial failure. Deletion, identity changes, unexpected creation and unsupported Question edits must block.
@@ -14,7 +14,7 @@ No production synchronization baseline exists yet. The 2026-10-29 Java import co
 4. Enable concept synchronization only after deployed frontend compatibility and backend SHA checks, recoverability verification, and isolated concurrency/failure/history tests. Serialize releases; Actions concurrency alone is insufficient. Default stop behavior is to retain batch evidence, not restore the database.
 5. Expand Question policy only after preserving historical Attempt meaning. Existing-attempt answer/choice/type/concept-link changes are blocked by default. Do not silently reinterpret old answers or assume ID preservation alone preserves semantics.
 
-## Acceptance tests still required
+## Acceptance criteria
 
 - Failed/skipped CI run between two source commits does not lose earlier content changes.
 - Source file deletion, path traversal, key changes and duplicate definitions block.
@@ -49,14 +49,15 @@ Recheck Neon history coverage at execution time. A historical snapshot is not a 
 4. Execute AUDIT with apply disabled, verify the Job source hash, target and output. Test first against an isolated DB/Job.
 5. INITIALIZE each supported scope only after zero drift. Configure real recoverability checks, verify serving frontend/backend SHA, then enable Concept Apply. Question Apply stays separately disabled until live scope reconciliation and history-policy tests are approved.
 
-### Current activation evidence (2026-10-29)
+### Activation evidence (2026-10-30 KST)
 
 - PR #282 was merged as `c914b50c599c3e9d831beef53b0800d64ace9f29`. The deployment workflow built its image but left 100% of Cloud Run traffic pinned to old revision `csforge-00089-6kj`; its health check passed against the old revision. The missing audit endpoint was therefore a deployment routing issue, not evidence that the new image lacked the controller.
 - New revision `csforge-00090-v22` was independently tested through a zero-traffic candidate tag. It applied Flyway V17, reported readiness and DB UP, and was promoted to 100%. The audit endpoint subsequently succeeded with 876 source files, 60 updates and zero errors. All 59 Java differences are Questions; Java Concepts have no differences. This does not imply all other content is synchronized.
 - The new deployment workflow tests the candidate image digest and readiness, checks main has not advanced, explicitly promotes that revision, and checks the resulting traffic. The regression tests exercise failed health, wrong image, stale main and unexpected traffic.
 - An isolated production-derived branch accepted V17 DDL with unchanged personal/history table digests. The production migration is now independently confirmed by Flyway logs. Do not restore production wholesale: later personal activity must be preserved.
-- The protected `production-content-sync` environment permits main only and contains the user-supplied `NEON_API_KEY`. Dedicated runtime/executor identities, Job and IAM bindings have been provisioned. The runtime uses the existing production database owner's credential: IAM limits secret access to that Job identity, but database privileges remain broad. Apply and Question flags remain false.
-- The provisioned Job successfully ran a read-only audit from the actual production image, reporting zero audit errors and Java Concept manifest `77e49f516091c3e73ad32455b7210d1aaa324700e4187253cf7dab7cceeabafd`. Live recovery API verification, scoped checkpoint initialization, and enabling automatic Concept application are still pending.
+- The protected `production-content-sync` environment permits main only and contains the user-supplied `NEON_API_KEY`. Dedicated runtime/executor identities, Job and IAM bindings have been provisioned. The runtime uses the existing production database owner's credential: IAM limits secret access to that Job identity, but database privileges remain broad. Concept Apply is enabled; Question Apply remains disabled.
+- The protected workflow verified the production branch's six-hour history retention and a schema read from five minutes earlier. This is not a complete restore drill. The Java Concept checkpoint was initialized at SHA `2f7831632f1cae10078a52739787a4e71a33faaf` with 145 unchanged Concepts, zero created and zero updated. A subsequent guarded Apply of the same SHA also succeeded with zero changes. The repository variable `CSFORGE_CONTENT_SYNC_ENABLED` is true.
+- The provisioned Job successfully ran a read-only audit from the production image, reporting zero audit errors and Java Concept manifest `77e49f516091c3e73ad32455b7210d1aaa324700e4187253cf7dab7cceeabafd`. The executor trusts the immutable owner/repository ID OIDC subject for the protected environment.
 - Manual `RECOVERY_CHECK` verifies the protected Neon secret and history while the automatic switch is off. It does not invoke the Job or write the database. Initializing the Java Concept baseline requires exact zero drift; Question initialization remains blocked until its separate history review is complete.
 
 ### Preserving personal data during recovery
