@@ -2,6 +2,9 @@
 set -euo pipefail
 : "${SOURCE_SHA:?}" "${GCP_PROJECT_ID:?}" "${GCP_REGION:?}" "${SYNC_JOB:?}"
 [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
+[[ "$SYNC_MODE" =~ ^(AUDIT|INITIALIZE|APPLY)$ ]]
+[[ "$SYNC_SCOPE" =~ ^JAVA_(CONCEPTS|QUESTIONS)$ ]]
+[[ "${RECOVERY_VERIFIED_AT:-}" =~ ^[0-9TZ:.-]*$ ]]
 image="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/csforge/csforge:${SOURCE_SHA}"
 digest=$(gcloud artifacts docker images describe "$image" --format='value(image_summary.digest)')
 [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
@@ -34,8 +37,5 @@ fi
 # Job is provisioned separately with fixed DB secrets, least privilege and apply disabled by default.
 gcloud run jobs update "$SYNC_JOB" --project="$GCP_PROJECT_ID" --region="$GCP_REGION" --image="${image%:*}@${digest}" --quiet
 # Values are constrained; no credentials or canonical/user payloads are passed through shell text.
-[[ "$SYNC_MODE" =~ ^(AUDIT|INITIALIZE|APPLY)$ ]]
-[[ "$SYNC_SCOPE" =~ ^JAVA_(CONCEPTS|QUESTIONS)$ ]]
-[[ "${RECOVERY_VERIFIED_AT:-}" =~ ^[0-9TZ:.-]*$ ]]
 gcloud run jobs execute "$SYNC_JOB" --project="$GCP_PROJECT_ID" --region="$GCP_REGION" --wait \
   --update-env-vars="SYNC_SOURCE_SHA=$SOURCE_SHA,SYNC_MODE=$SYNC_MODE,SYNC_SCOPE=$SYNC_SCOPE,SYNC_BACKEND_SHA=$SOURCE_SHA,SYNC_FRONTEND_SHA=$SOURCE_SHA,SYNC_RECOVERY_VERIFIED_AT=${RECOVERY_VERIFIED_AT:-}" --quiet
