@@ -1,0 +1,86 @@
+---
+kind: concept
+contentKey: java.core.streams.tomap-duplicate-keys
+topicContentKey: java.core.streams
+slug: tomap-duplicate-keys
+title: "toMap의 중복 키 처리"
+summary: "여러 원소가 같은 키로 변환될 수 있을 때 toMap의 충돌을 인식하고 업무 의미에 맞는 병합 정책을 명시한다"
+level: 2
+status: PUBLISHED
+displayOrder: 50
+references:
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/stream/Collectors.html#toMap(java.util.function.Function,java.util.function.Function)"
+    title: "Java SE 25 API: Collectors.toMap"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 1
+    relationNote: duplicate key와 merge overload의 계약 확인
+---
+# toMap의 중복 키 처리
+
+Stream의 각 원소를 키와 값으로 바꿔 Map을 만들 수 있습니다.
+
+```java
+Map<Long, Order> byId = orders.stream()
+        .collect(Collectors.toMap(Order::id, Function.identity()));
+```
+
+이 코드는 **모든 주문 id가 서로 다르다**는 전제가 숨어 있습니다. 두 원소가 같은 키를 만들면 단순 `toMap(keyMapper, valueMapper)`는 중복 키를 자동으로 덮어쓰는 것이 아니라 실패할 수 있습니다.
+
+### 중복이 가능하면 어떤 값을 남길지 결정해야 한다
+
+```java
+Map<String, Member> byEmail = members.stream()
+        .collect(Collectors.toMap(
+                Member::email,
+                Function.identity(),
+                (first, second) -> first
+        ));
+```
+
+이 merge 함수는 같은 이메일이 나오면 첫 값을 유지합니다. 입력에서 나중에 만난 값을 유지하려면 `second`를 선택할 수도 있습니다. 이것이 시간상 최신 값이라는 뜻은 아니며, 입력이 시각순으로 정렬되어 있다는 별도 전제가 필요합니다.
+
+하지만 **어떤 값을 남길지 코드만 편하게 결정하기 전에 중복 자체가 정상인지**를 물어야 합니다. 이메일이 원래 유일해야 하는 도메인이라면 조용히 하나를 버리는 merge는 데이터 오류를 숨길 수 있습니다.
+
+### 합산 같은 자연스러운 merge도 있다
+
+```java
+Map<String, Integer> counts = words.stream()
+        .collect(Collectors.toMap(
+                Function.identity(),
+                word -> 1,
+                Integer::sum
+        ));
+```
+
+같은 단어의 개수를 합치는 것은 중복 키가 곧 집계 대상이라는 의미이므로 자연스럽습니다.
+
+### groupingBy와 선택 기준이 다르다
+
+같은 키에 여러 값을 모두 보존해야 한다면 `groupingBy`가 더 맞습니다.
+
+```java
+Map<String, List<Member>> grouped = members.stream()
+        .collect(Collectors.groupingBy(Member::team));
+```
+
+`toMap` merge는 결국 키 하나당 값 하나를 남깁니다.
+
+### 문제를 풀 때 먼저 키 유일성을 확인한다
+
+- 키가 정말 유일한가?
+- 중복이면 오류여야 하는가?
+- 첫 값/마지막 값/합산 중 어떤 정책이 의미 있는가?
+- 여러 값을 모두 보관해야 하는가?
+
+`toMap`에서 발생하는 예외를 단순 API 함정으로 외우지 말고 **Map 키의 의미와 데이터 계약 문제**로 이해하면 실무에서도 도움이 됩니다.
+
+```java
+Map<String, Order> lastEncounteredByUser = orders.stream()
+    .collect(Collectors.toMap(
+        Order::userId,
+        Function.identity(),
+        (oldOrder, newOrder) -> newOrder));
+```
+
+세 번째 인자는 중복을 조용히 덮어쓰는 장치가 아니라 충돌 시 어떤 값이 도메인상 승자인지 표현하는 merge 정책입니다. 최신 시각 비교나 합산처럼 결정 기준이 필요하면 그 기준을 코드와 테스트에 남기고, 중복 자체가 오류라면 기본 `toMap`의 실패를 보존하는 편이 낫습니다.

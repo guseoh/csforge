@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="420" viewBox="0 0 960 420" role="img" aria-labelledby="title desc">
+  <title id="title">Page fault handling flow</title>
+  <desc id="desc">Memory access가 fault를 일으킨 뒤 mapping과 permission을 검사하고 복구 가능한 경우 frame과 mapping을 준비해 instruction을 재시도하는 흐름</desc>
+  <rect width="960" height="420" rx="24" fill="#111827"/>
+  <text x="48" y="52" fill="#f9fafb" font-size="28" font-family="Arial, sans-serif" font-weight="700">Page Fault Flow</text>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <rect x="55" y="130" width="150" height="72" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="130" y="160" fill="#f9fafb" font-size="17">memory access</text><text x="130" y="184" fill="#d1d5db" font-size="14">translation 불가</text>
+    <rect x="245" y="130" width="170" height="72" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="330" y="160" fill="#f9fafb" font-size="17">fault handler</text><text x="330" y="184" fill="#d1d5db" font-size="14">mapping / permission 확인</text>
+    <rect x="455" y="95" width="190" height="72" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="550" y="126" fill="#f9fafb" font-size="17">recoverable</text><text x="550" y="150" fill="#d1d5db" font-size="14">frame / content 준비</text>
+    <rect x="455" y="235" width="190" height="72" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="550" y="266" fill="#f9fafb" font-size="17">invalid access</text><text x="550" y="290" fill="#d1d5db" font-size="14">permission / mapping error</text>
+    <rect x="700" y="95" width="200" height="72" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="800" y="126" fill="#f9fafb" font-size="17">mapping update</text><text x="800" y="150" fill="#d1d5db" font-size="14">instruction 재시도</text>
+    <rect x="700" y="235" width="200" height="72" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="800" y="266" fill="#f9fafb" font-size="17">process error</text><text x="800" y="290" fill="#d1d5db" font-size="14">예: SIGSEGV 가능</text>
+  </g>
+  <g stroke="#e5e7eb" stroke-width="3" fill="#e5e7eb">
+    <line x1="205" y1="166" x2="245" y2="166"/><polygon points="245,166 232,158 232,174"/>
+    <line x1="415" y1="155" x2="455" y2="132"/><polygon points="455,132 440,132 447,145"/>
+    <line x1="415" y1="177" x2="455" y2="270"/><polygon points="455,270 443,260 441,275"/>
+    <line x1="645" y1="131" x2="700" y2="131"/><polygon points="700,131 687,123 687,139"/>
+    <line x1="645" y1="271" x2="700" y2="271"/><polygon points="700,271 687,263 687,279"/>
+  </g>
+  <text x="480" y="365" text-anchor="middle" fill="#9ca3af" font-size="16" font-family="Arial, sans-serif">Page fault ≠ 항상 storage I/O</text>
+</svg>

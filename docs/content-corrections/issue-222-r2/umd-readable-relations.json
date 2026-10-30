@@ -1,0 +1,398 @@
+[
+  {
+    "contentKey": "computer-architecture.core.cache-organization.cache-friendly-access",
+    "file": "content/computer-architecture/cache-organization/cache-friendly-access.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Locality의 배열 순회와 temporal/spatial locality를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.cache-organization.direct-mapped-cache",
+    "file": "content/computer-architecture/cache-organization/direct-mapped-cache.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Direct-Mapped Cache의 주소 매핑·충돌을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.cache-organization.fully-associative-cache",
+    "file": "content/computer-architecture/cache-organization/fully-associative-cache.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Fully Associative Cache의 전체 tag 비교와 하드웨어 비용을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.cache-organization.index-tag-offset",
+    "file": "content/computer-architecture/cache-organization/index-tag-offset.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Larger Blocks의 tag·index·offset 분할 예제를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.cache-organization.replacement-policy",
+    "file": "content/computer-architecture/cache-organization/replacement-policy.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Replacement Policies의 LRU·NMRU·FIFO와 비용을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.cache-organization.set-associative-cache",
+    "file": "content/computer-architecture/cache-organization/set-associative-cache.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Set-Associative Cache의 set 선택과 way 비교를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.cache-organization.write-allocate",
+    "file": "content/computer-architecture/cache-organization/write-allocate.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Handling Stores의 write-allocate와 no write-allocate를 비교한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.cache-organization.write-through-write-back",
+    "file": "content/computer-architecture/cache-organization/write-through-write-back.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/cache-organization/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Handling Stores의 write-through·write-back과 dirty eviction을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.data-representation.binary-hex",
+    "file": "content/computer-architecture/data-representation/binary-hex.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/numbers.html",
+    "basis": "Binary Numbers와 Some Important Bases의 진법·자릿값을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.data-representation.bit-byte-word",
+    "file": "content/computer-architecture/data-representation/bit-byte-word.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/06-cpu-i-g.pdf",
+    "basis": "pp. 7–9의 MIPS 32-bit register와 byte-addressed word를 확인한다. word 폭은 ISA에 따라 다르다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.data-representation.fixed-width-overflow",
+    "file": "content/computer-architecture/data-representation/fixed-width-overflow.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/03-numbers-and-arithmetic-i-g.pdf",
+    "basis": "pp. 33, 38–43의 고정 폭 결과·carry-out·부호 있는 overflow를 비교한다. 언어별 overflow 계약과 구분한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.data-representation.signed-twos-complement",
+    "file": "content/computer-architecture/data-representation/signed-twos-complement.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/number-systems/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/numbers.html",
+    "basis": "Two’s Complement의 음수 자릿값·범위·비트 반전을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.datapath-control.alu-datapath",
+    "file": "content/computer-architecture/datapath-control/alu-datapath.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture30/datapath.pdf",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/06-cpu-i-g.pdf",
+    "basis": "pp. 4, 8–15의 register file·ALU·control 배선을 따라간다. 교육용 MIPS 구현이다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.datapath-control.clock-cycle",
+    "file": "content/computer-architecture/datapath-control/clock-cycle.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/state.html",
+    "basis": "The Clock의 rising edge·period·frequency 정의를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.datapath-control.control-unit",
+    "file": "content/computer-architecture/datapath-control/control-unit.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture30/datapath.pdf",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/06-cpu-i-g.pdf",
+    "basis": "pp. 10–15의 instruction decode와 ALU·register 제어 경로를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.datapath-control.critical-path",
+    "file": "content/computer-architecture/datapath-control/critical-path.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/cmsc311/clin-cmsc311/Lectures/lecture30/datapath.pdf",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/07-perf-pipe-i-g.pdf",
+    "basis": "pp. 10–12의 register 출력→입력 최장 경로와 최소 클록 주기를 확인한다. 예제는 setup time 등을 생략한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.memory-hierarchy.cache-hit-miss",
+    "file": "content/computer-architecture/memory-hierarchy/cache-hit-miss.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Hits & Misses와 Accessing의 valid·tag 판정을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.memory-hierarchy.cache-line",
+    "file": "content/computer-architecture/memory-hierarchy/cache-line.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Larger Blocks의 연속된 바이트 단위 전송과 block offset을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.memory-hierarchy.latency-vs-bandwidth",
+    "file": "content/computer-architecture/memory-hierarchy/latency-vs-bandwidth.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs5220/2024fa/slides/03-single-core.html",
+    "basis": "Act 2: Memory Matters의 Basic Problem과 How Caches Help를 확인한다. 슬라이드는 방향키로 이동한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.memory-hierarchy.memory-hierarchy",
+    "file": "content/computer-architecture/memory-hierarchy/memory-hierarchy.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "The Memory Bottleneck과 A Hierarchy of Caches의 용량·비용·지연 절충을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.memory-hierarchy.miss-penalty",
+    "file": "content/computer-architecture/memory-hierarchy/miss-penalty.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Understanding Cache Performance의 hit time + miss rate × miss penalty를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.memory-hierarchy.temporal-spatial-locality",
+    "file": "content/computer-architecture/memory-hierarchy/temporal-spatial-locality.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/memory-hierarchy-design/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Locality의 반복 변수 접근과 연속 배열 접근을 비교한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.multicore-memory.cache-coherence-problem",
+    "file": "content/computer-architecture/multicore-memory/cache-coherence-problem.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2025sp/notes/cachecoherency.html",
+    "basis": "도입부의 코어별 캐시 복사본과 공유 주소 공간의 문제를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.multicore-memory.coherence-protocol-model",
+    "file": "content/computer-architecture/multicore-memory/coherence-protocol-model.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2025sp/notes/cachecoherency.html",
+    "basis": "VI·MSI 절의 invalidation과 M·S·I 상태를 확인한다. MESI 전체 구현 명세는 아니다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.multicore-memory.false-sharing",
+    "file": "content/computer-architecture/multicore-memory/false-sharing.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "decision": "CONSOLIDATE_EXISTING",
+    "url": "https://www.kernel.org/doc/html/latest/kernel-hacking/false-sharing.html",
+    "basis": "What is False Sharing의 같은 cache line 내 독립 field와 write/read 간섭을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.multicore-memory.hardware-memory-reordering",
+    "file": "content/computer-architecture/multicore-memory/hardware-memory-reordering.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "decision": "CONSOLIDATE_EXISTING",
+    "url": "https://docs.riscv.org/reference/isa/unpriv/rvwmo.html",
+    "basis": "RVWMO v2.0의 Preserved Program Order와 Explicit Synchronization을 확인한다. 단일 주소 coherence와 여러 주소의 순서를 구분한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.multicore-memory.multicore-shared-memory",
+    "file": "content/computer-architecture/multicore-memory/multicore-shared-memory.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2025sp/notes/cachecoherency.html",
+    "basis": "도입부의 코어별 캐시와 단일 물리 주소 공간, 공유 복사본을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.multicore-memory.private-shared-cache",
+    "file": "content/computer-architecture/multicore-memory/private-shared-cache.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/multiprocessors/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2011sp/lecture/19-vm1-i-g.pdf",
+    "basis": "pp. 5, 22의 코어별 L1·공유 L2 예시와 다중 CPU 캐시 도표를 확인한다. 2009년 장비 사례를 일반 규칙으로 보지 않는다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.performance.amdahl-law",
+    "file": "content/computer-architecture/performance/amdahl-law.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/parallel-perf.html",
+    "basis": "Modeling Parallel Performance의 직렬 비율과 speedup 한계를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.performance.cache-impact",
+    "file": "content/computer-architecture/performance/cache-impact.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/caches.html",
+    "basis": "Understanding Cache Performance의 AMAT를 확인한다. CPU 전체 CPI와 AMAT를 동일한 지표로 보지 않는다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.performance.cpu-time",
+    "file": "content/computer-architecture/performance/cpu-time.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "decision": "REPLACE",
+    "url": "https://courses.cs.cornell.edu/cs3410/2026sp/notes/pipelining.html",
+    "basis": "Iron Law of Processor Performance의 IC × CPI × clock period를 확인한다. I/O 대기를 포함한 wall time과 구분한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.performance.instruction-count-cpi-clock",
+    "file": "content/computer-architecture/performance/instruction-count-cpi-clock.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "decision": "REPLACE",
+    "url": "https://courses.cs.cornell.edu/cs3410/2026sp/notes/pipelining.html",
+    "basis": "Iron Law와 multi-cycle 명령어 혼합의 가중 평균 CPI를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.performance.latency-throughput",
+    "file": "content/computer-architecture/performance/latency-throughput.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "decision": "REPLACE",
+    "url": "https://courses.cs.cornell.edu/cs3410/2026sp/notes/pipelining.html",
+    "basis": "Performance of Pipelined Processors의 명령어 지연과 전체 처리량을 구분한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.performance.pipeline-branch-impact",
+    "file": "content/computer-architecture/performance/pipeline-branch-impact.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/performance/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2018fa/schedule/slides/06-pipeline-bw.pdf",
+    "basis": "pp. 78, 84, 89–90의 분기 빈도 × 실패율 × 복구 주기와 추가 CPI를 확인한다. 단순 교육용 모델이다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.pipeline-ilp.branch-prediction",
+    "file": "content/computer-architecture/pipeline-ilp/branch-prediction.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2018fa/schedule/slides/06-pipeline-bw.pdf",
+    "basis": "pp. 75–90의 잘못된 경로 flush와 방향 예측·정확도·CPI 예제를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.pipeline-ilp.forwarding-and-stall",
+    "file": "content/computer-architecture/pipeline-ilp/forwarding-and-stall.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2018fa/schedule/slides/06-pipeline-bw.pdf",
+    "basis": "pp. 59–72의 forwarding과 load-use stall을 확인한다. MEM→EX 직접 연결의 임계 경로 문제도 비교한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-hazards",
+    "file": "content/computer-architecture/pipeline-ilp/pipeline-hazards.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2018fa/schedule/slides/06-pipeline-bw.pdf",
+    "basis": "Hazards의 structural·data·control 구분과 pp. 69–77, 91–92의 검출·stall·flush를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.pipeline-ilp.pipeline-stages",
+    "file": "content/computer-architecture/pipeline-ilp/pipeline-stages.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html",
+    "decision": "REPLACE",
+    "url": "https://courses.cs.cornell.edu/cs3410/2026sp/notes/pipelining.html",
+    "basis": "Pipelined Processors의 단계 중첩과 pipeline register, 이상적인 CPI를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.mmu",
+    "file": "content/computer-architecture/virtual-memory-hardware/mmu.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/vm.html",
+    "basis": "The Memory Management Unit과 Other Data in the Page Table의 주소 변환·R/W/X 권한을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.multi-level-page-table",
+    "file": "content/computer-architecture/virtual-memory-hardware/multi-level-page-table.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "decision": "CONSOLIDATE_EXISTING",
+    "url": "https://www.kernel.org/doc/html/latest/mm/page_tables.html",
+    "basis": "Page Tables와 Page Table Folding의 희소 계층·상위 leaf·아키텍처별 단계 수를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.page-size-huge-page",
+    "file": "content/computer-architecture/virtual-memory-hardware/page-size-huge-page.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "decision": "CONSOLIDATE_EXISTING",
+    "url": "https://www.kernel.org/doc/html/latest/admin-guide/mm/hugetlbpage.html",
+    "basis": "Overview와 hugepagesz의 TLB 자원·다중 페이지 크기, 연속 메모리 확보 제약을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.page-table-walk",
+    "file": "content/computer-architecture/virtual-memory-hardware/page-table-walk.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "decision": "CONSOLIDATE_EXISTING",
+    "url": "https://www.kernel.org/doc/html/latest/mm/page_tables.html",
+    "basis": "MMU, TLB, and Page Faults의 TLB miss 후 walk와 상위 단계 leaf 종료를 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.tlb",
+    "file": "content/computer-architecture/virtual-memory-hardware/tlb.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/vm.html",
+    "basis": "A Cache for the Page Table의 변환 캐시와 다단계 lookup 비용을 확인한다. TLB miss 자체를 page fault로 보지 않는다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  },
+  {
+    "contentKey": "computer-architecture.core.virtual-memory-hardware.virtual-physical-address",
+    "file": "content/computer-architecture/virtual-memory-hardware/virtual-physical-address.md",
+    "oldUrl": "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/virtual-memory/index.html",
+    "decision": "REPLACE",
+    "url": "https://www.cs.cornell.edu/courses/cs3410/2026sp/notes/vm.html",
+    "basis": "Virtual vs. Physical Memory Addresses와 Pages and Page Tables의 VPN→PPN·offset을 확인한다.",
+    "limits": "UMD 원문은 접근 제한으로 미검증. 대체 자료의 지정 절만 직접 확인했으며 원본과 동일 판본이라고 주장하지 않는다."
+  }
+]

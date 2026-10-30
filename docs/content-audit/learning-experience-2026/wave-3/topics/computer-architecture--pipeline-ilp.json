@@ -1,0 +1,212 @@
+{
+  "area": "computer-architecture",
+  "topic": "pipeline-ilp",
+  "topicKey": "computer-architecture.core.pipeline-ilp",
+  "coverage": "두 bounded 출력으로5 Concept/15 Question 전체를읽었다. stage겹침→세hazard→ready값forward/미준비stall→direction/target예측→rename/OOO/retire로학습순서와책임이이어진다. 모든MC선택지/rationale,서술모델/해설을대조했다. branch-prediction.q3은앞Topic branch-control-flow.q3의같은곱셈목표를숫자만바꿔반복하므로선택적P2목표재조정을기록한다. 나머지계산/의존성/precisestate는정확하다.",
+  "concepts": [
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-stages",
+      "KEEP",
+      "L1의서로다른명령어단계중첩·유휴자원활용목표가충분하다.",
+      "대표5stage일뿐모든CPU보장이아님을명시한다. I1/2/3의shiftedcycle표와fill후완료간격대종단간latency,overhead/최악stage/불균형의비용이맞다. 한국어인과흐름이충분하다.",
+      "DIAGRAM의cycle1..7표가각명령별stage와동시진행을직접보여준다. 기존도식유지.",
+      "canonicalUMDtarget은403NEEDS_REVIEW. 실제검색으로읽은같은대학pipeline강의의stage/forwarding관련발췌는별도보충근거이며canonical전체를확인한것이아니다.",
+      "q1겹침,q2latency/throughput,q3max170+20=190ps와새병목을구별해검사한다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-hazards",
+      "KEEP",
+      "L2의구조/데이터/제어원인구별목표를달성한다.",
+      "단일memoryport충돌,add→sub RAW,단순inorder와OOO의WAR/WAW이름재사용,미확정PC와기다림/추측실패가명확하다. 해저드처리없으면정확성도깨지는이유를설명한다.",
+      "DIAGRAM 계약은RAW명령전후와원인대응분류를텍스트로효과적으로보여준다. 모든해저드의회로이미지를필수로요구하지않는다.",
+      "UMDcanonicaltarget403. 같은대학강의검색본문의5stage WAR/WAW불발조건과복잡pipeline차이를 실제읽었으며특정MIPS교육모델만으로모든CPU를단정하지않는다.",
+      "q1RAW,q2각원인/대응,q3WAR rename과RAW보존의차이를검사한다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.forwarding-and-stall",
+      "KEEP",
+      "L2의값준비시점대소비시점과forward/bubble목표를달성한다.",
+      "producerALU결과준비후WB전우회,load주소와load값준비의차이,아직없는값은forward불가,정확한stall수구현의존을명시한다. load-use에서값이늦는인과가코드와연결된다.",
+      "DIAGRAM의producer→consumer우회와load/add명령쌍,ready대notready상태가핵심을설명한다. cycle별bubble추가표는선택적심화이며현재결함으로만들지않는다.",
+      "canonicalUMD403이고같은대학보충강의발췌의WB전ALU입력forward설명을 실제읽어비교했다. 전부runtime시험한근거는아니다.",
+      "q1ready값forward,q2load-use시점,q3독립3개대의존2개의OOO한계를검사한다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.branch-prediction",
+      "KEEP",
+      "L2의direction/target미리선택과예측실패비용·정확성목표를달성한다.",
+      "predict→fetch→실제확인→계속/폐기PC재지정,고정/이력패턴과무작위,architectural결과대추측작업을구별한다. 마이크로아키텍처cache흔적까지없어진다는보장은없다.",
+      "TEXT의taken예측과맞음/틀림분기가상태를보여주며본문의방향/대상과연결된다.",
+      "UMDcanonical403. 실제MITsuperscalar강의PDF의fetchprediction/branchresolution/kill/commit분리와맞는다. 정확한예측기별성능이나특정ISA보장을확정하지않는다.",
+      "q1방향/대상,q2wrongpath복구가목표에맞다. q3계산은정확하지만앞Topic문항과목표중복을W3-CA-003으로기록한다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.superscalar-out-of-order",
+      "KEEP",
+      "L3 STANDARD의폭/ready발행/의존성/rename/retire메커니즘목표를달성한다. 모든renameentry나ROB구현bit강의는범위밖이다.",
+      "Aload대기/B의존/C독립의선행실행,RAW보존과WAR/WAWphysicalmapping,순서retire/예외폐기,ILP부족/윈도전력절충을정확히설명한다. Java동기화대체아님도명시한다.",
+      "DIAGRAM의execute A(wait)/C(done)/B(wait)대architectural A→B→C순서대비가핵심을효과적으로보여준다. rename표/ROB그림은외부심화자료로보완가능하며추가그림자체를필수결함으로삼지않는다.",
+      "MIT공식resource설명과다운로드PDF의슬라이드2~4 ROB/tag/physicalrename/execute대commit/branchkill 내용을실제읽었다. PDF시각전체QA나현대CPU모든구현검증을주장하지않는다.",
+      "q1병렬자원대상태공개,q2false대true의존성,q3독립B/C대D대기/A예외시precise상태를검사한다."
+    ]
+  ],
+  "questions": [
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-stages.q1",
+      "KEEP",
+      "C독립명령stage겹침이맞다. A한명령동시모든stage/Bstage제거1cycle/D모든경우CPI1은false며모든rationale/해설이fill/latency와무hazard전제를설명한다.",
+      "EASY 충분히채워짐/무hazard조건으로유일하다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-stages.q2",
+      "KEEP",
+      "모델/해설은완료간격과한명령전체stage·regoverhead를분리해latency감소를무조건보장하지않는다.",
+      "MEDIUM throughput대latency원인을검사하며q1을기계적으로재진술한닫힌정답이아니다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-stages.q3",
+      "KEEP",
+      "max170ps+20ps=190ps이며모델/해설의분할후다른stage병목/overhead/hazard비용이타당하다. 두배무보장이라는결론에근거가있다.",
+      "HARD 타이밍계산과분할절충을결합한다. 4stage교육설계라본문대표5stage와충돌하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-hazards.q1",
+      "KEEP",
+      "A r1생산→소비RAW가맞다. B읽기후쓰기/C두쓰기/DPC해저드는이명령쌍과다르며모든rationale와해설이그방향을설명한다.",
+      "EASY 명령어피연산자가명확하다. 시간상stall이실제발생하는지는pipeline조건에따른다는해설이적절하다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-hazards.q2",
+      "KEEP",
+      "모델/해설의자원부족→구성/스톨,미준비operand→forward/stall/OOO,PC미확정→prediction/recovery가올바르다.",
+      "MEDIUM 세원인과대응의mapping이며단순세이름만대답하는것으로모델을구성하지않았다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.pipeline-hazards.q3",
+      "KEEP",
+      "앞읽기전뒤쓰기의WAR이며physicalmapping으로이름충돌을제거하고RAW생산값의존은남는다는모델/해설이맞다.",
+      "HARD 이름대값/실행재정렬의상태추론이다. q1RAW와다른목표며뒤OOO심화설명과연결되는복습이다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q1",
+      "KEEP",
+      "D준비결과forward가맞다. A생산자재실행으로미준비소비보정/B가능해도무조건WB대기/CRAWrename제거는잘못이다. 모든rationale/해설은값준비와경로를구분한다.",
+      "EASY forward가능교육조건의기법선택이다. forwarding없는CPU에서D구현을보장한다는질문이아니다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q2",
+      "KEEP",
+      "모델/해설은load MEM완료후값대consumer EX필요시점이엇갈리므로bubble필요,stall수구현/메모리지연의존을정확히제시한다.",
+      "MEDIUM 고전5stage조건으로scope를고정하고모든CPU의1cycle로일반화하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q3",
+      "KEEP",
+      "모델/해설은미도착load값을forward할수없음과의존2개대기/독립3개선행가능성을구별한다. OOO는일부지연을숨길뿐의존연쇄를없애지않는다.",
+      "HARD ready조건·독립/의존·두기법한계판단이다. 자원부족시반드시3개완료된다는단정은없다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.branch-prediction.q1",
+      "KEEP",
+      "D direction=taken판단,target=nextfetch가맞다. A항상정확/B역할역전/Cretire후만사용은false이며모든rationale와해설이명확하다.",
+      "EASY 방향과주소의두정보를구별한다. unconditional모든분기를direction필수로일반화하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.branch-prediction.q2",
+      "KEEP",
+      "모델/해설의prediction→speculativefetch/execute→틀림시architectural반영방지→올바른PC/재충전비용이맞다.",
+      "MEDIUM 복구상태응용으로앞branch-control-flow.q2와유사하지만이Concept의추측/확정경계를직접확인한다. 모든microarchitectural흔적제거는요구하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.branch-prediction.q3",
+      "TARGETED_ENHANCE",
+      "0.20*0.05*12=0.12cycle/instruction계산과CPI영향의모델/해설은정확하다. 앞branch-control-flow.q3와같은분기비율*실패율*penalty목표를숫자만바꿔반복한다.",
+      "HARD표시두문항이동일계산이며새상태추론이작다. 선택적P2로기존q3목표재조정후보다(W3-CA-003). 정답오류로확대하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q1",
+      "KEEP",
+      "B독립작업병렬/readyOOO가맞다. A모든의존없음/C완료순공개/Dcachemiss면모두대기는false다. 모든rationale는자원/ROB용량조건과retire의정밀상태를구별한다.",
+      "EASY 두구조의역할분리이며ISA가특정retire회로를의무화한다는보기는아니다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q2",
+      "KEEP",
+      "모델/해설은WAR/WAW이름재사용대RAW실제생산값의존을구별한다. physicalreg분리후에도생산값대기가남는결론이맞다.",
+      "MEDIUM hazard.q3의WAR시나리오를일반원칙으로확장한관련복습이며별도심각중복으로판정하지않는다."
+    ],
+    [
+      "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q3",
+      "KEEP",
+      "모델/해설은readyB/C선행가능,D의RAW대기,A예외에서뒤결과architectural미반영과프로그램순retire의precise예외를설명한다. 실제읽은MIT ROB/commit구분과일치한다.",
+      "HARD 의존·병렬실행·예외확정의다단계판단이다. cache흔적이나장치외부부수효과의완전rollback을보장하지않는다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://www.cs.umd.edu/~meesh/411/CA-online/chapter/pipelining-mips-implementation/index.html",
+      "NEEDS_REVIEW",
+      "직접도구403으로canonical관련절은읽지못했다. 같은대학강의발췌는supplemental로구별하며모든해당링크의학습자접근장애를확정하지않는다."
+    ],
+    [
+      "https://ocw.mit.edu/courses/6-823-computer-system-architecture-fall-2005/resources/l14_superscalar/",
+      "CURRENT_VERIFIED",
+      "공식resource설명과실제다운로드PDF슬라이드2~4의ROB/tag준비/physicalrename/execute와commit/branchkill구분을읽었다.2005강의의대표구조이며모든현대CPU내부방식·PDF전체시각QA를확정하지않는다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://ocw.mit.edu/courses/6-823-computer-system-architecture-fall-2005/de5d7f798f868802112e1b6cdbc454cc_l14_superscalar.pdf",
+      "CURRENT_VERIFIED",
+      "resource의실제PDF링크를따라슬라이드2~4텍스트의tag/data준비후issue,결과저장후commit,physicalmapping과branchrecovery를직접확인했다. screenshot호출은했지만이미지내용이도구출력에표시되지않아시각QA완료로기록하지않는다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/411/pipe-lect-4up.pdf",
+      "CURRENT_VERIFIED",
+      "실제공식대학검색발췌의MIPS5stage WAR/WAW조건, RAW스톨과WB전ALUforward 설명을읽었다. PDF전체/diagram시각검토는아니다."
+    ],
+    [
+      "https://www.cs.umd.edu/~meesh/411/Pipelining_Lecture.pdf",
+      "NEEDS_REVIEW",
+      "검색의같은대학forwarding부분발췌는읽혔으나직접PDF접근은403으로전체/시각흐름은확인하지못했다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-CA-003",
+      "severity": "P2",
+      "contentKeys": [
+        "computer-architecture.core.pipeline-ilp.branch-prediction.q3"
+      ],
+      "file": "content/computer-architecture/pipeline-ilp/questions.json",
+      "quote": "명령어당 예측 실패는 0.20 × 0.05 = 0.01회다.",
+      "problem": "이 문항은 20% 분기·5% 실패·12cycle의 추가 CPI를 계산한다. 앞 Topic의 computer-architecture.core.datapath-control.branch-control-flow.q3는 20%·10%·12cycle을 같은 식으로 계산한다. 두 HARD 문항의 정답은 정확하지만 같은 학습 목표를 숫자만 바꿔 반복해 심화 상태 추론의 다양성이 작다. 핵심 목표가 검증됐으므로 선택적 P2다.",
+      "action": "앞 Topic의 비용 입문 계산을 유지하고 기존 branch-prediction.q3만 방향 예측 성공/목적지 예측 실패 또는 서로 다른 분기 패턴의 실행·폐기 흐름을 비교하는 응용으로 최소 재구성한다. 본문에 이미 있는 방향/대상·추측/확정 목표를 재사용하며 새 문항이나 예측기 세부 강의는 강제하지 않는다.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "computer-architecture.core.pipeline-ilp.branch-prediction": "587ae67f8c9e4e89a46f08bb97941214ec937c788cb432c64036f651f129e52e",
+    "computer-architecture.core.pipeline-ilp.branch-prediction.q1": "226f65a08e746cad27a439a607c09b8f23f3e56e8744d85bffc0d54e2fbdc7f8",
+    "computer-architecture.core.pipeline-ilp.branch-prediction.q2": "1ebc12e5344f00a81af38429599046c7f26f857f615917f709463d7c470234a7",
+    "computer-architecture.core.pipeline-ilp.branch-prediction.q3": "61289bf31fc04b4f0570a671ce8ad82c1f20fa46c2c29ecd1b4be5fac1a9c960",
+    "computer-architecture.core.pipeline-ilp.forwarding-and-stall": "594ce2514033ee5068f37b1c381e95e2feae9d0f78b474f25d33a946973ba3cf",
+    "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q1": "c1753e9ba067de76f2b249cf6f8a51d520c2991f04334315512a2c78c46bc457",
+    "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q2": "067b19efc6beaa548de0d82a29e946b01c7108488ca3f7f78916a0213bdac773",
+    "computer-architecture.core.pipeline-ilp.forwarding-and-stall.q3": "4c1a2a4f5138ebfb3f73da57dfbdcc9aff643ff1195674e5539bc87d86456655",
+    "computer-architecture.core.pipeline-ilp.pipeline-hazards": "fdabd72c41495f89569ea0250a8634784688fdac6f9c44c68a0aa6b826132255",
+    "computer-architecture.core.pipeline-ilp.pipeline-hazards.q1": "fa3d53475ae51474fff68514ae4fbf244acdd935a3382eadb3a383ddd4cb0224",
+    "computer-architecture.core.pipeline-ilp.pipeline-hazards.q2": "c65e14768768d7983d4da548bd159e5c19fd7547f82acb6f609fd2c0b0734903",
+    "computer-architecture.core.pipeline-ilp.pipeline-hazards.q3": "9e461bb621fb795769ee4a5da8caface9a257b96a3ddc33acd780c5ea7b494da",
+    "computer-architecture.core.pipeline-ilp.pipeline-stages": "1e4ee130cd12190c254958133211ac1e9a828f48cb898fe63d27d34e38033092",
+    "computer-architecture.core.pipeline-ilp.pipeline-stages.q1": "9f51ccf7e9b078fe05857c7dfdaccd6212eba881e60f7e49c220833669948276",
+    "computer-architecture.core.pipeline-ilp.pipeline-stages.q2": "113c3740e04507813c9d60e02655c88d4187710a03cef79935cc06cceb50d877",
+    "computer-architecture.core.pipeline-ilp.pipeline-stages.q3": "3ba974e580eda0aea9348df1b0c18b9183a25df04720273738790129f93a1270",
+    "computer-architecture.core.pipeline-ilp.superscalar-out-of-order": "9c17ba8308f4b04e935b0c03ff44e300f54c3163528ae675b66fc7fe3515eb77",
+    "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q1": "2068aaf997fa8b82111f7f5ec44812e2640b3165cea2c60c516eb62cb1e79d94",
+    "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q2": "89457a01c0ec36f655c5eceb0cfc168b2675f5dba9515b448e80b921c5f882dc",
+    "computer-architecture.core.pipeline-ilp.superscalar-out-of-order.q3": "0cdc667f6780e93f47c9edcaa0947cc1e7a65725fe0a8db2e8eff3c3dc387155"
+  }
+}

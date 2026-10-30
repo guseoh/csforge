@@ -1,0 +1,406 @@
+{
+  "area": "system-design",
+  "wave": "Wave 1",
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewMethod": "requirements→architecture→reliability의 본문9와 27문항을 모두 직접 읽고 choices/rationale/accepted/model/explanation 개별 대조. 정밀 계산 및 접수/거절 상태 계약을 새 보강 대상으로 식별.",
+  "topics": [
+    {
+      "key": "system-design.core.requirements",
+      "coverage": "measurable behavior→capacity assumptions→authoritative ownership. capacity.q2는 주어진 수치 계산 없이 변수만 제시해 보강."
+    },
+    {
+      "key": "system-design.core.architecture",
+      "coverage": "user completion boundary, projection trade-off, separation cost. ownership.q2/modular.q2는 공유 writer 같은 위험이나 data recovery와 service migration 초점 다름."
+    },
+    {
+      "key": "system-design.core.reliability",
+      "coverage": "optional degradation, resource isolation, canary observed rollout. failure-isolation.q3의 거절/대체/접수 상태가 섞인 설명을 분리해야 함."
+    }
+  ],
+  "concepts": [
+    [
+      "system-design.core.requirements.functional-nonfunctional",
+      "KEEP",
+      "L1 search behavior→peak500/p99<300/staleness/fault isolation 예로 measurable goals 충족.",
+      "invariant vs preference와 acceptance tests 충분. 영문 기술 용어가 자주 섞이나 핵심은 한국어 예/설명으로 해석 가능; 다음 편집에서 첫용어 한국어 병기 권장.",
+      "TEXT 기능/품질 조건 목록으로 충분.",
+      "SRE userSLI/SLO와 AWS security/reliability/performance/cost evaluation 배경이 관련.",
+      "q1 names,q2 실시간 수치화,q3 invariant vs preference 측정으로 충분."
+    ],
+    [
+      "system-design.core.requirements.capacity-data",
+      "TARGETED_ENHANCE",
+      "L1 86.4M/day→1000QPS 예와 peak/mix/retention/index/replica 변수 설명은 맞음.",
+      "order of magnitude/assumption/loadtest는 적절. 하지만 q2의 실제 수치가 계산까지 이어지지 않아 내부 query/bytes/storage 판단을 learner가 추적하기 어려움.",
+      "DIAGRAM requests→QPS→work/storage 목록보다 1M/day→11.6RPS→116peak→347query/s·2GB/day 가정 흐름 표시 후보.",
+      "SRE capacity forecasting/loadtest와 AWS workload/datastore 선택 문헌 관련. 70%threshold는 q3에서 예시이지 보편 규칙 아님.",
+      "q1/q3 맞음; q2 산술/단위/peakduration·writefraction 가정 보강(W1-SYS-001)."
+    ],
+    [
+      "system-design.core.requirements.ownership-boundaries",
+      "KEEP",
+      "L2 sourceowner/localinvariants vs derivedviews and team/API/schema/recovery responsibility 충족.",
+      "authoritativewriter와 independent cache/search 충돌 설명, freshness/rebuild cost·sharedDBcoupling 충분.",
+      "DIAGRAM owner→DB→event/cache/view 흐름 적합.",
+      "Microservices monolith modular boundaries 및 Saga cross-service localtransaction 배경. 모든 소유권에 서비스 분리를 요구하지 않음.",
+      "q1 relation,q2 conflictingstores,q3 team boundary/invariant 책임을 구분."
+    ],
+    [
+      "system-design.core.architecture.sync-async",
+      "KEEP",
+      "L1 immediate result vs durable accept/latercomplete 선택과 userstate contract 충족.",
+      "202=접수≠완료, pending/failure/query, synchronous timeout unknown, deadline/failure storage 판단 충분.",
+      "DIAGRAM wait vs durableaccept branching 유지.",
+      "Saga workflow와 gRPC deadline/cancellation은 선택 배경. 202의 application durability는 RFC가 자동보장하는 것이 아니라 앱 계약이라는 구분 유지.",
+      "q1 names,q2 longCSV durableoperation,q3 paymentneeded/indexdelay 분리로 충분."
+    ],
+    [
+      "system-design.core.architecture.read-write-models",
+      "KEEP",
+      "L2 writeinvariant vs query/filter/sort/aggregate shape, measuredbottleneck 이후 projection검토 충족.",
+      "one relational schema 우선, stale/updatefailure/schema/backfill/rebuild/writeamplification·RYWpath 충분. 첫번역 병기는 가독성 선택 후보.",
+      "DIAGRAM canonical→propagation→projection과 prose가 역할/상태를 보여 유지.",
+      "Outbox는 atomic business/intent와 duplicate 경계, AWS는 accesspatterns/dataworkload 선택 배경. CQRS implementation 직접문서 아님.",
+      "q1 reason,q2 quizwrite/30sstale,q3 backfill/rebuild cost 확인. q3 마지막 해설의 '원본을 복제하는 대신'은 권위중복을 뜻한다고 읽되 '파생 복사본' 표현 정밀화 여지."
+    ],
+    [
+      "system-design.core.architecture.modular-monolith-services",
+      "KEEP",
+      "L2 logicalmodule APIs/dataowner→independentruntime benefits vs network/ops cost 판단 충족.",
+      "분산 모놀리스/공유테이블, invariant·migration·recovery, later extraction 충분. 학습/문제/퀴즈 실제 앱 예 적합.",
+      "TEXT one deployment/module figure로 충분.",
+      "Microservices monolith 원저자와 Fowler independentdeployment vs distributed/operationalcomplexity trade-off 확인.",
+      "q1 actualneeds,q2 sharedtablewrites,q3 team/control/cost/migration 판단 충분."
+    ],
+    [
+      "system-design.core.reliability.failure-budget",
+      "KEEP",
+      "L1 core resultstore vs optional recommendation/stats와 SLO-driven degradation 목표 충족.",
+      "degrade≠successmask, partialresult notice/security-money-canonicalwrite invariant, budget→pause/reliabilitywork 충분.",
+      "DIAGRAM corecorrectness vs omit/stale/delayed branching 유지.",
+      "SRE SLO/budget와 cascading reducedwork/degradation의 조건/운영 경계 직접 관련.",
+      "q1 categories,q2 recommendationfail/coreload,q3 budget/restore policies 개별 확인."
+    ],
+    [
+      "system-design.core.reliability.failure-isolation",
+      "TARGETED_ENHANCE",
+      "L2 slowoptionalflow sharedpool→criticalfailure와 separateconcurrency/time/queue/admission 목표 충족.",
+      "end-to-end DB/quota 한계·보호장치≠newcapacity 본문 정확. q3 state vocabulary가 거절과 durableaccept/대체 결과를 혼합.",
+      "DIAGRAM sharedresource causal path 유지. request rejected/nooperation vs accepted/persisted/pending vs degradedread 3상태 분기 보강 후보.",
+      "gRPC deadline만으로 spawnedwork 자동중단 아님, SRE shed/drop/reducedwork 경계 확인.",
+      "q1/q2 타당. q3 pending을 '거절'로 표현해 operation 책임 모호(W1-SYS-002)."
+    ],
+    [
+      "system-design.core.reliability.rollout-observability",
+      "KEEP",
+      "L2 canary→perpopulation metrics/businesscorrectness→expand/stop/rollback/forwardfix 목표 충족.",
+      "health≠usercorrectness, tenant/data-shape aggregate conceal, schema/events/external effects remain, feedback to future assumptions 충분.",
+      "DIAGRAM observed branching 충분; key/version/schema 혼재의 상세화는 후속 구현별 예로 가능.",
+      "SRE Workbook canary/control 분리와 맞는 timeinterval, appendix progressive rollout/actualcapacity 관측 관련.",
+      "q1 reason,q2 tenantp99/businesserror,q3 schema/event/cache compatiblemigration 경계 충분."
+    ]
+  ],
+  "questions": [
+    [
+      "system-design.core.requirements.functional-nonfunctional.q1",
+      "KEEP",
+      "accepted13은 functional/nonfunctional 정의와 기능/품질·비기능 동의 조합. 순서/쉼표 요구와 일치하는 한국어 조합 충분, explanation 역할 맞음.",
+      "EASY 용어쌍 범위 명시, 열린 판단 단답과 다름."
+    ],
+    [
+      "system-design.core.requirements.functional-nonfunctional.q2",
+      "KEEP",
+      "실시간을 clientquerymix/p95-p99/QPS/freshness/partialfail/retention/auth/cost로 수치화. 99%300ms/10sindex는 example model/explanation 타당.",
+      "MEDIUM 요구명확화, 특정숫자 정답 강제 아님."
+    ],
+    [
+      "system-design.core.requirements.functional-nonfunctional.q3",
+      "KEEP",
+      "auth/no unauthorizedresults/writecorrectness invariant vs resultcount/freshness/tail/cost preferences, failure/load/rollout/SLOtests model/explanation 충분.",
+      "HARD 구체 검증방법 포함, latency빠르면보안양보 주장 없음."
+    ],
+    [
+      "system-design.core.requirements.capacity-data.q1",
+      "KEEP",
+      "B burst/mix/querybytes/fanout 이유. A peakalone decidesstorage,C avgknowsburst,D mixirrelevant 오답; rationale4·해설 타당.",
+      "EASY unitwork vs requests 구분."
+    ],
+    [
+      "system-design.core.requirements.capacity-data.q2",
+      "TARGETED_ENHANCE",
+      "model는 QPS변환·10배·3queries·2KB·replica/index/retry 변수 선택 타당하나 실제 수치/단위 계산을 전혀 제시 안 함.",
+      "MEDIUM 주어진 숫자의 workedsolution과 writefraction/peakduration 조건을 보강해야 추산 이해를 평가(W1-SYS-001). 정답 오류 아님."
+    ],
+    [
+      "system-design.core.requirements.capacity-data.q3",
+      "KEEP",
+      "low/base/high demand/mix/size/retry/replication/retention 가정, budget70% 또는 procurementleadtime threshold는 명시 예시. model/explanation 맞음.",
+      "HARD uncertainestimation→decisiontrigger, 70% 보편 threshold로 판정 안 함."
+    ],
+    [
+      "system-design.core.requirements.ownership-boundaries.q1",
+      "KEEP",
+      "D canonical transitions/derived rebuild 맞음. A indexauthority,B allindependentwriters,C cachelatestnodb 오답; rationale4·해설 적절.",
+      "EASY canonicalowner 정의."
+    ],
+    [
+      "system-design.core.requirements.ownership-boundaries.q2",
+      "KEEP",
+      "DB+indexconflict→singleownertx invariant+derivedevent/outbox/revision/rebuild/staleUX model/explanation 타당.",
+      "MEDIUM projectionloss 복구, app V1에 index를 구현하라는 지시 아님."
+    ],
+    [
+      "system-design.core.requirements.ownership-boundaries.q3",
+      "KEEP",
+      "sharedwrites/processsplit→distributedmonolith, localinvariants/API/schema/auth/recoveryownership/crossboundarySaga costs model/explanation 충분.",
+      "HARD teamownership이 URL이나process만은아님 검증."
+    ],
+    [
+      "system-design.core.architecture.sync-async.q1",
+      "KEEP",
+      "accepted12는 같은요청wait vs laterresult 동기/비동기 순서와 정의. explanation 완료시점분리 타당.",
+      "EASY 업무흐름 용어쌍, async함수 모든동작의 일반정의로 확대 안 함."
+    ],
+    [
+      "system-design.core.architecture.sync-async.q2",
+      "KEEP",
+      "validate→persistPENDING→operationId→workersteps→progress/COMPLETE/FAILED/CANCELLED/retry/idempotency/reconcile model/explanation 타당.",
+      "MEDIUM 명시 longCSV 상황, 202만으로 내구성자동 보장 없음."
+    ],
+    [
+      "system-design.core.architecture.sync-async.q3",
+      "KEEP",
+      "paymentneeded vs indexingdelay coupling→deadline/resources/unknown, persistpaymentresult+operation thenoutboxderived model/explanation 충분.",
+      "HARD 외부 payment와 DB가 같은 로컬Txn이라는 보장 아님; 기록 확정과 원격결과 불확실성 구분은 partialfailure와 연결."
+    ],
+    [
+      "system-design.core.architecture.read-write-models.q1",
+      "KEEP",
+      "A queryshape/latency reason. B alwaysnewer,C automaticallyprotectwrite,D norebuild 오답; rationale4·해설 맞음.",
+      "EASY reason plus cost"
+    ],
+    [
+      "system-design.core.architecture.read-write-models.q2",
+      "KEEP",
+      "canonicalquizcommit response + RYWprimary/revisionwait, lagdisplay/replayrebuild model/explanation 타당.",
+      "MEDIUM 30sstale 경계, canonicalwrite를 projectionavailability에 묶지 않음."
+    ],
+    [
+      "system-design.core.architecture.read-write-models.q3",
+      "KEEP",
+      "ownership/invariant→measuredqueryfreshness→update/duplicates/ordercost→backfill/rebuild/revision/fallback model 충분, explanation 의도는 derivedauthority separation.",
+      "HARD '원본을 복제하는 대신'은 literalcopy금지가 아니라 authoritative duplicate 금지 맥락. 표현정밀화 선택 후보, 새 정답오류 확정 아님."
+    ],
+    [
+      "system-design.core.architecture.modular-monolith-services.q1",
+      "KEEP",
+      "D actualindependent scale/release/security/failure/dataowner. A sharedtableprocesssplit,B filecount,C distributedcostdecreases 틀림; rationale4 타당.",
+      "EASY value>operatingcost 판단."
+    ],
+    [
+      "system-design.core.architecture.modular-monolith-services.q2",
+      "KEEP",
+      "two tablewriters remaincoupling, singleowner/API/events+datamigration/schema/timeout/SLO/recover/traffic model/explanation 맞음.",
+      "MEDIUM 실제 분리 후 위험진단."
+    ],
+    [
+      "system-design.core.architecture.modular-monolith-services.q3",
+      "KEEP",
+      "moduleAPI/data/invariant architecturalchecks then autonomy/scale/security/failuredomain vs network/ops/migration/rollback costs model/explanation 충분.",
+      "HARD neither architectureuniversalbest."
+    ],
+    [
+      "system-design.core.reliability.failure-budget.q1",
+      "KEEP",
+      "accepted15에 core/optional/핵심·필수/선택·부가 순서 동의어, 설명 degradation≠hidingerror 맞음.",
+      "EASY 범주정의, q2/q3 operationalreasoning 보완."
+    ],
+    [
+      "system-design.core.reliability.failure-budget.q2",
+      "KEEP",
+      "recommendation optional, productcanonical/auth/SLO and boundedoriginload/partialnotice/startrecover model/explanation 타당.",
+      "MEDIUM fallback안전성 핵심조건 포함."
+    ],
+    [
+      "system-design.core.reliability.failure-budget.q3",
+      "KEEP",
+      "user SLO/burn pause, corecorrectness/optionalstaleomit,503/partial/pending 상태계약과 recoveryconsistency model/explanation 충분.",
+      "HARD pending은 명시적인 상태 계약의 선택이지 거절의 동의어 아님; isolation.q3와 차이."
+    ],
+    [
+      "system-design.core.reliability.failure-isolation.q1",
+      "KEEP",
+      "B resourcebudgets isolation. A unboundedqueue,C successmask,D endlesswait 오답; rationale4·해설 맞음.",
+      "EASY mechanismpurpose, no automatichealing."
+    ],
+    [
+      "system-design.core.reliability.failure-isolation.q2",
+      "KEEP",
+      "slowreport holdsconnections/workers→criticalwait/retryamplification, separatepool/boundedconcurrency/deadline/cancel/quota·queueorrefuse model/explanation 타당.",
+      "MEDIUM acceptedqueue vs reject는 여기서 별도 대안으로 명시."
+    ],
+    [
+      "system-design.core.reliability.failure-isolation.q3",
+      "TARGETED_ENHANCE",
+      "deadline/rate/backpressure/bulkhead 역할은 타당. model는 shed를 429/503 또는 '오래된 값·처리 중 상태로 거절'이라 하여 접수·축소·거절의 효과가 혼합.",
+      "HARD pending이면 durable operation/이후완료 책임, rejected면 미접수·retry계약, staleread면degradedresult로 분리해야 함(W1-SYS-002)."
+    ],
+    [
+      "system-design.core.reliability.rollout-observability.q1",
+      "KEEP",
+      "D reducedblast/perversionSLO/error/latency/businesscorrectness. A healthalone,B hide telemetry,C autoexternalrollback 틀림; rationale4·해설 타당.",
+      "EASY observedprogressive risk containment."
+    ],
+    [
+      "system-design.core.reliability.rollout-observability.q2",
+      "KEEP",
+      "tenantp99/businesserror despiteprobe→matchedmix/population/route/versionmetrics+SLOstop/schemaeventeffects reconcile model/explanation 충분.",
+      "MEDIUM 전체평균이 회귀 숨기는 구체case."
+    ],
+    [
+      "system-design.core.reliability.rollout-observability.q3",
+      "KEEP",
+      "compat expandcontract/versionevent/flags/dualreadwrite/canary metrics, rollbackleavesschema/events/cache/effects→compensate/rebuild model/explanation 맞음.",
+      "HARD cacheversion/dualwrite의 세부 원자성은 후속 구현 계약 필요; 이 문항은 적용/복구 계획 범위."
+    ]
+  ],
+  "sources": [
+    [
+      "https://sre.google/sre-book/service-level-objectives/",
+      "CURRENT_VERIFIED",
+      "userSLI/SLO/budget 측정계약 배경."
+    ],
+    [
+      "https://docs.aws.amazon.com/wellarchitected/latest/framework/definitions.html",
+      "CURRENT_VERIFIED",
+      "quality pillars와 workload 평가 정의; 기능/비기능 상세표준은 아님."
+    ],
+    [
+      "https://sre.google/sre-book/service-best-practices/",
+      "CURRENT_VERIFIED",
+      "forecastvsactual/loadtest, userSLO, progressive rollout, degradedresult vs costlyquery shed 운영."
+    ],
+    [
+      "https://docs.aws.amazon.com/pdfs/wellarchitected/latest/performance-efficiency-pillar/wellarchitected-performance-efficiency-pillar.pdf",
+      "CURRENT_VERIFIED",
+      "workload/architecture/datastore access/throughput/retention 차원. 큰 문서여서 Architecture selection/Data management section 안내가 유용."
+    ],
+    [
+      "https://microservices.io/patterns/monolithic.html",
+      "CURRENT_VERIFIED",
+      "one deployment와 component coupling/운영 trade-off."
+    ],
+    [
+      "https://microservices.io/patterns/data/saga.html",
+      "CURRENT_VERIFIED",
+      "local ownership/cross-service workflow·isolation 보조."
+    ],
+    [
+      "https://grpc.io/docs/guides/deadlines/",
+      "CURRENT_VERIFIED",
+      "deadline/cancel과 서버 spawnedwork 책임, sync결과완료 자동증명 아님."
+    ],
+    [
+      "https://microservices.io/patterns/data/transactional-outbox.html",
+      "CURRENT_VERIFIED",
+      "businesswrite+eventintent, deriveddelivery와 duplicates 경계."
+    ],
+    [
+      "https://martinfowler.com/articles/microservice-trade-offs.html",
+      "CURRENT_VERIFIED",
+      "independentdeployment benefits vs distributed/operationalcomplexity costs."
+    ],
+    [
+      "https://sre.google/sre-book/addressing-cascading-failures/",
+      "CURRENT_VERIFIED",
+      "sharedresource/exhaustion and degradation reducework; condition/action/layer/regularexercise."
+    ],
+    [
+      "https://sre.google/sre-book/handling-overload/",
+      "CURRENT_VERIFIED",
+      "bounded queue/admission/drop와 retrybudget overload보호."
+    ],
+    [
+      "https://sre.google/workbook/canarying-releases/",
+      "CURRENT_VERIFIED",
+      "canary/control population별 signals와 comparable timeinterval."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9110.html#name-202-accepted",
+      "CURRENT_VERIFIED",
+      "202 is noncommittal accepted/notcomplete HTTP 의미. 앱의 durablepending/완료 책임 자체는 별도 계약."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W1-SYS-001",
+      "severity": "P2",
+      "contentKeys": [
+        "system-design.core.requirements.capacity-data",
+        "system-design.core.requirements.capacity-data.q2"
+      ],
+      "file": "content/system-design/requirements/questions.json",
+      "quote": "일일 평균 요청을 초당 처리량으로 환산하는 데 더해",
+      "problem": "1M/day·10배·3query·2KB 숫자를 제시하지만 model은 변수 이름만 되풀이하고 환산/곱셈/저장량 계산을 보여주지 않는다. 실제 추산 목표의 이해 검증과 학습 피드백이 약함.",
+      "action": "평균11.6RPS/peak약116/DB약347query/s를 단계별 단위로 제시. 모든 요청이2KB쓴다는 가정에서 원본약2GB/day, 실제writefraction·peakduration·retention/index/replica/backup 조건을 나눠 본문과 model worked example 추가.",
+      "followupIssues": [
+        204
+      ]
+    },
+    {
+      "id": "W1-SYS-002",
+      "severity": "P1",
+      "contentKeys": [
+        "system-design.core.reliability.failure-isolation",
+        "system-design.core.reliability.failure-isolation.q3"
+      ],
+      "file": "content/system-design/reliability/questions.json",
+      "quote": "오래된 값·처리 중 상태로 거절한다.",
+      "problem": "명확한 미접수 거절, stale read의 기능축소, durable accepted/pending 작업을 load shedding의 같은 거절 응답으로 나열한다. 처리중 상태를 반환하고 실제 작업을 버려도 된다는 잘못된 완료 책임을 유도할 수 있음.",
+      "action": "rejected→429/503와 재시도계약, degradedread→partial/stale와표시, deferredaccepted→durable operationId/pending와최종완료조회 책임을 분리. deadline은 취소를 관찰한 서버작업의 자원 해제까지 조건 명시.",
+      "followupIssues": [
+        204
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "system-design.core.requirements.functional-nonfunctional": "4c5a6b37479d5073dae750612b0cb58808fdb4efb2c06a46788b7e6fe975610f",
+    "system-design.core.requirements.capacity-data": "849a7b3a408e4ad72aa97bf7ec61c7d5ceebcc5857a6d85598a7cc3b5e96a8e2",
+    "system-design.core.requirements.ownership-boundaries": "606e551dd692bce218f39b358074f1e241cb4cea2c3a575d0f9b50d69267c37c",
+    "system-design.core.architecture.sync-async": "0cb56de515f8c6eeb45b2beddb227be0f1958824b394463bbe1031d326c9acdb",
+    "system-design.core.architecture.read-write-models": "a39369361094a685040596b6060a7cd7ab6426bade9e62ad77bf8cc0450d7945",
+    "system-design.core.architecture.modular-monolith-services": "9845f144158df2b3aeb1ccbbf771b852bd8bccd171d98056b2d0ebd7bb55f30a",
+    "system-design.core.reliability.failure-budget": "da5a783e98bea057eb657edd0e714a82947f5560bf421bf0007dd669f324d11f",
+    "system-design.core.reliability.failure-isolation": "f2dd4b4c950b4399cd10924d38bd7830dc5279f48a818cd49305b25d934b892e",
+    "system-design.core.reliability.rollout-observability": "66642b36c54a484745bee1bd2df7ed0a73d3cf5d2883583cd753211f8c8ef727",
+    "system-design.core.requirements.functional-nonfunctional.q1": "acdd2cd2dd1450e2300bcdbbb1cbd56035b9cde9fb62f66b58f186e67e89d798",
+    "system-design.core.requirements.functional-nonfunctional.q2": "b4ae0fe535da476407b1dfaafceece095808c09bc4192f74b86588588d4e554e",
+    "system-design.core.requirements.functional-nonfunctional.q3": "3ce4c0983f6587a0a82770b9bf1f3821b70c03beee97cdd73c693d142baaf118",
+    "system-design.core.requirements.capacity-data.q1": "0a4b6ba7914b75b738470e6a34e21b76c4fbd388cf0ad00fb7a72686a70819c1",
+    "system-design.core.requirements.capacity-data.q2": "961d762a715611a7d8228fad717df3898f4ff82a47eedf43f68604c3adda47bb",
+    "system-design.core.requirements.capacity-data.q3": "6547a41c32c7ca38a55fa664dcabdb421120715baf639615c5df3eb195e9859a",
+    "system-design.core.requirements.ownership-boundaries.q1": "b4b7784ab2e83c21e880b87e9daec754b99bb882282c7cccbfa901a775e19377",
+    "system-design.core.requirements.ownership-boundaries.q2": "0effe65f3a9c864bc61142f99f64d0af9dfccd72dc00faabdcd1d12cecf0c5c2",
+    "system-design.core.requirements.ownership-boundaries.q3": "4f6ef45f290fe6139bf7500520b0c2cb4248063541a3e3b78396a1fe25af8c6b",
+    "system-design.core.architecture.sync-async.q1": "d6f807242a4e5b875d4f2cf8cc398b26e5ace5433b74e494d056d33eb7b4d894",
+    "system-design.core.architecture.sync-async.q2": "4deb2fd5b14338a56560e8a048d001a49ebc3ed577545b2f747ecf86cd817506",
+    "system-design.core.architecture.sync-async.q3": "ba8341ab60f43815c4fcb8698359bb7628633b9bd9376e6e27af4a12e94ee253",
+    "system-design.core.architecture.read-write-models.q1": "7044ae0fea4431efb45a4ed18d29399d65d8160c94e8eb6e5c260b4e00129bc0",
+    "system-design.core.architecture.read-write-models.q2": "0d5a1a54ff88774e71af5d3e03516dc9e5f777f08d2902ad4c067f16e642e3c8",
+    "system-design.core.architecture.read-write-models.q3": "0e74c12e3183ed6957d7c57beb24edacb78a27fea603b5f39b4bf6b9ef1e70c9",
+    "system-design.core.architecture.modular-monolith-services.q1": "ae76d4adc6a37884f49b3128cd12b2d9880c89dd6a8d80ff26652c4eb24d2f41",
+    "system-design.core.architecture.modular-monolith-services.q2": "4d7804a99cf5122c96a5c1d1bb9b3f19401dd0a521bae34ece1882ebd1d94aef",
+    "system-design.core.architecture.modular-monolith-services.q3": "28b632e90ba68404d3bcfaee02b67c4f862de86b6fb35ccc26ac2c32e750e1ae",
+    "system-design.core.reliability.failure-budget.q1": "4fd1abdffb3de4a3ea32c704a29ae3bcb2070b91e1917ec2def50a618331ef9d",
+    "system-design.core.reliability.failure-budget.q2": "5bf584fb9e74483e648a9d38526b7cc70162f27e45407a5ed35d5875b035130b",
+    "system-design.core.reliability.failure-budget.q3": "06ff2ea9b5e516d37ca8d821f097450d875b146c01ea19777317142d4213158c",
+    "system-design.core.reliability.failure-isolation.q1": "c6bd97339a00c6891b11f590acc81730f0cec0f8a27b9ae8ffe2212cd6305f60",
+    "system-design.core.reliability.failure-isolation.q2": "5bb50a40ea638ec6560d910da44b4a6ea480d5b01c219571c2af432e5267af96",
+    "system-design.core.reliability.failure-isolation.q3": "9deffbf7e438f813a4f6a65c9724d4ecb02de3abe8acafc49fe0bb965ead5275",
+    "system-design.core.reliability.rollout-observability.q1": "6d5ef0065487a6409c7f09df490f446f1f2a1500840e15613c23eccb911a2e81",
+    "system-design.core.reliability.rollout-observability.q2": "8939b145872446c3b30f93d194cc12a911445c817ad198447fefd194fea9b539",
+    "system-design.core.reliability.rollout-observability.q3": "9e6bceadbfbb1b8b3186ff9664fa484dba339dfcfb3f8f78761dd7072f26c2ec"
+  },
+  "curriculumSha256": "215d8976bfa6c8aeaa273d55fff46b65247f9caa66a5a5097e2bb8ee7024be3a",
+  "topicCatalogSha256": "c4cda68df416c8feb8ff8b17b35d2eedaf219fff7f1aed15d5af8f18dabfe5df"
+}

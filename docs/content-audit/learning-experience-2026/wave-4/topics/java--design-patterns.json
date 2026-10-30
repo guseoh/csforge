@@ -1,0 +1,556 @@
+{
+  "area": "java",
+  "wave": 4,
+  "topic": "design-patterns",
+  "topicKey": "java.core.design-patterns",
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewedAt": "2026-10-14",
+  "reviewMethod": "기존1차메모를불변으로보존하고8C/40Q전체본문/모든정답/선택지rationale/modelAnswer/explanation/난도/모호성/중복/연결을현재직접읽었다. 후보2건은원문/공식계약대조로확정하고새P2두건을추가. 자동PASS없음.",
+  "topics": [
+    {
+      "key": "java.core.design-patterns",
+      "coverage": "8C/40Q전수.정책→상위골격→생성→외부번역→기능합성→접근중개→동기알림→상태전이의책임/실패경계를각각대조."
+    }
+  ],
+  "concepts": [
+    [
+      "java.core.design-patterns.strategy-pattern",
+      "TARGETED_ENHANCE",
+      "L2 CORE: 사용/선택 책임, 정책 위임, lambda/state 대비, 작은if 유지와 추상화 비용을 충분히 설명한다.",
+      "PriceCalculator price-policy.discount 흐름과 final 생성자 주입을 읽었다. setter 런타임교체가 필수 아니며 모든 분기 제거를 보장하지 않는다. long 금액 전체 overflow-safe 주장은 없어 기존 선택 보강 메모만 유지.",
+      "DIAGRAM: 실제 strategy SVG의 calculator→계약←두 구현, 조립 주입 화살표/본문 ASCII를 확인했다. source 의미 확인이며 새 render QA아님.",
+      "JLS9 역할/abstract method와 Tecoble Transportation/Command 관련 절을 직접 대조. Strategy부분은 유용하지만 Command예시 오타와 인자차이→overload필수 일반화는W4-JDPAT-002 P1로한정.",
+      "q1~q8 전체 정답/모든보기/model을 읽음. C구조,DComparator,A5,B합성,A100부작용,Scenario 정책/수수료/저장 경계가 일치한다."
+    ],
+    [
+      "java.core.design-patterns.template-method-pattern",
+      "TARGETED_ENHANCE",
+      "L2 STANDARD: 상위run의 고정순서와 hook, protected 결합, 독립변동축 조합 비용을 설명한다.",
+      "run validate→transform→save→afterSave와 final/hook 구별이 정확하다. 구체CsvImportJob는 validate구현을 생략했으나 생략표시가 없어 W4-JDPAT-003 P2 코드문맥보강.",
+      "NONE: 순서 TEXT와 상/하위 책임 비교, 압축×암호화 합성 대조가 충분하다.",
+      "JLS8.4.8 override, 8.4.3.1 abstract구현, 8.4.3.3 final규칙을 관련본문에 대조했다. 생성/override언어계약과 좋은template설계는 구별.",
+      "q1~q4의 D공통단계/D템플릿final/A독립정책합성/A실제상위순서통제를 개별검토, 정답과보기근거가 일치."
+    ],
+    [
+      "java.core.design-patterns.factory-pattern",
+      "TARGETED_ENHANCE",
+      "L2 CORE: 생성정책·구현선택·dependency조립·수명과 단순wrapper 비용 및Builder차이를 충분히 설명한다.",
+      "인스턴스create와 후속 PaymentProcessorFactory.create(type)가 충돌하여W4-JDPAT-001 P0. config를보유한Factory인스턴스로호출하는최소수정이며4Q와개념모델은유지.",
+      "NONE: 사용책임/Factory조립과 immutable/요청별mutable 수명TEXT가 목적에충분.",
+      "JLS15.9 constructor선택과15.12.3 TypeName.method static요구를대조. runtimeprobe는호출쟁점만최소재구성.",
+      "q1~q4 C생성책임/D역할반환/AParser공유Writer별도/A간접비용. Factory와생성형태를혼동하지않고객체상태독립수명검증."
+    ],
+    [
+      "java.core.design-patterns.adapter-pattern",
+      "KEEP",
+      "L2 STANDARD: 외부/내부 타입·단위·실패번역과 business정책경계를 충분히 설명한다.",
+      "Vendor charge와Money pay,catch번역및exact연산을읽었다. 30M×100=3B의int초과를거부하며모든오류뭉개기를권하지않음.",
+      "NONE: 내부→Adapter→vendor흐름과단위대응표/변환코드가충분.",
+      "JLS9 interface계약과Math multiplyExact/toIntExact overflow검사를본문/문항에개별대조.",
+      "q1~q5 B호환,D경계번역,Cexact,ADecorator구분,B벤더결합 모두보기/rationale/단일정답맞음."
+    ],
+    [
+      "java.core.design-patterns.decorator-pattern",
+      "KEEP",
+      "L2 STANDARD: 동일역할 위임·조합순서·상태공유·계약과Proxy의도비교가충분하다.",
+      "Logging try/finally와Metrics(Retry) vs Retry(Metrics) 호출범위를읽었다. 같은interface가자동행동대체/스레드안전을보장하지않는경계가정확.",
+      "NONE: wrapper호출사슬/측정범위1vs시도수의TEXT가충분.",
+      "FilterInputStream의in보관과read/close위임관련API를합성의학습예시에대조. 기능순서의구체보장은각wrapper계약이다.",
+      "q1~q5 정답C/D/C1,2/A/D는맞음. q3 A오답rationale는첫조합1만설명하여뒤2반박누락을W4-JDPAT-004 P2로개별분리;본문KEEP유지."
+    ],
+    [
+      "java.core.design-patterns.proxy-pattern",
+      "KEEP",
+      "L2 STANDARD: 접근중개/권한→lazy생성/우회경로/self-call/JDK구현구별을충분히설명한다.",
+      "MeasuringRepository try/finally와target검사순서,대상this.methodB가바깥proxy를거치지않는호출경로가정확. singleton/동시성보장으로일반화하지않음.",
+      "NONE: client→proxy→target/우회/대상내부호출TEXT가충분.",
+      "JDKProxy API의interface구현/InvocationHandler전달을대조. 임의concrete클래스상속으로확장하지않음.",
+      "q1~q4 B접근중개/Ainterfacehandler/C거부0허가합1/A동일역할을읽어각rationale/단일정답확인."
+    ],
+    [
+      "java.core.design-patterns.observer-pattern",
+      "KEEP",
+      "L2 STANDARD: 동기실행/지연·예외/구독수명/불변사실/명시orchestration와의경계를충분히설명한다.",
+      "순차listener호출중예외는후속중단,이미외부효과는자동취소아님. record의Instant/long사실과강한참조구독해제는타당하다.",
+      "NONE: fanout·동기A→B→C순서·독립후속vs선행필수흐름TEXT가충분.",
+      "Flow Publisher/Subscriber/Subscription 및request flow-control을publish-subscribe의보조API로확인. 단순동기observer가Flow의backpressure/비동기계약을자동보장하지않음.",
+      "q1~q5 C구독,C지연,D[AB]후[AC],C불변사실,Scenario2예외→3미실행/1기록잔존을개별검토."
+    ],
+    [
+      "java.core.design-patterns.state-pattern",
+      "KEEP",
+      "L2 STANDARD: 전이표·상태별응집·enum대안·실패상태보존·외부업무조정경계를충분히설명한다.",
+      "Document nextState반환→대입,금지전이선검사/throw및enum canCancel을읽었다. 여러class생성자체를좋은설계보장으로설명하지않음.",
+      "NONE: DRAFT/PUBLISHED/ARCHIVED전이표와현재객체→state TEXT가충분.",
+      "JLS8의class/상속/객체state기반만확인. State설계/업무전이표는명시계약이며언어의자동보장아님.",
+      "q1~q5 B응집/Aenum/AARCHIVED3번째거부/C전이표/서술형boolean조합축소를모두검토."
+    ]
+  ],
+  "questions": [
+    [
+      "java.core.design-patterns.strategy-pattern.q1",
+      "KEEP",
+      "C공통역할합성;A문맥상속/B내장분기/Dtemplate와의차이를각rationale가반박.",
+      "EASY구조목표,단일C/연결적합."
+    ],
+    [
+      "java.core.design-patterns.strategy-pattern.q2",
+      "KEEP",
+      "D비교정책위임;A저장구조/B정렬골격/Cequals교체가아님.",
+      "MEDIUM Comparator역할과정렬절차구별,q1과목표다름."
+    ],
+    [
+      "java.core.design-patterns.strategy-pattern.q3",
+      "KEEP",
+      "A5=apply10/2;B위임생략/C기본값/D이름있는class필수오해를반박.",
+      "MEDIUM 람다/단일메서드계약전제명확."
+    ],
+    [
+      "java.core.design-patterns.strategy-pattern.q4",
+      "KEEP",
+      "B협력합성vs상위골격;A관계뒤집음/C자동상위교체/D공통흐름이동강제틀림.",
+      "MEDIUM 패턴의도비교,런타임setter의무아님."
+    ],
+    [
+      "java.core.design-patterns.strategy-pattern.q5",
+      "KEEP",
+      "C변화없으면간접비용;Afake/B문맥교체/D여러구현은실제변동축.",
+      "EASY선택trade-off,단일C."
+    ],
+    [
+      "java.core.design-patterns.strategy-pattern.q6",
+      "KEEP",
+      "A B95+5=100오류,올바른90+5=95;B중복허용/C이름분기/D모두중복을반박.",
+      "HARD 반환계약/공통순서전제가충분."
+    ],
+    [
+      "java.core.design-patterns.template-method-pattern.q1",
+      "KEEP",
+      "D상위공통단계순서;A외부교체/Bprivate호출/C개별절차복제를반박.",
+      "EASY골격목표,단일D."
+    ],
+    [
+      "java.core.design-patterns.template-method-pattern.q2",
+      "KEEP",
+      "Dtemplate override금지;Ahook금지/B필드불변/C예외숨김보장이아님.",
+      "MEDIUMfinal역할,hook과구별."
+    ],
+    [
+      "java.core.design-patterns.template-method-pattern.q3",
+      "KEEP",
+      "A압축×암호화합성+run유지;B순서복제/C조합class계속/D검증뒤이동틀림.",
+      "HARD독립변동2×2전제/공통bug비용분명."
+    ],
+    [
+      "java.core.design-patterns.template-method-pattern.q4",
+      "KEEP",
+      "A실제로상위가순서통제;Babstract존재/Cprotected생성자/D같은interface만으론부족.",
+      "MEDIUM골격과문법이름구별."
+    ],
+    [
+      "java.core.design-patterns.factory-pattern.q1",
+      "KEEP",
+      "C선택/생성정책분리;A모든업무전이/Bsingleton/Dcaller직접선택은아님.",
+      "EASY 생성책임목표,단일C."
+    ],
+    [
+      "java.core.design-patterns.factory-pattern.q2",
+      "KEEP",
+      "D역할반환;A구체참조불가/B모두import/C같은필드배치강제틀림.",
+      "MEDIUM 선언계약/구현선택연결명확."
+    ],
+    [
+      "java.core.design-patterns.factory-pattern.q3",
+      "KEEP",
+      "AParser공유/Writer별도;B둘singleton/Csynchronized공유/D분기복제는독립버퍼미보장.",
+      "HARD 불변/문서가변상태수명전제명확."
+    ],
+    [
+      "java.core.design-patterns.factory-pattern.q4",
+      "KEEP",
+      "A별도생성책임없으면간접비용;Bprivate접근/C구체반환의무/Dstatic검증불가반박.",
+      "EASY 과도한구조도입trade-off."
+    ],
+    [
+      "java.core.design-patterns.adapter-pattern.q1",
+      "KEEP",
+      "B계약번역;ADecorator/CProxy/D상태전이와구별.",
+      "EASY단일B,형태보다의도."
+    ],
+    [
+      "java.core.design-patterns.adapter-pattern.q2",
+      "KEEP",
+      "DMoney→cents/예외경계;Acents노출/B도메인덮어쓰기/C단위무시반박.",
+      "MEDIUM 단위/정책경계,SDK long형전제충분."
+    ],
+    [
+      "java.core.design-patterns.adapter-pattern.q3",
+      "KEEP",
+      "Cexactlong곱→int범위;A잘라곱/B캐스팅무손실/D먼저int이면안전틀림;3Bint초과.",
+      "HARD 입력30M/호출전거부명시,유일C."
+    ],
+    [
+      "java.core.design-patterns.adapter-pattern.q4",
+      "KEEP",
+      "A다른계약호환vs같은계약기능;B동일interface의무/C번역decorator/D예외번역역할전환틀림.",
+      "MEDIUM 인접패턴목표대조."
+    ],
+    [
+      "java.core.design-patterns.adapter-pattern.q5",
+      "KEEP",
+      "Bvendor예외직접노출결합;A교체무수정/C공통예외자동/Dretry계약자동틀림.",
+      "EASY 경계역할,단일B."
+    ],
+    [
+      "java.core.design-patterns.decorator-pattern.q1",
+      "KEEP",
+      "C동일계약delegate합성;AAdapter/B조합하위class/D위임없는독립구현과구별.",
+      "EASY구조,단일C."
+    ],
+    [
+      "java.core.design-patterns.decorator-pattern.q2",
+      "KEEP",
+      "D측정횟수/재시도범위;A동일횟수/B하나무시/C가독성만영향을반박.",
+      "MEDIUM순서의미,개별기능contract전제."
+    ],
+    [
+      "java.core.design-patterns.decorator-pattern.q3",
+      "TARGETED_ENHANCE",
+      "C앞1뒤2및전체해설정확;B바깥모두반복/D앞뒤반대rationale맞음. A는첫1만설명하고둘째2를누락한W4-JDPAT-004 P2.",
+      "HARD 새target/counter독립전제명확,정답변경불필요/오답feedback만보강."
+    ],
+    [
+      "java.core.design-patterns.decorator-pattern.q4",
+      "KEEP",
+      "A기능합성vs접근중개;B다른interface만/C상태유무강제/D무조건위임을반박.",
+      "MEDIUM 형태아닌의도목표."
+    ],
+    [
+      "java.core.design-patterns.decorator-pattern.q5",
+      "KEEP",
+      "DFIXED는원본문자열변환계약위반;A인터페이스/B자동Adapter/Cfinal보장아님.",
+      "MEDIUM 명시행동계약,모든decorator매번delegate문법의무아님."
+    ],
+    [
+      "java.core.design-patterns.proxy-pattern.q1",
+      "KEEP",
+      "B권한/cache/lazy중개;AAdapter/CState/DFactory구별.",
+      "EASY Proxy접근역할."
+    ],
+    [
+      "java.core.design-patterns.proxy-pattern.q2",
+      "KEEP",
+      "AJDKinterfacehandler;Bconcrete상속/C모든private자기호출/D인자관찰불가반박.",
+      "MEDIUM JDKAPI제약명확;handler Object메서드처리를배제하는주장아님."
+    ],
+    [
+      "java.core.design-patterns.proxy-pattern.q3",
+      "KEEP",
+      "C검사먼저거부0→첫허가1후재사용;A생성undo/B미리생성lazy/D매번생성재사용틀림.",
+      "HARD순차호출전제있고동시성보장과혼동없음."
+    ],
+    [
+      "java.core.design-patterns.proxy-pattern.q4",
+      "KEEP",
+      "A동일역할;B비용제거/Ctarget획득불필요/Didentity같음반박.",
+      "MEDIUM interface와별도객체identity구별."
+    ],
+    [
+      "java.core.design-patterns.observer-pattern.q1",
+      "KEEP",
+      "C구독목록/알림시점;A모든subscriber상태대입/B비교집계/Dsingleton강제틀림.",
+      "EASY 구조목표."
+    ],
+    [
+      "java.core.design-patterns.observer-pattern.q2",
+      "KEEP",
+      "C동기지연/실패전파;A자동별도thread/B자동구독제외/D기다리지않음반박.",
+      "MEDIUM 동기전제/실행모델구분."
+    ],
+    [
+      "java.core.design-patterns.observer-pattern.q3",
+      "KEEP",
+      "D첫AB/둘째AC;A현재snapshot바뀜/B원본변경영구무시/C등록자동거부반박.",
+      "HARD 시작snapshot/첫알림에서만A변경조건충분."
+    ],
+    [
+      "java.core.design-patterns.observer-pattern.q4",
+      "KEEP",
+      "C필요immutable사실;A실행중collection공유/B모든내부참조/Dfinaldeepimmutable반박.",
+      "MEDIUMpayload소유권,단일C."
+    ],
+    [
+      "java.core.design-patterns.state-pattern.q1",
+      "KEEP",
+      "B상태별행동전이응집;A검사caller전가/C정책선택/Dclass이름이동만으론불충분.",
+      "EASY의도,단일B."
+    ],
+    [
+      "java.core.design-patterns.state-pattern.q2",
+      "KEEP",
+      "A작은enum명령;B문자열setter/Ccaller중복검사/D항상성공은불변식우회.",
+      "MEDIUM 구현규모trade-off."
+    ],
+    [
+      "java.core.design-patterns.state-pattern.q3",
+      "KEEP",
+      "A ARCHIVED/3번째archive거부. B모두성공/C이후모두거부/D마지막거부틀림.",
+      "HARD 예외catch계속/실패상태유지전제가충분."
+    ],
+    [
+      "java.core.design-patterns.state-pattern.q4",
+      "KEEP",
+      "C허용/금지/다음상태테스트;A참조자동삭제/B모두허용/D조건검토불필요아님.",
+      "MEDIUM표의검증효과."
+    ],
+    [
+      "java.core.design-patterns.strategy-pattern.q7",
+      "KEEP",
+      "model은독립수수료정책/공통입출력/작은if비용;해설과일치.",
+      "SCENARIO MEDIUM,전제명확;choices/acceptedAnswers없음."
+    ],
+    [
+      "java.core.design-patterns.strategy-pattern.q8",
+      "KEEP",
+      "model의할인결정반환/Checkout공통전이저장/부수효과가정책이면명시조건이타당.",
+      "SCENARIO HARD,무조건pure강제가아닌명시계약판단;choices없음."
+    ],
+    [
+      "java.core.design-patterns.observer-pattern.q5",
+      "KEEP",
+      "model은2예외caller전파/3미실행/1외부기록자동rollback없음;해설맞음.",
+      "SCENARIO HARD 예외미처리·등록순서·외부기록전제충분."
+    ],
+    [
+      "java.core.design-patterns.state-pattern.q5",
+      "KEEP",
+      "model의단일상태/전이응집/불가능조합축소와작은enum대안이타당.",
+      "DESCRIPTIVE MEDIUM 제시모델의허용조합기준;모든paid+cancelled현실업무가불가능이라는일반화아님."
+    ]
+  ],
+  "sources": [
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html",
+      "CURRENT_VERIFIED",
+      "JLS9 interface구현역할을PaymentGateway→VendorAdapter의내부계약보존에대조했다. 같은URL의Strategy관련성확인을빌리지않는다."
+    ],
+    [
+      "https://tecoble.techcourse.co.kr/post/2021-10-04-strategy-command-pattern/",
+      "CURRENT_VERIFIED",
+      "Transportation→Bus/Bicycle전략위임은학습에관련되나Command부분의뒤바뀐account/Account와method오타,다른인자→overload필수일반화가있어W4-JDPAT-002 P1로한정한다."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.8",
+      "CURRENT_VERIFIED",
+      "JLS8.4.8 override계약을run의호출순서와열린hook구현에대응시켰다. final/abstract쟁점은별도JLS8근거와제한probe."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.9",
+      "CURRENT_VERIFIED",
+      "JLS15.9.3 constructor선택/인자전달을Factory의구체객체선택/조립예시에대조했다. static호출가능여부는별도15.12.3근거다."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Math.html",
+      "CURRENT_VERIFIED",
+      "Math API의multiplyExact(long,long)와toIntExact(long)의ArithmeticException을유로→센트/int범위문제에대조했다."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/FilterInputStream.html",
+      "CURRENT_VERIFIED",
+      "FilterInputStream의protected in보관/read/close위임계약을같은stream역할의wrapper합성예시에대응시켰다. 모든wrapper순서의동등성을주장하지않는다."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/reflect/Proxy.html",
+      "CURRENT_VERIFIED",
+      "JDKProxy의지정interface구현과method/args→InvocationHandler전달을동적Proxy문항에대조했다. 임의concrete상속/대상내부this호출가로채기를보장하지않음."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/Flow.html",
+      "CURRENT_VERIFIED",
+      "Flow Publisher/Subscriber/Subscription과request제어를publish-subscribe표준API보조로대응시켰다. 단순동기listener모델과Flow의backpressure/전달계약을구별한다."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html",
+      "CURRENT_VERIFIED",
+      "JLS8 class/member/instance구현기반을DocumentState의객체별행동예시에대응시켰다. 특정업무전이/enum선택은본문의설계계약으로구별한다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12.3",
+      "CURRENT_VERIFIED",
+      "TypeName.method에는static선언이필요함을Factory호출쟁점에직접대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.3.1",
+      "CURRENT_VERIFIED",
+      "구체하위class의abstract구현의무를Csv예시에대조."
+    ]
+  ],
+  "referenceAccess": {},
+  "findings": [
+    {
+      "id": "W4-JDPAT-001",
+      "severity": "P0",
+      "contentKeys": [
+        "java.core.design-patterns.factory-pattern"
+      ],
+      "file": "content/java/design-patterns/factory-pattern.md",
+      "quote": "PaymentProcessorFactory.create(type)",
+      "additionalEvidence": [
+        {
+          "file": "content/java/design-patterns/factory-pattern.md",
+          "quote": "PaymentProcessor create(PaymentType type)"
+        }
+      ],
+      "problem": "본문위의create는config를보유한Factory인스턴스메서드인데뒤에서클래스이름으로호출한다. 해당선언에static이없어같은모델로는컴파일불가다. 기존1차후보를독립대조해확정했으며Factory모델과4Q는맞다.",
+      "action": "config로Factory인스턴스를생성한뒤factory.create(type)를보이는최소호출수정. 생성정책/수명설명및Question유지.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12.3"
+      ],
+      "runtimeEvidence": "Temurin javac25.0.4.1 최소호출재구성에서non-static compile error. 전체본문compile주장아님.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W4-JDPAT-002",
+      "severity": "P1",
+      "contentKeys": [
+        "java.core.design-patterns.strategy-pattern"
+      ],
+      "file": "content/java/design-patterns/strategy-pattern.md",
+      "quote": "https://tecoble.techcourse.co.kr/post/2021-10-04-strategy-command-pattern/",
+      "problem": "관련글Strategy부분의정책위임은유용하나Command예시에account타입/Account변수뒤바뀜과scratchAllLotery철자불일치가있다. 서로다른인자가필요하면Strategy는overload밖에없다는설명은입력객체/전략자체상태대안이가능함을누락한다. 외부자료의관련부분과한계를구분해야한다.",
+      "action": "관련Strategy부분과Command코드미완성/일반화한계를relationNote로한정하거나더정확한한국어자료로교체. 정확한canonicalStrategy본문/8Q유지. #201/#222 출처1관계조정.",
+      "externalEvidence": [
+        {
+          "url": "https://tecoble.techcourse.co.kr/post/2021-10-04-strategy-command-pattern/",
+          "checkedAt": "2026-10-14",
+          "sourceLocation": "Command예시122/126/171행및어떻게와무엇229행",
+          "shortQuote": "private account Account;"
+        }
+      ],
+      "followupIssues": [
+        201,
+        222
+      ]
+    },
+    {
+      "id": "W4-JDPAT-003",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.design-patterns.template-method-pattern"
+      ],
+      "file": "content/java/design-patterns/template-method-pattern.md",
+      "quote": "class CsvImportJob extends ImportJob {",
+      "additionalEvidence": [
+        {
+          "file": "content/java/design-patterns/template-method-pattern.md",
+          "quote": "protected abstract void validate();"
+        }
+      ],
+      "problem": "구체CsvImportJob의후속예시는transform/afterSave만보이고필수validate구현은생략한다. 생략표시없이완전class형태여서앞ImportJob과연결해실행하면validate미구현컴파일오류. 핵심순서/hook모델은맞고명시적설명예시의작은문맥공백이다.",
+      "action": "validate등다른필수구현을생략한발췌라고한문장표시하거나짧은validate구현추가. 전체재작성/4Q변경불필요하며P2로이전PASS를취소하지않음.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.3.1"
+      ],
+      "runtimeEvidence": "본문ImportJob/CsvImportJob발췌에ParsedData/parseCsv/audit미정의협력자만보충했으며validate미구현compile error. 전수코드실행아님.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W4-JDPAT-004",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.design-patterns.decorator-pattern.q3"
+      ],
+      "file": "content/java/design-patterns/questions.json",
+      "quote": "Metrics가 바깥이면 delegate로 한 번 진입하고 내부 Retry가 대상을 재호출하므로 counter는 한 번 증가한다.",
+      "problem": "A보기는두조합모두1이라틀리지만rationale는첫조합이1이라는맞는부분만설명한다. 뒤Retry(Metrics)의counter2를반박근거로말해야한다. 정답C/전체해설은정확하다.",
+      "action": "A의rationale에두번째조합은각재시도마다Metrics를거쳐2가된다는한문장추가. 정답/난도/본문유지.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "carriedForwardFindings": [],
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/java/strategy-pattern.svg",
+      "sourceSha256": "d57c31f6a12912252704f49c9e8740ba02238e8eee6d17d149c56c41a70b54bd",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "basis": "960×500 viewBox/title/desc/전체rect/text/path/marker소스를읽음. calculator(55,105)→policy(365,105) 실선,두구현(665,70/235)→계약점선과조립박스(180,355)주입화살표가역할분리를보인다. Fixed구현은본문계약의다른정책예시. 실제pixel/Reader/mobile/themeQA는미실시."
+    }
+  ],
+  "sourceHashes": {
+    "java.core.design-patterns.strategy-pattern": "5307ec30269d51a68dabee6848808b1bd653874fb0a27b657bc575e012cff8f1",
+    "java.core.design-patterns.template-method-pattern": "44b1b34e82d9be7f19d754c8108c9601745aea677d3f4b232849ea3dc2fbbfc6",
+    "java.core.design-patterns.factory-pattern": "e6cc2cb83a0bd64973054fa0f279229f9281aa787f36dfd434a4d43c0e885bd5",
+    "java.core.design-patterns.adapter-pattern": "c13fc670fd1e68c8b26b190aa6381534f95d759217fc288ae25c3736eb2170fc",
+    "java.core.design-patterns.decorator-pattern": "1dc2d3dd0985660ab6cc51ed857977f1bbedeb6220165a6dde280f641ac1d44c",
+    "java.core.design-patterns.proxy-pattern": "673b4a11f48a009a32d9cd55827a91eefe48b82de3261dddafbdea9dae5460a4",
+    "java.core.design-patterns.observer-pattern": "b299f48e6f3360202f6043f7d6a8eb1d4f970bb914442555f095f05248ffa8db",
+    "java.core.design-patterns.state-pattern": "0d4056f0e1ffc2b1407654236e762969b1a22d9920eb2e81d988ca11b272fea2",
+    "java.core.design-patterns.strategy-pattern.q1": "1c773d2ec02fe4ae6202e4a220115024a6b4af7ab4e0c675dee62661ce500ae7",
+    "java.core.design-patterns.strategy-pattern.q2": "cd14372dfd820cec692260ee22e1a4c44701082f4001b2b00a221e0521def203",
+    "java.core.design-patterns.strategy-pattern.q3": "17102953b2d26c0094e4d7524edf63fc4804b2be34408026cab6410c5ebbd3da",
+    "java.core.design-patterns.strategy-pattern.q4": "e98f96f20f05f548850a7d4a3b8fc37ea438b60f6a6b4bcc9f15f013bfe8843c",
+    "java.core.design-patterns.strategy-pattern.q5": "0cd25fd9386d6c8e79a3642062af709a136c583d8c85cc2425ec7bb1b64989c3",
+    "java.core.design-patterns.strategy-pattern.q6": "f25ef50929614ee64235ed090eee23146a253b7c50546fabc712b6158747b921",
+    "java.core.design-patterns.template-method-pattern.q1": "6432c7373b387269edbce20b2108538cdbaa739c8a49a6bb0de51d3227d58942",
+    "java.core.design-patterns.template-method-pattern.q2": "3c5abeafed3d3167cded66cdb680d576ff2de7e05bd498245e832b111df620da",
+    "java.core.design-patterns.template-method-pattern.q3": "6b407e5b4bd874f5eb8d29cc3424582fd6761c569ee13c6ed76ca2df74808fe2",
+    "java.core.design-patterns.template-method-pattern.q4": "624aee003f09eff167ee45cfebb29b3e0028bb38bffee3c1799f82c523bca4f0",
+    "java.core.design-patterns.factory-pattern.q1": "9d59e215b10443ccb80e426e3fc87a86ae882f793c916d7513e87a98ce25fdf5",
+    "java.core.design-patterns.factory-pattern.q2": "3f2dfa7e3bab5353c444c216e4c72aa17431c5e22d4b5a65e17da9bcb4a40db5",
+    "java.core.design-patterns.factory-pattern.q3": "12d27ebaf4fcbefa7add7a753e0229dc282fbb1b87596cb23377fcd0f04049d1",
+    "java.core.design-patterns.factory-pattern.q4": "3380196890e9528b19b4ec0991fb2e5a3310023e91fef3f4205f5ae0224dfd32",
+    "java.core.design-patterns.adapter-pattern.q1": "aff1e4e2efdbc935715118e8b6aac76b0e9888d9e1ade8949b641e882037eb78",
+    "java.core.design-patterns.adapter-pattern.q2": "fed27acf6de602c91953016e93a3fe6e76883874bd76e1ff439a8d76c72e6d10",
+    "java.core.design-patterns.adapter-pattern.q3": "32f1b09a057690bcd1f3ed2287aa756a8b90677dd43f503cc00bb5b1cc433c70",
+    "java.core.design-patterns.adapter-pattern.q4": "6f1e751c50b2456dbfa5474e7464e2101bb50f13500d364ee8b96769e1f1b802",
+    "java.core.design-patterns.adapter-pattern.q5": "a9ca1d1eb09d4cb8b517a3c521173a9fdf33aad59e004a2ea4873ab6fb4c135e",
+    "java.core.design-patterns.decorator-pattern.q1": "5a33260ae241fb52988af2dc46e2154175ab30737b1dd65c958ab3d245369383",
+    "java.core.design-patterns.decorator-pattern.q2": "b9270ff2c88b5bcbe01b88a8f57f00212b14b6bf0781d3bdc4bac09304eb363e",
+    "java.core.design-patterns.decorator-pattern.q3": "5ccd46082f0ef7397fd9b6497a5f59ec7a101e7b1737ed5fc91dbd0adf6f6ebd",
+    "java.core.design-patterns.decorator-pattern.q4": "c280498e4e820850e4ca468788e6f7e6b6fa3ca2635e63c4209f910d5d193a3f",
+    "java.core.design-patterns.decorator-pattern.q5": "e07e346cde9dc4d7b69ac1f04e171de2fbda5192bec41efe0b102ab898032c1b",
+    "java.core.design-patterns.proxy-pattern.q1": "c272b7055726554eec45f0df95c49253eada9f1f66d5516aa048269d062ec335",
+    "java.core.design-patterns.proxy-pattern.q2": "675ffc28a8fa1db52460e9a8bbbf891a2df0af411bdfeed4e49a755fff680576",
+    "java.core.design-patterns.proxy-pattern.q3": "26d0306dcdb883412536cf76d643b115dd94e603e36dd605e20ea1ef42241265",
+    "java.core.design-patterns.proxy-pattern.q4": "22c4b4af6a0e557283b0de090b1f5bce4204af06e219d6ee12703ef89ea7305b",
+    "java.core.design-patterns.observer-pattern.q1": "fd16f5c07df60fea600f666c8a57f95b480e6ec210845d929113c305bee02a1a",
+    "java.core.design-patterns.observer-pattern.q2": "903ceee6a15686472a06e3741d37ab68a709ae56a5e927efcc15587a90d87311",
+    "java.core.design-patterns.observer-pattern.q3": "60f43f4a3d756245ee06fd1f8f370b3757c9417afc07ffd6d15c626bb124a970",
+    "java.core.design-patterns.observer-pattern.q4": "dfefb3d74ea978c61275cfce7cf065225bb1bda813187c53b1783c7a01a08457",
+    "java.core.design-patterns.state-pattern.q1": "479b7e1329dc7a78ea063c3c666068ac3ee10d342dd146d926cf113dfa4f6e24",
+    "java.core.design-patterns.state-pattern.q2": "acc64d570484cfa03745f2fc6d48224931bd62dac151174f41b6ba215d2fc4f8",
+    "java.core.design-patterns.state-pattern.q3": "6441f7b4fcca0d7f8333874596f2bcc44a4815ffff2944124e40150a838669b8",
+    "java.core.design-patterns.state-pattern.q4": "35361addada2e2ffd95a1b43f57a188201dbbc37837a861035ba64b224b72bbc",
+    "java.core.design-patterns.strategy-pattern.q7": "c309cb8f4cb5bdb0cfac0faf9e1dfdcc12b9f0cee3dd868e406f3d6d29ed2486",
+    "java.core.design-patterns.strategy-pattern.q8": "35dd53f087ed7231a8b1163a0af5f482338b219f8e02367fe396173c613b707b",
+    "java.core.design-patterns.observer-pattern.q5": "a87c8c0d35dfda2e6016d4e83a43770ccabaacc0aa40d340289d8120fac30bb3",
+    "java.core.design-patterns.state-pattern.q5": "a9dd89a9b17ed6c276475a9189e99dcd8fe178e7f54ce2a50bfbe293f06d8eb8"
+  },
+  "curriculumSha256": "0aad122de20d9205274f96887b562473a3a23de3dd406cbd684031438d4bbe0c",
+  "topicCatalogSha256": "2a167f43030df4dfc9742225d86dfcefdcd5cff2fc0d702c0b9101e00e6b172c",
+  "priorQualityReview": {
+    "pr": 178,
+    "evidence": "기존Wave/PR178PASS와1차design메모는이력으로보존. 새판정은현재전체직접읽은근거이며기존후보를중복신규로다시세지않음. 기존메모C6KEEP/2보강Q40KEEP후보와차이는추가발견P2의template1C/decorator1Q뿐."
+  },
+  "probeEvidence": {
+    "file": "docs/content-audit/learning-experience-2026/wave-4/probes/check-design-patterns.py",
+    "sourceSha256": "c515998929af38e11afa90af266f2c0d991701549042bc7cee27a6f18767257f",
+    "command": "python docs/content-audit/learning-experience-2026/wave-4/probes/check-design-patterns.py",
+    "runtime": "Temurin javac25.0.4.1, Windows 승인된임시디렉터리compile",
+    "exitCode": 0,
+    "stdout": [
+      "javac 25.0.4.1",
+      "factoryClassCall=compile-error:non-static",
+      "csvExample=compile-error:missing-validate"
+    ],
+    "limits": "두쟁점만실행,외부자료전체코드/40Q전수실행/성능/ReaderQA아님."
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "datasetSha256": "3b2fddcc6f496ac6b17456422f554c3428ade4657a07eb35e13b96055c85aea0",
+  "rubricSha256": "174227dcb976a20e5c29f649b04897aba812fcd076358d45ef83690bb302c378",
+  "rubricVersion": "rationale-quality-v2",
+  "developmentCommit": "c59c96c499a50db7dce6b18dcfa91c37c2c50f5b",
+  "developmentRun": 35960273791,
+  "frozenAtUtc": "2026-09-24T05:31:37Z"
+}

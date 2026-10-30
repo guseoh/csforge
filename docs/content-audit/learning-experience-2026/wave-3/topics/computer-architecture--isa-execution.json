@@ -1,0 +1,254 @@
+{
+  "area": "computer-architecture",
+  "topic": "isa-execution",
+  "topicKey": "computer-architecture.core.isa-execution",
+  "coverage": "6 Concept와18 Question 전체를 직접 읽었다. ISA/구현→encoding→register→논리실행→주소계산→호출ABI 순서의 책임이 분리되어 있다. RISC-V 공식 현재판의 programmer model/format/load-store/branch fault/JALR와 ABI register/procedure 절을 실제 확인했다. 명령어 형식 그림은 실제 bit 배치가 아닌 개념 그림이라고 표시되어 있어 오류로 판정하지 않는다. procedure의 핵심 SP 상태 변화 누락만 P1로 선별한다.",
+  "concepts": [
+    [
+      "computer-architecture.core.isa-execution.isa-vs-microarchitecture",
+      "KEEP",
+      "L1의 software-visible ISA와 구현 선택 경계를 달성한다. 성능과 정확성을 다른 검증 대상으로 연결한다.",
+      "ADD의 결과와 pipeline/cache/predictor 구현, 같은instruction수의다른CPI/시간, 배포확장지원과실측을 일관되게 구별한다. RISC-V 공식 intro의 구현을특정하지않는 interface 설명과 맞으며한국어 원인흐름도 충분하다.",
+      "TEXT 계약이지만 이 관계는 ISA계약/다른구현의 비교 문단과 구체 ADD 예로 충분히 전달된다. 그림 개수만으로 새 결함을 만들지 않는다.",
+      "canonical intro 직접도구접근은실패했으나 같은공식 현재 v20260120 intro의 software-visible/다양한microarchitecture 절을읽었다. 의미검증과짧은URL접근미확정을분리한다.",
+      "q1 ISA/구현분류, q2 같은명령수의성능차이, q3 이식정확성/실측분리로 학습목표를검사한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.instruction-format",
+      "KEEP",
+      "L1의 opcode/register/immediate/function 역할과 제한된encoding폭을달성한다.",
+      "RV32I의32bit/R-I-S유형과5bit32개 선택, immediate제한→추가명령 trade-off가 정확하다. 필드그림은 실제배치다름을명시해opcode의잘못된 실제위치주장을피한다. 실제배치 전체튜토리얼은L1필수가아니다.",
+      "TEXT의필드개념분해가형식별실제배치와분리되어효과적이다. bit인덱스그림추가는선택적이다.",
+      "canonicalrv32redirect를따라 실제공식 v20260120의baseformat/5bitregister/signextendedimmediate 절을읽었다.",
+      "q1 필드조합수, q2 signed12bit범위, q3 고정인코딩budget/밀도/해독절충이구별된다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.registers",
+      "KEEP",
+      "L1의명령어이름으로관찰하는register와memory/cache/spill을충분히설명한다.",
+      "load→register산술→store 및컴파일러spill, ABI의역할위임이정확하다. physicalrenamefile과ISAregister전체를동일시하는주장은본문에없다. q3의physical용어는컴파일러할당문맥으로읽고아키텍처레지스터를명시한모델과대조했다.",
+      "TEXT의memory→register→memory상태가주소/피연산자역할을보여준다.",
+      "공식ABI register 표의x0/ra/sp/a/s/t와보존조건을 실제읽었다. ISAregister 접근과ABI이름/보존약속을동일계층으로쓰지않는다.",
+      "q1 cache와구별, q2 s0-s11보존이름은Reference/뒤호출심화응용, q3 실제live-range/spill대소스변수수 구별이다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.fetch-decode-execute",
+      "KEEP",
+      "L1의PC인출/해독/실행과다음PC·예외목표를달성한다. 논리모델과OOO겹침을구별한다.",
+      "ADD/load효과, branch순차/target, unsupported/메모리fault와OS정책경계가정확하다. 공식RV32I targetinstructionfault와misalignedbranch자체fault의차이에반하는주장이없다. 실CPU모든단계의cycle순서를보장하지않는다.",
+      "DIAGRAM의논리단계및true/falsePC가지가초기학습에충분하며예외본문과연결된다.",
+      "실제RV32I registerPC/currentinstruction·controltransfer·targetpagefault 절을읽었다. fetch-decode는architectural논리추론이지명세의특정pipeline구현이아니다.",
+      "q1 takenbranch의PC,q2 fetch성공후fault,q3 branch1800→targetfetchfault→handler/retry조건을검사한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.addressing-modes",
+      "KEEP",
+      "L2의immediate/register/base+offset과고수준indirect분류의ISA차이를달성한다.",
+      "1000+12=100C, 배열base+index*size를산술후loadbase로사용, 단일고수준역참조가여러load일수있음과EA성공≠메모리성공을구별한다. 연결q3모델의두load가이경계를구체화한다. 모든ISA에복합indexed명령이있다고약속하지않는다.",
+      "TEXT의값원천/EA식과수치예가충분하며pointerchase두load의추가그림은선택적이다.",
+      "RV32I load/store의signextended12bitoffset,EEI별미정렬행동을 실제대조했다. 일반indirect분류와실제encoding구분이출처와맞다.",
+      "q1 decimal24→1018,q2 index7*4=28,q3 nextpointer→value두load/fault로범위를확장한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.procedure-call-machine-level",
+      "TARGETED_ENHANCE",
+      "L2의반환주소/인자/보존책임은충분하나objective의스택포인터호출·복귀변화는본문/그림에없다. W3-CA-001의작은상태예가필요하다.",
+      "ISA jump/link와ABI의a0-a7/callee/caller-saved분리, leaf의스택생략가능성, nonleaf에서ra보존설명은정확하다. 재귀프레임도 개념만나열해 실제SP복구와공간수명을추론할근거가부족하다.",
+      "DIAGRAM의PC/ra/인자와f3→f2→f1프레임은유지한다. entrySP→frame할당SP→nestedcall보존→복원SP의한timeline/표를추가할후보다.",
+      "공식procedure2.1.1의하향stack,standardABI의16byte정렬/수명·s계열복원·인자규칙을 실제읽어SP누락을확인했다. 모든ABI의일반보장으로확대하지않는다.",
+      "q1 ISA/ABI조합,q2 보존주체,q3 s1포인터손상은정확하다. q2와q3는규칙설명/실패응용으로구별되나SP상태목표는직접검사하지않는다."
+    ]
+  ],
+  "questions": [
+    [
+      "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q1",
+      "KEEP",
+      "B ADD의미/깊이선택이맞다. A고정cache/Cpredictor계약/D동일cycles는구현을ISA로일반화한다. 모든rationale와explanation은그보장을분리한다.",
+      "EASY 분류로B만성립한다. 특정ISA의성능명세예외를부정하는전면주장이아니다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q2",
+      "KEEP",
+      "모델/해설은같은명령수에도cache/pipeline/predictor→CPI/stall차이로시간이다를수있음을올바르게설명한다.",
+      "MEDIUM 원인비교, q1분류를실행비용에응용한다. 주파수까지모두나열해야만정답이라는닫힌rubric이아니다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q3",
+      "KEEP",
+      "모델/해설은40ns가ISA계약이아니며확장/ABI정확성확인과B작업부하실측을분리한다. 이미확장지원조건이주어졌어도ABI·환경확인은남는다.",
+      "HARD 이식의정확성/성능두축판단이다. q2보다적용범위가다르고성능상한보장을만들지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.instruction-format.q1",
+      "KEEP",
+      "A32=2^5가맞다. B16/C5/D64는각4bit/폭과개수혼동/6bit이며모든rationale와설명이계산에맞다.",
+      "EASY 패턴수명시, 레지스터필드가모든reserved제약까지고려한ISA유효명령수라는뜻은아니다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.instruction-format.q2",
+      "KEEP",
+      "signed12bit2C=-2048..2047이며accepted세문자열모두전체범위를답한다. 해설-2^11..2^11-1이맞다.",
+      "MEDIUM fixedwidth목표의ISA응용이다. 분기offset의implicitlowbit까지묻는문제가아니므로12bit그대로맞다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.instruction-format.q3",
+      "KEEP",
+      "고정32bitbudget에서더넓은opcode/reg가imm/다른공간을압박하고추가format/명령수/코드밀도·해독비용이달라질수있다는모델/해설이타당하다.",
+      "HARD 여러제약의절충추론, 특정ISA의정확한비트재설계를요구하지않아열린답을self-check하는형식이적절하다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.registers.q1",
+      "KEEP",
+      "C ISA이름상태대cache사본이맞다. A관찰성역전/B동일인덱스/D압박시cache용량증가는false이며모든rationale와explanation이역할차이를설명한다.",
+      "EASY 단위분류. cache를직접피연산자로선택하는일반보장을부정하는조건이며cache관리명령존재와충돌하지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.registers.q2",
+      "KEEP",
+      "accepted의s0-s11은공식ABI표의callee-saved정수계열이다. 바꾸면복구한다는해설도맞다. ra/a/t를accepted하지않는다.",
+      "MEDIUM은상태추론보다ABI이름회상에가깝다. stable단답이며연결Reference와뒤호출Concept를통한응용이라는한계를기록한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.registers.q3",
+      "KEEP",
+      "모델/해설은spill의store/reload비용과JITlive-range/inline/fold/allocation변화를제시한다. 소스변수수와실ISAregister압박의1:1추측을금지한다. 해설physical은할당된기계register문맥이며renamefile최대수로정답을만들지않는다.",
+      "HARD 실행메모리비용과관찰증거선택을함께추론한다. 실제JIT코드를실행했다고기록하지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.fetch-decode-execute.q1",
+      "KEEP",
+      "C 다음PC가맞다. A DRAM전체/B모든GPR/DISA이름변경은분기의필수효과가아니다. 모든rationale/해설은takenbranch와잘못인출한경로폐기를분리한다.",
+      "EASY target≠sequential조건으로유일하다. 실제예측기의임시PC값을묻지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.fetch-decode-execute.q2",
+      "KEEP",
+      "모델/해설의잘못된encoding또는unsupported와execution메모리권한/매핑fault예가맞다. 인출완료를전체완료로일반화하지않는다.",
+      "MEDIUM 두실패경로예,모든reservedencoding이반드시illegaltrap이라는RISC-V비보장으로단정하지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.fetch-decode-execute.q3",
+      "KEEP",
+      "모델/해설의1000branch→1800next→targetfetchpagefault→handler/해결시retry순서가맞다. 공식spec은targetaccess/pagefault를targetinstruction에보고하며그흐름과일치한다.",
+      "HARD takenbranch와새인출실패의다단계순서다. unmapped가반드시복구된다는보장은없고가능조건을명시한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.addressing-modes.q1",
+      "KEEP",
+      "B1018이decimal24의base합이다. Ahex혼동/C음수offset/Dbase누락이며모든rationale·해설의수치가맞다.",
+      "EASY signedoffset양수값을명시해유일하다. 0x1018주소의실제접근성공을묻지않는다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.addressing-modes.q2",
+      "KEEP",
+      "index7*4=28byte이며accepted세값과해설모두base에더할offset을답한다.",
+      "MEDIUM 배열scale적용, 최종201C주소가아니라offset질문으로모호하지않다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.addressing-modes.q3",
+      "KEEP",
+      "모델/해설의nextpointer첫load→그값base의value두번째load가가능하며각EA/변환/권한/정렬fault는별도다. 항상정렬fault라는단정없이가능성을제시한다.",
+      "HARD 고수준표현과ISA복수접근·실패경계를구별한다. 가능한흐름을요구하므로컴파일러가항상두load라는잘못된보장은없다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.procedure-call-machine-level.q1",
+      "KEEP",
+      "D link명령+ABI약속이맞다. A모든register보존/B모두자동stack저장/Cra불가능은false이며모든rationale를ABI표/JAL로대조했다. 해설s계열보존도정확하다.",
+      "EASY RISC-V표준규약을명시한다. ISA가ra/sp전용register를강제한다는오해를피한다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.procedure-call-machine-level.q2",
+      "KEEP",
+      "모델/해설은호출뒤필요한caller-saved는caller가미리보존,바꾼callee-saved는callee가복원한다. 별도컴파일코드의공통약속이유도설명한다.",
+      "MEDIUM 두책임비교다. q3와유사규칙이나원칙설명과포인터실패응용으로구별된다."
+    ],
+    [
+      "computer-architecture.core.isa-execution.procedure-call-machine-level.q3",
+      "KEEP",
+      "s1을변경미복구하면callee-saved위반으로caller포인터가손상된다는모델/해설이공식ABI와일치한다. 모든명령정상과호출약속정상은별개다.",
+      "HARD라는label에비해단일보존규칙응용이중심이다. 채점/정답문제는없고더많은숨은ABI조건을문항에강제하지않는다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://docs.riscv.org/reference/isa/unpriv/intro.html",
+      "CURRENT_VERIFIED",
+      "직접legacytarget접근은도구실패. 같은공식 v20260120 intro의software-visibleinterface와다양한구현허용/구현의존제거절을실제읽어의미를대조했다. 짧은URL도착은별도미확정이다."
+    ],
+    [
+      "https://docs.riscv.org/reference/isa/unpriv/rv32.html",
+      "CURRENT_VERIFIED",
+      "실제redirect링크를따라 v20260120 RV32I2.1의architecturalregister/format/signextension/load-store/branchtargetfault/JAL/JALR관련절을읽었다. 전반부와load-store부분모두직접확인했으며spec전체를승인하지않는다."
+    ],
+    [
+      "https://docs.riscv.org/reference/abi/v1.0/riscv-cc-register-convention.html",
+      "CURRENT_VERIFIED",
+      "실제integerregister표의ra/sp/a0-a7/s0-s11및보존조건을읽었다. FP/vector의구판규칙전체를현재판일반보장으로인용하지않는다."
+    ],
+    [
+      "https://docs.riscv.org/reference/abi/v1.0/riscv-cc-procedure-calling-convention.html",
+      "CURRENT_VERIFIED",
+      "실제2.1/2.1.1의register보존,인자전달,하향stack와128bit정렬,SP아래데이터수명제약을읽었다. 표준ABI의설명이며모든ISA/ABI계약으로일반화하지않는다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://docs.riscv.org/reference/isa/v20260120/unpriv/intro.html",
+      "CURRENT_VERIFIED",
+      "같은공식현재판intro의ISA/구현software-visibleinterface구분과byte-address/word정의를 실제 읽었다. legacyURL의직접도구실패와분리한다."
+    ],
+    [
+      "https://docs.riscv.org/reference/isa/v20260120/unpriv/rv32.html",
+      "CURRENT_VERIFIED",
+      "legacyrv32페이지가제공한redirect를따른실제현재판본문. 관련format/controltransfer/load-store 절 대조에사용했다."
+    ]
+  ],
+  "referenceAccess": {
+    "https://docs.riscv.org/reference/isa/unpriv/intro.html": {
+      "status": "NEEDS_REVIEW",
+      "basis": "legacy직접도구접근은실패했지만동일공식현재판본문은접근해의미를대조했다. 실제학습자의legacyroute접근/redirect는별도확인필요."
+    }
+  },
+  "findings": [
+    {
+      "id": "W3-CA-001",
+      "severity": "P1",
+      "contentKeys": [
+        "computer-architecture.core.isa-execution.procedure-call-machine-level"
+      ],
+      "file": "content/computer-architecture/isa-execution/procedure-call-machine-level.md",
+      "quote": "필요하면 register / local state를 stack에 보존",
+      "problem": "학습 목표는 스택 포인터·반환 주소·인자의 호출·복귀 상태 변화다. 본문은 ra/a0-a7과 보존 주체, 재귀 frame 이름은 설명하지만 SP의 frame 할당·중첩 호출·복귀 복원을 설명하지 않는다. 프레임 수명과 stack 위치 변화의 핵심 학습 근거가 빠져 있다.",
+      "action": "RISC-V 표준 ABI를 명시한 작은 non-leaf 예에 entry SP → 정렬된 frame 할당(SP 감소) → ra/s 보존과 nested call → 값 복원 → entry SP 복구의 상태 표/timeline을 추가한다. 기존 정확한 ISA/ABI 분리와 leaf 생략 가능성은 유지하며 모든 함수가 동일 frame을 만든다고 일반화하지 않는다. 기존 문항은 정확하므로 새 문항 생성이나 전체 재작성은 불필요하다.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "computer-architecture.core.isa-execution.addressing-modes": "59120e57b47ad9cfe3c322bc24478db961386cefa07bbe8f6bc2de29798b00c1",
+    "computer-architecture.core.isa-execution.addressing-modes.q1": "e952ff2a2d887e87a0355cd0e5d6ee2a7787fa3ee36737707e684104833c8e5a",
+    "computer-architecture.core.isa-execution.addressing-modes.q2": "1f7b2ee8e1a9c8d549bae2416ac65e38f72f15ebb71ad176c1afea71157cfc72",
+    "computer-architecture.core.isa-execution.addressing-modes.q3": "83929412a4fc0c0b8b1e8175fc9120ab41868849b9df0d0733394e4bba563bfa",
+    "computer-architecture.core.isa-execution.fetch-decode-execute": "7787fde7b3c015f2ddf8135fd2100376de394f6e4722be327a8b6c691abec703",
+    "computer-architecture.core.isa-execution.fetch-decode-execute.q1": "30a147ff009dd8907fce6eb87b549768769b5cb06e77276eea7d355ed356300c",
+    "computer-architecture.core.isa-execution.fetch-decode-execute.q2": "d444c6195685ec6f77af20bd6f6da6e3c8e4b72738114a22a1375abe0ecd1103",
+    "computer-architecture.core.isa-execution.fetch-decode-execute.q3": "a6b7294d74971011dfa5469dfdf40b28ad214df69c5adcedfb2f241b83e99c46",
+    "computer-architecture.core.isa-execution.instruction-format": "e78fe1233eba6ac8661c138c780b3831b9f75af0fd1f7bace0705e98e1cddd95",
+    "computer-architecture.core.isa-execution.instruction-format.q1": "b527584cbedc5ad354daaa04c939c26e105d90f03f8f70677910d4585e2374d3",
+    "computer-architecture.core.isa-execution.instruction-format.q2": "75db2ad3497364f1bd9e06054129ef2e8604fecd25f476368ee7492d86fee730",
+    "computer-architecture.core.isa-execution.instruction-format.q3": "3a440c90a1fc34b39762a374d6471583aaca4d6f483290b4c7ecb297b7b7d0e6",
+    "computer-architecture.core.isa-execution.isa-vs-microarchitecture": "12fbd26ea2f0dca34110913ed917875fe32f579119410e54a820ba75bc6f602f",
+    "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q1": "3f074e0fad3ba977bc10e23cbd7ac926d384b3894386d9439b4456edc3c7491d",
+    "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q2": "57221d51bfd2422feb243a9376bbbeabfeaaa80677161db9d1fa96dcf4fb5690",
+    "computer-architecture.core.isa-execution.isa-vs-microarchitecture.q3": "d6c205275c6f23a79707a8142bb0f1766c26d3062d065abdf46d136f9872579b",
+    "computer-architecture.core.isa-execution.procedure-call-machine-level": "e32e8caf8da61d42520888bf73c5a49829bb139a8961f488a47057ec4e229830",
+    "computer-architecture.core.isa-execution.procedure-call-machine-level.q1": "3c488ccf3e2e541c35fb3b179ea864fbf8df15da41148c27ec60bc21c04233f8",
+    "computer-architecture.core.isa-execution.procedure-call-machine-level.q2": "d57807860bf4ab27a3627024765925f832dc65efbabb6b8f18eba45f55208379",
+    "computer-architecture.core.isa-execution.procedure-call-machine-level.q3": "df0300c771334e4f58466e2d2389a2267e083e38993e02a63f2e3851c9cffddd",
+    "computer-architecture.core.isa-execution.registers": "04a31d633c778a142248c48f0358506b78d16637c0e6baca4edc525a35a0ab34",
+    "computer-architecture.core.isa-execution.registers.q1": "01220e1b2164ea3f9ac3d9b3f5b15c28bed4a1882bc5c41e44b3351b2d5aa51a",
+    "computer-architecture.core.isa-execution.registers.q2": "bf40d174d6309e2895e0574ac188f87d132ec015f22d0c3ff0775cce4c4bc93d",
+    "computer-architecture.core.isa-execution.registers.q3": "945fc4993f87352f68782c693f6822ad580a485ba8ee2d19149c32d1923e6309"
+  }
+}

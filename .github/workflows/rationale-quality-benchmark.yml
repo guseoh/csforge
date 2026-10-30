@@ -1,0 +1,51 @@
+name: Rationale Quality Benchmark (#155)
+
+on:
+  push:
+    branches: [experiment/jev-rationale-quality]
+    paths:
+      - .github/workflows/rationale-quality-benchmark.yml
+      - experiments/jev-content-quality/package.json
+      - experiments/jev-content-quality/src/rationale-quality.ts
+      - experiments/jev-content-quality/test/rationale-quality.test.ts
+      - experiments/jev-content-quality/scripts/build-rationale-cases.py
+      - experiments/jev-content-quality/data/rationale-cases.jsonl
+      - experiments/jev-content-quality/data/rationale-freeze.json
+
+permissions:
+  contents: read
+
+jobs:
+  benchmark:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: experiments/jev-content-quality
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: experiments/jev-content-quality/package-lock.json
+      - run: npm ci
+      - run: npm run rationale:validate
+      - run: npm run typecheck
+      - run: npm test
+      - name: Development evaluation
+        if: ${{ hashFiles('experiments/jev-content-quality/data/rationale-freeze.json') == '' }}
+        run: npm run rationale:run -- development
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+      - name: Frozen holdout evaluation
+        if: ${{ hashFiles('experiments/jev-content-quality/data/rationale-freeze.json') != '' }}
+        run: npm run rationale:run -- holdout
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rationale-quality-${{ github.run_id }}
+          path: experiments/jev-content-quality/results/rationale-quality/
+          retention-days: 14

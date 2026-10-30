@@ -1,0 +1,122 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '4.1.1'
+    id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.guseoh'
+version = '0.0.1-SNAPSHOT'
+description = 'CSForge local learning application backend'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+dependencies {
+    implementation platform('org.springframework.ai:spring-ai-bom:2.0.1')
+    implementation 'org.springframework.boot:spring-boot-starter-webmvc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+    implementation 'org.springframework.boot:spring-boot-starter-session-jdbc'
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation 'org.springframework.boot:spring-boot-starter-flyway'
+    implementation 'org.springframework.ai:spring-ai-starter-model-ollama'
+    implementation 'org.flywaydb:flyway-database-postgresql'
+    implementation 'org.yaml:snakeyaml:2.4'
+    implementation 'org.commonmark:commonmark:0.31.0'
+
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+
+    runtimeOnly 'org.postgresql:postgresql'
+    runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'org.springframework.boot:spring-boot-starter-webmvc-test'
+    testImplementation 'org.springframework.security:spring-security-test'
+    testImplementation 'org.testcontainers:junit-jupiter:1.20.6'
+    testImplementation 'org.testcontainers:postgresql:1.20.6'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+    // Preserve failure diagnostics for isolated integration tests in CI logs.
+    testLogging {
+        events 'failed'
+        exceptionFormat 'full'
+    }
+}
+
+springBoot {
+    mainClass = 'com.guseoh.csforge.CsforgeApplication'
+}
+
+def canonicalContentDirectory = file('../content')
+def canonicalContentResourceDirectory = file("${buildDir}/generated/canonical-content-resources")
+
+tasks.register('generateCanonicalContentManifest') {
+    inputs.dir(canonicalContentDirectory)
+    outputs.file(file("${canonicalContentResourceDirectory}/canonical-content/manifest.txt"))
+
+    doLast {
+        def manifest = file("${canonicalContentResourceDirectory}/canonical-content/manifest.txt")
+        def canonicalFiles = fileTree(canonicalContentDirectory) {
+            include '**/*.md'
+            include '**/topics.json'
+            include '**/questions.json'
+            exclude 'examples/**'
+            exclude 'curriculum/**'
+            exclude 'README.md'
+            exclude 'AGENTS.md'
+        }.files.toList().sort { left, right ->
+            project.relativePath(left).replace(File.separator, '/') <=> project.relativePath(right).replace(File.separator, '/')
+        }
+        manifest.parentFile.mkdirs()
+        manifest.text = canonicalFiles.collect { file ->
+            canonicalContentDirectory.toPath().relativize(file.toPath()).toString().replace(File.separator, '/')
+        }.join('\n') + '\n'
+    }
+}
+
+tasks.named('processResources') {
+    dependsOn(tasks.named('generateCanonicalContentManifest'))
+    from(canonicalContentDirectory) {
+        into('canonical-content')
+        include '**/*.md'
+        include '**/topics.json'
+        include '**/questions.json'
+        exclude 'examples/**'
+        exclude 'curriculum/**'
+        exclude 'README.md'
+        exclude 'AGENTS.md'
+    }
+    from(canonicalContentResourceDirectory)
+}
+
+// Pin the image source independently of operator-supplied Job environment variables.
+tasks.register('generateCanonicalSourceSha') {
+    def output = layout.buildDirectory.file('generated/source-sha/canonical-source.sha')
+    def sourceSha = providers.environmentVariable('CSFORGE_BUILD_SHA').orElse('UNKNOWN')
+    inputs.property('sourceSha', sourceSha)
+    outputs.file(output)
+    doLast {
+        output.get().asFile.parentFile.mkdirs()
+        output.get().asFile.text = sourceSha.get() + '\n'
+    }
+}
+tasks.named('processResources') {
+    dependsOn(tasks.named('generateCanonicalSourceSha'))
+    from(layout.buildDirectory.dir('generated/source-sha'))
+}

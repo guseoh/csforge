@@ -1,0 +1,637 @@
+[
+  {
+    "name": "static-flow0",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "java-pass-by-value1",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"java-pass-by-value\", \"initialName\": \"kim\", \"replacementName\": \"park\"}"
+  },
+  {
+    "name": "min-heap2",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [30, 10, 20]}"
+  },
+  {
+    "name": "tcp-handshake3",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": 100, \"serverIsn\": 300}"
+  },
+  {
+    "name": "tcp-handshake4",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": 4294967295, \"serverIsn\": 0}"
+  },
+  {
+    "name": "min-heap5",
+    "valid": true,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": []}"
+  },
+  {
+    "name": "unknown-type",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"execute-js\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "unknown-version",
+    "valid": false,
+    "source": "{\"version\": 2, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "extra-field",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"], \"script\": \"alert(1)\"}"
+  },
+  {
+    "name": "prototype",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"], \"__proto__\": {\"polluted\": true}}"
+  },
+  {
+    "name": "missing-summary",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "html-description",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"<script>alert(1)</script>\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "html-label",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"<img onerror=alert(1)>\", \"응답\"]}"
+  },
+  {
+    "name": "large-heap",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]}"
+  },
+  {
+    "name": "out-of-range",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [100]}"
+  },
+  {
+    "name": "fraction",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [1.5]}"
+  },
+  {
+    "name": "null-item",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [null]}"
+  },
+  {
+    "name": "negative-isn",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": -1, \"serverIsn\": 300}"
+  },
+  {
+    "name": "overflow-isn",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": 100, \"serverIsn\": 4294967296}"
+  },
+  {
+    "name": "code-name",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"java-pass-by-value\", \"initialName\": \"kim\", \"replacementName\": \"\\\";alert(1)\"}"
+  },
+  {
+    "name": "empty-name",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"java-pass-by-value\", \"initialName\": \" \", \"replacementName\": \"park\"}"
+  },
+  {
+    "name": "long-label",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴긴\", \"응답\"]}"
+  },
+  {
+    "name": "one-node",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"하나\"]}"
+  },
+  {
+    "name": "boolean-version",
+    "valid": false,
+    "source": "{\"version\": true, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}"
+  },
+  {
+    "name": "array-root",
+    "valid": false,
+    "source": "[{\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"static-flow\", \"labels\": [\"요청\", \"처리\", \"응답\"]}, {\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"java-pass-by-value\", \"initialName\": \"kim\", \"replacementName\": \"park\"}, {\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": [30, 10, 20]}, {\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": 100, \"serverIsn\": 300}, {\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"tcp-handshake\", \"clientIsn\": 4294967295, \"serverIsn\": 0}, {\"version\": 1, \"title\": \"학습 도식\", \"description\": \"상태 변화와 결과를 본문과 함께 확인합니다.\", \"type\": \"min-heap\", \"initialValues\": []}]"
+  },
+  {
+    "name": "null-root",
+    "valid": false,
+    "source": "null"
+  },
+  {
+    "name": "malformed-json",
+    "valid": false,
+    "source": "{oops"
+  },
+  {
+    "name": "trailing-json",
+    "valid": false,
+    "source": "{\"version\": 1, \"title\": \"\\ud559\\uc2b5 \\ub3c4\\uc2dd\", \"description\": \"\\uc0c1\\ud0dc \\ubcc0\\ud654\\uc640 \\uacb0\\uacfc\\ub97c \\ubcf8\\ubb38\\uacfc \\ud568\\uaed8 \\ud655\\uc778\\ud569\\ub2c8\\ub2e4.\", \"type\": \"static-flow\", \"labels\": [\"\\uc694\\uccad\", \"\\ucc98\\ub9ac\", \"\\uc751\\ub2f5\"]} {}"
+  },
+  {
+    "name": "language-types-valid-0",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"assignment-copy\"}"
+  },
+  {
+    "name": "language-types-valid-1",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"final-list\"}"
+  },
+  {
+    "name": "language-types-valid-2",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"string-intern\"}"
+  },
+  {
+    "name": "language-types-valid-3",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-array-store\"}"
+  },
+  {
+    "name": "language-types-valid-4",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-definite-assignment\"}"
+  },
+  {
+    "name": "language-types-invalid-0",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\"}"
+  },
+  {
+    "name": "language-types-invalid-1",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":null}"
+  },
+  {
+    "name": "language-types-invalid-2",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"unsupported\"}"
+  },
+  {
+    "name": "language-types-invalid-3",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"assignment-copy\",\"nodes\":[]}"
+  },
+  {
+    "name": "language-types-invalid-4",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-array-store\",\"elements\":[1]}"
+  },
+  {
+    "name": "language-types-invalid-5",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-definite-assignment\",\"condition\":\"eval(code)\"}"
+  },
+  {
+    "name": "language-types-invalid-6",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"<script>\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-array-store\"}"
+  },
+  {
+    "name": "language-types-invalid-7",
+    "valid": false,
+    "source": "{\"version\":2,\"title\":\"Java 값과 상태\",\"description\":\"본문과 동일한 고정 예제를 추적합니다.\",\"type\":\"java-value-reference\",\"example\":\"string-intern\"}"
+  },
+  {
+    "name": "object-model-static-members",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"static-members\"}"
+  },
+  {
+    "name": "object-model-initialization",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"initialization\"}"
+  },
+  {
+    "name": "object-model-inheritance",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"inheritance\"}"
+  },
+  {
+    "name": "object-model-composition",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"composition\"}"
+  },
+  {
+    "name": "object-model-dispatch",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"dispatch\"}"
+  },
+  {
+    "name": "object-model-casting",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"casting\"}"
+  },
+  {
+    "name": "object-model-defensive-copy",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"defensive-copy\"}"
+  },
+  {
+    "name": "object-model-invalid-missing",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\"}"
+  },
+  {
+    "name": "object-model-invalid-null",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":null}"
+  },
+  {
+    "name": "object-model-invalid-object",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":{}}"
+  },
+  {
+    "name": "object-model-invalid-unknown",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"execute-code\"}"
+  },
+  {
+    "name": "object-model-invalid-coordinates",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"dispatch\",\"x\":0}"
+  },
+  {
+    "name": "object-model-invalid-code",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"dispatch\",\"code\":\"eval(x)\"}"
+  },
+  {
+    "name": "object-model-invalid-version",
+    "valid": false,
+    "source": "{\"version\":2,\"type\":\"java-object-model\",\"title\":\"객체의 관계와 상태\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"dispatch\"}"
+  },
+  {
+    "name": "object-model-invalid-html",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"java-object-model\",\"title\":\"<script>\",\"description\":\"본문의 고정 예제와 같은 상태를 설명합니다.\",\"example\":\"dispatch\"}"
+  },
+  {
+    "name": "java-api hash-contract",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"hash-contract\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api comparator",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"comparator\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api invariance",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"invariance\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api pecs",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"pecs\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api heap-pollution",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"heap-pollution\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api map-views",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"map-views\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api list-layout",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"list-layout\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api hash-lookup",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"hash-lookup\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api deque",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"deque\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api iterator",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"iterator\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api view-copy",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"view-copy\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api buffer",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"buffer\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api selector",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"selector\", \"title\": \"Java API 계약\", \"description\": \"고정 예제의 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "invalid java-api unknown{}",
+    "valid": false,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"unknown\", \"title\": \"Java API 계약\", \"description\": \"고정 예제입니다.\"}"
+  },
+  {
+    "name": "invalid java-api buffer{'code': 'evil()'}",
+    "valid": false,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"buffer\", \"title\": \"Java API 계약\", \"description\": \"고정 예제입니다.\", \"code\": \"evil()\"}"
+  },
+  {
+    "name": "invalid java-api selector{'nodes': []}",
+    "valid": false,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"selector\", \"title\": \"Java API 계약\", \"description\": \"고정 예제입니다.\", \"nodes\": []}"
+  },
+  {
+    "name": "invalid java-api {}",
+    "valid": false,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"\", \"title\": \"Java API 계약\", \"description\": \"고정 예제입니다.\"}"
+  },
+  {
+    "name": "java-api lambda-capture",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"lambda-capture\", \"title\": \"Java API\", \"description\": \"고정 예제\"}"
+  },
+  {
+    "name": "java-api stream-shapes",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"stream-shapes\", \"title\": \"Java API\", \"description\": \"고정 예제\"}"
+  },
+  {
+    "name": "java-api parallel-costs",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"parallel-costs\", \"title\": \"Java API\", \"description\": \"고정 예제\"}"
+  },
+  {
+    "name": "java-api stream-laziness",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"stream-laziness\", \"title\": \"Java API\", \"description\": \"고정 예제\"}"
+  },
+  {
+    "name": "java-api dependency-injection",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"dependency-injection\", \"title\": \"Java 관계\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api strategy",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"strategy\", \"title\": \"Java 관계\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api adapter",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"adapter\", \"title\": \"Java 관계\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api decorator",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"decorator\", \"title\": \"Java 관계\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api proxy",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"proxy\", \"title\": \"Java 관계\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api observer",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"observer\", \"title\": \"Java 관계\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api state",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"state\", \"title\": \"Java 관계\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api throwable-tree",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"throwable-tree\", \"title\": \"Java 예외·자원\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api exception-boundary",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"exception-boundary\", \"title\": \"Java 예외·자원\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api exception-cause",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"exception-cause\", \"title\": \"Java 예외·자원\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api failure-atomicity",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"failure-atomicity\", \"title\": \"Java 예외·자원\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api resource-suppressed",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"resource-suppressed\", \"title\": \"Java 예외·자원\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api resource-ownership",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"resource-ownership\", \"title\": \"Java 예외·자원\", \"description\": \"감사된 고정 관계와 상태입니다.\"}"
+  },
+  {
+    "name": "java-api instant-zones",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"instant-zones\", \"title\": \"Java 시간\", \"description\": \"고정 날짜·시간대 예제입니다.\"}"
+  },
+  {
+    "name": "java-api zone-dst",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"zone-dst\", \"title\": \"Java 시간\", \"description\": \"고정 날짜·시간대 예제입니다.\"}"
+  },
+  {
+    "name": "java-api duration-period",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"duration-period\", \"title\": \"Java 시간\", \"description\": \"고정 날짜·시간대 예제입니다.\"}"
+  },
+  {
+    "name": "java-api concurrency-parallelism",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"concurrency-parallelism\", \"title\": \"교대 실행과 병렬 실행\", \"description\": \"실행 자원 하나의 교대와 두 자원의 동시 진행을 구분하는 교육용 예시입니다. Thread 생성은 실제 CPU 배치를 보장하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api thread-lifecycle",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"thread-lifecycle\", \"title\": \"Thread 시작·종료와 join\", \"description\": \"start 전, 실행 중, 종료를 확인한 join 반환을 비교합니다. 인터럽트는 협력적 신호이며 timed join의 timeout에는 종료 보장이 없습니다.\"}"
+  },
+  {
+    "name": "java-api virtual-carrier",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"virtual-carrier\", \"title\": \"가상 스레드의 mount와 unmount\", \"description\": \"한 시점에 carrier 하나에 가상 스레드 하나를 표시합니다. 지원되는 blocking I/O에서 unmount하고 같은 carrier가 아닐 수도 있는 곳에서 재개합니다.\"}"
+  },
+  {
+    "name": "java-api lost-update",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"lost-update\", \"title\": \"증가를 잃는 가능한 실행\", \"description\": \"두 작업이 0을 읽고 각각 1을 기록해 최종 1이 되는 가능한 경로입니다. 유일한 실행이나 실제 CPU 명령 수를 뜻하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api monitor",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"monitor\", \"title\": \"monitor의 소유·재진입·해제\", \"description\": \"같은 monitor의 소유와 대기, 재진입 횟수, 해제 뒤 획득의 HB를 비교합니다. 다음 획득자의 공정 순서는 보장하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api happens-before",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"happens-before\", \"title\": \"program order와 HB 연결\", \"description\": \"data 쓰기와 volatile 공개, 해당 공개를 관찰한 reader의 읽기를 연결합니다. 순서 간선은 물리 시간이나 cache flush가 아닙니다.\"}"
+  },
+  {
+    "name": "java-api safe-publication",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"safe-publication\", \"title\": \"생성 중 유출과 생성 완료 후 공개\", \"description\": \"생성 중 this 유출 반례와 정상 생성 뒤 volatile 공개를 비교합니다. final 참조는 이후 가변 객체 변경까지 보호하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api volatile-handoff",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"volatile-handoff\", \"title\": \"volatile 공개의 순서\", \"description\": \"data를 먼저 쓰고 ready로 공개한 뒤 true를 관찰해 data를 읽는 경로입니다. volatile은 count++ 전체를 원자화하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api cas-retry",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"cas-retry\", \"title\": \"CAS의 성공·실패·재시도\", \"description\": \"같은 expected를 준비한 두 작업 중 A가 성공하면 B는 실패합니다. B는 최신 값을 읽고 재계산해 다시 시도합니다.\"}"
+  },
+  {
+    "name": "java-api condition-await",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"condition-await\", \"title\": \"await의 해제와 재획득\", \"description\": \"소비자의 조건 검사, await로 lock 해제, 생산자의 signal, 소비자의 lock 재획득과 while 재검사를 비교합니다.\"}"
+  },
+  {
+    "name": "java-api executor-admission",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"executor-admission\", \"title\": \"ThreadPoolExecutor 작업 수용\", \"description\": \"core 미만 worker 생성, 큐 수용, max까지 확장, 거부 순서를 비교합니다. 종료 상태와 거부 정책을 별도로 처리합니다.\"}"
+  },
+  {
+    "name": "java-api bounded-queue",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"bounded-queue\", \"title\": \"용량 1의 큐와 대기\", \"description\": \"빈 큐의 take 대기, 가득 찬 큐의 put 대기, 소비 뒤 공간 확보를 비교합니다. 큐 수용은 업무 완료나 영속 저장이 아닙니다.\"}"
+  },
+  {
+    "name": "java-api latch-gate",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"latch-gate\", \"title\": \"일회용 완료 gate\", \"description\": \"count 3에서 두 신호 뒤 1, 마지막 신호 뒤 0으로 진행합니다. gate는 성공 여부나 CPU 동시 실행을 집계하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api semaphore-permits",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"semaphore-permits\", \"title\": \"permit 소진과 반환\", \"description\": \"세 permit을 소진한 뒤 대기하고, 성공한 acquire에 대응하는 release 뒤 다시 획득하는 경로입니다. 소유권이나 실제 연결 생성을 뜻하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api threadlocal-reuse",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"threadlocal-reuse\", \"title\": \"재사용 worker의 문맥 수명\", \"description\": \"요청 A의 ThreadLocal 값을 남긴 경로와 finally에서 remove한 경로를 비교합니다. 비동기 작업으로 자동 전파되지 않습니다.\"}"
+  },
+  {
+    "name": "java-api scoped-binding",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"scoped-binding\", \"title\": \"ScopedValue의 중첩 범위\", \"description\": \"바깥 바인딩, 안쪽 재바인딩, 복원을 비교합니다. 구조적 상속 예제의 StructuredTaskScope는 Java 25 preview입니다.\"}"
+  },
+  {
+    "name": "java-api future-completion",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"future-completion\", \"title\": \"결과 완료와 후속 단계\", \"description\": \"미완료에서 정상 변환·단계 연결·결합 경로와 예외·취소 경로를 구분합니다. cancel(true)는 실행 스레드를 인터럽트하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api deadlock-progress",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"deadlock-progress\", \"title\": \"교착·기아·반복 양보\", \"description\": \"잠금의 소유자와 순환 대기를 표시하고, 특정 작업의 기아와 작업 없이 양보를 반복하는 livelock을 별도 예제로 비교합니다.\"}"
+  },
+  {
+    "name": "java-api jdk-classfile",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"jdk-classfile\", \"title\": \"빌드와 실행의 경계\", \"description\": \"Java 소스에서 javac의 클래스 파일 산출물과 JVM 구현의 실행 전략을 구분합니다. 클래스 파일은 바이트코드와 메타데이터를 포함합니다.\"}"
+  },
+  {
+    "name": "java-api bytecode-stack",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"bytecode-stack\", \"title\": \"add(3, 4)의 피연산자 스택\", \"description\": \"지역 변수 값을 차례로 load한 뒤 iadd로 합을 만들고 ireturn으로 7을 반환하는 JVM 추상 프레임 예제입니다.\"}"
+  },
+  {
+    "name": "java-api class-initialization",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"class-initialization\", \"title\": \"로딩·준비·초기화와 지연 해석\", \"description\": \"정적 필드의 기본값과 소스 초기화식을 구분합니다. 해석은 지연 가능하며 초기화 실패 뒤에는 오류 상태가 유지될 수 있습니다.\"}"
+  },
+  {
+    "name": "java-api loader-identity",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"loader-identity\", \"title\": \"공유 API와 로더별 타입\", \"description\": \"공통 API를 부모에서 공유하고 구현 클래스를 로더별로 정의한 예시입니다. 타입 동일성에는 바이너리 이름과 defining loader가 필요합니다.\"}"
+  },
+  {
+    "name": "java-api runtime-areas",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"runtime-areas\", \"title\": \"스레드별 프레임과 공유 영역\", \"description\": \"독립적인 JVM 스택의 프레임과 공유 heap·method area를 구분합니다. JVMS 추상 모델이며 HotSpot의 고정 물리 배치를 뜻하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api gc-roots",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"gc-roots\", \"title\": \"root 경로와 고립 cycle\", \"description\": \"Cache의 참조 제거 전후를 비교합니다. 고립 cycle도 회수 대상이 될 수 있지만 도달 불가능한 순간의 즉시 수거는 보장하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api reference-strength",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"reference-strength\", \"title\": \"참조 종류와 큐 알림\", \"description\": \"강한·소프트·약한 참조와 PhantomReference의 큐 알림을 구분합니다. 큐 알림은 메모리·외부 자원 회수 완료 barrier가 아닙니다.\"}"
+  },
+  {
+    "name": "java-api collector-tradeoffs",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"collector-tradeoffs\", \"title\": \"GC 작업과 pause의 구간 예시\", \"description\": \"앱 실행·STW pause·동시 GC 작업을 구분한 예시입니다. 도형 길이는 측정값이 아니며 특정 수집기의 고정 성능을 보장하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api retained-path",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"retained-path\", \"title\": \"장수 owner의 유지 경로\", \"description\": \"종료된 Session과 Payload를 owner가 보유한 상태와 등록 해제 후를 비교합니다. 소유 수명 문제와 GC 실패를 구분합니다.\"}"
+  },
+  {
+    "name": "java-api process-memory",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"process-memory\", \"title\": \"프로세스 메모리 소비처와 지표\", \"description\": \"heap·Metaspace·stack·direct·code cache를 구분합니다. 면적은 실측 비율이 아니며 RSS·NMT·container 한도는 서로 다른 지표입니다.\"}"
+  },
+  {
+    "name": "java-api jit-profile",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"jit-profile\", \"title\": \"프로파일과 추측 기반 최적화\", \"description\": \"HotSpot이 프로파일과 가정을 활용하고 가정 무효화 때 최적화를 해제할 수 있음을 표시합니다. 워밍업 횟수는 고정 계약이 아닙니다.\"}"
+  },
+  {
+    "name": "java-api dynamic-proxy",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"dynamic-proxy\", \"title\": \"동적 프록시의 호출·반환·실패\", \"description\": \"호출자에서 proxy·handler·target으로 위임하고 결과를 호출자까지 반환하는 예제입니다. 원인 unwrap과 인터페이스 예외 계약을 구분합니다.\"}"
+  },
+  {
+    "name": "java-api processing-reflection",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"processing-reflection\", \"title\": \"컴파일 처리와 실행 시점 관찰\", \"description\": \"processor가 컴파일 시점에 산출물을 만드는 경로와 JVM 로딩 뒤 reflection으로 메타데이터를 읽는 경로를 비교합니다.\"}"
+  },
+  {
+    "name": "java-api serialization-boundary",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"serialization-boundary\", \"title\": \"외부 바이트와 객체 복원 경계\", \"description\": \"신뢰할 수 없는 바이트에서 객체 그래프와 복원 중 실행 경로로 이어지는 위험 경계입니다. UID 일치는 입력 안전성이나 전체 호환성을 보장하지 않습니다.\"}"
+  },
+  {
+    "name": "java-api module-boundary",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"module-boundary\", \"title\": \"모듈의 읽기·공개·reflection 경계\", \"description\": \"requires의 readability, exports와 public 접근, 깊은 reflection의 opens 조건을 구분합니다.\"}"
+  },
+  {
+    "name": "java-api binary-evolution",
+    "valid": true,
+    "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"binary-evolution\", \"title\": \"소스 재컴파일과 기존 바이너리 링크\", \"description\": \"새 소스 컴파일과 기존 class를 새 library에 연결하는 검사는 다릅니다. 링크 성공도 의미 호환성을 보장하지 않습니다.\"}"
+  }
+]

@@ -1,0 +1,435 @@
+{
+  "area": "dsa",
+  "topic": "graph-path",
+  "topicKey": "dsa.core.graph-path",
+  "coverage": "9 Concept와31 Question의모든실제필드를세bounded출력에서읽었다. BFS distance/parent와대안복원,Dijkstra tentative/relax/PQstale/negative반례,BellmanFord V-1/reachablecycle,Floyd중간집합·negative영향,UFmembership/rank/compression와MST·cut/Kruskal/Prim상태를검토했다. 실제저자공식DijkstraSP·UF·LazyPrimMST·PrimMST관련원문을대조했다. parent필수단정,오답rationale의방향오류,중복정답가능distractor,lazy/eager비용범위와조사오류를선별했다.",
+  "concepts": [
+    [
+      "dsa.core.graph-path.unweighted-shortest-path",
+      "KEEP",
+      "L1 BFS layer최소edge와parent복원을충족한다.",
+      "start0/firstlayerk+1,FIFO와최소edge,parent를저장하면직접역추적가능,unreachable대0구별과동일비용조건이정확하다. parent를유일복원방법으로단정하지않는다.",
+      "DIAGRAM계약은distance/parent의동시갱신과layer/역추적흐름설명으로충족한다.",
+      "Princeton41graphtarget의기존직접403근거를재사용하며item원문·경로proof를직접검토했다.",
+      "q1모든보기/q2A-B-D-F는맞다. q3의parent필수단정은W3-DSA-020이다."
+    ],
+    [
+      "dsa.core.graph-path.dijkstra",
+      "KEEP",
+      "L2 최소tentative의확정·relax와nonnegative조건을충족한다.",
+      "start0/otherINF,dist[u]+w개선시dist/parent갱신,PQminimum과음수없는확정논리,negative뒤늦은개선반례가정확하다. 모든간선동일이면BFS가능을경계한다.",
+      "DIAGRAM계약은tentative선택→relax→parent/PQ후속흐름과식이충분하다.",
+      "실제저자DijkstraSP의nonnegative검사·INF/start초기화·edgeTo/pathTo관련절을읽었다. 그indexedPQ의비용을lazyduplicate구현에자동승격하지않는다. canonical44target은미확정이다.",
+      "q1모든보기/q2B4→3/q3stale4skip/q4negative경로-5를검토했다."
+    ],
+    [
+      "dsa.core.graph-path.bellman-ford",
+      "KEEP",
+      "L2 전체relax반복·V-1·reachablenegativecycle을충족한다.",
+      "INFguard,단순path최대V-1,뒤늦은개선과extra검사,unreachablecycle제외/갱신없는fullpass조기종료가정확하다. reachablecycle은영향받는vertex의finite거리문제이며모든다른vertex도무조건-∞라는보장으로읽지않는다.",
+      "TEXT guardedrelax식과fullpass/추가검사순서가충분하다.",
+      "Princeton44sp직접접근실패로target미확정이다. 원문과V-1/reachability의수학을직접추론했다.",
+      "q1정답D는맞지만A rationale방향은W3-DSA-021이다. q2 V-1/q3extra개선/q4다른componentcycle은맞다."
+    ],
+    [
+      "dsa.core.graph-path.floyd-warshall",
+      "KEEP",
+      "L2 허용중간집합을넓히는all-pairs DP를충족한다.",
+      "0대directweight/INF의대표초기모형,k허용에기존대via-k최소,모든k후거리,V³/V²와negativecycle영향조건이정확하다. loop/parallel을허용할때초기weight최솟값처리는별도graph계약이다.",
+      "DIAGRAM계약은i→k→j두경로와dist식·중간집합순서가충분하다.",
+      "Princeton44target미확정이다. 원문중간집합과q2min계산/q3negative영향쌍을직접추론했다.",
+      "q1모든보기/q2A-C6/q3cycle을거쳐목적지로도달할쌍의undefinedfinite를검토했다."
+    ],
+    [
+      "dsa.core.graph-path.union-find",
+      "KEEP",
+      "L1 find/union·동일membership와연결성경계를충족한다.",
+      "각rootself초기화/두root연결,같은집합samefind,undirected기존path에edge추가시cycle,Kruskal과parentforest는원그래프path아님이정확하다.",
+      "DIAGRAM계약은selfroot→unionroot연결의상태설명과find동일비교식으로충족한다.",
+      "실제저자UF의parent초기화/find/union/same-rootreturn관련코드를읽었다. canonical15target직접접근은실패하여미확정이다.",
+      "q1모든보기/q2A와C같은대표/q3cycle/q4원그래프path아님을검토했다."
+    ],
+    [
+      "dsa.core.graph-path.path-compression-union-rank",
+      "KEEP",
+      "L2 compression의parent변환과rank/sizeunion·작은amortizedcost를충족한다.",
+      "재귀find반환으로parent[x]=root와membership보존,smallrank/size를큰root아래로,rank는compression후actualheight아님,α(n)sequence대개별O1아님이정확하다.",
+      "DIAGRAM계약은재귀find복귀의parentassignment와membership유지상태설명이충분하다. optional보충은x→p→root대x→root의두forest로효과를더빠르게볼수있지만현재부재만으로결함판정하지않는다.",
+      "저자공식UF의rank비교·동률rank+1,halvingfind와sequence mα(n)관련절을읽었다. canonical의recursive full compression과halving이같은코드라는승인은하지않는다.",
+      "q1모든보기/q2equalrank+1/q3stalerank대actualheight를검토했다."
+    ],
+    [
+      "dsa.core.graph-path.minimum-spanning-tree",
+      "KEEP",
+      "L2 전체연결총weight대SSSP·tree경계를충족한다.",
+      "connectedundirected/V-1/acyclic,총weight대pairpath,현재forest를존중하는적절한cut의safeedge,동률비유일성과disconnectedforest가정확하다. 임의cut이이미선택한edge를가로지르는경우까지safe로승인하지않는다.",
+      "TEXT 두최소화목표·cut와forest경계설명이충분하다.",
+      "Princeton43target직접접근실패이다. 실제저자LazyPrimMST의forest/negative동률가능과cut최적성검사관련코드를대조했다.",
+      "q1모든보기/q2 7/q3treebridge장애/q4동률여러MST·tiekey를검토했다."
+    ],
+    [
+      "dsa.core.graph-path.kruskal",
+      "KEEP",
+      "L2 weight순·UFcycle없는forest확장목표를충족한다.",
+      "sortededge/finddifferent→select/union,same-root기존path→cycle,component를존중하는cut안전성,V-1connected/forestdisconnected와sortElogE가정확하다.",
+      "TEXT sortededge조건code와forest/cut인과가충분하다.",
+      "Princeton43target미확정이다. 원문UF/cut조건과모든실행trace를직접검토했다.",
+      "q2 AB/BC/CDweight7와q3forest는맞고q1D의중복답해석은W3-DSA-022이다."
+    ],
+    [
+      "dsa.core.graph-path.prim",
+      "TARGETED_ENHANCE",
+      "L2 tree/frontier/cut선택목표는맞지만lazy/eager비용범위를W3-DSA-023으로정밀보강한다. 조사오류는W3-DSA-024이다.",
+      "tree내/외crossmin→newvertex→frontier,양endpoint내staleedge skip,treecut과matrixV²는맞다. edgeheap의lazy설명과ElogV를함께주면서simplegraph또는indexedvertexheap범위를명시하지않는다.",
+      "DIAGRAM T내부|외부crossedge가현재frontier를보여준다. 유지한다.",
+      "실제저자LazyPrimMST의binaryedgeheap/ElogE/E공간·staleskip와PrimMST의indexedheap/ElogV/V공간을읽어구별했다. canonical43페이지확인으로승격하지않는다.",
+      "q1모든보기/q2 AB/BC/CDweight6/q3staleskip는정확하며기존문항을재작성할필요없다."
+    ]
+  ],
+  "questions": [
+    [
+      "dsa.core.graph-path.unweighted-shortest-path.q1",
+      "KEEP",
+      "A BFS최소edge가맞다. BDFSfirst/CUF연결만/DMSTpath는그목적보장이없으며모든rationale/해설을확인했다.",
+      "EASY 가장직접적인방법을묻고다른전수방법불가능이라는단정은없다."
+    ],
+    [
+      "dsa.core.graph-path.unweighted-shortest-path.q2",
+      "KEEP",
+      "모델3edges A→B→D→F와해설이주어진treeedge와맞다. BFSparent를보유하면역추적이가능하다.",
+      "MEDIUM graph.bfs.q3와거리예는같지만새목표인실제path출력을추가한다."
+    ],
+    [
+      "dsa.core.graph-path.unweighted-shortest-path.q3",
+      "TARGETED_ENHANCE",
+      "모델/해설의parent직접역추적은맞지만원래graph와전체dist가남아있으면incomingedge중dist1작은predecessor를찾아최단경로하나도복원가능하다. parent필수단정은W3-DSA-020이다.",
+      "MEDIUM 원graph재접근불가또는원래first-discoverytree재현이라는조건이없어올바른대안이성립한다."
+    ],
+    [
+      "dsa.core.graph-path.dijkstra.q1",
+      "KEEP",
+      "C관련edge≥0이맞다. Anegativecycle만없음/B모두1/DDK지원이면negative도안전은틀리며모든rationale/해설에확정논리경계가있다.",
+      "EASY 일반label-settingDijkstra의정확성전제이다."
+    ],
+    [
+      "dsa.core.graph-path.dijkstra.q2",
+      "KEEP",
+      "A후B4/C1,C후1+2=3으로B4→3이다. 두acceptedAnswers와해설을확인했다.",
+      "MEDIUM 잠정거리개선이명확하다."
+    ],
+    [
+      "dsa.core.graph-path.dijkstra.q3",
+      "KEEP",
+      "모델/해설은entry4대현재dist3의oldduplicate를skip하는lazyPQ조건을설명한다.",
+      "MEDIUM 두entry를넣은구현전제가있으며indexeddecrease-key의동작과혼동하지않는다."
+    ],
+    [
+      "dsa.core.graph-path.dijkstra.q4",
+      "KEEP",
+      "direct2대viaC5-10=-5로늦은경로가확정값을줄여negative전제위반이라는모델/해설이맞다.",
+      "MEDIUM negativecycle없이도확정오류가가능한정확한반례다."
+    ],
+    [
+      "dsa.core.graph-path.bellman-ford.q1",
+      "TARGETED_ENHANCE",
+      "Dnegativeedge와finite경로가능이맞다. B항상finite/Cnegative처리불가는틀리며rationale가설명한다. A는undirectedtree에서만허용이라는데rationale는directed에서만가능이아님을반박해W3-DSA-021이다. undirectednegative반복cycle주의는맞다.",
+      "EASY 정답유일성은유지하고A의반박방향만맞춘다."
+    ],
+    [
+      "dsa.core.graph-path.bellman-ford.q2",
+      "KEEP",
+      "simplepath는vertices최대V라edges최대V-1이다. 두acceptedAnswers와전파해설을확인했다.",
+      "MEDIUM 정점반복없는조건이명확하다."
+    ],
+    [
+      "dsa.core.graph-path.bellman-ford.q3",
+      "KEEP",
+      "V-1fullpasses후reachableedge의추가개선이면reachablenegativecycle영향이다. 세acceptedAnswers와해설이맞다.",
+      "MEDIUM 정적graph·정확산술의표준relax모형이다."
+    ],
+    [
+      "dsa.core.graph-path.bellman-ford.q4",
+      "KEEP",
+      "모델/해설은sourceunreachable다른componentcycle은sourceSSSP에영향없고finite거리u의edge만relax한다.",
+      "MEDIUM 전체graphcycle대source관련cycle을구별한다."
+    ],
+    [
+      "dsa.core.graph-path.floyd-warshall.q1",
+      "KEEP",
+      "Aall-pairsdistance가맞다. Bsingle-source만/C도달여부만/DMSTsum만은틀리며모든rationale/해설이목표범위를구별한다.",
+      "EASY 결과범위를묻는유일답이다."
+    ],
+    [
+      "dsa.core.graph-path.floyd-warshall.q2",
+      "KEEP",
+      "min10,4+2=6이다. 두acceptedAnswers와viaB해설을확인했다.",
+      "MEDIUM 현재허용중간vertex가명시된다."
+    ],
+    [
+      "dsa.core.graph-path.floyd-warshall.q3",
+      "KEEP",
+      "모델/해설은distvv<0의negativeclosedpath/cycle신호와source가cycle에닿고destination으로나갈수있는영향쌍의finite값미정의를설명한다.",
+      "MEDIUM 모든쌍이영향받는다고하지않는다."
+    ],
+    [
+      "dsa.core.graph-path.union-find.q1",
+      "KEEP",
+      "Bset대표root가맞다. A원소수/Cdirectparent만/D원그래프edge목록은틀리며모든rationale/해설이representative와원graph를구별한다.",
+      "EASY forest모형이본문에있다."
+    ],
+    [
+      "dsa.core.graph-path.union-find.q2",
+      "KEEP",
+      "ABunion후BCunion이면A/C동일대표다. 세acceptedAnswers와해설은실제root를고정하지않는다.",
+      "MEDIUM 같은membership계약이다."
+    ],
+    [
+      "dsa.core.graph-path.union-find.q3",
+      "KEEP",
+      "모델/해설은selectedforest의같은component기존path에새edge추가→cycle로Kruskal이skip함을설명한다.",
+      "MEDIUM UF가원래graph전체가아닌선택edgeforest를표현함을명시한다."
+    ],
+    [
+      "dsa.core.graph-path.union-find.q4",
+      "KEEP",
+      "모델/해설은parentforest가대표탐색용이고compression으로바뀌어원래graphpath가아니며별도graph탐색정보가필요함을설명한다.",
+      "MEDIUM UF의내부parent대BFSparent를구별한다."
+    ],
+    [
+      "dsa.core.graph-path.path-compression-union-rank.q1",
+      "KEEP",
+      "Droot에가깝게parent를바꿔후속finddepth감소가맞다. Arank0/B원edge삭제/Cset분리는틀리며모든rationale/해설이membership유지를설명한다.",
+      "EASY full/halving의구체형태를유일하게강제하지않는다."
+    ],
+    [
+      "dsa.core.graph-path.path-compression-union-rank.q2",
+      "KEEP",
+      "equalrankroots중선택rootrank+1이다. 세acceptedAnswers와해설이실제UF.union의동률경우에맞다.",
+      "MEDIUM union-by-rank범위가명시된다."
+    ],
+    [
+      "dsa.core.graph-path.path-compression-union-rank.q3",
+      "KEEP",
+      "모델/해설은compression으로actualheight가낮아져도rank를재계산하지않아upper/heuristic정보라는조건을설명한다.",
+      "MEDIUM rank대size대현재height를같게보지않는다."
+    ],
+    [
+      "dsa.core.graph-path.minimum-spanning-tree.q1",
+      "KEEP",
+      "CMST총edgeweight대SSSP개별pathcost가맞다. Adirected만/B동일edge항상/Dcycle수최소는틀리며모든rationale/해설이목표를구별한다.",
+      "EASY 두문제의계산결과를혼동하지않는다."
+    ],
+    [
+      "dsa.core.graph-path.minimum-spanning-tree.q2",
+      "KEEP",
+      "V8treeedges7이다. accepted7/7개/V-1과해설을확인했다.",
+      "MEDIUM connectedspanningtree조건이다."
+    ],
+    [
+      "dsa.core.graph-path.minimum-spanning-tree.q3",
+      "KEEP",
+      "모델/해설은tree에여분cyclepath가없어한edge장애가분리시키고availability/capacity추가조건은MST최소총비용목표와별도임을설명한다.",
+      "HARD 최소화문제를장애우회보장으로확장하지않는다."
+    ],
+    [
+      "dsa.core.graph-path.minimum-spanning-tree.q4",
+      "KEEP",
+      "모델/해설은equalweight의복수optimalMST가능대안정edgeidentifier의tiepolicy를구별한다.",
+      "HARD 총최솟값과edge집합결정성이서로다르다."
+    ],
+    [
+      "dsa.core.graph-path.kruskal.q1",
+      "TARGETED_ENHANCE",
+      "Bcycle때문에skip이맞고Acycle허용/Ccomponent분리는틀리며rationale가맞다. D'현재가중치무시하고다음간선선택'은skip현재후다음eligible선택으로도읽혀B와동시에성립할수있어W3-DSA-022이다. D rationale의전체weightorder무시는보기보다강하다.",
+      "EASY 오답은가중치순서를실제로거스르는구체조건으로수정해야한다."
+    ],
+    [
+      "dsa.core.graph-path.kruskal.q2",
+      "KEEP",
+      "AB1/BC2선택,AC3cycle skip,CD4선택→sum7의모델/해설이맞다.",
+      "MEDIUM 4vertices의3edgesforest확장이다."
+    ],
+    [
+      "dsa.core.graph-path.kruskal.q3",
+      "KEEP",
+      "모델/해설은allE처리후selected<V-1이면disconnected,connected계약이면오류대disconnected허용이면MSF를설명한다.",
+      "MEDIUM 올바른Kruskal과전체edge검사전제가명확하다."
+    ],
+    [
+      "dsa.core.graph-path.prim.q1",
+      "KEEP",
+      "Ainside-outsidecross가맞다. B둘다inside/Ctree와무관최소/DSSSP만은틀리며모든rationale/해설이tree확장과cut을설명한다.",
+      "EASY frontier의유일조건이다."
+    ],
+    [
+      "dsa.core.graph-path.prim.q2",
+      "KEEP",
+      "A에서AB1후BC2후CD3로모든vertex,총6이다. 모델/해설이현재cut의최소선택과맞다.",
+      "MEDIUM startA·weights가명시된다."
+    ],
+    [
+      "dsa.core.graph-path.prim.q3",
+      "KEEP",
+      "모델/해설은둘다inside의oldfrontieredge가새vertex를못추가하고cycle을만들어skip함을설명한다.",
+      "MEDIUM lazyedgePQ가주어진상태이며eagervertexPQ와구별한다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://algs4.cs.princeton.edu/41graph/",
+      "NEEDS_REVIEW",
+      "graph에서직접403으로확인한동일target접근근거를재사용했다. 현재BFSpath관련원문·문항은실제읽었으나원격페이지확인은아니다."
+    ],
+    [
+      "https://algs4.cs.princeton.edu/44sp/",
+      "NEEDS_REVIEW",
+      "canonical직접web접근은Internal Error로실패했다. 관련Dijkstra는저자공식source로보충대조했지만target전체및BF/Floyd학습경로는미확정이다."
+    ],
+    [
+      "https://algs4.cs.princeton.edu/15uf/",
+      "NEEDS_REVIEW",
+      "canonical직접접근실패이다. 저자공식UF의실제관련절은보충으로읽었지만target전체학습경로확인으로승격하지않는다."
+    ],
+    [
+      "https://algs4.cs.princeton.edu/43mst/",
+      "NEEDS_REVIEW",
+      "canonical직접접근실패이다. 저자공식lazy/eagerPrim의실제관련코드·cost절은보충으로구별하며target페이지자체는미확정이다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://raw.githubusercontent.com/kevin-wayne/algs4/master/src/main/java/edu/princeton/cs/algs4/DijkstraSP.java",
+      "CURRENT_VERIFIED",
+      "저자공식실제nonnegative조건·검사,INF/source0,edgeTo/역추적관련절을읽었다. 수치범위주의도확인했으며indexedPQ의ElogV를lazyduplicate형식에일반화하지않는다."
+    ],
+    [
+      "https://raw.githubusercontent.com/kevin-wayne/algs4/master/src/main/java/edu/princeton/cs/algs4/UF.java",
+      "CURRENT_VERIFIED",
+      "실제parentself/rank0초기화,halvingfind,rank비교·동률+1·same-rootreturn과sequence mα(n)관련절을읽었다. recursivefullcompression과halving은다른대표방식으로구별한다."
+    ],
+    [
+      "https://raw.githubusercontent.com/kevin-wayne/algs4/master/src/main/java/edu/princeton/cs/algs4/LazyPrimMST.java",
+      "CURRENT_VERIFIED",
+      "실제binaryedgeheap의ElogE/E공간·bothmarkedskip·frontier추가및cutoptimality검사관련코드를읽었다. MST/forest·negative/동률가중치조건과대조했다."
+    ],
+    [
+      "https://raw.githubusercontent.com/kevin-wayne/algs4/master/src/main/java/edu/princeton/cs/algs4/PrimMST.java",
+      "CURRENT_VERIFIED",
+      "실제indexedbinaryheap의ElogV/V공간계약과vertex별edgeTo/distTo/PQfields관련절을읽어lazyedgequeue와구별했다. 전체실행성능시험은하지않았다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-DSA-020",
+      "severity": "P0",
+      "contentKeys": [
+        "dsa.core.graph-path.unweighted-shortest-path.q3"
+      ],
+      "file": "content/dsa/graph-path/questions.json",
+      "quote": "이전 정점을 함께 기록해야 목적지에서 시작 정점까지 역추적해 경로를 복원할 수 있다.",
+      "problem": "원래graph의edge와전체BFSdist가남아있다면도착점으로들어오는edge중거리1작은predecessor를반복선택해최단경로하나를복원할수있다. A→B/C→D에서dist0/1/1/2만저장해도D←B←A를찾을수있다. prompt는원graph재접근을금지하지않고원래first-discovery경로재현도요구하지않아parent필수단정이올바른대안을배제한다.",
+      "action": "parent는효율적인직접역추적을위한대표state라고한정하고graph+dist대안과필요한재탐색비용을인정한다. 또는원graph에재접근할수없거나원래discoverytree를재현해야한다는전제를준다. 본문정확한parent사용법은유지한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-DSA-021",
+      "severity": "P2",
+      "contentKeys": [
+        "dsa.core.graph-path.bellman-ford.q1"
+      ],
+      "file": "content/dsa/graph-path/questions.json",
+      "quote": "음수 간선이 방향 그래프에서만 가능한 것은 아니다.",
+      "problem": "A보기는'음수간선은무방향트리에서만허용'이라는데rationale는'방향그래프에서만가능'을부정해반박방향이반대다. undirectednegative반복cycle주의와정답D는정확하다.",
+      "action": "'BellmanFord는음수간선을무방향트리로한정하지않고방향graph의음수간선도처리한다'로A반박을맞춘다. 뒤의undirectednegativecycle경계는유지한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-DSA-022",
+      "severity": "P0",
+      "contentKeys": [
+        "dsa.core.graph-path.kruskal.q1"
+      ],
+      "file": "content/dsa/graph-path/questions.json",
+      "quote": "현재 간선의 가중치를 무시하고 다음 간선을 선택한다",
+      "problem": "이미연결된endpoint의현재edge를skip할때그weight와무관하게다음eligibleedge를고르는것은정상Kruskal과양립한다. 실제q2의AC3skip후CD4선택은B와D의자연스러운해석이동시에맞는예다. D rationale는전체weight정렬을무시한것으로해석하지만보기는그렇게말하지않는다.",
+      "action": "D를가중치순서를명시적으로위반하거나다음간선의cycle검사를생략하는구체적오답으로교체하고rationale를그오류에맞춘다. 정답B·A/C·본문은유지한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-DSA-023",
+      "severity": "P1",
+      "contentKeys": [
+        "dsa.core.graph-path.prim"
+      ],
+      "file": "content/dsa/graph-path/prim.md",
+      "quote": "Adjacency list와 binary heap을 사용하면 일반적으로 O(E log V) 정도로 분석할 수 있고",
+      "problem": "본문은edge를heap에넣고both-inside staleedge를skip하는lazyPrim을설명하면서heap종류/simplegraph조건없이ElogV를제시한다. 실제저자LazyPrimMST는edgeheap ElogE/E공간,PrimMST는indexedvertexheap ElogV/V공간이다. simplegraph면E≤V²로logE=O(logV)변환가능하지만parallel간선을허용한일반graph에서는같은범위가아니다.",
+      "action": "대표lazyedge방식의O(ElogE)와indexedvertex방식의O(ElogV)를한문장으로구별하거나현재식은simplegraph에서의상한임을명시한다. 기존frontier/state/문항은유지하고구현튜토리얼은추가하지않는다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-DSA-024",
+      "severity": "P2",
+      "contentKeys": [
+        "dsa.core.graph-path.prim"
+      ],
+      "file": "content/dsa/graph-path/prim.md",
+      "quote": "frontier 간선**를 반복해서",
+      "problem": "한국어조사'간선를'오류다. 알고리즘흐름이나그림재작성근거는아니다.",
+      "action": "해당표현만'frontier간선을'로정밀수정한다.",
+      "followupIssues": [
+        202
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "dsa.core.graph-path.bellman-ford": "f9b0f6aee36ff2f439cfea645d53a6ff42d2e099342082b0a89ee1258d6aa3fb",
+    "dsa.core.graph-path.bellman-ford.q1": "84b3b66aff15e27c67c2989b1a1ccd43191c4e3793f5f1e27c8908034c30b044",
+    "dsa.core.graph-path.bellman-ford.q2": "9dd95d2ab9302db1af331062aea2197e57e56c159f84ad392fb634f38b422df2",
+    "dsa.core.graph-path.bellman-ford.q3": "6c3b6c0a1464de15c18f228518aaef8d7e6070d40b0709611087bb3f7b5ca452",
+    "dsa.core.graph-path.bellman-ford.q4": "145af3db0e365498335af7461f6342d456070c13befc03c479b00bb212576aa2",
+    "dsa.core.graph-path.dijkstra": "e38c3f4821cd91aecc3f418b216720cc94fde5db4786207e46e1ad98cfda608e",
+    "dsa.core.graph-path.dijkstra.q1": "86018d8e609d318da64f53593c808f3e284dd8d956a22a5951dc45a9d8595ec6",
+    "dsa.core.graph-path.dijkstra.q2": "1243e83877616398ec165adafff03b370b48f0358349057abad3746bf0c87538",
+    "dsa.core.graph-path.dijkstra.q3": "6a4012cee2672f2903829bfe483c1858d4c6bc98ba47652228d47b2a96a18c4b",
+    "dsa.core.graph-path.dijkstra.q4": "ed4349380f386d4eaddb7fdeaf56e6a39ab63bde568b0149bfa9b660ef5b35dd",
+    "dsa.core.graph-path.floyd-warshall": "31a625c4b906ccd5698e6c2c0418bec560f7a02d10f2c6afddc50226d1cfec7f",
+    "dsa.core.graph-path.floyd-warshall.q1": "8825f69c525d6a29b2459e82066e42c5a9765cc5124e065626512aa86cde0e2a",
+    "dsa.core.graph-path.floyd-warshall.q2": "7cf4208fae91652ecbe5f3182bc1b5d232289ebc099d8b57804a3ab16811e21e",
+    "dsa.core.graph-path.floyd-warshall.q3": "da515614e6010baea586349a1d0dfe4420ee549d5da678c945902787557a4a3e",
+    "dsa.core.graph-path.kruskal": "d37dfc3a9d4ac7dc1b19ccebc7d660644f28fd3b4cc760f944036a0b5008e660",
+    "dsa.core.graph-path.kruskal.q1": "2010bc3406ad8bbe4e9420c5f38d7921894e467a60fcb36bca25d4b0c289c7b5",
+    "dsa.core.graph-path.kruskal.q2": "210e7e047b3e04d1db6da02ecb6598c77495c2ee6e74d78128ceb476b2a19cdd",
+    "dsa.core.graph-path.kruskal.q3": "fda4e6a0a74068be42103ed78a0f90b201f73e1319652c975725d4fe875ddce6",
+    "dsa.core.graph-path.minimum-spanning-tree": "d375f537fd8cfc4a7610bd6ee35f545a74a4c20b2a0d75c92356dec27c2b8d7c",
+    "dsa.core.graph-path.minimum-spanning-tree.q1": "6f26c0120163572adaf47490c3c0ceba230f7ad475e4eca998f913fb9cdb0222",
+    "dsa.core.graph-path.minimum-spanning-tree.q2": "7bf49ca6d5d2b805b7ab0f11238484a1a15f94d508c7115704d49f4d7dc82a69",
+    "dsa.core.graph-path.minimum-spanning-tree.q3": "ff327bfe1f7fb12bd2421e165119588ac5220bf27effc864302fa15ed6cde0f7",
+    "dsa.core.graph-path.minimum-spanning-tree.q4": "abb6f94584c60d424baf8c691c526a554da0dd87bf36742888133cc6dc39b2a4",
+    "dsa.core.graph-path.path-compression-union-rank": "6f96fb82abcb2d8da3ceb111b3db9a9ea08b909aeb9b777cc4aaf53f41f3835a",
+    "dsa.core.graph-path.path-compression-union-rank.q1": "8df311f4957a42a7b6c446b8a86005ec6aa2a13ee68989b5a608ccd3270208a5",
+    "dsa.core.graph-path.path-compression-union-rank.q2": "0c3167ca7b34225cb5af3e609fe3318624168a1ecf714f7dd5263641bf4a7b72",
+    "dsa.core.graph-path.path-compression-union-rank.q3": "046d3d9eadc909ff095b8b5f9b67c24c3b45de4c0cea83fd7d2c91449f222df0",
+    "dsa.core.graph-path.prim": "40cb9cfbaa64d1333e283ad791240b37eb5a930353ad058cdaa3dc6040d27e04",
+    "dsa.core.graph-path.prim.q1": "f0c02ef7d0e3b1474362344460228318b1873b4701f868d4c9d298a3ab1183cd",
+    "dsa.core.graph-path.prim.q2": "7a6207d8d1c17ab447aa38e7c60085d88e15fe4a2e84573b56b3742bd36eaa20",
+    "dsa.core.graph-path.prim.q3": "bd159330aef4f7a91cf0a5f3af95092a541e99f4cd4f4398085ea049ca82ddda",
+    "dsa.core.graph-path.union-find": "127d4e7ceee0f6f5bed1cfa3e85a36d77d533e3696a8c6c66dda6f955bf0f79a",
+    "dsa.core.graph-path.union-find.q1": "e33d082d9965804424e988d449edb924815fa51e015c272b00d2d30968d46fb7",
+    "dsa.core.graph-path.union-find.q2": "51b0b48b0987ed654ae61013952f2fe3587b832ce608428b55a008461bf872dc",
+    "dsa.core.graph-path.union-find.q3": "0c65f924deefc882df458f5130085810bbb966fc8379071613d331aed09202b4",
+    "dsa.core.graph-path.union-find.q4": "fadbb14d2c3beb7f177fb3699fd8f9e5ab8b2336c3445558ee75870f07298777",
+    "dsa.core.graph-path.unweighted-shortest-path": "02b5f7b3421ce5765d7924fa1a0efd2a3152c49d9135d18809047de92f496ad3",
+    "dsa.core.graph-path.unweighted-shortest-path.q1": "0c9d2b843502d77f0aa8bb7d2c166cefef5949ec426d769025cdfa82fb732223",
+    "dsa.core.graph-path.unweighted-shortest-path.q2": "4bf398e50d893624c585cd3365b6ea731b2e109788e3058dcafca77aac6168e5",
+    "dsa.core.graph-path.unweighted-shortest-path.q3": "cd82091dab027c3dc9f207c5751cbabe7ce8530a17bc4702ad9f395f39fb6aa4"
+  }
+}

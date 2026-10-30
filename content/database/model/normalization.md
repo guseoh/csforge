@@ -1,0 +1,91 @@
+---
+kind: concept
+contentKey: database.core.model.normalization
+topicContentKey: database.core.model
+slug: normalization
+title: "정규화와 중복이 만드는 변경 문제"
+summary: "반복 데이터를 무조건 나누는 규칙으로 외우지 않고 하나의 사실이 여러 row에 중복될 때 생기는 update·insert·delete anomaly를 줄이는 구조화 과정으로 이해한다."
+level: 1
+status: PUBLISHED
+displayOrder: 30
+references:
+  - url: "https://www.cs.cmu.edu/~christos/courses/dbms.S12/slides/17NormI.pdf"
+    title: "CMU 15-415 Lecture 16: Schema Refinement and Normalization"
+    referenceType: COURSE
+    language: en
+    displayOrder: 1
+    relationNote: functional dependency와 중복으로 생기는 update·insert·delete anomaly 및 schema decomposition 설명 확인
+  - url: "https://www.postgresql.org/docs/current/ddl-constraints.html"
+    title: "PostgreSQL Documentation: Constraints"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 2
+    relationNote: 이 Concept에서 사용하는 key와 참조 무결성을 표현하는 PostgreSQL constraint 확인
+---
+# 정규화와 중복이 만드는 변경 문제
+
+정규화를 “1NF, 2NF, 3NF를 순서대로 외우는 것”으로 시작하면 왜 필요한지 놓치기 쉽습니다. 먼저 **하나의 사실을 여러 곳에 복사해 둘 때 어떤 변경 문제가 생기는가**를 봐야 합니다.
+
+주문 row마다 회원 이메일을 그대로 저장한다고 해 봅시다.
+
+```text
+order_id │ member_id │ member_email       │ total
+─────────┼───────────┼────────────────────┼──────
+101      │ 7         │ old@example.com    │ 12000
+102      │ 7         │ old@example.com    │ 18000
+103      │ 7         │ old@example.com    │  9000
+```
+
+회원 7의 이메일이 변경되면 세 row를 모두 바꿔야 합니다. 한 row를 놓치면 같은 회원이 서로 다른 이메일을 갖는 모순이 생깁니다. 이것이 update anomaly의 전형적인 모습입니다.
+
+### 주문 row에 회원 정보를 종속시키면 삽입·삭제도 어려워진다
+
+같은 단일 주문 테이블만으로 회원의 현재 이메일을 표현한다고 가정해 봅시다. **주문을 아직 하지 않은 회원 8**이 가입하면 해당 회원의 이메일을 저장할 주문 row가 없습니다. 존재하지 않는 주문 번호와 금액을 억지로 채우거나, 주문 컬럼을 비워 둔 가짜 row를 만들어야 하는 상황이 바로 삽입 이상(insert anomaly)입니다.
+
+반대로 회원 7의 주문이 위의 101·102·103 세 건뿐이고 이를 모두 삭제하면, 해당 테이블에서 회원 7의 이메일이라는 사실까지 사라집니다. 주문 삭제와 회원 삭제는 서로 다른 업무 사건인데 하나의 row에 묶여 발생한 삭제 이상(delete anomaly)입니다.
+
+```text
+회원 8 가입 (주문 0건)       → orders만으로 회원 이메일 저장 불가
+회원 7의 마지막 주문 삭제   → orders만 있으면 회원 이메일 사실도 소실
+```
+
+### 사실의 소유 위치를 분리한다
+
+```text
+member
+member_id │ email
+──────────┼─────────────────
+7         │ new@example.com
+
+orders
+order_id │ member_id │ total
+─────────┼───────────┼──────
+101      │ 7         │ 12000
+102      │ 7         │ 18000
+```
+
+회원의 현재 이메일이라는 사실은 `member`가 소유하고 주문은 `member_id`로 참조합니다. 그러면 이메일 변경은 한 곳에서 일어납니다. 주문이 없는 회원 8도 `member`에 독립적으로 등록할 수 있고, 회원 7의 마지막 주문을 지워도 `member` row는 남습니다. 이때 `orders.member_id`가 `member.id`를 참조하는 외래 키에 `ON DELETE CASCADE`가 설정되어 있다면 **회원(참조 대상 부모)을 삭제할 때 그 회원의 주문(참조하는 자식)이 함께 삭제**되는 것이지, 마지막 주문을 삭제할 때 회원이 삭제되는 것은 아닙니다. **데이터 소유권 분리**와 **부모→자식 삭제 전파 정책**은 구별해야 합니다.
+
+```sql
+ALTER TABLE orders
+ADD CONSTRAINT fk_orders_member
+FOREIGN KEY (member_id) REFERENCES member(member_id);
+```
+
+외래 키는 애플리케이션이 실수로 존재하지 않는 회원을 참조하는 것도 DB에서 막아 줍니다.
+
+### 그렇다고 중복이 언제나 잘못은 아니다
+
+주문 시점의 배송 주소나 상품명 snapshot은 이후 원본이 바뀌어도 과거 주문 기록이 유지되어야 할 수 있습니다. 이때 중복은 anomaly가 아니라 **의도한 역사적 snapshot**입니다.
+
+```text
+현재 회원 주소     ≠     주문 당시 배송 주소 snapshot
+```
+
+따라서 “중복을 발견하면 무조건 table을 분리한다”가 아니라 그 값이 **현재 원본 사실인지, 시점별 기록인지**를 구분해야 합니다.
+
+### denormalization은 조회 편의와 쓰기 책임을 교환한다
+
+측정 결과 복잡한 JOIN이나 aggregate가 병목이고 읽기 성능 요구가 명확하다면 일부 값을 중복 저장할 수 있습니다. 다만 그 순간부터 “원본이 바뀌면 복사본을 누가 언제 동기화하는가?”라는 새 책임이 생깁니다. 캐시나 materialized projection과 같은 관점으로 관리해야 합니다.
+
+정규화의 목적은 table 수를 늘리는 것이 아니라 **한 사실의 authoritative location을 명확히 하고 변경 시 모순 가능성을 줄이는 것**입니다.

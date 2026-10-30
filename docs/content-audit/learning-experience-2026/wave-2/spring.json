@@ -1,0 +1,1295 @@
+{
+  "area": "spring",
+  "wave": "Wave 2",
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewMethod": "12 Topic의 curriculum 목표·전체 Concept 본문·모든 Question 선택지/rationale/accepted/model/explanation을 직접 읽어 개별 근거를 작성. 공식 자료로 계약/불확실 주장을 대조하며 자동 파싱·이전 PASS로 verdict를 부여하지 않음.",
+  "topics": [
+    {
+      "key": "spring.core.why",
+      "coverage": "객체의 실제 연결/수명→독립 변경 이유→외부 조립 책임을 구분. coupling.q2와 object-graph.q2는 값 생성과 협력 구현 선택/수명이라는 다른 초점. IoC 단답은 정의된 책임 이동을 묻고 q2로 Service Locator 차이를 추론한다."
+    },
+    {
+      "key": "spring.core.container",
+      "coverage": "등록 설계도/생성 시점, container 단계·기능, per-container/per-bean 공유/동시성 책임 분리. @Lazy 첫생성 실패와 후보모호성 실패는 다른 단계. 같은타입이라는 이유만으로 객체수가1이라는 오해는 두문항이 서로 다른 실제조건으로 검증."
+    },
+    {
+      "key": "spring.core.registration",
+      "coverage": "외부SDK 명시 factory, scan 후보 발견, 같은 타입 선택은 서로 다른 단계. NoUnique의 후보 존재와 scan 미등록을 구분하며 configuration.q2는 full/lite 조건을 검증한다."
+    },
+    {
+      "key": "spring.core.injection",
+      "coverage": "필수 생성 상태, 정상 제품의 부재 의미, constructor cycle의 조립 불가능성을 분리. why.ioc-di는 책임 이동 입문, constructor-injection은 null검증/final/12dependency 책임을 더 구체화하므로 학습 중복은 관리됨."
+    },
+    {
+      "key": "spring.core.scope-lifecycle",
+      "coverage": "scope의 수명/공유, 짧은 수명 조회, 초기화/종료 책임을 분리. request 설명은 충분하나 scope-proxy의 prototype curriculum 목표는 보강 필요."
+    },
+    {
+      "key": "spring.core.config",
+      "coverage": "파일 표현→최종 Environment→타입/시작 계약 순서가 자연스러움. 환경 선택과 업무 플래그·기밀성을 구분."
+    },
+    {
+      "key": "spring.core.mvc",
+      "coverage": "mapping/adapter→인자→controller→반환 표현 및 HTTP/업무 책임을 분리. 첫 dispatcher 도식의 흐름 결함만 보강."
+    },
+    {
+      "key": "spring.core.validation-error",
+      "coverage": "입력 형식/상태 불변식/유일성/권한을 분리하고 변환 오류→안정적 API 오류 계약을 설명. MVC 예외 목록은 대표 예시이지 전체 구현 계약으로 판정하지 않음."
+    },
+    {
+      "key": "spring.core.data-jpa",
+      "coverage": "repository→context/flush→실제 SQL로 연결. 개별 문항의 정답은 타당하며 entity graph 비교 목표는 본문 보강 필요."
+    },
+    {
+      "key": "spring.core.transaction-aop",
+      "coverage": "L3 proxy 진입→실제 메서드→완료, self-call 우회, Java 예외와 rollback-only 상태를 독립적으로 추적. propagation은 DB isolation과 분리됨."
+    },
+    {
+      "key": "spring.core.testing",
+      "coverage": "테스트 context 범위·실제 위험·double/실제adapter·testTX와 운영 완료 경계의 검증 공백을 구별. 세 Topic 사례는 다른 실패 유형을 검사함."
+    },
+    {
+      "key": "spring.core.production",
+      "coverage": "잘못된 정적 구성/일시 의존성 장애, health/metrics, 종료 drain/불명확 commit 후 retry를 분리. Boot 준비/종료 도식은 conceptual application availability로 검토."
+    }
+  ],
+  "concepts": [
+    [
+      "spring.core.why.object-graph",
+      "KEEP",
+      "L1 생성·선택·연결 objective를 주문 객체 그래프와 scope/cycle/candidate 질문으로 충족.",
+      "직접 new와 constructor/Fake 조립 예의 의미가 설명됨. 부분 코드이며 실행 주장 없음. 변경 가능한 singleton 공유 위험/불필요 interface 비용 포함, 한국어 인과 설명 충분.",
+      "TEXT 참조 화살표와 수명 질문 표 유지.",
+      "Spring IoC introduction의 DI/컨테이너 조립 정의와 직접 관련.",
+      "q1 런타임참조 vs 상속/FK/interface, q2 외부 조립 결정으로 충분."
+    ],
+    [
+      "spring.core.why.coupling",
+      "KEEP",
+      "L1 구현 교체/테스트 대역/설정의 변경 비용을 실제 코드로 비교.",
+      "인터페이스 타입만 바꿔도 내부 new 선택이 남음. 값 객체/도메인 생성과 외부 협력 선택을 구분. 과도한 abstraction 비용 설명 적절.",
+      "NONE 코드와 변경 비교표 충분, 추가 이미지 불필요.",
+      "factory-collaborators 현재 heading은 Dependency Injection. 생성자/factory 조립 내용은 관련; 기존 metadata를 바꾸지 않음.",
+      "q1 동일 주제 4선택지·q2 Money vs JPA 책임 비교."
+    ],
+    [
+      "spring.core.why.ioc-di",
+      "KEEP",
+      "L1 협력 객체의 선택/생성/연결 이동을 생성자 코드와 container 흐름으로 설명.",
+      "Service Locator getBean vs external DI, 필수 의존성/null와 테스트, container≠도메인/DB/HTTP 보장 구분 충분.",
+      "TEXT container→완성 그래프/DI vs locator 표 유지.",
+      "introduction/factory-collaborators의 DI specialized IoC·constructor/factory/property 경계 확인.",
+      "q1 핵심 책임 이동, q2 AgetBean/Bconstructor 판단."
+    ],
+    [
+      "spring.core.container.bean-definition",
+      "KEEP",
+      "L1 STANDARD BeanDefinition≠instance와 class/factory/scope/dependency 등록을 @Bean 예로 충족.",
+      "definition→instance, singleton/prototype 객체수, eager/lazy·scan없는정의/생성예외를 구분. 설명형 한국어·factory부분코드 적절.",
+      "NONE지만 생성흐름 ASCII·표는 유효한 보조; 새 이미지 불필요.",
+      "Bean Overview의 definition metadata 직접 확인.",
+      "q1 등록정보/객체, q2 lazy 생성예외로 핵심 충족."
+    ],
+    [
+      "spring.core.container.application-context",
+      "TARGETED_ENHANCE",
+      "L1 CORE 등록/생성/의존해결/생명주기/부가기능 범위는 충분.",
+      "서비스 생성자/시작오류단계·domain≠container API가 정확. 그러나 큰 흐름에서 BPP before/after 모두 초기화 이전으로 표시해 after 계약과 충돌.",
+      "TEXT BPP before→initialization→BPP after로 현재 도식 순서만 수정(W2-SPR-001).",
+      "Container Overview는 조립/metadata 입문; 순서의 정확성은 Extension Points 초기화 양쪽 callback 계약과 대조.",
+      "q1 부가기능·q2 NoUnique 후보 해결은 정확하며 잘못된 hook순서를 정답으로 요구하지 않음."
+    ],
+    [
+      "spring.core.container.singleton-identity",
+      "KEEP",
+      "L1 per-container/per-bean identity 및 mutable request field 위험 충족.",
+      "A10/B20/A20 interleaving, context2개/Clock2정의·GoF비교·shortscope mismatch 설명 충분. 부분PriceService코드는 policy 생략한 역할예로 판단.",
+      "TEXT sharedreference와 thread 상태표가 실제 원인 표현.",
+      "Singleton Scope 공식 per-container/per-bean와 GoF classloader boundary 관련.",
+      "q1 singleton vs JVM/threadsafe/request, q2 currentMemberId race 충분."
+    ],
+    [
+      "spring.core.registration.configuration-bean",
+      "KEEP",
+      "L1 외부SDK·환경 인자·adapter의 명시 조립 목표를 PaymentConfig/두@Bean 호출 예로 충족.",
+      "full@Configuration interception vs proxyBeanMethods/lite 일반 호출 경계 정확. 조립 선택과 요청별 업무 판단을 분리. 부분 코드 미실행, 한국어 인과 설명 충분.",
+      "NONE 코드/설정→factory→service 흐름으로 충분.",
+      "Basic Concepts의 full/lite 호출 경계 직접 대조.",
+      "q1 외부SDK등록 이유,q2 가로채기 조건 검증."
+    ],
+    [
+      "spring.core.registration.component-scan",
+      "KEEP",
+      "L1 package/stereotype/filter가 후보 집합 결정, 다른 패키지 예로 충족.",
+      "classpath≠registered, 넓은 scan의 의도치 않은 설정/충돌, Boot 전형적 시작점 및 slice 범위 제한이 적절.",
+      "TEXT 디렉터리 및 scan→definition→creation 도식 유지.",
+      "Classpath Scanning stereotype/filter·Repository 역할 직접 관련.",
+      "q1 com.app/com.shop 등록 누락,q2 넓은 scan 비용."
+    ],
+    [
+      "spring.core.registration.primary-qualifier",
+      "KEEP",
+      "L2 같은타입 모호성→Primary기본/Qualifier의미/Fallback후순위/name단서 충족.",
+      "Primary는 collection/명시qualifier를 무조건 이기는 규칙 아님. Qualifier≠uniqueID, 변수명 리팩터링/선택책임 분산 trade-off 충분.",
+      "NONE 코드와 선택 정책으로 충분.",
+      "공식 Primary/Fallback/Qualifier의 type narrowing 및 collection 조건 대조.",
+      "q1 A기본/B환불,q2 qualifier 분산 책임 분리."
+    ],
+    [
+      "spring.core.injection.constructor-injection",
+      "KEEP",
+      "L2 CORE 필수 collaborators→유효 생성 상태/final/test objective를 requireNonNull 생성자로 충족.",
+      "한생성자 @Autowired 생략, field injection 불완전상태, 12인자 책임신호/숫자quota아님 충분. 생성자예·Fake 조립 의미가 설명됨.",
+      "NONE 코드/준비→new→유효객체 ASCII 충분.",
+      "factory-collaborators constructor/factoryargs 계약 대조; required 단일값과 optional/multielement는 별도라는 한계 적절.",
+      "q1 생성시점/q2 의존성수 숨기기 vs 책임분리."
+    ],
+    [
+      "spring.core.injection.optional-dependency",
+      "KEEP",
+      "L2 STANDARD 부재가 정상인지→Optional/provider/noop/조건부 조립 선택 충족.",
+      "PaymentGateway 누락 숨김금지, 반복nullbranch/noop의 실패은폐 경계 충분. AuditService finalOptional 예는 생성자 생략된 부분예로 평가, 실행 주장 없음.",
+      "NONE 역할비교 표와 noop코드가 충분.",
+      "Using@Autowired required=false/Optional 조건 확인. ObjectProvider는 container조회 역할로 한정한 설명이 적절.",
+      "q1 필수Bean failfast/q2 제품상 허용된 알림noop 판단."
+    ],
+    [
+      "spring.core.injection.circular-dependency",
+      "KEEP",
+      "L2 CORE A→B→미완성A와 상위조정/작은역할 경계 충족.",
+      "setter/lazy는 생성 우회 조건부이며 runtime 책임순환/재귀·transaction/이벤트 전달 지연은 별도. 한국어 실행원인 설명 충분.",
+      "DIAGRAM 생성순환→CheckoutUseCase 새그래프 및 runtime왕복으로 효과적.",
+      "constructor anchor의 BeanCurrentlyInCreationException/earlyreference 경계 직접 대조.",
+      "q1 생성불가능 직접이유/q2 lazy이후 runtime위험."
+    ],
+    [
+      "spring.core.scope-lifecycle.scopes",
+      "KEEP",
+      "L2 CORE singleton/prototype/request의 생성·공유·정리 책임 목표 충족.",
+      "singleton per-container/per-definition, prototype lookup 시 생성과 종료 관리 제외, request HTTP 범위 정확. 공유 가변 상태 대신 지역변수/인자 선택과 부분 ExportSession 예의 책임을 설명.",
+      "TEXT 수명 비교 표와 Request A/B의 공유/분리 상태 충분.",
+      "factory-scopes의 singleton 범위 및 prototype lifecycle 계약 대조.",
+      "q1 공유/수명 계약, q2 prototype AutoCloseable 종료 책임을 확인."
+    ],
+    [
+      "spring.core.scope-lifecycle.scope-proxy",
+      "TARGETED_ENHANCE",
+      "L2 CORE request mismatch는 충족. curriculum의 prototype 직접 고정/조회 목표는 본문에서 다루지 않음.",
+      "stable proxy→활성 request target 조회와 @Async scope 부재, 값 복사 및 ObjectProvider 대안 정확. singleton에 직접 주입한 prototype이 한 번만 생성되는 경우와 prototype proxy의 method-call별 새 target은 빠짐.",
+      "DIAGRAM request A/B 대상 교체 흐름 유효. prototype direct injection/lookup/per-method proxy 비교 상태 추가 필요.",
+      "other-injection anchor 및 singleton/prototype once-injection, prototype proxy every-method-call 공식 계약 대조.",
+      "q1 수명 mismatch와 q2 async request 부재는 타당하지만 prototype 목표 검증 없음."
+    ],
+    [
+      "spring.core.scope-lifecycle.lifecycle-callback",
+      "KEEP",
+      "L2 CORE 생성/DI/초기화/종료 책임과 필수 상태 목표 충족.",
+      "BPP before→init→BPP after 순서 정확하며 application-context 도식 오류와 대조됨. constructor 불변식과 Bean 초기화, 종료 소유권/시간 제한, prototype 정리 경계를 설명. client 예는 생성자 생략 부분 예로 평가.",
+      "TEXT 단계 흐름과 종료 책임 설명으로 충분.",
+      "factory-nature 초기화·종료 계약 및 factory-extension의 전후 처리 순서 대조.",
+      "q1 PostConstruct 시점/역할과 q2 공유 client 소유권 확인."
+    ],
+    [
+      "spring.core.config.properties-yaml",
+      "KEEP",
+      "L2 STANDARD 동일 코드의 외부 입력 및 논리 key/value 목표 충족.",
+      "properties/YAML 동일 예, 들여쓰기·복제 trade-off, 단위/secret 노출 경계를 설명. 외부 설정 자체가 보안을 보장하지 않는다고 명시.",
+      "NONE 동일 key 표현과 비교 코드로 충분.",
+      "Boot external-config의 파일/환경/인자 공급과 구조 바인딩 계약 대조.",
+      "q1 형식과 Environment/q2 Git secret 노출 분리."
+    ],
+    [
+      "spring.core.config.profiles-precedence",
+      "KEEP",
+      "L2 CORE 8080→9090→10080 실제 값 추론과 환경 조사 목표 충족.",
+      "활성 후보와 source override 분리, relaxed binding·외부 위치·마스킹 순서 충분. 업무별 runtime 정책을 profiles에 옮기는 경계 정확.",
+      "TEXT 후보→우선순위→최종값 흐름 충분.",
+      "Boot OS 환경이 config data보다 뒤의 우선순위, profiles 활성 및 profile 파일 override 계약 확인.",
+      "q1 실제 값 덮어쓰기/q2 조사 항목3개 이상."
+    ],
+    [
+      "spring.core.config.configuration-binding",
+      "KEEP",
+      "L2 CORE 타입·등록 경로·시작 검증 목표 충족.",
+      "URI/Duration record와 Scan/Enable 등록 코드, Validated 및 1..100, 로그 record secret 위험과 client 구성 경계 설명. URI는 endpoint 가용성 검증 아님 문항이 보완.",
+      "NONE 변환/실패/클라이언트 조립 ASCII와 코드 충분.",
+      "Boot scan/enable와 Validated 계약 대조; validation provider classpath가 필요하다는 공식 전제는 승인 stack의 validation 의존성 내 해석.",
+      "q1 타입 의미/q2 정상 실행 계약 위반 failfast."
+    ],
+    [
+      "spring.core.mvc.dispatcher-servlet",
+      "TARGETED_ENHANCE",
+      "L2 CORE front-controller/선택/호출 목표는 상세 예로 충족하나 첫 도식 순서가 오해 유발.",
+      "mapping과 adapter의 질문 구분, binding 이전 실패·filter 차단·404 조사 경계 충분. 첫 도식의 예외/결과→controller 화살표는 정상 실행 순서와 불일치.",
+      "DIAGRAM 두번째 POST 흐름과 Filter 위치는 유효. 첫 그림에 정상/예외 분기를 분리할 필요.",
+      "mvc-servlet front-controller delegation 및 processing의 handler 실행→응답/예외 계약 대조.",
+      "q1 정상 경로/q2 filter short-circuit은 정확."
+    ],
+    [
+      "spring.core.mvc.controller-service",
+      "KEEP",
+      "L2 CORE HTTP 변환·use-case 조정·domain invariant 목표 충족.",
+      "나쁜 setter/save/payment 경계와 command/result·201 DTO 좋은 예, batch 재사용·변경 이유 설명 충분. 좋은 controller 코드는 constructor 생략 부분예로 평가.",
+      "NONE 계층 흐름·검증 책임 표와 코드 충분.",
+      "Annotated Controllers는 HTTP mapping/input/exception 계약을 지원. application/domain 배치는 문서의 framework 보장이 아닌 설계 권고로 설명됨.",
+      "q1 API 표현 책임/q2 REST·batch 경계 공유."
+    ],
+    [
+      "spring.core.mvc.argument-resolver",
+      "KEEP",
+      "L2 CORE parameter source/선택/준비 목표 충족.",
+      "supportsParameter→resolveArgument, path/header/principal와 converter body 차이, 현재 사용자 식별자 변환·업무 처리 금지·호출전 실패 설명 충분.",
+      "TEXT 선택→실제 인자→호출 흐름 유효.",
+      "method-arguments의 source 표 및 Javadoc 지원 검사 후 resolve 계약 확인.",
+      "q1 다른 MVC 확장점 구별/q2 security 표현 변환 책임."
+    ],
+    [
+      "spring.core.mvc.message-converter",
+      "KEEP",
+      "L2 CORE Content-Type/Accept와 body 변환 목표 충족.",
+      "text/plain JSON 실패 가능성 조건부, abc int 변환과 0 Min 검증 분리, Entity lazy/query/노출 위험은 가능성으로 정확. Jackson은 구현이라고 구분.",
+      "TEXT inbound 선택과 outbound lazy 접근 흐름 충분.",
+      "message-converters 읽기/쓰기 및 지원 미디어 계약 대조.",
+      "q1 media/DTO 지원 계약/q2 parsing와 validation 단계."
+    ],
+    [
+      "spring.core.validation-error.bean-validation",
+      "KEEP",
+      "L2 CORE 형식과 domain invariant 경계 목표 충족.",
+      "provider/@Valid 전제와 cancel 현재상태, exists 경합/UNIQUE 방어 목적, annotation!=SQL/XSS/authz 설명 충분. Email/Size 부분 DTO는 필수 null까지 보장하는 예로 주장하지 않음.",
+      "NONE 경계 표·사전조회 경쟁 예로 충분.",
+      "beanvalidation provider/constraint와 MVC signature별 검증 계약 대조.",
+      "q1 경계/q2 동시 중복 INSERT 구체 원인."
+    ],
+    [
+      "spring.core.validation-error.binding-errors",
+      "KEEP",
+      "L2 CORE 변환/validation 실패→field/global 오류 번역 목표 충족.",
+      "abc와0 단계, 안정적 외부 코드, rejected secret 배제, 날짜 global 오류 및 domain 조건 설명 충분. 구체 BindingResult 배치/최신 method validation 예외는 Reference로 확장 가능하며 본문은 전체 handler 구현을 주장하지 않음.",
+      "TEXT 입력단계/예외→API 변환과 JSON fieldErrors 유효.",
+      "ModelAttribute의 인접 BindingResult 및 MVC method validation의 별도 오류 조건 확인.",
+      "q1 단계 구분/q2 민감값 안전 표현."
+    ],
+    [
+      "spring.core.validation-error.exception-handler",
+      "KEEP",
+      "L2 CORE Advice/Handler 위치·HTTP 변환·노출 위험 목표 충족.",
+      "404 코드예·domain HttpStatus 결합·200/모든400 위험·서버오류 관측·rollback 별도 경계를 설명. 모든 Filter 예외까지 잡는다고 일반화하지 않음.",
+      "NONE 오류 mapping과 클라이언트/서버 정보 표 충분.",
+      "ann-exceptionhandler의 DispatcherServlet HandlerExceptionResolver 기반 계약 대조.",
+      "q1 adapter 방향/q2 오류 분류와 운영 영향."
+    ],
+    [
+      "spring.core.data-jpa.repository-abstraction",
+      "KEEP",
+      "L2 CORE 반복 adapter 감소와 query 비용 경계 목표 충족.",
+      "JpaRepository 예·proxy→JPA→provider→JDBC→DB 흐름, managed save 불필요 조건, 무제한 findAll·aggregate/검색 책임 설명 충분. Querydsl 등은 선택 후보이며 새 의존성 요구 아님.",
+      "NONE 실행 계층/메서드/dirty-checking 코드 충분.",
+      "core-concepts CRUD 반환 범위와 query-method lookup 전략 확인.",
+      "q1 abstraction 한계/q2 managed 변경은 lifecycle까지 연결."
+    ],
+    [
+      "spring.core.data-jpa.entity-lifecycle",
+      "KEEP",
+      "L2 CORE transient/managed/detached/removed와 flush 목표 충족.",
+      "상태 도식·rename dirtychecking·같은context find identity·clear/query 경계·merge 복사 반환과 domain상태 분리 충분. TX 종료만으로 항상 detach된다고 단정하지 않고 detached 전제를 둠.",
+      "DIAGRAM persist/detach/remove 및 SQL 변경 추적 유효. 전체 모든 역전이는 입문 목표 밖.",
+      "save persist/merge 공식 계약 및 별도 Jakarta EntityManager 3.2 API로 merge/변경 감지/find 반환 확인. canonical 명세 URL은 조회 제한으로 미확인 상태 유지.",
+      "q1 persistence/domain축/q2 detached 변경 추적 제외."
+    ],
+    [
+      "spring.core.data-jpa.fetch-plan",
+      "TARGETED_ENHANCE",
+      "L2 CORE lazy query/컬렉션 page 위험과 fetchjoin/batch는 충족하나 entity graph 비교 목표는 이름만 언급.",
+      "EAGER도 secondary query 가능·SQL row 증식·provider pagination 조건·실측 진단 정확. findAll(Pageable) 예의 1+20은 서로 다른 미로딩 member/추가 count 제외 모델임을 밝혀야 숫자 보장 오해 감소.",
+      "TEXT 1+N 및 부모×자식 rows 충분. graph 선택의 loaded attributes/쿼리 차이 상태 비교 필요.",
+      "Spring Data EntityGraph attributePaths/fetch·load 선택 확인. 명세 search 발췌 및 Hibernate 공식 pagination 자료가 주장을 지지하지만 canonical 긴명세 전체 targeted 절은 미조회로 구분.",
+      "q1 관측된21회 원인/q2 부모/rowpage 차이/q3 실제진단 모두 타당."
+    ],
+    [
+      "spring.core.transaction-aop.transaction-proxy",
+      "KEEP",
+      "L3 CORE interceptor/manager·참여/신규·완료 목표 충족.",
+      "REQUIRED T0참여/T1신규·다른 propagation manager 지원 한계·DB isolation 위임·save/log 이후 flush/commit·긴 외부호출 lock/connection 점유 설명 충분.",
+      "DIAGRAM proxy→metadata/manager→target→완료와 T0/T1 상태 유효.",
+      "tx-decl-explained의 proxy/interceptor/manager 및 imperative thread-bound 계약, annotations REQUIRED/default 대조.",
+      "q1 기존참여/q3 없으면신규/q2 지연 UNIQUE를 lifecycle와 연결."
+    ],
+    [
+      "spring.core.transaction-aop.self-invocation",
+      "KEEP",
+      "L3 CORE this 직접 호출이 interception을 우회하는 호출경로 목표 충족.",
+      "outer TX가 있으면 내부 작업도 기존TX에서 실행 가능, REQUIRES_NEW 미적용을 정확히 구분. 별도 Bean 분리·selfproxy 비용과 버전/가시성 조건 설명 충분.",
+      "DIAGRAM proxy→place→target.saveOne과 별도 Bean 예가 경계 통과 차이를 설명.",
+      "annotations proxy external-only/AspectJ 차이 확인. Woowa2019는 legacy OAuth2 설정을 최신 구현 지침으로 사용하지 않는 self-invocation 사례의 보충 가치.",
+      "q1 원인/q2 항목별 독립TX 요구와 해결."
+    ],
+    [
+      "spring.core.transaction-aop.rollback-rule",
+      "KEEP",
+      "L3 CORE 기본/개별/전역 exception 규칙과 rollback-only 목표 충족.",
+      "RuntimeException/Error vsIOException·rollbackFor/noRollbackFor·6.2 ALL_EXCEPTIONS·catch 정상반환과 공유rollback-only·원격 결제 비원자성 충분. 보상/대사 정책을 DBrollback으로 혼동하지 않음.",
+      "TEXT T1 실패→mark→catch→commit요청→rollback/예외 상태 흐름 유효.",
+      "rolling-back/annotations default 및 override 대조; 추가 공식 propagation절로 UnexpectedRollbackException 공유 상태 확인.",
+      "q1 기본 규칙/q2 Java 반환과TX 상태/q3 원격 부수효과 한계."
+    ],
+    [
+      "spring.core.testing.slice-test",
+      "KEEP",
+      "L3 CORE WebMvc/DataJpa/Boot 선택과 실제 integration 위험 목표 충족.",
+      "slice≠mock, MVC와 Repository 실제 범위·설정/proxy 연결·MockitoBean Service 제외·H2/PG 차이와 실제DB 선택 충분. DataJpaTest만으로PG자동 선택을 보장한다고 주장하지 않음.",
+      "NONE 범위표와 annotation/대역 예로 충분.",
+      "Boot tests/webslice scanner/MockMvc·slice appendix JPA설정과 MockitoBean replace/create 계약 확인.",
+      "q1 webslice 한계/q2 DBMS 차이 검증."
+    ],
+    [
+      "spring.core.testing.mock-boundary",
+      "KEEP",
+      "L3 STANDARD 내부 호출 결합 vs 독립 실패 경계 목표 충족.",
+      "PG mock 승인/거절/timeout, save→saveAll 결과 보존·fake 한계·HTTP adapter fixture·12mock 책임신호 설명 충분. 설계 권고와 Spring override 보장은 분리됨.",
+      "NONE test layer별 경계 표와 double 코드 충분.",
+      "MockitoBean/SpyBean은 context override 문서로 가치 있음; 순수 Mockito 사용의 전체 API 지침을 제공하는 Reference라고 주장하지 않음.",
+      "q1 외부경계 결정성/q2 복잡도 신호 해석."
+    ],
+    [
+      "spring.core.testing.test-transaction",
+      "KEEP",
+      "L3 CORE testrollback이commit/lazy/constraints 가리는 목표 충족.",
+      "outer testTX에 REQUIRED참여→assertion까지 lazy, flush/실commit 검증, async/REQUIRES_NEW 별도cleanup 설명 충분. 운영lazy실패는 조건부이며 OSIV와 확장context의 일괄부정 아님.",
+      "TEXT test 시작→검증→rollback vsserviceproxy→완료→응답 비교 유효.",
+      "TestContext 기본rollback/thread-bound/ORM flush false-positive 경고 대조.",
+      "q1 lazy 성공 일반화 금지/q2 flush·commit 및 독립TX 위험."
+    ],
+    [
+      "spring.core.production.startup-failure",
+      "KEEP",
+      "L3 CORE 설정/Bean graph/startup 실패의 운영 이점 목표 충족.",
+      "단계/validated 설정·잘못된필수입력 vs503/선택서비스·무거운 PostConstruct와 timeout·원인단계 조사 충분. ReadyEvent 그림은 runners 등 생략한 준비상태 모델로 이해하며 socket bind의 전체 상세순서/모든외부연결 검증 보장을 주장하지 않음.",
+      "NONE 시작 ASCII 및 실패/복구 정책 표가 적절.",
+      "external-config/factory-nature 계약 재사용; 추가 Boot events와 probe lifecycle 자료로 Ready 이후 availability와 시작 작업 조건 대조.",
+      "q1 필수구성결함/q2 warmup 시작필수 여부 판단."
+    ],
+    [
+      "spring.core.production.metrics-actuator",
+      "KEEP",
+      "L3 CORE health/metrics·exposure/cardinality/secret 목표 충족.",
+      "pending와500의 상관은 조사근거일뿐 원인확정 아님, tail/평균 예137.4ms≈138 계산 타당. bounded tags/logtrace·exposure whitelist와 접근통제 분리 충분.",
+      "NONE 지표 질문표·분포 숫자·고cardinality 나쁜 예와 yaml로 충분.",
+      "endpoints sanitization/exposure·Boot Hikari metrics·Micrometer name+tags identity 확인. 추가 Hikari 공식 코드의 pending→getPendingThreads로 문항 gauge 의미 대조.",
+      "q1 DB pool 우선조사/q2 high cardinality 직접원인."
+    ],
+    [
+      "spring.core.production.graceful-shutdown",
+      "KEEP",
+      "L3 CORE 새유입/drain/유한timeout/자원 종료 목표 충족.",
+      "개념적 상태 순서, background checkpoint/sideeffect/recovery 및 commit후response유실 시 idempotency 별도 설명 충분. 종료절대무손실을 부정하고 readiness/liveness 역할 구분.",
+      "TEXT 종료 전이와 Client/Server/DB 실패 시퀀스가 상태를 효과적으로 보여줌.",
+      "Boot graceful default·SmartLifecycle초기stop·유한phase timeout과 서버별 요청거부 방법 대조.",
+      "q1 unknown결과 중복/q2 신규유입 중단 목적."
+    ]
+  ],
+  "questions": [
+    [
+      "spring.core.why.object-graph.q1",
+      "KEEP",
+      "A 실제 참조/수명 정확. B 상속만/C DBFK동일/D interface수=품질 오답; A~D rationale·해설이 모두 역할을 구분.",
+      "EASY 정의와 실제 범위 검증, 연결 정확."
+    ],
+    [
+      "spring.core.why.object-graph.q2",
+      "KEEP",
+      "model/explanation 구현/수량/수명/설정/연결순서의 외부 책임 2가지 이상 타당.",
+      "MEDIUM two decisions 범위 명확, q1 분류와 구분."
+    ],
+    [
+      "spring.core.why.coupling.q1",
+      "KEEP",
+      "D PG 선택·설정과 주문 기능 책임 결합. A interface만/B static singleton/C 내부factory는 선택 위치 안 바뀜; 4rationale/해설 적절.",
+      "MEDIUM 구체 Stripe→fake/다른PG 전제에서 유일 정답."
+    ],
+    [
+      "spring.core.why.coupling.q2",
+      "KEEP",
+      "Money 내부 값/불변식 vs JPA 구현·수명·설정의 변경 이유; model과해설 정확.",
+      "MEDIUM new 자체를 금지하는 오해 예방."
+    ],
+    [
+      "spring.core.why.ioc-di.q1",
+      "KEEP",
+      "accepted4 모두 정의된 협력 선택/생성/연결의 외부 이동 명제를 표현. 해설 annotation/new 제거와 책임 위치 구분.",
+      "EASY 안정적인 정의 명제 단답; 원인추론은 q2가 보완."
+    ],
+    [
+      "spring.core.why.ioc-di.q2",
+      "KEEP",
+      "B constructor 외부 전달, A container lookup ServiceLocator; model/explanation 의존성의 드러남/방향 타당.",
+      "MEDIUM A/B 판단과 근거, coupling 구현교체와 다른 목표."
+    ],
+    [
+      "spring.core.container.bean-definition.q1",
+      "KEEP",
+      "A metadata/createdinstance 맞음. B definition=service,C JVMone,D scan등록없이instance 틀림; 모든 rationale와 explanation 대조.",
+      "EASY definition/scope 경계, 단일 정답."
+    ],
+    [
+      "spring.core.container.bean-definition.q2",
+      "KEEP",
+      "lazy 등록성공/첫조회 constructorfail는 registration≠instantiation. model/explanation may-lazy 조건 맞음.",
+      "MEDIUM 비lazy dependent가 없다는 발생상황이 주어져 eager exception과 모호하지 않음."
+    ],
+    [
+      "spring.core.container.application-context.q1",
+      "KEEP",
+      "model/explanation graph/lifecycle+environment/resource/event의 2가지 이상 타당.",
+      "EASY 책임 목록 회상 수준, 순서 문항은 아니므로 diagram 오류를 Q 정답오류로 확대 안 함."
+    ],
+    [
+      "spring.core.container.application-context.q2",
+      "KEEP",
+      "3 dependencyresolution: 후보있지만 choose불가. model/explanation Primary/Qualifier 단서 적절.",
+      "MEDIUM 가장가까운단계 표현으로 일반 getBean 예외의 모든 발생지점 주장 안 함."
+    ],
+    [
+      "spring.core.container.singleton-identity.q1",
+      "KEEP",
+      "B percontext/perdefinition. A JVMclassone,C autosynchronization,D perrequestnew 틀림; rationale4·해설 적절.",
+      "EASY 타입/범위/threadsafe 분리."
+    ],
+    [
+      "spring.core.container.singleton-identity.q2",
+      "KEEP",
+      "sameobject/field 공유→overwrite/wrongMember. model/explanation Spring noautoisolate, local/separate scope 대안 타당.",
+      "MEDIUM 실제 동시상태 결과, correctness/threadsafe 이유 명확."
+    ],
+    [
+      "spring.core.registration.configuration-bean.q1",
+      "KEEP",
+      "A factory 조립 맞음. B 유일등록방법/C 항상new/D SDK자원모두자동관리 틀림; 4 rationale와 해설 확인.",
+      "EASY SDK 생성과 관리 경계 명확."
+    ],
+    [
+      "spring.core.registration.configuration-bean.q2",
+      "KEEP",
+      "model/explanation fullproxy managedbean 반환과 proxyBeanMethods/등록방식 조건 정확.",
+      "MEDIUM annotation 외관 대신 실제 호출 조건 검증."
+    ],
+    [
+      "spring.core.registration.component-scan.q1",
+      "KEEP",
+      "com.app defaultscan은 com.shop 범위 밖, model/explanation basepackage/등록 단계 확인 타당.",
+      "MEDIUM Boot 전형적 전제가 Topic에 있으며 '발견되지 않을 수'로 한정."
+    ],
+    [
+      "spring.core.registration.component-scan.q2",
+      "KEEP",
+      "model/explanation 의도치 않은 후보/설정→충돌·부수효과 및 비용/추적 어려움 타당.",
+      "EASY 두 영향 회상, 과도한 난이도 아님."
+    ],
+    [
+      "spring.core.registration.primary-qualifier.q1",
+      "KEEP",
+      "B PrimaryA+QualifierB 맞음. A 무작위/D 같은이름/C 모든호출자getBean은 각각 미해결/Locator결합; rationale4·해설 타당.",
+      "MEDIUM 선택 조합. A 쉽지만 다른 관련 오해가 목표 보완."
+    ],
+    [
+      "spring.core.registration.primary-qualifier.q2",
+      "KEEP",
+      "model/explanation 선택책임/이름변경비용 분산→조립경계 집중 또는 실제 역할 인터페이스 타당.",
+      "MEDIUM 무조건 인터페이스 추가 강요 없음, q1 구문과 구분."
+    ],
+    [
+      "spring.core.injection.constructor-injection.q1",
+      "KEEP",
+      "C 필수 협력자 명시/생성시전달 정확. A laterfield/B prototype자동/D 책임신호사라짐 오답; rationale4·해설 확인.",
+      "EASY 주입/scope/책임 분리, nullvalidation된 본문예 전제."
+    ],
+    [
+      "spring.core.injection.constructor-injection.q2",
+      "KEEP",
+      "model/explanation fieldinjection은12의존성을 숨길뿐, 조정/domain/infra 책임 및 변경이유 검토 정확.",
+      "MEDIUM 숫자만으로 결함확정하지 않음 명시."
+    ],
+    [
+      "spring.core.injection.optional-dependency.q1",
+      "KEEP",
+      "D 필수 여부/등록오류와 failfast의 의도 맞음; A requiredfalse/B staticLocator/C allOptional은 누락숨김. rationale4·해설 확인.",
+      "MEDIUM D의 '계속 실패'는 rationale의 '잘못된 구성에서'라는 조건으로 해석해야 함. 문구만 국소 정밀화 여지는 있지만 단일 정답·판단근거 충분."
+    ],
+    [
+      "spring.core.injection.optional-dependency.q2",
+      "KEEP",
+      "허용알림부재→NoopNotifier, 필수누락/실전송실패 은폐금지 model/explanation 타당.",
+      "MEDIUM alternatives중하나·주의점 범위 명확."
+    ],
+    [
+      "spring.core.injection.circular-dependency.q1",
+      "KEEP",
+      "accepted3 모두 A완성에B/B에미완성A 필요라는 생성순환의 실제 원인. explanation annotation누락과 구분.",
+      "EASY 직접생성불가능 상태, 코드A/B와 일치."
+    ],
+    [
+      "spring.core.injection.circular-dependency.q2",
+      "KEEP",
+      "model/explanation lazy는 creation지연, mutualruntimecalls의 recursion/transaction/stateorder 위험은 남을수있음, coordinator/smallerinterface 타당.",
+      "MEDIUM 상호의존만으로 항상재귀라고 단정하지 않고 가능성으로 제한."
+    ],
+    [
+      "spring.core.scope-lifecycle.scopes.q1",
+      "KEEP",
+      "C 수명/공유 정확. A JVM 클래스당 하나/B prototype 종료 자동/D request thread당 하나 오답. rationale4와 explanation 모두 대조.",
+      "EASY 서로 다른 scope 계약 구분, 단일 정답."
+    ],
+    [
+      "spring.core.scope-lifecycle.scopes.q2",
+      "KEEP",
+      "model/explanation prototype 생성 후 container가 전체 종료를 추적하지 않으므로 획득·사용 측에서 AutoCloseable 정리를 소유한다는 답 타당.",
+      "MEDIUM 종료 호출 보장과 interface 선언을 구분."
+    ],
+    [
+      "spring.core.scope-lifecycle.scope-proxy.q1",
+      "KEEP",
+      "accepted3 모두 긴 수명 Bean이 짧은 수명 객체를 직접 고정하는 수명/생성 시점 불일치를 표현. explanation 활성 request의 대상 조회 정확.",
+      "MEDIUM 생성/보관의 원인 설명, prototype 목표는 별도 Concept 보강 대상."
+    ],
+    [
+      "spring.core.scope-lifecycle.scope-proxy.q2",
+      "KEEP",
+      "model/explanation 동일 proxy 보관이 @Async request context를 전달하지 않으며 필요한 값을 command로 복사한다는 설명 정확.",
+      "MEDIUM request 밖 접근 실패 조건 명확."
+    ],
+    [
+      "spring.core.scope-lifecycle.lifecycle-callback.q1",
+      "KEEP",
+      "model/explanation 생성자·DI 이후 PostConstruct, 생성자는 필수 불변식, callback은 Bean 초기화라는 구분 타당.",
+      "MEDIUM 초기화 역할 비교와 무거운 외부 작업 주의가 적절."
+    ],
+    [
+      "spring.core.scope-lifecycle.lifecycle-callback.q2",
+      "KEEP",
+      "model/explanation 공유 HTTP client의 실제 소유자와 종료 순서를 확인해야 하며 아무 Bean이나 닫으면 안 된다는 판단 정확.",
+      "MEDIUM PreDestroy 존재와 안전한 자원 소유권을 구분."
+    ],
+    [
+      "spring.core.config.properties-yaml.q1",
+      "KEEP",
+      "B 동일 외부 key/value source 정확. A 별도 namespace/C 우선순위 무효/D YAML 항상 우선 오답; 모든 rationale·해설 확인.",
+      "EASY 형식과 source 순위 혼동 구분."
+    ],
+    [
+      "spring.core.config.properties-yaml.q2",
+      "KEEP",
+      "model/explanation 소스 분리만 했고 Git/로그/Actuator secret 접근 통제 필요 정확.",
+      "MEDIUM 노출 경로 원인 설명 충분."
+    ],
+    [
+      "spring.core.config.profiles-precedence.q1",
+      "KEEP",
+      "model/explanation 활성 prod config보다 OS 환경이 우선하여10080 가능 정확.",
+      "MEDIUM 다른 상위 source를 추가로 가정하지 않는 제시 사례 추론."
+    ],
+    [
+      "spring.core.config.profiles-precedence.q2",
+      "KEEP",
+      "model/explanation 활성profile·환경/인자·외부위치·relaxed binding·최종source와 마스킹 타당.",
+      "MEDIUM 세가지 이상 요구와 평가 범위 명확."
+    ],
+    [
+      "spring.core.config.configuration-binding.q1",
+      "KEEP",
+      "C 경계 타입 변환 정확. A 타입이 source 우선/B URI가 연결검증/D 실패 String보존 오답; rationale4·해설 대조.",
+      "EASY 문법/단위와 endpoint 가용성 분리."
+    ],
+    [
+      "spring.core.config.configuration-binding.q2",
+      "KEEP",
+      "model/explanation concurrency0은 실행 계약 위반, 시작 검증으로 부분 서비스 회피 정확.",
+      "MEDIUM request/domain 규칙 대신 설정 불변식 검증."
+    ],
+    [
+      "spring.core.mvc.dispatcher-servlet.q1",
+      "KEEP",
+      "B Filter→Dispatcher→Mapping/Adapter→Controller 정확. A controller먼저/C repository먼저/D Jackson/Security만은 잘못된 경로. rationale4·explanation 대조.",
+      "EASY C는 낮은 매력의 distractor이나 A/D 실제 순서·구현 혼동도 있어 이해 검증 충분."
+    ],
+    [
+      "spring.core.mvc.dispatcher-servlet.q2",
+      "KEEP",
+      "model/explanation 인증 실패 filter가 응답 후 chain 중단하여 MVC/Controller 미호출 가능 정확.",
+      "MEDIUM Filter 실패가 항상 MVC까지 전달된다고 가정하지 않음."
+    ],
+    [
+      "spring.core.mvc.controller-service.q1",
+      "KEEP",
+      "C DTO→command/result→HTTP 책임 정확. A setter invariant/B DB 격리구현/D controller 항상 retry+TX 오답; rationale4·해설 확인.",
+      "EASY 권고 책임 구분, framework가 계층 배치를 강제한다고 주장하지 않음."
+    ],
+    [
+      "spring.core.mvc.controller-service.q2",
+      "KEEP",
+      "model/explanation HTTP 변환 유지, service 조정/domain 상태규칙으로 REST와 batch 공유 타당.",
+      "MEDIUM 단순히 service로 모든 if 이동하는 답을 피함."
+    ],
+    [
+      "spring.core.mvc.argument-resolver.q1",
+      "KEEP",
+      "D 매개변수→인자 정확. A mapping/B return handler/converter/C exception resolver 오답; 각 rationale와 해설 확인.",
+      "MEDIUM 역할 경계가 가까운 distractor로 충분."
+    ],
+    [
+      "spring.core.mvc.argument-resolver.q2",
+      "KEEP",
+      "model/explanation SecurityContext 표현→ID 변환 반복을 API 경계로 모으고 DB TX/주문/domain 판단을 제외 타당.",
+      "MEDIUM principal 변환과 권한 정책 구별."
+    ],
+    [
+      "spring.core.mvc.message-converter.q1",
+      "KEEP",
+      "model/explanation text/plain과 CreateOrderRequest 지원 converter 부재로 호출전 실패 가능 정확.",
+      "MEDIUM custom converter에 따라 달라짐을 '실패할 수'로 제한."
+    ],
+    [
+      "spring.core.mvc.message-converter.q2",
+      "KEEP",
+      "model/explanation abc 역직렬화 실패 vs0 변환성공 후 Min검증 정확.",
+      "MEDIUM Min 규칙 존재를 모델에 조건으로 명시."
+    ],
+    [
+      "spring.core.validation-error.bean-validation.q1",
+      "KEEP",
+      "D DTO형식/domain상태 정확. A NotBlank가 상태규칙 대체/B 자동권한/C UNIQUE 대체 오답; rationale4·해설 대조.",
+      "EASY 범위/원자 보장 구분."
+    ],
+    [
+      "spring.core.validation-error.bean-validation.q2",
+      "KEEP",
+      "model/explanation 두 사전조회가 모두false→동시INSERT, UNIQUE 최종 방어와 안전한 오류 변환 정확.",
+      "HARD로 지정됐으나 원인·보완의 두 경계를 묻는 중간 수준에 가까움. 정답/수준 분리하며 난이도 체계 재조정 필요만으로 이전 PASS를 재작성하지 않음."
+    ],
+    [
+      "spring.core.validation-error.binding-errors.q1",
+      "KEEP",
+      "accepted4 모두 type conversion/binding→Bean Validation 순서를 정확히 지정. explanation page0 Min 위반과 일치.",
+      "MEDIUM 명확한 두 실패 유형, 동의어 채점 범위 타당."
+    ],
+    [
+      "spring.core.validation-error.binding-errors.q2",
+      "KEEP",
+      "model/explanation 비밀번호 응답/로그 유출→필드/코드/안전 메시지·마스킹·correlation 타당.",
+      "MEDIUM 진단정보와 비밀원문 분리."
+    ],
+    [
+      "spring.core.validation-error.exception-handler.q1",
+      "KEEP",
+      "A HTTP무관 예외/API adapter 변환 정확. B HTTP강제/C rollback담당/D 서비스 ResponseEntity 오답; rationale4·해설 확인.",
+      "MEDIUM 의존방향 및 별도 TX 책임 검증."
+    ],
+    [
+      "spring.core.validation-error.exception-handler.q2",
+      "KEEP",
+      "model/explanation 모든400은 5xx/경보 은폐와 client retry판단 오류, 예상/비예상 구분 타당.",
+      "MEDIUM 두가지 운영 문제 요구와 모델 근거 일치."
+    ],
+    [
+      "spring.core.data-jpa.repository-abstraction.q1",
+      "KEEP",
+      "D 조회범위/정렬/plan/비용 여전히 설계 정확. A 비용제거/B save없으면절대UPDATE/C findAll자동제한 오답. rationale4·해설 확인.",
+      "EASY 명시적 메서드 계약과 runtime 비용 검증."
+    ],
+    [
+      "spring.core.data-jpa.repository-abstraction.q2",
+      "KEEP",
+      "model/explanation managed Order의 complete→flush dirtychecking UPDATE 가능 정확.",
+      "MEDIUM managed·TX·flush 전제 명확, entity-lifecycle 다중 연결 적절."
+    ],
+    [
+      "spring.core.data-jpa.entity-lifecycle.q1",
+      "KEEP",
+      "accepted4 persistence관리/domain업무 상태 구분 정확, explanation 두 독립 축 예 타당.",
+      "EASY 축 정의 명확한 단답."
+    ],
+    [
+      "spring.core.data-jpa.entity-lifecycle.q2",
+      "KEEP",
+      "model/explanation detached는 현재context 추적 제외, managed 재조회 또는merge 필요 정확.",
+      "MEDIUM prompt가 detached라고 전제하므로 OSIV/extended context에 대한 일반화 아님."
+    ],
+    [
+      "spring.core.data-jpa.fetch-plan.q1",
+      "KEEP",
+      "accepted3 observed1+20 lazy member 조회→N+1 정확; explanation 기능별 plan 선택 타당.",
+      "MEDIUM 21회가 이미 관측된 사례이므로 동일 member identity/count 최적화 변형과 모순 없음."
+    ],
+    [
+      "spring.core.data-jpa.fetch-plan.q2",
+      "KEEP",
+      "model/explanation collection row 증식→LIMIT20≠부모20, provider memory/추가처리와 부모ID 먼저page·batch 대안 타당.",
+      "HARD SQL/entity 단위 비교, provider별 결과는 조건부."
+    ],
+    [
+      "spring.core.data-jpa.fetch-plan.q3",
+      "KEEP",
+      "model/explanation query수/cardinality/page/응답shape/plan trade-off와 EAGER불필요로딩 정확.",
+      "MEDIUM q1 진단/q2 row단위와 다른 설계 조사 목표. entity graph 내부 비교는 Concept 추가 보강."
+    ],
+    [
+      "spring.core.transaction-aop.transaction-proxy.q1",
+      "KEEP",
+      "D 기존TX 참여/최종결과 영향 정확. A 매번physicalnew/B readonly만결정/C repository별독립 오답; rationale4·해설 확인.",
+      "MEDIUM 실제commit은 outer 경계라는 rationale로 단일 답 명확."
+    ],
+    [
+      "spring.core.transaction-aop.transaction-proxy.q2",
+      "KEEP",
+      "model/explanation save와target반환≠완료, flush/UNIQUE/interceptor commit 지연 가능 정확.",
+      "HARD 제시된 순서의 지연 가능성 설명이며 모든 UNIQUE가commit시에만 검사된다고 주장하지 않음. lifecycle 연결 적절."
+    ],
+    [
+      "spring.core.transaction-aop.self-invocation.q1",
+      "KEEP",
+      "accepted3 모두 this→target 호출이 proxy를 우회한다는 원인, explanation advice미적용 정확.",
+      "MEDIUM proxy 모드라는 본문 전제, '항상 TX없음' 오답을 피함."
+    ],
+    [
+      "spring.core.transaction-aop.self-invocation.q2",
+      "KEEP",
+      "model/explanation sameBean REQUIRES_NEW우회→outer 하나 가능, 독립TX필요시 다른Bean proxy와 실패/재시도정의 타당.",
+      "HARD 호출 방식/요구/결과 구분, 새TX가 무조건좋다는 답 아님."
+    ],
+    [
+      "spring.core.transaction-aop.rollback-rule.q1",
+      "KEEP",
+      "C default Runtime/Error·checked명시 정확. A 모든checked/B 이름결정/D 외부HTTP자동취소 오답; rationale4·해설 대조.",
+      "MEDIUM prompt 별도설정없음과 rationale 전역기본변경없음 조건으로 ALL_EXCEPTIONS 모호성 제거."
+    ],
+    [
+      "spring.core.transaction-aop.rollback-rule.q2",
+      "KEEP",
+      "model/explanation catch는 rollback-only 해제 아님, sharedTX의 commit요청→rollback/UnexpectedRollbackException 정확.",
+      "HARD 상태가 이미표시됨이라는 명확한 전제."
+    ],
+    [
+      "spring.core.transaction-aop.rollback-rule.q3",
+      "KEEP",
+      "model/explanation PG가 로컬TX 자원 아님→idempotency/기록/보상/대사 필요 정확.",
+      "HARD 외부불명확 결과와 원격효과 확인, duplicate q2와 다른 경계."
+    ],
+    [
+      "spring.core.transaction-aop.transaction-proxy.q3",
+      "KEEP",
+      "A 기존없음 REQUIRED신규 정확. B 호출skip/C proxy가 DB isolation구현/D 없는TX 먼저rollback 오답; rationale4·해설 확인.",
+      "EASY B/D 매력 낮지만 C의 framework/DB 보장 혼동과 신규/기존 분기 입문 확인. q1과 조건이 다른 학습 단계."
+    ],
+    [
+      "spring.core.testing.slice-test.q1",
+      "KEEP",
+      "accepted3 MVC 중심/Service·DB 통합 미검증 타당. explanation mock/제외 조건과 트랜잭션·domain 공백 설명.",
+      "EASY 범위 한계 명확; 일부추가Import가 가능한 예외를 기본slice 설명과 혼동하지 않음."
+    ],
+    [
+      "spring.core.testing.slice-test.q2",
+      "KEEP",
+      "model/explanation H2/PG 방언·제약·lock/query 차이→실제PG Testcontainers 검증 타당.",
+      "MEDIUM 운영DB 계약을 fake로 입증할 수 없음 명확."
+    ],
+    [
+      "spring.core.testing.mock-boundary.q1",
+      "KEEP",
+      "B PG 실패결정성 경계 정확. A indexplan mock/C 모든private call/D UNIQUE실제제거 오답; rationale4·해설 확인.",
+      "MEDIUM C는 Mockito 기본 private 지원 밖이지만 설계상 잘못된 목표이기도 함. 다른 선택지는 실제DB 보장 혼동을 검증."
+    ],
+    [
+      "spring.core.testing.mock-boundary.q2",
+      "KEEP",
+      "model/explanation12mock은 책임과 내부결합 신호일수있어 관측결과/실제경계 중심 재검토 타당.",
+      "MEDIUM 숫자quota로 결함 확정하지 않음."
+    ],
+    [
+      "spring.core.testing.test-transaction.q1",
+      "KEEP",
+      "model/explanation assertion까지 test context열림 vs운영 service완료후 detached가능 정확.",
+      "MEDIUM '반드시 성공' 반박, 환경별context조건을 가능성으로 제한."
+    ],
+    [
+      "spring.core.testing.test-transaction.q2",
+      "KEEP",
+      "model/explanation commit전rollback이제약확인·lazy 수명 가림, REQUIRES_NEW/async 별도commit 남음 타당.",
+      "MEDIUM 두예요구이며 q1은 lazy원인 심화, q2는 완료/정리 범위 확장."
+    ],
+    [
+      "spring.core.production.startup-failure.q1",
+      "KEEP",
+      "D 필수baseURL없음 failfast 타당. A 선택503/B 요청한건/C 평균5%변화는 정적시작결함 아님. rationale4·해설 확인.",
+      "EASY optional/individual/관측과 필수입력 경계 명확."
+    ],
+    [
+      "spring.core.production.startup-failure.q2",
+      "KEEP",
+      "model/explanation 전체다운로드 필수준비인지판단, 복구가능cache분리/필수면timeout정책 타당.",
+      "MEDIUM 외부호출을 항상금지하는 답 아님."
+    ],
+    [
+      "spring.core.production.metrics-actuator.q1",
+      "KEEP",
+      "C pending connection 대기 우선조사 정확. A 직렬화/B CPU포화/D 낮은CPU면DB불가 모두 주어진관측과 우선순위 부적합. rationale4·explanation 추가측정 확인.",
+      "MEDIUM causal확정아닌 먼저의심이라는 조건, CPU낮음이I/O대기를배제하지 않음."
+    ],
+    [
+      "spring.core.production.metrics-actuator.q2",
+      "KEEP",
+      "accepted4 high cardinality 동의표현/설명 정확, explanation 고유tag series 증가 타당.",
+      "MEDIUM 개념용어 단답과 원인 해설 연결."
+    ],
+    [
+      "spring.core.production.graceful-shutdown.q1",
+      "KEEP",
+      "model/explanation commit후response유실은 shutdown으로제거불가, idempotency별도 정확.",
+      "HARD 결과불명확구간 제시, rollback과 중복방지 혼동 방지."
+    ],
+    [
+      "spring.core.production.graceful-shutdown.q2",
+      "KEEP",
+      "accepted4 readiness↓→신규traffic줄임/기존drain 타당, explanation commit원복/중복제거 아님.",
+      "EASY LB/probe 경로가 적용되는 conceptual 종료 정책 목적."
+    ]
+  ],
+  "sources": [
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/introduction.html",
+      "CURRENT_VERIFIED",
+      "spring.core.why: DI는 IoC의 구체형태이고 객체 dependencies를 외부 container가 조립한다는 절 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html",
+      "CURRENT_VERIFIED",
+      "spring.core.why: constructor/factory args 및 setter DI 절 확인. 현재 제목 Dependency Injection이며 URL은 계약에 직접 관련. / spring.core.injection: constructor 전달/DI와 mandatory dependency 조립 계약(why에서 직접 확인한 동일절 재사용)."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/basics.html",
+      "CURRENT_VERIFIED",
+      "spring.core.container: context는 configuration metadata로 instantiating/configuring/assembling. BeanFactory 확장 lifecycle 순서는 이 입문보다 extension 절이 직접적."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/definition.html",
+      "CURRENT_VERIFIED",
+      "spring.core.container: definition metadata/class/scope/callback/dependencies와 객체 구분."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html#beans-factory-scopes-singleton",
+      "CURRENT_VERIFIED",
+      "spring.core.container: per-container/per-bean sharing 및 GoF perClassLoader 경계."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/factory-extension.html",
+      "CURRENT_VERIFIED",
+      "spring.core.container: BPP 두 callback은 초기화 methods의 전과 initialization callbacks의 후라는 공식 계약."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/java/basic-concepts.html",
+      "CURRENT_VERIFIED",
+      "spring.core.registration: lite(proxyBeanMethods=false) ordinary Java call 비가로채기와 fullmanagedbean 경계."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/classpath-scanning.html",
+      "CURRENT_VERIFIED",
+      "spring.core.registration: stereotypes/component defaultfilters/Repository exceptiontranslation 역할."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired-primary.html",
+      "CURRENT_VERIFIED",
+      "spring.core.registration: Primary/Fallback 단일값 후보 우선순위와 버전 제한."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired-qualifiers.html",
+      "CURRENT_VERIFIED",
+      "spring.core.registration: type 후보 집합 안의 의미 필터, collection qualifier는 unique id 아님."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/annotation-config/autowired.html",
+      "CURRENT_VERIFIED",
+      "spring.core.injection: required=false는 불가능한 method skip/field default 유지, Optional은 부재표현; constructor resolution은 별도."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/dependencies/factory-collaborators.html#beans-constructor-injection",
+      "CURRENT_VERIFIED",
+      "spring.core.injection: constructor cycle의 BeanCurrentlyInCreationException, setter earlyreference 우회와 완전초기화 경계 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html",
+      "CURRENT_VERIFIED",
+      "spring.core.scope-lifecycle: singleton per-container/per-bean, prototype 종료 미관리와 singleton 주입 시 한 번 생성 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/factory-scopes.html#beans-factory-scopes-other-injection",
+      "CURRENT_VERIFIED",
+      "spring.core.scope-lifecycle: request/session scoped proxy 및 ObjectFactory/ObjectProvider 조회, prototype proxy는 every method call마다 새 target이라는 경계 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/beans/factory-nature.html",
+      "CURRENT_VERIFIED",
+      "spring.core.scope-lifecycle: Bean 초기화 callback과 종료 계약; 모든 종료 경로에서 stop→destroy 순서가 보장되는 것은 아니라는 한계 확인. / spring.core.production: scope-lifecycle에서 확인한 초기화/종료 및 책임 경계 재사용."
+    ],
+    [
+      "https://docs.spring.io/spring-boot/reference/features/external-config.html",
+      "CURRENT_VERIFIED",
+      "spring.core.config: 다양한 source→Environment/구조 바인딩과 후순위 override 확인. / spring.core.production: config Topic에서 직접 확인한 type/validated/startup 입력 계약 재사용."
+    ],
+    [
+      "https://docs.spring.io/spring-boot/reference/features/external-config.html#features.external-config",
+      "CURRENT_VERIFIED",
+      "spring.core.config: config data보다 OS 환경/명령행 입력이 높은 순위인 표 대조."
+    ],
+    [
+      "https://docs.spring.io/spring-boot/reference/features/profiles.html",
+      "CURRENT_VERIFIED",
+      "spring.core.config: profile별 Bean 구성과 활성profile도 propertysource 순위 영향 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-boot/reference/features/external-config.html#features.external-config.typesafe-configuration-properties",
+      "CURRENT_VERIFIED",
+      "spring.core.config: Scan/Enable 등록, record 타입 바인딩, Validated/provider 전제 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-servlet.html",
+      "CURRENT_VERIFIED",
+      "spring.core.mvc: central servlet이 mapping/view/exception 구성요소에 위임하는 역할 확인; 추가 processing 절로 순서 대조."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller.html",
+      "CURRENT_VERIFIED",
+      "spring.core.mvc: annotation HTTP mapping/input/exception 및 자유로운 method signature 계약 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-methods/arguments.html",
+      "CURRENT_VERIFIED",
+      "spring.core.mvc: path/query/header/principal/body source 및 body converter 구분 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/docs/current/javadoc-api/org/springframework/web/method/support/HandlerMethodArgumentResolver.html",
+      "CURRENT_VERIFIED",
+      "spring.core.mvc: supportsParameter 지원 후 resolveArgument로 실제 인자 생성하는 계약 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/web/webmvc/message-converters.html",
+      "CURRENT_VERIFIED",
+      "spring.core.mvc: HTTP body 읽기/쓰기와 media type별 구현 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/core/validation/beanvalidation.html",
+      "CURRENT_VERIFIED",
+      "spring.core.validation-error: constraint metadata와 provider classpath, LocalValidatorFactoryBean→FieldError/Errors 계약 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-validation.html",
+      "CURRENT_VERIFIED",
+      "spring.core.validation-error: 단일객체 MethodArgumentNotValidException과 method-level HandlerMethodValidationException, BindingResult 및 class-level Validated proxy 조건 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-methods/modelattrib-method-args.html",
+      "CURRENT_VERIFIED",
+      "spring.core.validation-error: binding/검증 오류와 바로 다음 BindingResult, 없을 때 예외 및 method validation 차이 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-controller/ann-exceptionhandler.html",
+      "CURRENT_VERIFIED",
+      "spring.core.validation-error: DispatcherServlet 예외 resolver 기반, response/media mapping 및 cause 우선순위 조건 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-data/jpa/reference/repositories/core-concepts.html",
+      "CURRENT_VERIFIED",
+      "spring.core.data-jpa: Repository 타입/CRUD findAll 범위와 paging 지원 계약 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-data/jpa/reference/repositories/query-methods-details.html",
+      "CURRENT_VERIFIED",
+      "spring.core.data-jpa: default declared-query 우선 후 method-name 생성 전략 확인."
+    ],
+    [
+      "https://jakarta.ee/specifications/persistence/3.2/jakarta-persistence-spec-3.2.html",
+      "NEEDS_REVIEW",
+      "spring.core.data-jpa: 검색의 공식 발췌는 lifecycle/LAZY/EAGER/graph와 일치하지만 open/find가 Internal Error. URL 부재로 판정하지 않으며 명세의 해당 절 전체와 anchor 학습 편의는 별도 확인 필요. 핵심 managed/merge는 접근 가능한 공식 3.2 EntityManager API로 직접 대조."
+    ],
+    [
+      "https://docs.spring.io/spring-data/jpa/reference/jpa/entity-persistence.html",
+      "CURRENT_VERIFIED",
+      "spring.core.data-jpa: save의 new detection에 따른 persist/merge와 version/id/Persistable 조건 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-data/jpa/reference/jpa/query-methods.html",
+      "CURRENT_VERIFIED",
+      "spring.core.data-jpa: EntityGraph named/ad-hoc attributePaths 및 fetch/load 선택과 stable scrolling 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/tx-decl-explained.html",
+      "CURRENT_VERIFIED",
+      "spring.core.transaction-aop: AOP metadata/interceptor/manager와 imperative thread-bound vsreactive context 계약 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html",
+      "CURRENT_VERIFIED",
+      "spring.core.transaction-aop: REQUIRED 및 기본 rollback, 6.2 ALL_EXCEPTIONS와 개별규칙 우선 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/annotations.html#transaction-declarative-annotations-method-visibility",
+      "CURRENT_VERIFIED",
+      "spring.core.transaction-aop: proxy external-only/self-invocation 우회, AspectJ 대안과 가시성 설정 조건 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/rolling-back.html",
+      "CURRENT_VERIFIED",
+      "spring.core.transaction-aop: unhandled exception 관찰·Runtime/Error·checked exception 규칙 확인."
+    ],
+    [
+      "https://techblog.woowahan.com/2617/",
+      "CURRENT_VERIFIED",
+      "spring.core.transaction-aop: 실제 AOP OAuth2 cache 사례의 'aop는 만능이 아니다' 절이 proxy/self-invocation 미실행을 설명. 2019 legacy security adapter/캐시 설정은 최신 실행 가이드로 채택하지 않음."
+    ],
+    [
+      "https://docs.spring.io/spring-boot/reference/testing/spring-boot-applications.html",
+      "CURRENT_VERIFIED",
+      "spring.core.testing: MVC slice scan 대상·regular components 제외·MockitoBean 및 MockMvc실server불필요 계약 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-boot/appendix/test-auto-configuration/slices.html",
+      "CURRENT_VERIFIED",
+      "spring.core.testing: slice별 imported config 표에서 DataJpa/JPArepositories·Hibernate 구성 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/testing/annotations/integration-spring/annotation-mockitobean.html",
+      "CURRENT_VERIFIED",
+      "spring.core.testing: replace-or-create/enforceOverride와 mock이원래Bean AOPproxy를 유지하지 않는 계약 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/testing/testcontext-framework/tx.html",
+      "CURRENT_VERIFIED",
+      "spring.core.testing: 기본rollback/test-thread context·다른thread 정리제외·ORM flush false-positive 경고 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-boot/reference/actuator/endpoints.html",
+      "CURRENT_VERIFIED",
+      "spring.core.production: exposure/접근제어와 기본 sanitization·readiness 외부의존성 신중선택 및 lifecycle/probe 구분 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-boot/reference/actuator/metrics.html",
+      "CURRENT_VERIFIED",
+      "spring.core.production: DataSource gauges 및 Hikari-specific hikaricp prefix·pool tags 확인."
+    ],
+    [
+      "https://docs.micrometer.io/micrometer/reference/concepts/meters.html",
+      "CURRENT_VERIFIED",
+      "spring.core.production: meter별 metrics 차이와 name/dimensions(tags) identity 확인."
+    ],
+    [
+      "https://docs.spring.io/spring-boot/reference/web/graceful-shutdown.html",
+      "CURRENT_VERIFIED",
+      "spring.core.production: context close의 초기 SmartLifecycle stop, finite timeout-per-shutdown-phase·inflight기회·서버별거부 및 IDE SIGTERM 조건 확인."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W2-SPR-001",
+      "severity": "P0",
+      "contentKeys": [
+        "spring.core.container.application-context"
+      ],
+      "file": "content/spring/container/application-context.md",
+      "quote": "BeanPostProcessor 전/후 처리",
+      "problem": "도식은 BeanPostProcessor 전/후 처리 → 초기화 콜백 순서다. after-initialization callback까지 초기화 전에 실행된다고 표시해 공식 hook 계약과 충돌한다.",
+      "action": "정의 단계 BFPP 이후 생성/주입 → BPP before(이 경로의 @PostConstruct 처리기) → InitializingBean/custom init → BPP after(일반 auto-proxy) 순서로 해당 도식만 교정한다. 전체 재작성이나 연결 문항 변경은 불필요하다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SPR-002",
+      "severity": "P1",
+      "contentKeys": [
+        "spring.core.scope-lifecycle.scope-proxy"
+      ],
+      "file": "content/spring/scope-lifecycle/scope-proxy.md",
+      "quote": "ObjectProvider<RequestContext>",
+      "problem": "Curriculum은 request/prototype을 긴 수명 Bean에 직접 고정하는 문제를 모두 목표로 삼지만 본문과 문항은 request만 설명한다. prototype은 singleton 생성 시 한 번 주입되고 prototype scoped proxy는 method call마다 새 target이므로 request와 같은 수명 그림으로 일반화할 수 없다.",
+      "action": "기존 request 설명을 유지한다. singleton에 prototype을 한 번 직접 주입하는 경우, 작업 시작 시 ObjectProvider.getObject() 한 번, prototype scoped proxy의 method별 새 target을 비교한다. 상태를 가진 multi-method 작업에서 target이 달라지는 경계를 보여주고 기존 설명/채점 기준에 목표 비교를 반영하는 최소 보강을 권장한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SPR-003",
+      "severity": "P1",
+      "contentKeys": [
+        "spring.core.mvc.dispatcher-servlet"
+      ],
+      "file": "content/spring/mvc/dispatcher-servlet.md",
+      "quote": "└─ 예외·결과 처리",
+      "problem": "첫 도식은 예외·결과 처리에서 Controller로 화살표를 내려 그 처리가 Controller 호출 이전 단계처럼 보인다. 뒤의 POST 흐름 및 공식 MVC processing의 handler 실행과 응답/예외 처리 구분과 맞지 않는다.",
+      "action": "Mapping → Adapter(인자 준비) → Controller → 반환값 처리/응답의 정상 경로를 그린다. 각 단계의 예외 → HandlerExceptionResolver는 별도 가지로 표시한다. 기존 두 번째 도식과 정확한 Filter 설명/문항은 유지한다.",
+      "followupIssues": [
+        203
+      ]
+    },
+    {
+      "id": "W2-SPR-004",
+      "severity": "P1",
+      "contentKeys": [
+        "spring.core.data-jpa.fetch-plan"
+      ],
+      "file": "content/spring/data-jpa/fetch-plan.md",
+      "quote": "fetch join, entity graph, batch fetch, projection",
+      "problem": "Curriculum은 fetch join/entity graph/batch fetch 선택 비교를 목표로 한다. 본문은 entity graph의 지정 방식, 필요한 attributes, fetch/load 의미와 고정 SQL 횟수를 보장하지 않는다는 경계를 설명하지 않아 선택 근거가 부족하다.",
+      "action": "같은 Order.member 조회에 @EntityGraph(attributePaths=...) 예와 query별 fetch plan 의미를 추가한다. fetch join/batch와 필요한 data shape, row 증식, pagination/실측 기준으로 비교한다. 1+20 예는 서로 다른 미로딩 member와 별도 count 제외를 밝혀 숫자를 일반화하지 않는다. 새 Concept/문항이나 전체 재작성은 불필요하다.",
+      "followupIssues": [
+        203
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "spring.core.config.configuration-binding": "698f64ac00b856a776483dc12e92b8d4e94f6ff58344380e41ccb0557f0e090b",
+    "spring.core.config.configuration-binding.q1": "151a9f9342ca51b12aeb13693339bf398d258f21513ce91f04bd392305bbb5b2",
+    "spring.core.config.configuration-binding.q2": "99add2b9bfc98c7240e744df5e29abcac9d34eb58b0583b2193da557da8b1f1b",
+    "spring.core.config.profiles-precedence": "6eefd8b0ff54860a3db14c6ab93656dd3c628799cf7d08346f3749bff4fe0d5b",
+    "spring.core.config.profiles-precedence.q1": "7faa7e9eb5e774927d82f9ebe24e6b2119a91bd146f3cb5c8859c6debcb7cdd0",
+    "spring.core.config.profiles-precedence.q2": "eb21f4bf1b8a1c6d5c43cec05a54910c9b57f36ebc3c9fa259ad380c22197e40",
+    "spring.core.config.properties-yaml": "4dc5c2aae338960e21e51c6e2c9e0229c5e33f5226b34c21feb08af4e536faf9",
+    "spring.core.config.properties-yaml.q1": "e852dc8257db12a1be1a985bf23efbb1ffc972b1c6cefec7e8f6c96d7a84223c",
+    "spring.core.config.properties-yaml.q2": "0547db0d16449de31fbfc0f6c454e5b9361b277a3957bb73b96d4a89a7400705",
+    "spring.core.container.application-context": "6f94af9997c3160a66a3dfdf25d16b813390a2e44ce98ba5b697132a21d61bc4",
+    "spring.core.container.application-context.q1": "7c1a2b6fb729aec43bde4422a1647dad3f175ed33376ae7d74950de19fd860f5",
+    "spring.core.container.application-context.q2": "047b1009dc513f253be5c315807446c5b13a215107cc1f6628c36ab9019e34be",
+    "spring.core.container.bean-definition": "108e9c3acd1dce260559f309adf57c183b6bc29062eb97f0a8b36c2231c503dc",
+    "spring.core.container.bean-definition.q1": "2fbc7d1300b22b10b6a7db9e5e4d8b1c445f70f2774835c3fa16ad7b9dfc98de",
+    "spring.core.container.bean-definition.q2": "33cead78c99abcd34e052b10dc203d6774b2c700fef42872f3df59203e562fe8",
+    "spring.core.container.singleton-identity": "f18b5c93d53574ec7789afe1c12b6fc051a8a5e1b2b09a8dfb77a9eb38500959",
+    "spring.core.container.singleton-identity.q1": "1ae7dcf404c74099d9691fbb7d2e45db42d36c316293727147726e2c9356f0e0",
+    "spring.core.container.singleton-identity.q2": "51a41ea3f0ffbb354eed857b557bbf5914774efdbd96bd5f0dd59c615d9f1081",
+    "spring.core.data-jpa.entity-lifecycle": "adcd4a2a9545dd8a6233cbdd8c5da5372764faef595d656ce03c4247cd325567",
+    "spring.core.data-jpa.entity-lifecycle.q1": "c81ed9987778a7b8088d2c36a3c4d9281a428cb8f2fcc5ee7b0689adddee7a0a",
+    "spring.core.data-jpa.entity-lifecycle.q2": "aba68c6e42248e23960be184111472a3920ef5e5007513210452b8f172966371",
+    "spring.core.data-jpa.fetch-plan": "5c80154ee28e222a997f9f741b21abf8d675855243b7eb6b91c552eec1e6507e",
+    "spring.core.data-jpa.fetch-plan.q1": "1d6e724657a769da0fded7816dd682e69da84fcfe3d23be668e83e08c8d234dd",
+    "spring.core.data-jpa.fetch-plan.q2": "561aa9340b12c001890cee81e32d0c9a272c6279446bac47666c39cd00ea0ee5",
+    "spring.core.data-jpa.fetch-plan.q3": "dde1d6fff037ef2a8c7f59fc342fe9ca56ef35a886e65ba7c0033378106de0f5",
+    "spring.core.data-jpa.repository-abstraction": "e9f553ceae5f661216d7de26c56c354fd90093b02e434b6aa6b44b3158d0ddf9",
+    "spring.core.data-jpa.repository-abstraction.q1": "b3ab4e8eab6e3b77cba19c73f97d6c90384c4b9e6972cd84ff733edae5dcdab3",
+    "spring.core.data-jpa.repository-abstraction.q2": "358cae8d37bd2a704e5dac56bfe7d42e75254fbbde606ac8f5cb677bb6b1bf90",
+    "spring.core.injection.circular-dependency": "ba420e7109d555e304b85b4f9d8c9bea24c90aab4399df93fe42df2e848302e7",
+    "spring.core.injection.circular-dependency.q1": "abaf338567d71bd1b39e1c28e338569ac3c80379c970e4f1424b845899b18de3",
+    "spring.core.injection.circular-dependency.q2": "16346e006161cd2075e9fc06f24b4637f9fccaf55e9d8df464038521e22b34b1",
+    "spring.core.injection.constructor-injection": "00868eb5987e2378c1a6ee2950893841189b79c37e5d8edee4f5e11518d033ce",
+    "spring.core.injection.constructor-injection.q1": "ab677ff25985257b55ed90ea5ea669ace76cae5b9801c09997b8ae025f225048",
+    "spring.core.injection.constructor-injection.q2": "ec004119a8e285e4e604f7f26ed660e9fcacf1fe59e3a9d058beb5f80fc0e194",
+    "spring.core.injection.optional-dependency": "7013429d2b99a5f41d4bb4677713443e18d0b0d4ea4012f5e5ee51914fb85b82",
+    "spring.core.injection.optional-dependency.q1": "5e1439f04f5a10ab986c51055f8c204a607447a29ec33049fee6afc2cb47ec7a",
+    "spring.core.injection.optional-dependency.q2": "8842706f9a10c2ab521a5a1ec673dc4202c5aae53a1c5816a27ae20f366e7aa2",
+    "spring.core.mvc.argument-resolver": "0738afe90cd6cd8cf01e943257b34076d2fa421de81ea925067f893db39b037f",
+    "spring.core.mvc.argument-resolver.q1": "5bfc1e6e19d70575e742185c94dd47582f96440a4247738d5e5dbf8b13d8caf4",
+    "spring.core.mvc.argument-resolver.q2": "4e0e4e37e4a05577cdd177b0d7d78b98d8d824e8a4a0531beaf7b8930009f5f9",
+    "spring.core.mvc.controller-service": "d036214a349577d23dfe827633d7d0fb9d5629efa774ca18e9ee1e762b9fb36c",
+    "spring.core.mvc.controller-service.q1": "95b382c3be500438aa7116cc9f975369b0c772a39d816c2e50656636871d761f",
+    "spring.core.mvc.controller-service.q2": "6a076de53c231f0a865f7d2c450dcbb39dfe4c39ba90c4402e40dffbda8ceab0",
+    "spring.core.mvc.dispatcher-servlet": "a2ab7deb74c81961fc4e3c68dfe5c67f11e5d12deed675db4ae28ac0ae28f681",
+    "spring.core.mvc.dispatcher-servlet.q1": "dd61873545e6feeac98a290bfd9e4c0d63855ac2726ef242c80ae029977f370b",
+    "spring.core.mvc.dispatcher-servlet.q2": "8a03d1ad0bb2fdfe12f5afcc5f2d6644f150b96235d5470a83e2578fd4366096",
+    "spring.core.mvc.message-converter": "41c680061eee613dc0b02118d4b81ed4703fe2a3266feff4d0fdd9a7750d2f1a",
+    "spring.core.mvc.message-converter.q1": "e262ee6e3e4b7e353325db01e15c70828bb3868384180886d23d6f5c0bcbc0ea",
+    "spring.core.mvc.message-converter.q2": "c315a8511a5cefb8bff630f14ac5614b1f9352549f2980b8ed80e8532c5b48d8",
+    "spring.core.production.graceful-shutdown": "3c8feb33df4bb8690a7e7629d34e1f26743e3d9a6020b64a580bef70ec5d28e8",
+    "spring.core.production.graceful-shutdown.q1": "0450a179922b0f55b041ec3083799a53944e0e8061a73d998fcdea70ea8b2789",
+    "spring.core.production.graceful-shutdown.q2": "e77d55a0ed8e40397ba482adabb178c727c2419641ac0f5a4918a269819ff56e",
+    "spring.core.production.metrics-actuator": "5dfe7d531e6e380e7bbe78ab5b40f4e1b5e6ad25b986bfc4cea9c947e08c610b",
+    "spring.core.production.metrics-actuator.q1": "f1c525e892e86f5e403576fcaa16f229a99185d4a2c531f420322f381e214fac",
+    "spring.core.production.metrics-actuator.q2": "bf821c0654f09773a1e3db36f94574a2ca4c8be7c3ab804b60ccdc178f143dbc",
+    "spring.core.production.startup-failure": "63669b06cb6da6f56f329775b62efa21f39d15982bc077d8ba604a9051a5aa0d",
+    "spring.core.production.startup-failure.q1": "e2282e03323990a3707ef46e60fe8069dbdfe73684cfa7fd8085d7740a75910c",
+    "spring.core.production.startup-failure.q2": "8fb00719416c5543377049b2b02fe7b0794d66e2a45b042fbec1467146f1d876",
+    "spring.core.registration.component-scan": "2e83611a3ed324bc2490689f13253e22c7110d137dbb46afdbf4614608c2b7ce",
+    "spring.core.registration.component-scan.q1": "055e3edd6f0189bf1a9ecc6f8e97bcb2d6b3050c4adcc4b1efa7dfd3540c5872",
+    "spring.core.registration.component-scan.q2": "3fd61bc7a1637e7c430b6257b9a9408fe953a99f1bb5ab38515b0fe2be939d29",
+    "spring.core.registration.configuration-bean": "ae0254451e558ba8e8fca306f30dbee53f03597c87d3b8f9428f0bea65158626",
+    "spring.core.registration.configuration-bean.q1": "b8d2c4a71441be51dc420b3f252478a5cb990b8575d176ea78f5d43d694c4ef6",
+    "spring.core.registration.configuration-bean.q2": "77ceb43208dab5af025e225bf32ef430198b0963650fd78a0ecad42504c2e0f2",
+    "spring.core.registration.primary-qualifier": "861707abe2c81897c6c48505c19cfe0e1149e515bff81e9a6d605ecad6e92548",
+    "spring.core.registration.primary-qualifier.q1": "8af6ff4980c8eca4f4d86728dec7a6fdac4be728053f69bb2cf5ea02e9979561",
+    "spring.core.registration.primary-qualifier.q2": "9731aae2d7281f94c972f6c1824d1308124d0394d06e24cfe04dd850212cfa55",
+    "spring.core.scope-lifecycle.lifecycle-callback": "d5d6082608de8ee4df7357fc9bc9274a50937b5f50e95d1c683b8103ff3d4aa6",
+    "spring.core.scope-lifecycle.lifecycle-callback.q1": "b0a647408e2bfdc4480efa771152465129c44392d5613e8c6e5a1807e94760bb",
+    "spring.core.scope-lifecycle.lifecycle-callback.q2": "fff7b91c987b5b9ecfcf4d9f3b9edd1153774901a5e6d202d879552c39c02b8e",
+    "spring.core.scope-lifecycle.scope-proxy": "29b87ad9b94dbe13bece0da5b6a3063d222803579cb61d481cd5e2b21074ce73",
+    "spring.core.scope-lifecycle.scope-proxy.q1": "0b5e779bdf77e60845425905fd5b9bd113c7031ce780078688ffdaefb074f598",
+    "spring.core.scope-lifecycle.scope-proxy.q2": "9161f957862f4d9f096ee83002372daabb090b5b8e4db16a1d4ca2c67917e805",
+    "spring.core.scope-lifecycle.scopes": "ca61b7d431fe75542b57c4108929a43240dafead0da22b0aba01239a362f3ac7",
+    "spring.core.scope-lifecycle.scopes.q1": "5ebccb13c8fd0a0a10607463f58807e0ae34db298543617a39122fb6a5041571",
+    "spring.core.scope-lifecycle.scopes.q2": "5edcb1864e60ae5bafb071fe4b37a82d2b10726c1ac07fd581318b873cc19cad",
+    "spring.core.testing.mock-boundary": "fcc4f58cffb7c325eccafb5e180aa92a902f6f76fd91253640cff2d48cfccf08",
+    "spring.core.testing.mock-boundary.q1": "6a104d9695e92a13a757f7fa20b0729554afd1b800c5a497320750f6b3b1fdc2",
+    "spring.core.testing.mock-boundary.q2": "b815f4b230e809fae70106ba4133cc76df49a6bedbb500b31552c15677bf5194",
+    "spring.core.testing.slice-test": "39c2ecb3bf998b247e97d821bf5cddb5cf5de5a5ddcf9af49b630a1896ab5d79",
+    "spring.core.testing.slice-test.q1": "49c39e325d39c68aaf505ca76794d433d19947fe3f82f58297e0ce4d4fb1ea3d",
+    "spring.core.testing.slice-test.q2": "9d6dfbde96e429a8107a0efd8b61eb4f9ab4ccd779faf9ca619f3ec1f062c68f",
+    "spring.core.testing.test-transaction": "8937b50f462ddf5ceb5a08eddf1e3d9b96a9664ea66af63c34d4cecc991da9d2",
+    "spring.core.testing.test-transaction.q1": "07e4a11e2906e436e8a80eac48fae49ff09383f521499f45ce1dc19a0945e1bd",
+    "spring.core.testing.test-transaction.q2": "80f2e97c395ab05dbf65ba798d545db21b843f92f4b389ec8260f8da95d3bda0",
+    "spring.core.transaction-aop.rollback-rule": "3514c34bbeba1c31ce3171c5799305e0b1d8a3b5d2512c86b439308b80fb3dbc",
+    "spring.core.transaction-aop.rollback-rule.q1": "9f54335cd782e6c563fcfd4b5b8b032047aaacc6eda3e2294d5fb7358dc7f074",
+    "spring.core.transaction-aop.rollback-rule.q2": "6fbdf68d2dee4c15e00bca5cc1e04062c11e8413893161115419a3fd487beda7",
+    "spring.core.transaction-aop.rollback-rule.q3": "52de39afdf6ec686f974f315ad3548fce7ba5e21a40eac24e81243863a538449",
+    "spring.core.transaction-aop.self-invocation": "cea9e8068397e394eef855f349d28d656e2d5e1c99868a60defd8120cb48db54",
+    "spring.core.transaction-aop.self-invocation.q1": "37463201268d5fc34e9f165b78d6c8ece1e88b37f8788e80d8585b38f6b32fa0",
+    "spring.core.transaction-aop.self-invocation.q2": "44888c56ce627408db0092255a361c7e317a92543d31b129bfd75437895e953c",
+    "spring.core.transaction-aop.transaction-proxy": "6b1c07d95e4c12d6a79a7e33de1bc494f78b1bc6f4cec4295b74b8bb3f7b6dab",
+    "spring.core.transaction-aop.transaction-proxy.q1": "e10cc3c3e7dad7cb3ffaede67f3b382c2b524c3e3921f98fe849bcc9ba48fb3b",
+    "spring.core.transaction-aop.transaction-proxy.q2": "c6380e8c640906da4b003e2840045b4fddd41f9d9dcdad9bd579b726de879a60",
+    "spring.core.transaction-aop.transaction-proxy.q3": "0549a09767f1757fe16f645b3434c393e572b7e15e8f003480166417184030e0",
+    "spring.core.validation-error.bean-validation": "bcdbbe9baccffe09d272fccb74109af4a91c0e32496997bee5ed1fce8ee7649a",
+    "spring.core.validation-error.bean-validation.q1": "715c9bc0c2b4d8c5a263acdc3fc2659a6111c4a3a7975163d2fbbd27fb605cdd",
+    "spring.core.validation-error.bean-validation.q2": "1141f73ff1eab269fef0feedab50a0e7d62d14514eb8e905cf6c854ceadad9f7",
+    "spring.core.validation-error.binding-errors": "95566c0ddde00e3ff625d4d5f9ccb30e03d1ca946633d2bc6112ebd6d94df1f3",
+    "spring.core.validation-error.binding-errors.q1": "6dba7e069b8a5b79809b59061a546bf681a8f837b3025736740c34923d1d4f0b",
+    "spring.core.validation-error.binding-errors.q2": "829048b9bd1c24addac10b449b8530e3a188f793d832b111f95c1856305337b6",
+    "spring.core.validation-error.exception-handler": "0546b3aa59d769479e9d5cca36e1e355b4ab4de41ec70d62b4e276b127a2150a",
+    "spring.core.validation-error.exception-handler.q1": "c42cfd3a808d684461ec8de46d005196a087da61d7e123b12ae45489184d02f4",
+    "spring.core.validation-error.exception-handler.q2": "42075a56717df2edc4cc03c411a642439107028b819d90f6c8eda0b996e6599c",
+    "spring.core.why.coupling": "05151b7486e394cb64d655ead0bf5d65100bae02f1c4dca0e8b9ff6f048c0acd",
+    "spring.core.why.coupling.q1": "1205b3b34015782120404201c319294533e4055db020539fe13a895cfa521be3",
+    "spring.core.why.coupling.q2": "2f2c1484ff7557a914f9cbdef9bc4ea1dabc9cc3b499e667692152901b61c0d3",
+    "spring.core.why.ioc-di": "b179fde6a0bc0b0f8716c8b6b179e7c1d41a6bd887b8e3db886713907cc6b920",
+    "spring.core.why.ioc-di.q1": "b22e0959132f777d14a93b101b772be3119ca921f3b687c1c2b863fee89d6695",
+    "spring.core.why.ioc-di.q2": "f507264149d8f8bfea7ba81ed3c0275d3ae6ad0871a0d632a34a88c0df5051fd",
+    "spring.core.why.object-graph": "3d8c23770436b51f2d8e156300f226596b954d80e81f4b455600a38422dc7763",
+    "spring.core.why.object-graph.q1": "ba5386c33337adfde1b1e56616728a8edafe61ec895abd6b67a0209d260aaa3c",
+    "spring.core.why.object-graph.q2": "23818c98625daf83a32acd458720ba33f3f0d7864859c5a8f6d419fbb89dd4cb"
+  },
+  "curriculumSha256": "fe720ee4c061a17ede839792d0ffe105eaba6e66dfc0dd06441db69bfeea3720",
+  "topicCatalogSha256": "062f077809901debaa8e5560e7608efd707c2d089cd42130f193507373a1263c",
+  "supplementalSources": [
+    [
+      "https://docs.spring.io/spring-framework/reference/web/webmvc/mvc-servlet/sequence.html",
+      "CURRENT_VERIFIED",
+      "handler execution→response/view 및 request 중 발생한 예외 resolver 역할 대조(W2-SPR-003)."
+    ],
+    [
+      "https://jakarta.ee/specifications/persistence/3.2/apidocs/jakarta.persistence/jakarta/persistence/EntityManager.html",
+      "CURRENT_VERIFIED",
+      "managed 변경 감지·merge가 반환하는 managed 복사·find persistence identity 대조. canonical 긴명세 URL 미조회 상태를 대신 숨기지 않음."
+    ],
+    [
+      "https://docs.jboss.org/hibernate/orm/7.0/querylanguage/html_single/Hibernate_Query_Language.html",
+      "CURRENT_VERIFIED",
+      "공식 검색 발췌에서 fetchjoin/pagination in-memory 한계 확인. provider/version별 동작 전체를 일반화하지 않음."
+    ],
+    [
+      "https://docs.spring.io/spring-framework/reference/data-access/transaction/declarative/tx-propagation.html",
+      "CURRENT_VERIFIED",
+      "REQUIRED logical scope/shared physical TX rollback-only→UnexpectedRollbackException 및 REQUIRES_NEW 자원 점유 대조."
+    ],
+    [
+      "https://docs.spring.io/spring-boot/reference/features/spring-application.html",
+      "CURRENT_VERIFIED",
+      "ReadyEvent는 runner 후, availability event 뒤따름; WebServerInitializedEvent는 앞선 단계임을 확인. 본문 시작 그림은 readiness 개념 흐름으로 제한."
+    ],
+    [
+      "https://github.com/brettwooldridge/HikariCP/blob/dev/src/main/java/com/zaxxer/hikari/metrics/micrometer/MicrometerMetricsTracker.java",
+      "CURRENT_VERIFIED",
+      "공식 source 검색 결과의 pending gauge→PoolStats.getPendingThreads 확인. mutable dev snapshot, 배포버전 전체 실행검증 아님."
+    ]
+  ]
+}

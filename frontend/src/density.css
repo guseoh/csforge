@@ -1,0 +1,330 @@
+/* Step 5-A — Global learning density correction.
+ *
+ * This layer intentionally changes only type scale, control geometry, and shared spacing.
+ * Contrast, code/table/callout treatment, route hierarchy, and learning content stay out of
+ * scope so each correction step can be reviewed independently.
+ */
+html {
+  font-size: 15px;
+}
+
+:root {
+  --type-body: 1rem;
+  --type-control: 0.88rem;
+  --type-meta: 0.84rem;
+  --type-label: 0.78rem;
+  --type-reading: 1.0667rem;
+  --line-body: 1.58;
+  --line-reading: 1.76;
+  --reading-measure: 700px;
+}
+
+body {
+  font-size: var(--type-body);
+  line-height: var(--line-body);
+}
+
+.main-content {
+  min-height: calc(100vh - 56px);
+  padding: 36px 28px 96px;
+}
+
+.page-heading {
+  margin-bottom: 28px;
+}
+
+h1 {
+  font-size: clamp(1.85rem, 2.5vw, 2.25rem);
+  line-height: 1.18;
+}
+
+h2 {
+  font-size: clamp(1.35rem, 1.8vw, 1.52rem);
+  line-height: 1.38;
+}
+
+h3 {
+  font-size: 1.1rem;
+  line-height: 1.45;
+}
+
+.lead {
+  font-size: 0.94rem;
+  line-height: 1.68;
+}
+
+.eyebrow {
+  margin-bottom: 7px;
+  font-size: var(--type-label);
+}
+
+.primary-button,
+.secondary-button {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 7px;
+  font-size: 0.84rem;
+}
+
+.chip {
+  padding: 4px 8px;
+  font-size: 0.7rem;
+}
+
+.topbar {
+  height: 56px;
+  padding: 0 20px;
+}
+
+.topbar-inner {
+  gap: 20px;
+}
+
+.brand {
+  gap: 7px;
+  font-size: 0.96rem;
+}
+
+.brand-mark {
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  font-size: 0.66rem;
+}
+
+.topbar-nav-link {
+  min-height: 36px;
+  padding: 8px 9px 7px;
+  font-size: 0.84rem;
+}
+
+.topbar-actions {
+  gap: 8px;
+}
+
+.search-palette-trigger {
+  width: clamp(290px, 26vw, 340px);
+  min-height: 40px;
+  padding: 0 9px 0 11px;
+  border-radius: 9px;
+}
+
+.search-trigger-placeholder {
+  font-size: 0.84rem;
+}
+
+.search-palette-trigger kbd {
+  padding: 3px 5px;
+  font-size: 0.68rem;
+}
+
+.account-menu > summary {
+  width: 34px;
+  height: 34px;
+  font-size: 0.78rem;
+}
+
+.account-menu-panel {
+  width: 226px;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 10px;
+}
+
+.mobile-menu-toggle {
+  width: 36px;
+  min-height: 36px;
+}
+
+.search-palette-form input {
+  min-height: 44px;
+  font-size: 0.9rem;
+}
+
+.concept-page .breadcrumb {
+  margin-bottom: 18px;
+  font-size: 0.76rem;
+}
+
+.concept-reader-header {
+  margin-bottom: 30px;
+}
+
+.concept-page .concept-reader-header .concept-kicker {
+  margin-bottom: 7px;
+  font-size: 0.78rem;
+}
+
+.concept-page .concept-reader-header h1 {
+  font-size: clamp(1.95rem, 2.6vw, 2.3rem);
+  line-height: 1.18;
+}
+
+.concept-page .concept-reader-header .lead {
+  margin-top: 11px;
+  font-size: 0.94rem;
+  line-height: 1.66;
+}
+
+.concept-reader-meta {
+  margin-top: 12px;
+  font-size: 0.78rem;
+}
+
+.concept-reading-content .markdown-content {
+  font-size: var(--type-reading);
+  line-height: var(--line-reading);
+}
+
+.concept-reading-content .markdown-content > p,
+.concept-reading-content .markdown-content > ul,
+.concept-reading-content .markdown-content > ol {
+  margin-bottom: 1.15em;
+}
+
+.concept-reading-content h2 {
+  margin-top: 2.45em;
+  margin-bottom: 0.72em;
+  font-size: 1.38rem;
+}
+
+.concept-reading-content h3 {
+  margin-top: 1.85em;
+  margin-bottom: 0.62em;
+  font-size: 1.08rem;
+}
+
+.concept-completion-section {
+  gap: 24px;
+  margin-top: 50px;
+  padding: 22px 0;
+}
+
+.concept-completion-copy h2 {
+  font-size: 1.12rem;
+}
+
+.concept-completion-copy > p:last-child {
+  margin-top: 6px;
+  font-size: 0.82rem;
+  line-height: 1.6;
+}
+
+.concept-completion-actions .primary-button,
+.concept-completion-actions .secondary-button {
+  min-height: 36px;
+  padding: 0 12px;
+}
+
+.concept-bookmark-button {
+  min-height: 32px;
+}
+
+.concept-page .detail-section {
+  margin-top: 46px;
+  padding-top: 22px;
+}
+
+.concept-page .detail-section .section-heading h2 {
+  font-size: 1.14rem;
+}
+
+.interview-recall-item > summary {
+  min-height: 56px;
+}
+
+.personal-note-section .note-editor {
+  min-height: 160px;
+  padding: 14px 15px;
+  font-size: 0.9rem;
+  line-height: 1.66;
+}
+
+.reference-item {
+  min-height: 62px;
+  padding: 12px 2px;
+}
+
+.navigation-card {
+  min-height: 68px;
+}
+
+.concept-toc {
+  top: 80px;
+}
+
+.concept-toc-title {
+  font-size: 0.76rem;
+}
+
+.concept-toc a {
+  padding: 5px 6px;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 1180px) {
+  .topbar-inner {
+    gap: 14px;
+  }
+
+  .search-palette-trigger {
+    width: clamp(235px, 24vw, 285px);
+  }
+}
+
+@media (max-width: 900px) {
+  .topbar {
+    padding: 0 14px;
+  }
+
+  .topbar-inner {
+    gap: 10px;
+  }
+
+  .topbar-nav {
+    top: 56px;
+  }
+
+  .search-palette-trigger {
+    width: clamp(205px, 37vw, 270px);
+  }
+}
+
+@media (max-width: 680px) {
+  html {
+    font-size: 16px;
+  }
+
+  :root {
+    --type-control: 0.9rem;
+    --type-meta: 0.86rem;
+    --type-reading: 1.02rem;
+  }
+
+  .main-content {
+    padding: 28px 18px 80px;
+  }
+
+  .topbar-inner {
+    gap: 8px;
+  }
+
+  .search-palette-trigger {
+    width: 40px;
+    min-height: 38px;
+  }
+
+  .account-menu > summary {
+    width: 34px;
+    height: 34px;
+  }
+
+  .concept-page .concept-reader-header h1 {
+    font-size: clamp(1.85rem, 9vw, 2.2rem);
+  }
+
+  .concept-reading-content .markdown-content {
+    font-size: 1.02rem;
+    line-height: 1.78;
+  }
+}

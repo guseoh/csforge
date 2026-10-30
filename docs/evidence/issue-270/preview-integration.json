@@ -1,0 +1,29 @@
+{
+  "commit": "18f0d10e662789123d6a61a26b29c52e4862e283",
+  "deploymentId": "dpl_3ZF7JDnNjZC7kEFuaw6Xue72szuB",
+  "url": "https://csforge-julzomi3i-guseoh.vercel.app",
+  "state": "READY",
+  "target": "preview",
+  "anonymousGet": [
+    {
+      "path": "/",
+      "status": 200,
+      "contentType": "text/html"
+    },
+    {
+      "path": "/api/auth/session",
+      "status": 401,
+      "code": "UNAUTHENTICATED"
+    },
+    {
+      "path": "/api/public/learning-areas",
+      "status": 401,
+      "code": "UNAUTHENTICATED"
+    }
+  ],
+  "interpretation": "Frontend preview built successfully, but API responses retain the old authenticated-only backend contract. Refactor CI does not deploy the new backend; this preview is not an end-to-end validation of issue #270.",
+  "productionSettingsChanged": false,
+  "realOAuthVerified": false,
+  "testClientCreated": false,
+  "reason": "No isolated OAuth environment; user declined creating a separate localhost test client."
+}

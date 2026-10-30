@@ -1,0 +1,179 @@
+[
+  {
+    "id": "W1-CACHE-001",
+    "severity": "P1",
+    "contentKeys": [
+      "cache.core.models.write-strategies"
+    ],
+    "file": "content/cache/models/write-strategies.md",
+    "quote": "클라이언트에 성공 응답\n   │\n캐시 쓰기",
+    "problem": "Write-Behind diagram은 ACK를 cache write 앞에 둔다. 바로 위 본문과 q2는 cache record→ACK→later source write라고 설명한다. ACK 뒤 cache기록 전 crash와 source미반영 crash가 혼동된다.",
+    "action": "기존 TEXT를 cache기록/필요한내구성확보→성공응답→downstream쓰기 순서로 정합화하고 두 crash구간을 구분. 본문 모델/keys/q정답 유지.",
+    "followupIssues": [
+      204
+    ]
+  },
+  {
+    "id": "W1-CACHE-002",
+    "severity": "P1",
+    "contentKeys": [
+      "cache.core.consistency.invalidation",
+      "cache.core.consistency.invalidation.q2"
+    ],
+    "file": "content/cache/consistency/invalidation.md",
+    "quote": "캐시에 값을 넣기 직전에 원본의 최신 버전과 비교할 수 있습니다.",
+    "problem": "최신버전을 확인한 뒤 writer가 새버전을commit/delete하고 늦은reader가SET하면 v1가 다시 살아난다. 최신대상보존만으로 충분하지 않고 check/publication간 원자경계와 DB→Redisgeneration 전파의 failure contract가 필요.",
+    "action": "check v1→commit v2/DEL→SET v1 반례를 보이고 같은Redis권한하의원자generation-check+publish 또는versionednamespace의정확한관측/게시계약을 명시. DBcommit과Redismetadata는 여전히별도이며전파실패를복구/허용staleness로다룰것. q2 model/해설에 같은조건 반영.",
+    "followupIssues": [
+      204
+    ]
+  },
+  {
+    "id": "W1-DS-001",
+    "severity": "P2",
+    "contentKeys": [
+      "distributed.core.coordination.cap-tradeoffs",
+      "distributed.core.coordination.cap-tradeoffs.q1",
+      "distributed.core.coordination.cap-tradeoffs.q3"
+    ],
+    "file": "content/distributed-systems/coordination/cap-tradeoffs.md",
+    "quote": "모든 요청이 결국 응답을 반환하는 성질",
+    "problem": "공식 모델의 availability는 read/write 작업이 서비스 계약에 맞게 완료되는 의미다. '응답'만 명시하면 모든 요청에 503을 돌려도 A를 만족한다고 읽힐 수 있다. 기존 C선택 거절 도식은 의도를 보여 심각한 정리 오류나 재작성 대상으로 판정하지 않음.",
+    "action": "read/write의 유효한 결과 완료를 명시하고 오류/거절만 반환해도 formal A가 성립하는 것은 아니라는 예를 본문·q1/q3 해설에 추가. 현재 정확한 정답과 partition/invariant 흐름 유지.",
+    "followupIssues": [
+      204
+    ]
+  },
+  {
+    "id": "W1-INFRA-001",
+    "severity": "P2",
+    "contentKeys": [
+      "infrastructure.core.compute.execution-models"
+    ],
+    "file": "content/infrastructure-cloud/compute/execution-models.md",
+    "quote": "컨테이너가 제거되어 새 인스턴스가 만들어질 때",
+    "problem": "Curriculum objective는 process restart/container·Pod recreation 구분까지 요구하나 본문은 제거→새 instance만 보여 동일 실행단위의 restart 상태 대비가 빠짐.",
+    "action": "프로세스/동일 Docker container 재시작, 새 container, 새 Pod의 write layer/volume 수명을 플랫폼별 표로 구분. 현재 도식/정확한 기존 설명 유지.",
+    "followupIssues": [
+      204
+    ]
+  },
+  {
+    "id": "W1-INFRA-002",
+    "severity": "P1",
+    "contentKeys": [
+      "infrastructure.core.compute.execution-models",
+      "infrastructure.core.compute.execution-models.q1"
+    ],
+    "file": "content/infrastructure-cloud/compute/questions.json",
+    "quote": "VM·컨테이너·서버리스를 비교할 때 애플리케이션 팀이 가장 먼저 확인할 핵심 기준을 한 구절로 쓰라.",
+    "problem": "열린 판단 기준은 복수 표현이 유효한데 acceptedAnswers는 운영책임의 4개 문자열만 허용한다. '호스트 관리 책임'처럼 타당한 표현의 채점 경계가 불명확.",
+    "action": "정의된 용어를 묻도록 한정하거나 DESCRIPTIVE와 책임/수명 rubric으로 전환. 기존 key와 학습 목표 유지.",
+    "followupIssues": [
+      204
+    ]
+  },
+  {
+    "id": "W1-INFRA-003",
+    "severity": "P1",
+    "contentKeys": [
+      "infrastructure.core.network.network-boundaries",
+      "infrastructure.core.network.network-boundaries.q2"
+    ],
+    "file": "content/infrastructure-cloud/network/questions.json",
+    "quote": "방화벽·보안 그룹·NetworkPolicy 등 아웃바운드 경계를 두고",
+    "problem": "내부 metadata 접근 위험 상황에서 AWS SG는 EC2/ECS metadata traffic을 필터하지 않는다. 일반 egress control을 metadata 차단 수단으로 서로 바꿔 쓸 수 있다는 오해.",
+    "action": "provider metadata 설정/host firewall/지원 CNI 등 실제 유효 수단을 플랫폼 조건별로 명시하고 접근 시험 요구. SG 예외와 URL검증 필요를 함께 설명.",
+    "followupIssues": [
+      204
+    ]
+  },
+  {
+    "id": "W1-INFRA-004",
+    "severity": "P1",
+    "contentKeys": [
+      "infrastructure.core.reliability.backup-restore"
+    ],
+    "file": "content/infrastructure-cloud/reliability/backup-restore.md",
+    "quote": "https://csrc.nist.gov/pubs/sp/800/34/r1/final",
+    "problem": "Reference는 withdrawn May2010 landing으로 No Download; 공식 superseded November2010 upd1/final이 따로 있다. 접근 성공만으로 현행 학습 자료 적합성 PASS 불가.",
+    "action": "공식 superseding landing/PDF로 바꾸고 BIA/RPO/RTO/restore test section 안내. 내용 재작성이나 wholesale 링크 교체 불필요.",
+    "followupIssues": [
+      204
+    ]
+  },
+  {
+    "id": "W1-MSG-001",
+    "severity": "P1",
+    "contentKeys": [
+      "messaging.core.semantics.partition-key",
+      "messaging.core.semantics.partition-key.q1"
+    ],
+    "file": "content/messaging-async/semantics/questions.json",
+    "quote": "Kafka에서 레코드를 특정 파티션으로 라우팅할 때 파티셔너가 사용하는 값은 무엇인가?",
+    "problem": "단답 acceptedAnswers는 key만 받지만 explicit partition/null key/custom partitioner 조건이 없다. 본문 조건부 key 설명과 문항의 무조건 표현 불일치.",
+    "action": "명시적 partition이 없고 key 기반 라우팅을 사용하는 경우의 레코드 필드를 묻도록 한정. accepted 동의어와 기존 contentKey 유지.",
+    "followupIssues": [
+      204
+    ]
+  },
+  {
+    "id": "W1-MSG-002",
+    "severity": "P0",
+    "contentKeys": [
+      "messaging.core.delivery.ordering",
+      "messaging.core.delivery.ordering.q1"
+    ],
+    "file": "content/messaging-async/delivery/questions.json",
+    "quote": "Kafka가 같은 키의 레코드를 이벤트 타임스탬프 순으로 재정렬하지 않기 때문이다.",
+    "problem": "A는 timestamp 자동 재정렬 없음, B는 key가 producer 업무 버전을 직렬화 안 함으로 둘 다 주어진 동시 발행의 순서 미보장 이유다. A rationale도 사실을 인정하므로 correctChoiceKey=B 단독을 뒷받침 못 함.",
+    "action": "A를 '브로커가 event timestamp로 자동 재정렬하므로' 같은 실제 오답으로 교체하거나 key 역할을 묻는 범위를 명확히 좁힌다. 모든 rationale와 explanation 일치 확인.",
+    "followupIssues": [
+      204
+    ]
+  },
+  {
+    "id": "W1-PERF-001",
+    "severity": "P2",
+    "contentKeys": [
+      "performance.core.measurement.latency-throughput"
+    ],
+    "file": "content/performance-observability-operations/measurement/latency-throughput.md",
+    "quote": "요청별 지연 시간 표본",
+    "problem": "DIAGRAM 계약의 현재 그림은 지표로 변환하는 항목 목록만 보인다. 핵심인 평균이 같은 두 분포의 꼬리 차이와 인스턴스 p95 평균이 전체 p95가 아닌 이유를 실제 표본/분포로 보여주지 못한다.",
+    "action": "후속에서 같은 평균·다른 꼬리의 표본/히스토그램, p50/p95/p99 marker와 instance sample-count 가중 분포 합치기 예를 추가. 기존 정확한 본문/문항 유지; 이번에 이미지 생성 없음.",
+    "followupIssues": [
+      204
+    ]
+  },
+  {
+    "id": "W1-SYS-001",
+    "severity": "P2",
+    "contentKeys": [
+      "system-design.core.requirements.capacity-data",
+      "system-design.core.requirements.capacity-data.q2"
+    ],
+    "file": "content/system-design/requirements/questions.json",
+    "quote": "일일 평균 요청을 초당 처리량으로 환산하는 데 더해",
+    "problem": "1M/day·10배·3query·2KB 숫자를 제시하지만 model은 변수 이름만 되풀이하고 환산/곱셈/저장량 계산을 보여주지 않는다. 실제 추산 목표의 이해 검증과 학습 피드백이 약함.",
+    "action": "평균11.6RPS/peak약116/DB약347query/s를 단계별 단위로 제시. 모든 요청이2KB쓴다는 가정에서 원본약2GB/day, 실제writefraction·peakduration·retention/index/replica/backup 조건을 나눠 본문과 model worked example 추가.",
+    "followupIssues": [
+      204
+    ]
+  },
+  {
+    "id": "W1-SYS-002",
+    "severity": "P1",
+    "contentKeys": [
+      "system-design.core.reliability.failure-isolation",
+      "system-design.core.reliability.failure-isolation.q3"
+    ],
+    "file": "content/system-design/reliability/questions.json",
+    "quote": "오래된 값·처리 중 상태로 거절한다.",
+    "problem": "명확한 미접수 거절, stale read의 기능축소, durable accepted/pending 작업을 load shedding의 같은 거절 응답으로 나열한다. 처리중 상태를 반환하고 실제 작업을 버려도 된다는 잘못된 완료 책임을 유도할 수 있음.",
+    "action": "rejected→429/503와 재시도계약, degradedread→partial/stale와표시, deferredaccepted→durable operationId/pending와최종완료조회 책임을 분리. deadline은 취소를 관찰한 서버작업의 자원 해제까지 조건 명시.",
+    "followupIssues": [
+      204
+    ]
+  }
+]

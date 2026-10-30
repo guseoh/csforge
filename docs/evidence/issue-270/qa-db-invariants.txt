@@ -1,0 +1,8 @@
+concept=2
+personal_note=1
+concept_progress=0
+concept_view_history=0
+quiz_session=0
+attempt=0
+wrong_note=0
+review_schedule=0

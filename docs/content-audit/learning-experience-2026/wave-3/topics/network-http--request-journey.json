@@ -1,0 +1,382 @@
+{
+  "area": "network-http",
+  "topic": "request-journey",
+  "topicKey": "network-http.core.request-journey",
+  "coverage": "8 Concept와 24 Question의 전체 본문 및 모든 보기/rationale/model/explanation, 난이도·연결을 세 bounded 출력에서 직접 읽었다. URL 각 요소 소비 위치, origin 정규화, DNS주소 대 route/next-hop, TCP/QUIC·TLS/0RTT, 여러 HTTP홉/캐시·응답주체, SNI/authority 및 proxy방향을 추적했다. 공식URI/origin/HTTP·QUIC/TLS관련절과LinuxEHOSTUNREACH계약에 대조했다.",
+  "concepts": [
+    [
+      "network-http.core.request-journey.url-components",
+      "KEEP",
+      "L1 scheme/authority/path/query/fragment가 소비되는 단계의 목표를 충족한다.",
+      "https://api.example.com:8443/users/42?detail=true#profile을 구성표와GET path/query 및Host로 나누고fragment의client처리를 설명한다. DNS는host만이고다중주소/CDN·proxy와1:1이아님도정확하다.",
+      "DIAGRAM 계약의 URL분해표·연결host/port와실제HTTPsnippet이 충분하다.",
+      "RFC3986 §3.2의authority/host및§3.5 fragment dereference이전분리, RFC9110 §7.2 Host와target정보를 실제대조했다.",
+      "q1D 모든 보기, q2 값별역할, q3 server에서fragment를못보는원인과path/query/header/body로옮기는해결을 확인했다."
+    ],
+    [
+      "network-http.core.request-journey.origin",
+      "KEEP",
+      "L1 HTTP(S) tupleorigin·기본port정규화와networkendpoint다른경계가 충분하다.",
+      "http대https/443대8443/생략대명시443의 비교와같은IP의api/admin두host, DNS결과·connection대웹보안경계를표/예시로 설명한다. 모든URI의opaqueorigin까지tuple이라고강제하지않고'일반적으로'HTTP(S)범위를둔다.",
+      "NONE 계약의 concrete비교표가 충분하다.",
+      "RFC6454 §4의기본port적용과§5 동일tuple비교/uniqueorigin예외를 실제읽었다.",
+      "q1A 모든 보기, q2 scheme차이, q3 8443/443를합칠때script/data접근경계와정규화된allowlist를 확인했다."
+    ],
+    [
+      "network-http.core.request-journey.dns-to-route",
+      "TARGETED_ENHANCE",
+      "L1 이름→주소후보→선택목적지route/next-hop의 책임과실패가 충분하다.",
+      "A/AAAA 후보·clientpolicy, route→outputiface/next-hop→ARP/NDP, DNS성공≠reachability, 캐시/기존connection재사용을 정확히구분한다. 각HTTPrequest마다고정순서를강제하지않는다.",
+      "DIAGRAM 계약의주소후보와목적지→route→linkflow가 충분하다.",
+      "CanonicalRFC1034는DNS부분에가치가있지만routing/ARP/NDP는설명하지않는다. 앞서실제읽은RFC1122 §3.3.1의hostnext-hop와RFC826/4861로 보강할Reference범위는W3-NET-014이다.",
+      "q1B 모든 보기와q2책임차이는맞다. q3EHOSTUNREACH로원인을확정한문장은W3-NET-013이다."
+    ],
+    [
+      "network-http.core.request-journey.transport-establishment",
+      "TARGETED_ENHANCE",
+      "L1 TCP대QUICconnection과request대connection의차이가 충분하다.",
+      "TCPSYN/SYNACK/ACK대QUICstream/UDP·보안state, pool/persistent/multiplexing·실패경계를 설명한다. HTTP3도connection을가짐과기존state에따라DNS/TCP반복생략이 정확하다.",
+      "TEXT transporttree와handshakeflow가 충분하다.",
+      "CanonicalRFC9293는TCP부분을직접검증했다. QUICconnection/stream/security는실제읽은RFC9000 §2/9001 §4로추가안내할범위이며W3-NET-014이다.",
+      "q1C 모든 보기, q2준비state대업무성공, q3connecttimeout과SYN/SYNACK·listener/firewall/returnroute/backlog진단을 확인했다."
+    ],
+    [
+      "network-http.core.request-journey.tls-before-http",
+      "TARGETED_ENHANCE",
+      "L2 새1RTTHTTPS순서·기존connection/0RTT예외와QUIC차이가 충분하다.",
+      "TCP→TLS→HTTP대QUIC통합TLS핸드셰이크/packetprotection을구분하고기존보호connectionreuse,0RTTreplay대결제반복위험을 설명한다. 모든TLS연결에하나의고정순서를강제하지않는다.",
+      "DIAGRAM 계약의TCP기반대QUIC통합두flow와reuse예시가 충분하다.",
+      "RFC8446 §2/8의기본/earlydatareplay와RFC9001 §4의CRYPTOframes·TLSrecordprotection미사용을실제읽었다. 현행RFC9846과QUIC통합절의Reference보강은W3-NET-014이다.",
+      "q1D 모든 보기, q2평문금지및0RTT조건, q3TLS성공뒤실제send/framing/proxy/parser를추적하는진단을 확인했다."
+    ],
+    [
+      "network-http.core.request-journey.http-request-delivery",
+      "KEEP",
+      "L2 여러HTTP홉·필드변환/응답주체와관측의 깊이가 충분하다.",
+      "CDN/proxy별새connection/authority/hopfield/TLS/timeout과Forwarded신뢰, freshcache/직접policy/error응답을 설명한다. 원본log없음은단서로표현하며원본미실행확정증거로단정하지않는다.",
+      "DIAGRAM 계약에A/Bconnection과cachehit원본생략분기가 충분하다.",
+      "RFC9110 §3.7/7.2/7.3의intermediary·targetauthority·cache/proxyrouting과RFC7239 §8.1, RFC5861 §4 stale-if-error범위를 실제대조했다. canonicalURL접근오류와같은공식본문확인을분리했다.",
+      "q1A 모든 보기, q2선택적proxy책임, q3status200≠originexecution을requestID/Age/cache/upstream으로추적하는답을 확인했다."
+    ],
+    [
+      "network-http.core.request-journey.host-authority",
+      "KEEP",
+      "L2 networkdestination/SNI/HTTPauthority의다른책임을 충분히설명한다.",
+      "same203.0.113.10:443의api/admin, proxy10.0.3.25:8080과원래Host보존/내부authorityrewrite계약이 정확하다. '요청대상(authority)'는논리서비스부분을뜻하며path/query의request-target전체와동일하다는프로토콜필드보장으로읽지않았다.",
+      "TEXT DNS/SNI/authority역할표와privatebackend연결trace가 충분하다.",
+      "RFC9110 §7.2 Host=uri-host[:port]·H2/H3authority 및§7.1target재구성, 앞서확인한RFC9525referenceidentity대namecheck를 대조했다.",
+      "q1B 모든 보기, q2sameIPvirtualhost·SNI후HTTP차이, q3Hostrewrite대backend계약·신뢰된원래메타데이터를 확인했다."
+    ],
+    [
+      "network-http.core.request-journey.proxy-gateway-path",
+      "KEEP",
+      "L2 forward/reverse방향·gateway제품범위와hop별실패의 설명이 충분하다.",
+      "client대신외부대server경계내부, HTTPgateway가routing/변환/policy를가질수있다는조건, cache/retry/자체오류와A/Bstate분리가 정확하다. domain최종인가/transaction을무조건gateway에두지않는다.",
+      "DIAGRAM 계약의두proxy방향·newrequestA/B·requestIDlogflow가 충분하다.",
+      "RFC9110 §3.7의proxy/gateway/tunnel과connectionchain·7.3 cache/proxy, RFC5861 §4의boundedstale-if-error를 실제읽었다. 현대APIgateway가능역할과RFC의용어정의를동일제품의필수계약으로취급하지않는다.",
+      "q1C 모든 보기, q2protocol/policy경계의가능역할, q3stale200대originhealth를분리하고허용기간을관측하는설계를 확인했다."
+    ]
+  ],
+  "questions": [
+    [
+      "network-http.core.request-journey.url-components.q1",
+      "KEEP",
+      "D 구성별처리 정답; A fragment전송/B query·fragmentDNS/C path로컬only의모든rationale와해설을구성표/GETsnippet에대조했다.",
+      "EASY URL실제값으로계층별소비범위를확인한다. 답이유일하다."
+    ],
+    [
+      "network-http.core.request-journey.url-components.q2",
+      "KEEP",
+      "model/explanation의scheme기본port·authorityhost/port·DNScandidate·path/querytarget·fragmentlocal이 정확하다.",
+      "MEDIUM 구성요소역할설명;genericURIuserinfo까지HTTP(S)필수로가정하지않는다."
+    ],
+    [
+      "network-http.core.request-journey.url-components.q3",
+      "KEEP",
+      "fragment는requesttarget에없어serverrouting에못쓰며path/query/header/body로요구값을옮기는model/explanation이 맞다.",
+      "MEDIUM 구체client/server경계오류;주소창값모두전송오해를검증한다."
+    ],
+    [
+      "network-http.core.request-journey.origin.q1",
+      "KEEP",
+      "A scheme/host/normalizedport 정답; pathqueryfragment/IPseqmethod/SNIissuercookiePath오답과모든rationale가 맞다.",
+      "EASY HTTP(S)origin정의;defaultport정규화조건을명시한다."
+    ],
+    [
+      "network-http.core.request-journey.origin.q2",
+      "KEEP",
+      "http대https는다른scheme여서같은host/IP여도다른origin이라는model/explanation을RFC6454tuple비교에대조했다.",
+      "MEDIUM 논리보안경계대network주소;연결이맞다."
+    ],
+    [
+      "network-http.core.request-journey.origin.q3",
+      "KEEP",
+      "8443/443합치면cross-origin script/data접근이잘못허용될수있고정규화tupleallowlist가필요한model/explanation이 맞다.",
+      "MEDIUM port차이의보안영향;cookieport격리같은별도보장을주장하지않는다."
+    ],
+    [
+      "network-http.core.request-journey.dns-to-route.q1",
+      "KEEP",
+      "B 주소후보뒤route/next-hop 정답; A HTTPlog선행/C DNS만으로HTTP성공/D route가authorityDNS수정의모든rationale를확인했다.",
+      "EASY 단계책임인식;A/D는쉬운계층오답이나C가DNS성공=service성공오해를검증한다."
+    ],
+    [
+      "network-http.core.request-journey.dns-to-route.q2",
+      "KEEP",
+      "model/explanation의주소해석대outputinterface/next-hop,firewall/listener별도실패·cache/reuse예외가 정확하다.",
+      "MEDIUM 책임차이;DNS성공에서reachability를도출하지않는다."
+    ],
+    [
+      "network-http.core.request-journey.dns-to-route.q3",
+      "TARGETED_ENHANCE",
+      "model첫문장과explanation은error문자열을network경로없음/route선택단계실패로확정한다. Linuxip(7)은EHOSTUNREACH가remoteICMP에서도생긴다고명시해W3-NET-013이다. route/iface/VPN/ACL확인목록자체는유용하다.",
+      "MEDIUM 관측대원인모호성;packet/ICMP와실제route결과로실패홉을좁히는조건을추가해야한다."
+    ],
+    [
+      "network-http.core.request-journey.transport-establishment.q1",
+      "KEEP",
+      "C TCP/QUIC통신문맥 정답; DNSzone/usercommit/매request강제newconnection오답과모든rationale를확인했다.",
+      "EASY transportstate의경계;기존connectionreuse가능성을포함한다."
+    ],
+    [
+      "network-http.core.request-journey.transport-establishment.q2",
+      "KEEP",
+      "model/explanation의TCPseqstate·QUICkey/stream준비와HTTP업무결과별도가 정확하다.",
+      "MEDIUM transport운반책임;0RTT도cachedkey에서보호state를준비하므로'최종handshake완료항상선행'보장으로읽지않았다."
+    ],
+    [
+      "network-http.core.request-journey.transport-establishment.q3",
+      "KEEP",
+      "connecttimeout/TLS와HTTPlog없음에SYN/SYNACK·listener/firewall/roundtriproute/backlog/resource를먼저확인하는model/explanation이 적절하다.",
+      "MEDIUM 구체connect실패전제;log없음만으로업무미처리를증명하는문항과다르다."
+    ],
+    [
+      "network-http.core.request-journey.tls-before-http.q1",
+      "KEEP",
+      "D 보호state 정답; A request평문/B TCP만으로TLS보호/C HTTP본문뒤cert검증의오답/rationale·QUIC통합/0RTT해설이 맞다.",
+      "EASY 일반새1RTT조건을명시해earlydata예외와충돌하지않는다."
+    ],
+    [
+      "network-http.core.request-journey.tls-before-http.q2",
+      "KEEP",
+      "model/explanation은1RTT보호state전평문위험과resumption0RTTreplay별도위험을 설명한다.",
+      "MEDIUM 명시된일반1RTT범위;기존연결매request새handshake를강제하지않는다."
+    ],
+    [
+      "network-http.core.request-journey.tls-before-http.q3",
+      "KEEP",
+      "TLS성공뒤actualHTTPsend/framing/proxyroute/parserbeforelogclose를requestID/송신log로대조하는model/explanation이 적절하다.",
+      "MEDIUM 로그부재에서검사후보를묻고유일fault로단정하지않는다."
+    ],
+    [
+      "network-http.core.request-journey.http-request-delivery.q1",
+      "KEEP",
+      "A severalHTTP홉 정답; B DNSrootonly/C router인가only/D 항상origin도달오답과모든rationale가 맞다.",
+      "EASY 연결경계와cache/proxy응답역할;D가실제cache오해를검증한다."
+    ],
+    [
+      "network-http.core.request-journey.http-request-delivery.q2",
+      "KEEP",
+      "model/explanation의선택적TLS종료·authority/pathbackend선택·headernormalization/cache/retry/rate및forwardedtrust가 정확하다.",
+      "MEDIUM proxy가반드시모든기능을수행한다는보장이아닌가능역할질문이다."
+    ],
+    [
+      "network-http.core.request-journey.http-request-delivery.q3",
+      "KEEP",
+      "200대originlog없음에cache/stale/proxy자체응답/wrongbackend를candidate로두고ID/Age/cache/upstream상태를추적하는model/explanation이 맞다.",
+      "HARD 원인후보대관측;originfault200변환은별도계약문제로명시해캐시정상응답과구분한다."
+    ],
+    [
+      "network-http.core.request-journey.host-authority.q1",
+      "KEEP",
+      "B 논리서비스authority 정답; TCPpeer항상같음/TLSonly/cacheonly오답과모든rationale가 맞다. authority는target의중요한구성부분이라는D해설도확인했다.",
+      "EASY actualendpoint대logicalhost;답이유일하다."
+    ],
+    [
+      "network-http.core.request-journey.host-authority.q2",
+      "KEEP",
+      "sameIPvirtualhost에도HTTPauthority필요하고SNI의TLS선택과HTTPHost/authority가별도단계라는model/explanation이 맞다.",
+      "MEDIUM HTTPS이름재등장의다른책임;HTTPrequest-target전체가host뿐이라는주장으로읽지않는다."
+    ],
+    [
+      "network-http.core.request-journey.host-authority.q3",
+      "KEEP",
+      "Hostbackend.localrewrite후wrongvhost에원래authority보존또는신뢰된별도전달필드와backendcontract를명시하는model/explanation이 맞다.",
+      "MEDIUM proxyrewrite조건;모든backend에무조건외부Host보존을강제하지않아적절하다."
+    ],
+    [
+      "network-http.core.request-journey.proxy-gateway-path.q1",
+      "KEEP",
+      "C client외부대origin앞내부 정답; process내부함수/DNSonly/항상origin까지전달의오답과모든rationale를확인했다.",
+      "EASY forward/reverse방향과직접응답가능성을검증한다."
+    ],
+    [
+      "network-http.core.request-journey.proxy-gateway-path.q2",
+      "KEEP",
+      "model/explanation의HTTP/gRPC변환·경계auth/routing/quota/rate/aggregation가능성과최종domain인가/transaction별도가 적절하다.",
+      "MEDIUM 제품별가능역할;gateway의모든제품필수기능이라일반화하지않는다."
+    ],
+    [
+      "network-http.core.request-journey.proxy-gateway-path.q3",
+      "KEEP",
+      "stale200가originfault를가릴때cache/stale/Age/revalidation/upstreamfault와허용stale기간·originhealth별도관측의model/explanation을RFC5861§4에대조했다.",
+      "HARD 사용자가용성대origin건강상태의두지표;무제한stale권고가없다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://www.rfc-editor.org/rfc/rfc3986",
+      "CURRENT_VERIFIED",
+      "실제 §3.2 authority/host와§3.5 fragment를dereference이전분리해UA가처리하는문장을읽었다. HTTPtarget인코딩전체를이RFC만으로전수검증한뜻은아니다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc6454",
+      "CURRENT_VERIFIED",
+      "실제 §4 defaultport→tuple와§5 tuple동일비교/uniqueorigin예외·serialization에서defaultport생략을읽었다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc1034",
+      "CURRENT_VERIFIED",
+      "DNS Topic에서실제읽은namespace/A·resolver/referral관련절을이번name→address예시에재사용했다. 이RFC로hostrouting계약까지확인한것은아니다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9293",
+      "CURRENT_VERIFIED",
+      "TCP Topic에서실제읽은§3.5 handshake/§3.4seqstate·§3.7stream계약을이번TCP예시에재사용했다. QUIC동작은별도공식문서로확인했다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc8446",
+      "CURRENT_VERIFIED",
+      "TLS Topic에서읽은§2 full/PSK흐름과§8 earlydatareplay·key schedule을이번1RTT/0RTT구분에대조했다. 최신9846확인범위는별도supplemental에기록했다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9110",
+      "CURRENT_VERIFIED",
+      "canonicalURL은웹도구오류였으나공식Datatracker동일RFC에서실제 §3.7 connectionchain/proxy/gateway/tunnel와§7.1/7.2targetauthority·Host/§7.3cache/proxy/originrouting을읽었다. 상세H2/H3필드전체검증은아니다."
+    ]
+  ],
+  "referenceAccess": {
+    "https://www.rfc-editor.org/rfc/rfc9110": {
+      "status": "NEEDS_REVIEW",
+      "basis": "canonicalURL find에서Internal Error가왔으며404로판정하지않는다. 동일공식DatatrackerRFC본문은실제확인했다."
+    }
+  },
+  "supplementalSources": [
+    [
+      "https://datatracker.ietf.org/doc/html/rfc9110",
+      "CURRENT_VERIFIED",
+      "실제 §3.7/§7.1~7.3의연결경계·authority와requesttarget구성·proxy/cache순서 관련부분을읽었다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9000",
+      "CURRENT_VERIFIED",
+      "앞서TCP에서읽은§2/2.2의QUICstream/offset/connectionlimits를이번transport비교에대조했다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9001",
+      "CURRENT_VERIFIED",
+      "실제 §4의TLS handshake→CRYPTOframes/QUICpacket protection·TLSrecord미사용, Initial/0RTT/Handshake/1RTT encryptionlevels와§5/5.1의packetkey/direction분리를읽었다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc5861",
+      "CURRENT_VERIFIED",
+      "실제 §3/4의boundedstale-while-revalidate/stale-if-error, age900의cache200대upstream500예시와upperstaleness를읽었다. 역사적Warning요구를현행cache필수로일반화하지않는다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc7239",
+      "CURRENT_VERIFIED",
+      "TLS Topic에서실제읽은§8.1 client/proxymetadata변조·허용proxy·securedhop의한계를재사용했다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/ip.7.html",
+      "CURRENT_VERIFIED",
+      "실제 ERRORS EHOSTUNREACH의localroutingtable 또는remoteICMP기원을읽었다. 오류문자열만으로로컬route선택단계실패를확정할수없다는범위로대조했다."
+    ],
+    [
+      "https://datatracker.ietf.org/doc/rfc9846/",
+      "CURRENT_VERIFIED",
+      "TLS Topic에서공식2026게시정보및§1.2 backwardcompatibleupdate·KeyShare재사용금지/KeyUpdate강화/KEM포괄표현목록을읽은부분근거를재사용했다. 전체현행TLS규격전수검토는아니다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc1122",
+      "CURRENT_VERIFIED",
+      "local-delivery Topic에서읽은공식TXT §3.3.1.1/3.3.1.2 local/remotedestination과hostnext-hop결정을이번routingReference후보로재사용했다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-NET-013",
+      "severity": "P2",
+      "contentKeys": [
+        "network-http.core.request-journey.dns-to-route.q3"
+      ],
+      "file": "content/network-http/request-journey/questions.json",
+      "quote": "이름 해석은 끝났지만 선택한 IP 주소로 패킷을 내보낼 네트워크 경로가 없는 문제다.",
+      "problem": "model첫문장과explanation은No route to host만으로경로없음/경로선택단계실패를확정한다. Linuxip(7) ERRORS는EHOSTUNREACH가remoteICMP에서도발생한다고명시한다. DNS이후네트워크도달실패는맞지만어느홉/route선택이실패했는지는문자열만으로확정되지않는다. 뒤의route/VPN/ACL검사목록은보존할가치가있다.",
+      "action": "첫문장을DNS이후도달실패후보라는조건부표현으로바꾸고route lookup결과와송신패킷/ICMP기원을대조해local대remotefailure를좁히도록추가한다. DNS성공≠reachability의학습목표는유지한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-NET-014",
+      "severity": "P2",
+      "contentKeys": [
+        "network-http.core.request-journey.dns-to-route",
+        "network-http.core.request-journey.transport-establishment",
+        "network-http.core.request-journey.tls-before-http"
+      ],
+      "file": "content/network-http/request-journey/tls-before-http.md",
+      "quote": "https://www.rfc-editor.org/rfc/rfc8446",
+      "problem": "세본문의핵심기술설명은충분하고정확하나개별Reference는일부핵심단계를확인하기어렵다. DNS→routing은1034만, TCP대QUIC은9293만, TLS대QUIC통합은8446만이다. 8446은현행9846으로대체되었고9001의CRYPTO/packet보호차이는8446만으로학습할수없다. 각각actualrelatedprimary로확인했으나학습자경로에는그안내가없다.",
+      "action": "dns-to-route에1122 §3.3.1(필요시826/4861), transport에9000 §2와9001 §4, tls-before-http에현행9846 및9001 §4를관련절로안내한다. TLS Topic W3-NET-012와동일후속Issue에서Reference갱신을묶고정확한본문·도식은유지한다.",
+      "followupIssues": [
+        202
+      ],
+      "additionalEvidence": [
+        {
+          "file": "content/network-http/request-journey/dns-to-route.md",
+          "quote": "https://www.rfc-editor.org/rfc/rfc1034"
+        },
+        {
+          "file": "content/network-http/request-journey/transport-establishment.md",
+          "quote": "https://www.rfc-editor.org/rfc/rfc9293"
+        }
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "network-http.core.request-journey.dns-to-route": "354b560b5e97abeb898b7d32d6163410e1786f27731d568f90032725eacae202",
+    "network-http.core.request-journey.dns-to-route.q1": "136ca606803b0bc4a3e07e5910f5b4a9a7b6eb1dec0ca5049c83669d93327e35",
+    "network-http.core.request-journey.dns-to-route.q2": "198f361157e9d53e01643da88bf2260ae5d3d2928132c6d381fba78f8ac905c7",
+    "network-http.core.request-journey.dns-to-route.q3": "e361888890d03e295b73fd47c5ebb08d03725f4846094b5eb15a441d8bf710bb",
+    "network-http.core.request-journey.host-authority": "f3b0e85dda9e15eb455ed5a43b074d960d25f19a601283c6b37a9d5fa611e530",
+    "network-http.core.request-journey.host-authority.q1": "591a8e09f73eae6ac42fd0a84f6e71427780809f37157ea9d2b81ddb7bf022d4",
+    "network-http.core.request-journey.host-authority.q2": "fc948fe9d61f9cd8cb99019dcb980c0e15fd793e96e010c314527287fb2edfda",
+    "network-http.core.request-journey.host-authority.q3": "bcbbf5687673bfd272cfb847e0366983c28f321bc504671db161a4a1edec00ed",
+    "network-http.core.request-journey.http-request-delivery": "c634770710637c2d42099b60cc69d2cdc71c369f0595abee77e4b0054dcfe04d",
+    "network-http.core.request-journey.http-request-delivery.q1": "de41b64ddffac65e49bd78b20752368977ff6de63d701343549115bfb49b6673",
+    "network-http.core.request-journey.http-request-delivery.q2": "0b2a7bf18aaa59705e89b8ea087f2912209e005262dbca31f0660bf015ca218b",
+    "network-http.core.request-journey.http-request-delivery.q3": "2c7359c1bec585a0afaf82f09d9354277ace7468c25f9e134dea09220fd97350",
+    "network-http.core.request-journey.origin": "f17969ef683e1f988b2a9eb05b83da7c4db4cfd85e1ae9236ded97e9dbc5aff7",
+    "network-http.core.request-journey.origin.q1": "011daf578f4667717380e39636dce622c24e2a48f5cb6ef260a96614fae84655",
+    "network-http.core.request-journey.origin.q2": "a5efcc382707c0b951770f124943e0814051f750ffd848cc1b2443550865d1fe",
+    "network-http.core.request-journey.origin.q3": "0314232854a82cadecef9a78d25453e07a604ad8126a79eeb9a0c85c69cc795b",
+    "network-http.core.request-journey.proxy-gateway-path": "9f6e8e938fcb0fed375fa09421e8fc34aff124fde22589b533a0e788b619c200",
+    "network-http.core.request-journey.proxy-gateway-path.q1": "8b5ae5aca198c85bfb9ecf3a2d82285c350c21701eac4e488e18ac84544de8ad",
+    "network-http.core.request-journey.proxy-gateway-path.q2": "25995dc0fd7b331777c38d6e79cb56ce45614d9a8520fd03158e6bad48b5f4ae",
+    "network-http.core.request-journey.proxy-gateway-path.q3": "329f540d99487b1bd47d71a56ec7c3615794722c1056905f8b808fd9730850ec",
+    "network-http.core.request-journey.tls-before-http": "8c397002acddd8c1b208bed773899494de988b03f15bfba24fec2867118fe00c",
+    "network-http.core.request-journey.tls-before-http.q1": "d3664aff9c06558838ae4de016707dfe3fde2786a794024864b0088b4e20a067",
+    "network-http.core.request-journey.tls-before-http.q2": "a2e31bcb402f31562727cacf25de65b92798e1b21c5f65b2d05fab49ae952c20",
+    "network-http.core.request-journey.tls-before-http.q3": "5fd9ac81d751499c24d86920278345520cbbed0ff078e169d68d8cbe34dfe1cf",
+    "network-http.core.request-journey.transport-establishment": "3f31d0b50e04e4f25ce2c0bf32f3cf20472408165e3ed0c2afdcc7482b561084",
+    "network-http.core.request-journey.transport-establishment.q1": "b73f75116a4f9f7676e796493198fd1707169dc86739217228fd4c4ffa26a49b",
+    "network-http.core.request-journey.transport-establishment.q2": "3045a57e479c35e454e3b8e98d46405ba354ae3ca359230c0d60242ae9db43aa",
+    "network-http.core.request-journey.transport-establishment.q3": "3e31cda37119b3654185cd2650e2cefeb56317f24002423bcff15df3d2f90960",
+    "network-http.core.request-journey.url-components": "51292dcef3500fe02c9f4282f7f20d8486b276a5e1bc5276bda301ab0f4c86ad",
+    "network-http.core.request-journey.url-components.q1": "da1d58654a8f756a7b7230fd0d4c6bd906455809b3bab756b6f2c6c7408a4dac",
+    "network-http.core.request-journey.url-components.q2": "33f1d6b26f3fc972213ad8cead7c0cb3ca0cfe0d7cff473acc55c790a0409543",
+    "network-http.core.request-journey.url-components.q3": "0187af9d1314709b1065fda2baac1e0d58f104da38a026229ddcb9034b054a39"
+  }
+}

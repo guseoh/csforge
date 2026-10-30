@@ -1,0 +1,165 @@
+{
+  "cases": 46,
+  "evaluated": 46,
+  "copyExcluded": 0,
+  "errors": 0,
+  "ranking": {
+    "natural": {
+      "count": 30,
+      "positives": 1,
+      "prevalence": 0.03333333333333333,
+      "rocAuc": 1,
+      "budgets": {
+        "10": {
+          "reviewed": 3,
+          "found": 1,
+          "recall": 1,
+          "precision": 0.3333333333333333,
+          "liftVsRandom": 10
+        },
+        "20": {
+          "reviewed": 6,
+          "found": 1,
+          "recall": 1,
+          "precision": 0.16666666666666666,
+          "liftVsRandom": 5
+        },
+        "30": {
+          "reviewed": 9,
+          "found": 1,
+          "recall": 1,
+          "precision": 0.1111111111111111,
+          "liftVsRandom": 3.333333333333333
+        }
+      }
+    },
+    "historical": {
+      "count": 4,
+      "positives": 2,
+      "prevalence": 0.5,
+      "rocAuc": 0.75,
+      "budgets": {
+        "10": {
+          "reviewed": 1,
+          "found": 1,
+          "recall": 0.5,
+          "precision": 1,
+          "liftVsRandom": 2
+        },
+        "20": {
+          "reviewed": 1,
+          "found": 1,
+          "recall": 0.5,
+          "precision": 1,
+          "liftVsRandom": 2
+        },
+        "30": {
+          "reviewed": 2,
+          "found": 1,
+          "recall": 0.5,
+          "precision": 0.5,
+          "liftVsRandom": 1
+        }
+      }
+    },
+    "synthetic": {
+      "count": 12,
+      "positives": 6,
+      "prevalence": 0.5,
+      "rocAuc": 1,
+      "budgets": {
+        "10": {
+          "reviewed": 2,
+          "found": 2,
+          "recall": 0.3333333333333333,
+          "precision": 1,
+          "liftVsRandom": 2
+        },
+        "20": {
+          "reviewed": 3,
+          "found": 3,
+          "recall": 0.5,
+          "precision": 1,
+          "liftVsRandom": 2
+        },
+        "30": {
+          "reviewed": 4,
+          "found": 4,
+          "recall": 0.6666666666666666,
+          "precision": 1,
+          "liftVsRandom": 2
+        }
+      }
+    }
+  },
+  "criterion": {
+    "natural": {
+      "choice_rationale_misalignment": {
+        "positives": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "rocAuc": null
+      },
+      "choice_rationale_conflict": {
+        "positives": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "rocAuc": null
+      },
+      "choice_rationale_shallow": {
+        "positives": 1,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "rocAuc": 1
+      }
+    },
+    "historical": {
+      "choice_rationale_misalignment": {
+        "positives": 1,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "rocAuc": 0.6666666666666666
+      },
+      "choice_rationale_conflict": {
+        "positives": 1,
+        "falsePositive": 0,
+        "falseNegative": 1,
+        "rocAuc": 1
+      },
+      "choice_rationale_shallow": {
+        "positives": 0,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "rocAuc": null
+      }
+    },
+    "synthetic": {
+      "choice_rationale_misalignment": {
+        "positives": 2,
+        "falsePositive": 0,
+        "falseNegative": 2,
+        "rocAuc": 0.95
+      },
+      "choice_rationale_conflict": {
+        "positives": 2,
+        "falsePositive": 0,
+        "falseNegative": 0,
+        "rocAuc": 1
+      },
+      "choice_rationale_shallow": {
+        "positives": 2,
+        "falsePositive": 1,
+        "falseNegative": 0,
+        "rocAuc": 0.95
+      }
+    }
+  },
+  "inputTokens": 44666,
+  "outputTokens": 3220,
+  "estimatedInputCostUsd": 0.0018759720000000003,
+  "actualCostUsd": null,
+  "latencyMs": {
+    "p50": 252,
+    "p95": 631
+  }
+}

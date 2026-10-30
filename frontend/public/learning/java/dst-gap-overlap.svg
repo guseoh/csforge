@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="820" height="360" viewBox="0 0 820 360" role="img" aria-labelledby="title desc">
+  <title id="title">DST 전환의 gap과 overlap</title>
+  <desc id="desc">서머타임 시작에는 02시 구간이 건너뛰어 존재하지 않는 local time이 생기고, 종료에는 02시 구간이 두 번 나타나 같은 local time에 두 offset 후보가 생기는 흐름을 비교한다.</desc>
+  <rect width="820" height="360" rx="14" fill="#fbfafc"/>
+  <text x="34" y="42" font-family="sans-serif" font-size="19" font-weight="700" fill="#292132">DST 전환: 존재하지 않는 시간과 두 번 나타나는 시간</text>
+
+  <text x="50" y="86" font-family="sans-serif" font-size="16" font-weight="700" fill="#39275d">Gap · 시계를 앞으로 이동</text>
+  <line x1="72" y1="130" x2="748" y2="130" stroke="#8b70ca" stroke-width="3"/>
+  <g font-family="monospace" font-size="14" text-anchor="middle" fill="#39275d">
+    <rect x="54" y="106" width="112" height="48" rx="8" fill="#f4efff" stroke="#9c84d6"/><text x="110" y="136">01:59</text>
+    <rect x="252" y="106" width="180" height="48" rx="8" fill="#fff3f0" stroke="#cf7c69" stroke-dasharray="6 4"/><text x="342" y="127">02:00–02:59</text><text x="342" y="145" font-family="sans-serif" font-size="12" fill="#8d4e40">실제 순간이 없음</text>
+    <rect x="520" y="106" width="112" height="48" rx="8" fill="#f4efff" stroke="#9c84d6"/><text x="576" y="136">03:00</text>
+  </g>
+  <path d="M168 130 C205 78 472 78 518 130" fill="none" stroke="#cf7c69" stroke-width="3" marker-end="url(#arrow)"/>
+  <text x="343" y="95" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#8d4e40">local clock이 한 구간을 건너뜀</text>
+
+  <text x="50" y="216" font-family="sans-serif" font-size="16" font-weight="700" fill="#39275d">Overlap · 시계를 뒤로 이동</text>
+  <line x1="72" y1="264" x2="748" y2="264" stroke="#8b70ca" stroke-width="3"/>
+  <g font-family="monospace" font-size="14" text-anchor="middle" fill="#39275d">
+    <rect x="54" y="240" width="112" height="48" rx="8" fill="#f4efff" stroke="#9c84d6"/><text x="110" y="270">01:59</text>
+    <rect x="230" y="232" width="142" height="64" rx="8" fill="#eef7ff" stroke="#678bb0"/><text x="301" y="257">02:30</text><text x="301" y="278" font-family="sans-serif" font-size="12" fill="#496985">offset A</text>
+    <rect x="448" y="232" width="142" height="64" rx="8" fill="#eef7ff" stroke="#678bb0"/><text x="519" y="257">02:30</text><text x="519" y="278" font-family="sans-serif" font-size="12" fill="#496985">offset B</text>
+    <rect x="654" y="240" width="112" height="48" rx="8" fill="#f4efff" stroke="#9c84d6"/><text x="710" y="270">03:00</text>
+  </g>
+  <path d="M410 307 C410 330 286 330 286 300" fill="none" stroke="#678bb0" stroke-width="2.5" marker-end="url(#arrowBlue)"/>
+  <text x="410" y="337" text-anchor="middle" font-family="sans-serif" font-size="12" fill="#496985">같은 local time이 서로 다른 두 Instant 후보를 가질 수 있음</text>
+
+  <defs>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#cf7c69"/></marker>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 Z" fill="#678bb0"/></marker>
+  </defs>
+</svg>

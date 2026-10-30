@@ -1,0 +1,27 @@
+# General
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example
+
+# IDEs
+.idea/
+*.iml
+.vscode/
+
+# Backend / Gradle
+backend/.gradle/
+backend/build/
+
+# Frontend / Node
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Local infrastructure data
+infra/data/
+
+# GitHub Actions Google Cloud credentials
+gha-creds-*.json

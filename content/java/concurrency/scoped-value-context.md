@@ -1,0 +1,123 @@
+---
+kind: concept
+contentKey: java.core.concurrency.scoped-value-context
+topicContentKey: java.core.concurrency
+slug: scoped-value-context
+title: "ScopedValue로 실행 문맥 전달하기"
+summary: "Java 25의 ScopedValue가 값을 현재 스레드의 제한된 동적 범위에 바인딩하고 StructuredTaskScope 같은 명시적 구조에서 자식 작업으로 상속하는 방식을 이해한다"
+level: 3
+status: PUBLISHED
+displayOrder: 170
+references:
+  - url: "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ScopedValue.html"
+    title: "Java SE 25 API: ScopedValue"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 1
+    relationNote: Java 25 ScopedValue의 per-thread binding·rebinding·inheritance 계약 확인
+---
+# ScopedValue로 실행 문맥 전달하기
+
+요청 ID나 인증 주체처럼 깊은 호출 경로에서 읽어야 하지만 모든 중간 메서드가 매개변수로 전달할 필요는 없는 값이 있습니다. Java 25의 `ScopedValue`는 이런 값을 **현재 스레드의 제한된 dynamic 범위에 바인딩하고 안쪽 호출에서 읽게 하는 API**입니다.
+
+`ScopedValue` 자체는 Java 25의 정식 API이며, 공식 문서는 목적이 "메서드 매개변수 없이 one-way로 값을 전달하는 것"이라면 `ThreadLocal`보다 우선 검토하도록 안내합니다.
+
+### 바인딩은 bounded dynamic 범위를 가진다
+
+```java
+static final ScopedValue<String> REQUEST_ID = ScopedValue.newInstance();
+
+ScopedValue.where(REQUEST_ID, "req-42").run(() -> {
+    handleRequest();
+});
+```
+
+`handleRequest()`와 그 아래에서 같은 스레드로 직접 이어지는 호출은 `REQUEST_ID.get()`으로 현재 바인딩을 읽을 수 있습니다.
+
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "ScopedValue의 중첩 범위",
+  "description": "바깥 바인딩, 안쪽 재바인딩, 복원을 비교합니다. 구조적 상속 예제의 StructuredTaskScope는 Java 25 preview입니다.",
+  "example": "scoped-binding"
+}
+```
+
+ThreadLocal처럼 `remove()`를 직접 호출해 정리하는 가변 slot이 아니라, 실행 범위가 끝날 때 바인딩 수명도 함께 닫힌다는 점이 핵심입니다.
+
+### 안쪽 범위에서 rebinding할 수 있다
+
+```java
+ScopedValue.where(REQUEST_ID, "outer").run(() -> {
+    System.out.println(REQUEST_ID.get()); // outer
+
+    ScopedValue.where(REQUEST_ID, "inner").run(() -> {
+        System.out.println(REQUEST_ID.get()); // inner
+    });
+
+    System.out.println(REQUEST_ID.get()); // outer
+});
+```
+
+안쪽 바인딩이 바깥 값을 영구적으로 overwrite하는 것이 아닙니다. Nested dynamic 범위 동안 더 안쪽 바인딩이 보이고, 범위가 끝나면 이전 바인딩으로 돌아갑니다.
+
+### 기본적으로 모든 새 스레드에 자동 전파되는 것은 아니다
+
+```java
+ScopedValue.where(REQUEST_ID, "req-42").run(() -> {
+    executor.submit(() -> {
+        // arbitrary executor에서 req-42가 자동으로 보인다고 가정할 수 없음
+    });
+});
+```
+
+ScopedValue의 스레드 간 공유는 **구조화된 방식으로 명시적으로 지원되는 경우**에 한정됩니다. 새 스레드나 임의의 Executor로 작업을 넘겼다고 현재 바인딩이 자동 복사되는 일반 규칙은 없습니다.
+
+### StructuredTaskScope에서는 바인딩 inheritance가 계약으로 제공된다
+
+Java 25의 `StructuredTaskScope`는 preview API지만, ScopedValue 바인딩 상속을 명시적으로 지원합니다. Scope를 열 때 소유자 스레드의 바인딩을 capture하고 그 범위에서 `fork`한 subtask 스레드에 상속합니다.
+
+```java
+void runRequest() throws InterruptedException {
+    ScopedValue.where(REQUEST_ID, "req-42").call(() -> {
+        try (var scope = StructuredTaskScope.open()) {
+            scope.fork(() -> childTask());
+            scope.join();
+            return null;
+        }
+    });
+}
+```
+
+위 예제는 Java 25의 preview 기능을 켜서 컴파일·실행해야 합니다. join의 InterruptedException을 전달하기 위해 검사 예외를 허용하는 call을 사용하고, 바깥 메서드에서도 예외를 선언했습니다. Runnable을 받는 run 본문에서 이 검사 예외를 처리 없이 던질 수는 없습니다.
+
+이것은 "ScopedValue는 비동기 작업에 자동 전파된다"는 뜻이 아니라 **StructuredTaskScope가 제공하는 inheritance 계약**입니다. Java 25에서 `ScopedValue`는 정식 API이고 `StructuredTaskScope`는 preview라는 API 상태도 구분해야 합니다.
+
+### 바인딩이 읽기 중심이어도 값 객체 자체는 변경 가능할 수 있다
+
+```java
+record RequestContext(List<String> permissions) { }
+```
+
+이 객체를 ScopedValue에 바인딩했다고 `permissions`가 deep 불변해지는 것은 아닙니다. 여러 structured subtask가 같은 가변 객체를 공유한다면 그 객체에 대한 동기화나 소유권 규칙이 별도로 필요합니다.
+
+ScopedValue가 제공하는 것은 **바인딩의 방향과 수명을 구조화하는 것**이지 값 객체를 자동으로 스레드 안전하게 만드는 기능이 아닙니다.
+
+### ThreadLocal과 비교할 때 목적을 먼저 본다
+
+```text
+ThreadLocal
+- thread에 mutable slot을 둠
+- set/remove 가능
+- lifetime을 thread와 함께 관리
+
+ScopedValue
+- caller가 bounded scope에서 값을 bind
+- callee는 주로 읽음
+- scope 종료와 함께 binding 복원
+```
+
+따라서 request 문맥처럼 바깥에서 정하고 안쪽에서는 읽기만 하는 값에 ScopedValue가 잘 맞습니다. 반대로 같은 스레드 안에서 계속 갱신해야 하는 상태라면 ThreadLocal이나 더 명시적인 객체 전달이 맞을 수 있습니다.
+
+ScopedValue 코드를 읽을 때는 **바인딩이 시작·종료되는 동적 범위(dynamic scope), 실행 스레드가 바뀌는 경계, 스레드 간 상속을 제공하는 API가 실제로 있는지, 바인딩한 객체 자체가 변경 가능한지**를 차례로 확인하세요. 핵심은 전역 문맥 저장소가 아니라 범위가 정해진 단방향 문맥 전달입니다.

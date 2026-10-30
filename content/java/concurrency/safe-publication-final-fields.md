@@ -1,0 +1,134 @@
+---
+kind: concept
+contentKey: java.core.concurrency.safe-publication-final-fields
+topicContentKey: java.core.concurrency
+slug: safe-publication-final-fields
+title: "안전한 공개와 final 필드"
+summary: "완성된 객체 참조를 다른 스레드에 안전하게 전달하는 방법과 `final` 필드가 제공하는 특별한 초기화 규칙을 구분한다"
+level: 3
+status: PUBLISHED
+displayOrder: 70
+references:
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html#jls-17.5"
+    title: "Java SE 25 JLS: final Field Semantics"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 1
+    relationNote: 생성자 종료와 final 필드의 특별한 관찰 규칙 확인
+  - url: "https://docs.oracle.com/javase/specs/jls/se25/html/jls-17.html"
+    title: "Java SE 25 JLS Chapter 17: Threads and Locks"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 2
+    relationNote: 일반 공유 상태의 스레드 간 가시성과 동기화 관계 확인
+---
+# 안전한 공개와 final 필드
+
+한 스레드에서 객체를 완성했다는 사실과 다른 스레드가 그 객체의 초기 상태를 올바르게 관찰한다는 사실은 일반적으로 같은 보장이 아닙니다. 객체 참조를 스레드 사이에 전달할 때는 **어떤 공개(publication) 경계를 통해 전달했는지**를 봐야 합니다.
+
+다만 Java의 `final` 필드에는 일반 필드와 구분되는 특별한 초기화 의미론이 있습니다. 이 규칙을 일반적인 안전한 공개(safe publication)와 섞지 않는 것이 핵심입니다.
+
+### 일반적인 변경 가능 상태는 스레드 사이의 전달 경계를 확인한다
+
+```java
+class Holder {
+    static Config config;
+}
+
+void initialize() {
+    Holder.config = new Config(...);
+}
+```
+
+여러 스레드가 아무 동기화 없이 `config`를 읽고 쓰고, `Config` 안에도 일반 비`final` 필드가 있다면 "생성자가 먼저 끝났으니 읽는 쪽에서도 초기화 값을 당연히 본다"고 추론할 수 없습니다.
+
+일반적인 안전한 공개에는 스레드 사이의 메모리 일관성 관계가 정의된 경계를 사용할 수 있습니다. 예를 들어 완성된 객체를 `volatile` 참조에 저장하고 다른 스레드가 그 참조를 `volatile` 읽기로 얻으면, 앞선 초기화 동작과 읽은 뒤의 후속 동작을 happens-before 관계로 연결할 수 있습니다.
+
+```java
+private volatile Config current;
+
+void publish(Config next) {
+    current = next;
+}
+
+Config read() {
+    return current;
+}
+```
+
+```csforge-viz
+{
+  "version": 1,
+  "type": "java-api-contract",
+  "title": "생성 중 유출과 생성 완료 후 공개",
+  "description": "생성 중 this 유출 반례와 정상 생성 뒤 volatile 공개를 비교합니다. final 참조는 이후 가변 객체 변경까지 보호하지 않습니다.",
+  "example": "safe-publication"
+}
+```
+
+같은 모니터의 잠금 해제와 잠금 획득, 적절한 `java.util.concurrent` 전달(handoff), 클래스 초기화처럼 공식 계약이 메모리 관계를 제공하는 경계도 상황에 따라 같은 역할을 할 수 있습니다.
+
+### final 필드에는 생성자 종료와 연결된 특별한 보장이 있다
+
+JLS는 올바르게 생성된 객체의 `final` 필드에 일반 필드보다 강한 관찰 규칙을 둡니다.
+
+```java
+final class UserConfig {
+    private final int timeout;
+
+    UserConfig(int timeout) {
+        this.timeout = timeout;
+    }
+}
+```
+
+객체가 생성자에서 `final` 필드를 설정하고 **생성자가 끝나기 전에 그 객체 참조가 다른 스레드에 보이지 않았다면**, 이후 다른 스레드가 그 참조를 보았을 때 `final` 필드의 올바르게 초기화된 값을 관찰하도록 특별한 `final` 필드 의미론(final-field semantics)이 적용됩니다.
+
+JLS의 예에서도 데이터 경쟁(data race)을 통해 객체 참조를 얻은 스레드는 `final int x`의 생성자 값을 보도록 보장되지만, 같은 객체의 일반 `int y`는 기본값을 볼 수도 있습니다.
+
+이것이 "`final` 필드가 있으면 안전한 공개가 필요 없다"는 단순한 규칙은 아닙니다. **`final` 필드 자체의 초기화 관찰 보장**과 객체의 일반적인 변경 가능 상태를 안전하게 전달·수정하는 규칙을 나눠야 합니다.
+
+### final 참조가 가리키는 객체에도 생성 시점 관련 보장이 있지만 이후 변경은 별도다
+
+JLS는 `final` 필드가 객체나 배열을 참조할 때 그 생성 시점의 상태에 대해서도 특별한 관찰 보장을 정의합니다. 하지만 이것을 "`final` 참조가 가리키는 객체가 영원히 스레드 안전하다"고 확대하면 안 됩니다.
+
+```java
+final class Tags {
+    private final List<String> values;
+
+    Tags(List<String> values) {
+        this.values = values;
+    }
+}
+```
+
+생성 이후 다른 스레드가 같은 변경 가능한 `List`를 계속 수정한다면 그 후속 변경에는 별도의 동기화가 필요합니다. `final`은 참조의 재대입을 막고 특별한 생성 시점 의미를 제공하지만, 참조 대상의 이후 변경을 자동으로 직렬화하지 않습니다.
+
+### 생성자에서 참조가 빠져나가면 final 필드 보장의 전제를 깨뜨릴 수 있다
+
+```java
+class Listener {
+    Listener(EventBus bus) {
+        bus.register(this);
+    }
+}
+```
+
+생성자가 끝나기 전에 `this`를 외부 등록소, 콜백 또는 다른 스레드가 접근할 수 있는 곳에 넘기면 아직 완전히 초기화되지 않은 객체가 관찰될 수 있습니다.
+
+가능하면 객체를 완전히 만든 뒤 별도 단계에서 등록하거나, 팩터리가 생성 완료 후 공개를 담당하도록 설계하는 편이 안전합니다.
+
+### 세 개념을 분리하면 혼동이 줄어든다
+
+```text
+불변성(immutability)
+→ 생성 후 상태가 변하는가?
+
+안전한 공개(safe publication)
+→ 객체 참조와 일반 상태를 스레드 사이에 어떤 메모리 관계로 전달하는가?
+
+final 필드 의미(final-field semantics)
+→ 올바르게 생성된 `final` 필드에 JMM이 주는 특별한 생성 시점 보장은 무엇인가?
+```
+
+불변 객체는 공유 후 동기화 부담을 크게 줄여 주지만, `final` 하나가 객체의 모든 변경 가능한 동작을 스레드 안전하게 만드는 것은 아닙니다. 안전한 공개를 판단할 때는 생성자에서 참조가 빠져나갔는지, 참조가 전달된 경로, `final`·비`final` 상태, 공개 이후의 변경을 차례로 확인해야 합니다.

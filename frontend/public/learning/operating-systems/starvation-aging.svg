@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
+  <title id="title">Starvation and aging</title>
+  <desc id="desc">높은 priority 작업이 계속 도착해 낮은 priority 작업이 밀리다가 aging으로 effective priority가 올라가 service를 받는 흐름</desc>
+  <rect width="960" height="360" rx="24" fill="#111827"/>
+  <text x="48" y="52" fill="#f9fafb" font-size="28" font-family="Arial, sans-serif" font-weight="700">Starvation → Aging</text>
+  <text x="70" y="110" fill="#d1d5db" font-size="18" font-family="Arial, sans-serif">ready queue</text>
+  <rect x="70" y="135" width="130" height="58" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="135" y="170" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">H1</text>
+  <rect x="215" y="135" width="130" height="58" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="280" y="170" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">H2</text>
+  <rect x="360" y="135" width="130" height="58" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="425" y="170" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">H3</text>
+  <rect x="505" y="135" width="150" height="58" rx="12" fill="#1f2937" stroke="#9ca3af"/><text x="580" y="170" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">… 계속 도착</text>
+  <rect x="70" y="235" width="250" height="66" rx="14" fill="#1f2937" stroke="#6b7280" stroke-width="2"/>
+  <text x="195" y="262" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">Low-priority L</text>
+  <text x="195" y="287" text-anchor="middle" fill="#9ca3af" font-size="15" font-family="Arial, sans-serif">runnable but waiting</text>
+  <line x1="340" y1="268" x2="600" y2="268" stroke="#e5e7eb" stroke-width="3"/>
+  <polygon points="600,268 586,260 586,276" fill="#e5e7eb"/>
+  <text x="470" y="246" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">aging: wait time 반영</text>
+  <rect x="620" y="225" width="260" height="86" rx="14" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
+  <text x="750" y="257" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">effective priority ↑</text>
+  <text x="750" y="285" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">eventually gets CPU service</text>
+</svg>

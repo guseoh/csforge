@@ -1,0 +1,952 @@
+[
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q1",
+    "promptMarkdown": "다음 코드의 출력 결과는 무엇인가요?\n\n```java\nString a = new String(\"cs\");\nString b = a;\n\nSystem.out.println(a == b);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.primitive-reference-values"],
+    "choices": [
+      {"key": "A", "content": "true", "displayOrder": 0, "rationaleMarkdown": "`b = a`는 `a`에 저장된 참조값을 복사하므로 두 변수는 같은 `String` 객체를 가리킨다. 따라서 `a == b`는 `true`다."},
+      {"key": "B", "content": "false", "displayOrder": 1, "rationaleMarkdown": "`b = a`는 두 번째 객체를 만들지 않습니다. `a`의 참조 값이 `b`에 복사되므로 이 코드의 `a == b`는 `true`입니다."},
+      {"key": "C", "content": "컴파일 오류", "displayOrder": 2, "rationaleMarkdown": "`String` 참조 값을 다른 `String` 변수에 대입하는 것은 허용됩니다. `a == b`는 `println`의 인자로 사용되므로 이 코드는 컴파일되고 `true`를 출력합니다."},
+      {"key": "D", "content": "컴파일은 되지만 결과는 JVM 구현에 따라 달라진다", "displayOrder": 3, "rationaleMarkdown": "`b = a`는 같은 객체를 가리키는 참조값을 복사한다. 따라서 `a == b`는 JVM 구현과 관계없이 `true`다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`new String(\"cs\")`로 만든 객체의 참조 값이 먼저 `a`에 저장되고, `b = a`에서 **그 참조 값이 `b`에 복사**됩니다. 따라서 두 변수는 같은 `String` 객체를 가리키고 참조 동일성을 비교하는 `a == b`는 `true`입니다. `System.out.println(a == b);`는 이 값을 출력하므로 정답은 A입니다. `b = a`는 `String` 객체를 한 번 더 복제하는 코드가 아닙니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q2",
+    "promptMarkdown": "다음 코드 실행 후 `b`의 값은 무엇인가요?\n\n```java\nint a = 3;\nint b = a;\na = 4;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.primitive-reference-values"],
+    "choices": [
+      {"key": "A", "content": "3", "displayOrder": 0, "rationaleMarkdown": "원시 타입 `int` 값 `3`을 `b`에 복사한 뒤 `a`에 `4`를 넣어도 `b`의 값은 바뀌지 않는다."},
+      {"key": "B", "content": "4", "displayOrder": 1, "rationaleMarkdown": "`a`와 `b`는 각각 값을 저장하는 별도의 원시 타입 변수다. 복사 이후 `a`를 바꿔도 `b`가 갱신되지 않는다."},
+      {"key": "C", "content": "0", "displayOrder": 2, "rationaleMarkdown": "대입 당시 값은 `3`이지 기본값 `0`이 아니다. 이후 `a`에 대입해도 `b`는 처음 복사한 값을 유지한다."},
+      {"key": "D", "content": "컴파일 오류", "displayOrder": 3, "rationaleMarkdown": "두 `int` 변수 선언과 대입은 모두 유효한 Java 문장이다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`b = a`에서 원시 값 `3` 자체가 `b`에 복사됩니다. 그 뒤 `a = 4`는 `a`라는 별도 변수의 값만 바꾸므로 이미 복사된 `b`는 `3`을 유지합니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q3",
+    "promptMarkdown": "다음 코드 실행 후 `source[0]`의 값은 무엇인가요?\n\n```java\nint[] source = {1};\nint[] alias = source;\nalias[0] = 7;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.primitive-reference-values"],
+    "choices": [
+      {"key": "A", "content": "1", "displayOrder": 0, "rationaleMarkdown": "`alias`와 `source`는 같은 배열 참조 값을 가진다. `alias[0]`을 바꾸면 `source[0]`에서도 바뀐 원소를 읽는다."},
+      {"key": "B", "content": "0", "displayOrder": 1, "rationaleMarkdown": "원소를 `0`으로 되돌리는 연산은 없다. 같은 배열에 쓴 `7`이 남는다."},
+      {"key": "C", "content": "컴파일 오류", "displayOrder": 2, "rationaleMarkdown": "두 변수 모두 `int[]` 타입이며 배열 원소 대입도 유효하다."},
+      {"key": "D", "content": "7", "displayOrder": 3, "rationaleMarkdown": "`source`를 `alias`에 대입할 때 배열 객체를 복제하지 않고 참조값을 복사한다. 따라서 같은 배열의 원소가 `7`로 바뀐다."}
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`alias = source`는 배열 객체를 복제하지 않고 **배열을 가리키는 참조 값**을 복사합니다. 따라서 `source`와 `alias`는 같은 배열을 가리키고, `alias[0] = 7`로 바꾼 객체 상태를 `source[0]`에서도 `7`로 관찰합니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q4",
+    "promptMarkdown": "참조 변수 `Object value = null;`에 대해 항상 참인 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.primitive-reference-values"],
+    "choices": [
+      {"key": "A", "content": "값은 반드시 물리 메모리 주소 0을 담는다", "displayOrder": 0, "rationaleMarkdown": "Java는 `null`을 물리 주소 `0`으로 정의하지 않는다. 참조값의 내부 표현은 구현 세부다."},
+      {"key": "B", "content": "값은 객체가 없음을 나타내는 참조 값이다", "displayOrder": 1, "rationaleMarkdown": "`null`은 현재 어떤 객체도 가리키지 않음을 나타내는 특별한 참조값이다."},
+      {"key": "C", "content": "값을 사용하면 Object의 기본 객체가 자동 생성된다", "displayOrder": 2, "rationaleMarkdown": "`null` 참조를 사용한다고 기본 `Object`가 생성되지는 않는다. 역참조하면 `NullPointerException`이 발생할 수 있다."},
+      {"key": "D", "content": "참조 변수에는 null을 대입할 수 없다", "displayOrder": 3, "rationaleMarkdown": "참조 타입의 변수에는 `null`을 대입할 수 있다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`null`은 현재 어떤 객체도 가리키지 않는 특별한 참조 값입니다. 이를 특정 물리 주소라고 단정하거나, 접근 시 객체가 자동 생성된다고 해석하면 Java 언어 계약을 넘어선 설명이 됩니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q5",
+    "promptMarkdown": "다음 코드의 출력은 무엇인가요? 변수의 **재대입**과 공유 객체의 **상태 변경**을 나눠 추적해 보세요.\n\n```java\nStringBuilder a = new StringBuilder(\"x\");\nStringBuilder b = a;\n\nb.append(\"y\");\nb = new StringBuilder(\"z\");\n\nSystem.out.println(a + \":\" + b);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.primitive-reference-values"],
+    "choices": [
+      {"key": "A", "content": "x:z", "displayOrder": 0, "rationaleMarkdown": "`append`가 공유 객체를 먼저 `xy`로 바꾼 뒤 `b`만 새 `z` 객체를 가리킨다. 끝에서 `a`는 `x`가 아니라 `xy`다."},
+      {"key": "B", "content": "xy:z", "displayOrder": 1, "rationaleMarkdown": "두 참조값이 처음에는 같은 변경 가능 `StringBuilder`를 가리켜 `append`가 `xy`를 만든다. 이후 `b`만 새 객체로 재대입한다."},
+      {"key": "C", "content": "xy:xy", "displayOrder": 2, "rationaleMarkdown": "`b`를 새 `StringBuilder`로 바꿔도 `a`는 이전 객체를 계속 가리킨다."},
+      {"key": "D", "content": "z:z", "displayOrder": 3, "rationaleMarkdown": "`b`에 새 참조값을 대입해도 `a`에 저장된 참조값까지 함께 바뀌지는 않는다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "처음 `b = a` 뒤에는 두 변수가 같은 `StringBuilder(\"x\")`를 가리킵니다. 따라서 `b.append(\"y\")`는 공유 객체를 `\"xy\"`로 바꾸고, 이 변경은 `a`에서도 보입니다.\n\n그다음 `b = new StringBuilder(\"z\")`는 **`b`가 가진 참조 값만 새 객체의 참조로 교체**합니다. `a`는 기존 `\"xy\"` 객체를 계속 가리키므로 최종 출력은 `xy:z`입니다. 객체 상태 변경과 변수 재대입을 구분하는 것이 핵심입니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.primitive-reference-values.q6",
+    "promptMarkdown": "Java 참조 값에 대한 설명 중 언어가 보장하는 내용과 JVM 구현 세부를 올바르게 구분한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.primitive-reference-values"],
+    "choices": [
+      {"key": "A", "content": "참조 값은 언제나 OS가 노출하는 물리 주소다", "displayOrder": 0, "rationaleMarkdown": "Java는 참조 값이 OS에서 보이는 물리 주소라고 보장하지 않는다. 내부 표현은 JVM 구현에 달려 있다."},
+      {"key": "B", "content": "참조 값은 객체 전체를 깊은 복사한 값이다", "displayOrder": 1, "rationaleMarkdown": "참조 값은 객체에 접근하는 값이지, 객체의 필드와 객체 그래프를 깊게 복사한 결과가 아니다."},
+      {"key": "C", "content": "참조 값은 객체 동일성을 다루는 언어 의미를 가지며 실제 표현은 JVM 구현 세부다", "displayOrder": 2, "rationaleMarkdown": "Java 언어는 참조 값을 통한 객체 접근과 객체 동일성의 의미를 정의하고, 참조 값의 내부 표현은 JVM 구현에 맡긴다."},
+      {"key": "D", "content": "참조 값과 원시 값은 언어 수준에서 같은 타입 범주다", "displayOrder": 3, "rationaleMarkdown": "참조 타입과 원시 타입은 Java 언어에서 서로 다른 타입 범주다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Java 언어는 참조 값으로 객체에 접근하고 객체 동일성을 다룬다는 의미를 정의한다. 반면 참조가 실제로 어떤 비트 패턴이나 포인터 표현을 쓰는지, 객체가 어떻게 배치되는지는 JVM 구현에 달려 있다. 학습용 화살표를 물리 주소 보장으로 확대 해석하면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q1",
+    "promptMarkdown": "객체가 생성될 때 `int` 인스턴스 필드에 적용되는 설명은 무엇인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.variables-scope-definite-assignment"],
+    "choices": [
+      {"key": "A", "content": "사용 전 반드시 메서드 안에서 대입해야 한다", "displayOrder": 0, "rationaleMarkdown": "`int` 인스턴스 필드는 객체 초기화 과정에서 타입의 기본값을 받으므로, 메서드에서 먼저 대입하지 않아도 사용할 수 있다."},
+      {"key": "B", "content": "명시적 초기화가 없는 `int` 필드는 `null`로 초기화된다.", "displayOrder": 1, "rationaleMarkdown": "`null`은 참조형 값이며 `int` 같은 원시 타입에는 적용되지 않는다. 이 필드의 기본값은 `0`이다."},
+      {"key": "C", "content": "명시적 대입이 없으면 기본값 0으로 초기화된다", "displayOrder": 2, "rationaleMarkdown": "명시적으로 초기화하지 않은 `int` 인스턴스 필드에는 기본값 `0`이 대입된다."},
+      {"key": "D", "content": "기본값은 `static` 필드에만 적용되고 인스턴스 필드에는 적용되지 않는다.", "displayOrder": 3, "rationaleMarkdown": "인스턴스 필드도 객체 초기화 과정에서 타입의 기본값을 받는다. 기본값 규칙은 `static` 여부에 따라 달라지지 않는다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "인스턴스 필드는 객체 초기화 과정에서 타입의 기본값을 받는다. `int`의 기본값은 `0`이다. 지역 변수를 사용하기 전에 컴파일러가 모든 실행 경로의 대입을 확인하는 **확정적 대입(definite assignment)** 규칙과는 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q2",
+    "promptMarkdown": "다음 클래스가 컴파일되지 않는 직접적인 이유는 무엇인가요?\n\n```java\nclass Example {\n    void f() {\n        int count;\n        System.out.println(count);\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.variables-scope-definite-assignment"],
+    "choices": [
+      {"key": "A", "content": "`count`가 사용 전에 확정 할당되지 않았다", "displayOrder": 0, "rationaleMarkdown": "지역 변수는 필드처럼 자동으로 기본값을 받지 않는다. 컴파일러는 처음 읽기 전에 값이 대입됐는지 확인한다."},
+      {"key": "B", "content": "컴파일되고 `count`가 0으로 출력된다. 지역 `int`도 필드처럼 자동 초기화된다.", "displayOrder": 1, "rationaleMarkdown": "지역 변수에는 필드의 기본값 초기화가 적용되지 않습니다. 읽기 전에 대입되지 않았으므로 이 코드는 컴파일되지 않습니다."},
+      {"key": "C", "content": "컴파일 오류다. 지역 변수는 선언과 동시에 초기화해야 하므로 나중에 대입할 수 없다.", "displayOrder": 2, "rationaleMarkdown": "초기값 없이 선언한 지역 변수도 읽기 전에 값을 대입할 수 있습니다. 오류의 원인은 나중 대입 자체가 아니라 대입 전에 읽는 것입니다."},
+      {"key": "D", "content": "컴파일되지만 `count`의 값은 JVM이 스택에서 재사용한 값에 따라 달라진다.", "displayOrder": 3, "rationaleMarkdown": "Java는 초기화되지 않은 지역 변수에서 임의의 스택 값을 읽도록 허용하지 않습니다. 컴파일러가 대입 여부를 확인해 읽기를 거부합니다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "지역 변수는 필드처럼 자동으로 기본값을 받지 않습니다. `count`를 읽는 지점까지 값이 대입되었다는 사실을 컴파일러가 확인할 수 없으므로 컴파일 오류가 납니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q3",
+    "promptMarkdown": "다음 클래스가 컴파일되지 않는 이유는 무엇인가요? `value`를 읽는 모든 실행 경로를 추적하세요.\n\n```java\nclass Example {\n    void printValue(boolean ready) {\n        int value;\n        if (ready) {\n            value = 1;\n        }\n        System.out.println(value);\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.variables-scope-definite-assignment"],
+    "choices": [
+      {"key": "A", "content": "`ready`가 `false`인 경로는 `value`를 대입하지 않은 채 `println`에 도달할 수 있다.", "displayOrder": 0, "rationaleMarkdown": "그 경로에서도 읽기 지점에 도달하므로, 컴파일러는 `value`가 대입되었다고 증명할 수 없습니다."},
+      {"key": "B", "content": "`if` 블록이 끝나면 `value`의 이름 범위도 함께 끝난다.", "displayOrder": 1, "rationaleMarkdown": "`value`는 `if` 블록 밖에서 선언되었고 바깥 메서드 블록 안에 있으므로 `println`에서도 범위 안이다."},
+      {"key": "C", "content": "컴파일러는 실행 중 결정되는 조건을 분석하지 못하므로 모든 `if` 내부 대입을 무시한다.", "displayOrder": 2, "rationaleMarkdown": "컴파일러는 `if`와 `else`의 제어 흐름을 분석합니다. 이 코드가 거부되는 이유는 대입을 무시해서가 아니라 `false` 경로에 대입이 없기 때문입니다."},
+      {"key": "D", "content": "지역 변수는 선언할 때 초기화해야 하며, 조건문 안에서 나중에 대입할 수 없다.", "displayOrder": 3, "rationaleMarkdown": "지역 변수는 선언 뒤 읽기 전에 대입해도 됩니다. 여기서는 `ready == false`일 때 읽기 전에 대입되지 않는 경로가 남습니다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`ready == false`인 실행 경로에서는 `value`에 값을 대입하지 않은 채 `println`까지 도달한다. 컴파일러는 읽기 지점에 도달하는 모든 경로에서 지역 변수의 확정적 대입(definite assignment)을 확인한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q4",
+    "promptMarkdown": "다음 코드에서 `i`를 `for`문 뒤에 사용할 수 없는 이유는 무엇인가요?\n\n```java\nfor (int i = 0; i < 3; i++) {\n}\nSystem.out.println(i);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.variables-scope-definite-assignment"],
+    "choices": [
+      {"key": "A", "content": "초기화부에서 선언한 `i`는 `for`문이 끝나도 바깥 메서드 블록에서 계속 사용할 수 있다.", "displayOrder": 0, "rationaleMarkdown": "`for`문 초기화부에서 선언한 변수의 범위는 해당 `for`문에 한정되며, 문장이 끝난 뒤에는 이름을 사용할 수 없습니다."},
+      {"key": "B", "content": "`i`의 어휘적 범위(lexical scope)가 `for`문 안에서 끝나기 때문이다", "displayOrder": 1, "rationaleMarkdown": "`for`문 초기화부에서 선언한 변수는 해당 반복문 범위에서만 유효하고 문장 뒤에서는 보이지 않는다."},
+      {"key": "C", "content": "`i`는 `for`문의 갱신식에서만 쓰는 예약어라 다른 표현식에서 사용할 수 없다.", "displayOrder": 2, "rationaleMarkdown": "`i`는 예약어가 아니라 일반적인 지역 변수 이름이다. 오류는 `for`문이 정한 범위 밖에서 그 이름을 참조해서 발생한다."},
+      {"key": "D", "content": "반복문은 0회 실행될 수 있으므로 `i`가 초기화되지 않은 채 `println`에 도달할 수 있다.", "displayOrder": 3, "rationaleMarkdown": "`i`는 `for`문 초기화부에서 `0`으로 대입된다. 이 오류는 미대입이 아니라 `for`문 밖에서 이름을 참조한 범위 위반이다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`for`문 초기화부에서 선언한 `i`는 해당 `for`문의 어휘적 범위(lexical scope) 안에서만 사용할 수 있다. `for`문이 끝나면 범위 밖이므로 그 이름을 참조할 수 없다. 이는 객체의 수명과는 다른 개념이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q5",
+    "promptMarkdown": "다음 `final` 지역 변수 선언이 컴파일될 수 있는 이유는 무엇인가요?\n\n```java\nfinal int code;\nif (ok) {\n    code = 200;\n} else {\n    code = 400;\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.variables-scope-definite-assignment"],
+    "choices": [
+      {"key": "A", "content": "한 분기에서만 대입해도 JVM이 나머지 값을 추측하기 때문이다", "displayOrder": 0, "rationaleMarkdown": "Java는 `final` 지역 변수의 값을 누락된 분기에서 추측하지 않는다. 제어 흐름에 따라 확정적 대입이 보장돼야 한다."},
+      {"key": "B", "content": "`final`은 지역 변수에 붙일 수 없으므로 사실 컴파일되지 않는다", "displayOrder": 1, "rationaleMarkdown": "지역 변수도 `final`로 선언할 수 있다. 선언에서 초기화하지 않은 `final` 지역 변수는 이후 한 번 대입할 수 있다."},
+      {"key": "C", "content": "각 경로에서 여러 번 대입해야 `final`이 초기화되기 때문이다", "displayOrder": 2, "rationaleMarkdown": "`final` 지역 변수는 정상 완료하는 각 경로에서 정확히 한 번 대입되어야 하며 다시 대입하면 안 된다."},
+      {"key": "D", "content": "정상적으로 이어지는 각 경로에서 `code`가 정확히 한 번 결정되기 때문이다", "displayOrder": 3, "rationaleMarkdown": "두 분기가 모두 값을 정해 정상 완료하므로 합류 지점에서 확정적 대입이 성립하고 재대입도 없다."}
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "선언 시 초기화하지 않은 `final` 지역 변수는 이후에 한 번 대입할 수 있습니다. 이 코드에서는 `if`와 `else` 어느 경로를 타더라도 `code`가 정확히 한 번 대입되고, 합류 지점에서는 확정적 대입이 성립합니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.variables-scope-definite-assignment.q6",
+    "promptMarkdown": "다음 코드는 컴파일될까요? 컴파일된다면 `ready` 값에 따라 어떻게 동작하나요?\n\n```java\nint value;\nif (ready) {\n    value = 1;\n} else {\n    throw new IllegalStateException();\n}\nSystem.out.println(value);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.variables-scope-definite-assignment"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "컴파일되지 않는다. `ready`가 `false`인 경로에서 `value`가 미대입이기 때문이다",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`false` 분기는 `throw`로 끝나 `println`까지 도달하지 않는다. 따라서 정상 출력 경로마다 `value`가 대입돼 있다."
+      },
+      {
+        "key": "B",
+        "content": "컴파일되며 `value`가 자동으로 0으로 초기화된다",
+        "displayOrder": 1,
+        "rationaleMarkdown": "지역 변수는 자동으로 `0`으로 초기화되지 않는다. `true` 경로의 명시적 대입이 `println`에서 읽기를 가능하게 한다."
+      },
+      {
+        "key": "C",
+        "content": "컴파일되지만 `ready`가 `false`여도 `println`까지 도달한다",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`ready`가 `false`이면 출력문에 도달하기 전에 예외를 던지고 메서드 실행이 종료된다."
+      },
+      {
+        "key": "D",
+        "content": "컴파일되며 `true`이면 1을 출력하고 `false`이면 출력 지점에 도달하기 전에 예외로 종료한다",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`println`에 도달하는 유일한 경로에서는 `ready == true`이고 `value = 1`이 실행됐다. `false` 경로는 예외를 던지며 종료된다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`println`까지 **정상적으로 도달하는 경로**는 `ready == true`인 경우뿐이고, 그 경로에서는 `value = 1`이 실행됩니다. `false` 경로는 `throw`로 정상 완료하지 않으므로 합류 지점의 확정적 대입을 깨지 않습니다. 단순히 모든 문법 분기에서 대입문이 보여야 하는 규칙이 아니라 제어 흐름을 분석한다는 점이 핵심입니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.numeric-conversion-overflow.q1",
+    "promptMarkdown": "상수 변수가 아닌 변수의 값을 일반 대입한다고 할 때 별도 형변환 없이 허용되는 원시 타입 변환은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.numeric-conversion-overflow"],
+    "choices": [
+      {"key": "A", "content": "`int`를 `byte`로 대입", "displayOrder": 0, "rationaleMarkdown": "일반 int 변수의 값을 byte에 대입하려면 명시적 축소 변환이 필요하다. 다만 byte 범위 안의 int 상수 식은 대입 문맥에서 형변환 없이 허용되는 별도 예외가 있다."},
+      {"key": "B", "content": "`int`를 `long`으로 대입", "displayOrder": 1, "rationaleMarkdown": "`int`에서 `long`으로는 표현 범위가 넓어지므로 명시적 형변환 없이 확장 변환할 수 있다."},
+      {"key": "C", "content": "`long`을 `int`로 대입", "displayOrder": 2, "rationaleMarkdown": "`long`에서 `int`로는 축소 변환이므로 상위 비트 정보가 버려질 수 있어 명시적 형변환이 필요하다."},
+      {"key": "D", "content": "`double`을 `float`로 대입", "displayOrder": 3, "rationaleMarkdown": "`double`에서 `float`으로의 변환은 정밀도와 범위를 줄이는 변환이므로 확장 변환이 아니다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "상수 변수가 아닌 변수의 일반 대입에서는 int→long 확장 변환만 보기 중 형변환 없이 허용됩니다. int→byte, long→int, double→float은 축소 변환입니다. 단, byte 범위 안의 int 상수 식은 대입 문맥에서 예외적으로 허용됩니다. final 변수도 원시 타입 또는 String이고 상수 식으로 초기화되어야 상수 변수가 됩니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.numeric-conversion-overflow.q2",
+    "promptMarkdown": "다음 코드의 `total`이 기대한 `4_000_000_000L`이 되지 않는 이유는 무엇인가요?\n\n```java\nlong total = 2_000_000_000 + 2_000_000_000;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.numeric-conversion-overflow"],
+    "choices": [
+      {"key": "A", "content": "대입 대상이 `long`이므로 오른쪽 계산도 처음부터 `long`이라 항상 정확하다", "displayOrder": 0, "rationaleMarkdown": "대입 대상이 `long`이라는 사실이 이미 수행한 덧셈을 사후에 승격시키지는 않는다. 덧셈은 먼저 `int`로 계산된다."},
+      {"key": "B", "content": "오른쪽 두 `int` 값의 덧셈이 `int`로 먼저 계산되어 그 단계에서 오버플로가 발생한다", "displayOrder": 1, "rationaleMarkdown": "두 정수 리터럴이 `int`이므로 합이 `int`로 계산되고 `long` 대입 전에 오버플로가 발생한다."},
+      {"key": "C", "content": "컴파일러가 자동으로 `BigInteger`로 변환한다", "displayOrder": 2, "rationaleMarkdown": "Java가 이 `int` 표현식을 `BigInteger`로 암시적으로 변환하지 않는다. 큰 정수 연산에는 명시적으로 알맞은 타입을 사용한다."},
+      {"key": "D", "content": "`long`에는 정수 결과를 대입할 수 없다", "displayOrder": 3, "rationaleMarkdown": "`int`에서 `long`으로의 대입은 확장 변환이므로 가능하다. 문제는 이미 오버플로가 발생한 중간 `int` 결과다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "두 정수 리터럴의 타입이 `int`이므로 `+` 연산이 먼저 `int`로 수행됩니다. 그 중간 결과에서 오버플로가 발생한 뒤에야 이미 잘못된 `int` 값이 `long`으로 확장 변환됩니다. `2_000_000_000L + 2_000_000_000L`처럼 **연산 전에** `long` 문맥을 만들어야 합니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.numeric-conversion-overflow.q3",
+    "promptMarkdown": "다음 코드에 대한 설명으로 가장 정확한 것은?\n\n```java\nint big = 1_234_567_890;\nfloat approx = big;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.numeric-conversion-overflow"],
+    "choices": [
+      {"key": "A", "content": "확장 변환이므로 `approx`는 반드시 모든 비트를 정확히 보존한다", "displayOrder": 0, "rationaleMarkdown": "`int`에서 `float`으로는 확장 변환이므로 명시적 형변환이 필요 없지만 정밀도까지 보존되는 것은 아니다. 큰 정수는 `float` 표현에서 반올림될 수 있다."},
+      {"key": "B", "content": "`int`에서 `float`은 축소 변환이므로 명시적 형변환 없이는 컴파일되지 않는다", "displayOrder": 1, "rationaleMarkdown": "JLS는 `int`에서 `float`으로의 변환을 확장 원시 타입 변환(widening primitive conversion)으로 분류하므로 명시적 형변환 없이 허용합니다."},
+      {"key": "C", "content": "`int`에서 `float`은 확장 변환이라 명시적 형변환 없이 가능하지만 일부 하위 비트가 반올림되어 정밀도를 잃을 수 있다", "displayOrder": 2, "rationaleMarkdown": "`int`는 `float`으로 암시적으로 확장 변환되지만 `float`의 유효 비트 수가 더 적어 하위 비트가 반올림될 수 있으며, 이것만으로 예외가 발생하지는 않는다."},
+      {"key": "D", "content": "정밀도를 잃으면 반드시 `ArithmeticException`이 발생한다", "displayOrder": 3, "rationaleMarkdown": "이 변환의 정밀도 손실은 반올림 결과이며 `ArithmeticException` 발생이 보장되는 상황이 아니다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`int`에서 `float`으로의 변환은 JLS가 정의한 확장 원시 타입 변환(widening primitive conversion)이므로 명시적 형변환 없이 가능합니다. 다만 확장 변환이라고 항상 정확한 값이 보존되는 것은 아닙니다. `float`의 유효 정밀도 때문에 큰 `int`의 일부 하위 비트가 반올림될 수 있으며, 이때도 예외는 발생하지 않습니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.numeric-conversion-overflow.q4",
+    "promptMarkdown": "다음 코드가 컴파일되지 않는 이유는 무엇인가요?\n\n```java\nbyte a = 1;\nbyte b = 2;\nbyte c = a + b;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.numeric-conversion-overflow"],
+    "choices": [
+      {"key": "A", "content": "`a + b`에는 이항 숫자 승격(binary numeric promotion)이 적용되어 결과 타입이 `int`가 되므로, `byte` 대입에는 축소 변환이 필요하다", "displayOrder": 0, "rationaleMarkdown": "`byte` 피연산자끼리 더해도 이항 숫자 승격(binary numeric promotion)에 따라 결과 타입은 `int`가 됩니다. `byte` 변수에 대입하려면 축소 변환이 필요합니다."},
+      {"key": "B", "content": "`byte` 두 개의 덧셈은 항상 `byte` 값 3으로 남는다", "displayOrder": 1, "rationaleMarkdown": "피연산자가 모두 `byte`여도 산술식 결과는 `byte`로 남지 않고 `int`로 승격된다."},
+      {"key": "C", "content": "`byte` 덧셈은 항상 `long`으로 승격된다", "displayOrder": 2, "rationaleMarkdown": "이항 숫자 승격은 `byte`를 `int`로 승격한다. `long`으로 바로 승격하지 않는다."},
+      {"key": "D", "content": "final만 붙이면 초기화 식이나 값의 범위와 관계없이 byte 대입이 항상 허용된다", "displayOrder": 3, "rationaleMarkdown": "final이라는 사실만으로 충분하지 않다. 이 코드의 a와 b를 final byte로 선언하면 상수 식 1, 2로 초기화한 상수 변수가 되고, a+b도 int 상수 식이며 값 3이 byte 범위 안이라 대입이 허용된다. 실행 중 얻은 값으로 초기화한 final 변수에는 이 예외를 적용할 수 없다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "현재 a와 b는 상수 변수가 아니므로 a+b는 int 타입의 비상수 식입니다. 따라서 byte 대입에는 명시적 축소 변환이 필요합니다. 반면 final byte a=1, b=2로 선언하면 이항 승격으로 결과 타입은 여전히 int이지만, 식 전체가 상수이고 값 3이 byte 범위 안이라 대입이 허용됩니다. 승격 규칙과 상수 식의 대입 예외를 구분해야 합니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q1",
+    "promptMarkdown": "다음 코드에서 원시 타입 값이 래퍼 객체로 바뀌는 변환을 무엇이라고 하나요? `Integer count = 3;`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.boxing-unboxing-wrapper"],
+    "choices": [
+      {"key": "A", "content": "복싱(boxing)", "displayOrder": 0, "rationaleMarkdown": "정수 리터럴 `3`을 `Integer` 래퍼 객체로 바꾸는 대입 문맥의 변환을 복싱(boxing)이라고 한다."},
+      {"key": "B", "content": "언박싱(unboxing)", "displayOrder": 1, "rationaleMarkdown": "언박싱(unboxing)은 `Integer` 같은 래퍼 객체에서 원시 타입 값을 꺼내므로 이 변환과 방향이 반대다."},
+      {"key": "C", "content": "오버라이딩", "displayOrder": 2, "rationaleMarkdown": "오버라이딩은 하위 클래스에서 메서드를 재정의하는 것으로 이 변수 대입과 무관하다."},
+      {"key": "D", "content": "형변환만 일어난다", "displayOrder": 3, "rationaleMarkdown": "단순한 명시적 형변환만으로 설명되지 않는다. Java가 원시 타입 값을 `Integer` 참조 타입에 맞추기 위해 복싱 변환을 수행한다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`int` 리터럴 `3`을 `Integer` 래퍼 객체로 감싸는 변환이 복싱(boxing)이다. 소스에 생성자 호출이 없어도 대입 문맥에서 복싱 변환이 일어난다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q2",
+    "promptMarkdown": "다음 코드의 실행 결과는 무엇인가요?\n\n```java\nInteger value = null;\nint answer = value;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.boxing-unboxing-wrapper"],
+    "choices": [
+      {"key": "A", "content": "언박싱 시 `NullPointerException`이 발생한다", "displayOrder": 0, "rationaleMarkdown": "`Integer` 값을 `int`에 대입하려면 언박싱이 필요하다. 값이 `null`이면 `NullPointerException`이 발생한다."},
+      {"key": "B", "content": "`answer`가 0이 된다", "displayOrder": 1, "rationaleMarkdown": "언박싱은 `null`을 기본값 0으로 대체하지 않는다. 예외가 발생한다."},
+      {"key": "C", "content": "`answer`가 null이 된다", "displayOrder": 2, "rationaleMarkdown": "`int` 지역 변수에는 `null`을 대입할 수 없다. `null` 래퍼 객체가 원시 타입 값으로 남는 것도 아니다."},
+      {"key": "D", "content": "컴파일러가 `Integer`를 자동으로 1로 만든다", "displayOrder": 3, "rationaleMarkdown": "래퍼 객체의 `null`을 임의 값 `1`로 바꾸는 변환 규칙은 없다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`int answer = value`에서는 `Integer`에서 `int` 값을 꺼내는 언박싱(unboxing)이 필요하다. 그러나 `value`가 `null`이면 꺼낼 값이 없어 `NullPointerException`이 발생한다. `null`을 자동으로 `0`으로 보정하는 규칙은 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q3",
+    "promptMarkdown": "`Integer a = 1000; Integer b = 1000;`에서 숫자 값이 같은지 비교하려면 무엇을 사용해야 하나요?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.boxing-unboxing-wrapper"],
+    "choices": [
+      {"key": "A", "content": "항상 `==`를 사용한다", "displayOrder": 0, "rationaleMarkdown": "두 `Integer`에 `==`를 사용하면 객체 동일성을 비교한다. 숫자 값의 동등성은 `equals` 같은 값 비교로 확인한다."},
+      {"key": "B", "content": "래퍼 객체의 동일성을 믿고 `==`를 사용한다", "displayOrder": 1, "rationaleMarkdown": "래퍼 캐시는 일부 작은 값을 같은 객체로 만들 수 있지만 `1000`의 객체 동일성을 보장하지 않는다. 값 비교 계약으로 사용할 수도 없다."},
+      {"key": "C", "content": "두 값을 `String`으로 바꿔야만 비교할 수 있다", "displayOrder": 2, "rationaleMarkdown": "문자열로 바꿀 필요는 없다. `Integer.equals`는 정수 값을 비교한다."},
+      {"key": "D", "content": "`equals` 또는 `null`을 고려한 값 비교를 사용한다", "displayOrder": 3, "rationaleMarkdown": "숫자 값 비교가 목적이면 `equals`를 사용한다. `null`이 가능하다면 그 경우도 명시적으로 처리한다."}
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`Integer` 객체끼리의 `==`는 객체 동일성을 비교하므로 숫자 값 비교 수단으로 삼으면 안 됩니다. -128~127 범위의 `int` 상수 표현식을 박싱할 때의 동일성은 JLS가 보장하지만, 이 코드의 `1000`에는 그 보장이 없습니다. 작은 값이 같아지는 경우를 모두 우연이라고 하거나, `1000`의 동일성을 항상 `false`라고 단정해서도 안 됩니다. 값의 동등성이 목적이면 `equals` 등을 사용합니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q4",
+    "promptMarkdown": "다음 표현식의 결과는 무엇인가요? `Integer value = null; value == null`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.boxing-unboxing-wrapper"],
+    "choices": [
+      {"key": "A", "content": "true이며 언박싱이 필요 없다", "displayOrder": 0, "rationaleMarkdown": "`Integer` 참조와 `null`의 동일성을 비교하므로 원시 타입으로 언박싱하지 않는다. 결과는 `true`다."},
+      {"key": "B", "content": "false이며 null은 0으로 바뀐다", "displayOrder": 1, "rationaleMarkdown": "`null` 참조가 `int` 값 `0`으로 바뀌지 않는다. 여기서는 `null` 여부 자체를 비교한다."},
+      {"key": "C", "content": "항상 `ClassCastException`이다", "displayOrder": 2, "rationaleMarkdown": "서로 호환되지 않는 참조 타입 간 형변환이 아니므로 `ClassCastException`이 발생하지 않는다."},
+      {"key": "D", "content": "컴파일 오류다", "displayOrder": 3, "rationaleMarkdown": "`Integer` 참조와 `null`을 비교하는 표현식은 유효한 Java다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`null` 리터럴과 참조 동일성을 비교할 때는 `Integer`를 `int`로 언박싱하지 않는다. `value`가 `null`인지 직접 확인하므로 결과는 `true`다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q5",
+    "promptMarkdown": "다음 두 오버로드가 있을 때 `choose(null)`은 어느 메서드를 선택하나요?\n\n```java\nvoid choose(int value) { }\nvoid choose(Integer value) { }\n\nchoose(null);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.boxing-unboxing-wrapper"],
+    "choices": [
+      {"key": "A", "content": "`choose(int)`", "displayOrder": 0, "rationaleMarkdown": "`null`은 원시 값 `int`로 전달할 수 없으므로 이 메서드에는 인수를 넘길 수 없다."},
+      {"key": "B", "content": "`choose(Integer)`", "displayOrder": 1, "rationaleMarkdown": "`null`은 참조 타입인 `Integer` 매개변수에 전달할 수 있으므로 `choose(Integer)`가 선택된다."},
+      {"key": "C", "content": "두 메서드가 실행할 때 무작위로 선택된다", "displayOrder": 2, "rationaleMarkdown": "오버로드 선택은 실행 중 무작위로 이루어지지 않고 컴파일 시점의 규칙으로 결정된다."},
+      {"key": "D", "content": "두 메서드 때문에 항상 모호성 오류가 발생한다", "displayOrder": 3, "rationaleMarkdown": "`int` 매개변수는 `null`을 받을 수 없으므로 적용 가능한 후보가 둘이라서 생기는 모호성은 없다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`null`은 참조 값이므로 `Integer` 매개변수에는 전달할 수 있지만 원시 타입 `int` 매개변수에는 전달할 수 없습니다. 따라서 적용 가능한 오버로드는 `choose(Integer)`입니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q6",
+    "promptMarkdown": "다음 반복문에서 먼저 확인해야 할 실행 위험은 무엇인가요?\n\n```java\njava.util.List<Integer> values = java.util.Arrays.asList(1, null, 2);\nint total = 0;\nfor (Integer n : values) {\n    total += n;\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.boxing-unboxing-wrapper"],
+    "choices": [
+      {"key": "A", "content": "`Integer`는 향상된 `for`문에서 사용할 수 없다", "displayOrder": 0, "rationaleMarkdown": "향상된 `for`문은 `Integer` 원소를 순회할 수 있다. 산술식에서 `null`인 `Integer`를 언박싱하면 `NullPointerException`이 발생할 수 있다."},
+      {"key": "B", "content": "합계가 자동으로 문자열이 된다", "displayOrder": 1, "rationaleMarkdown": "`int total`과 `Integer n`의 산술은 자동으로 문자열 연결을 수행하지 않는다."},
+      {"key": "C", "content": "모든 `n`이 반드시 새로운 객체로 복사된다", "displayOrder": 2, "rationaleMarkdown": "컬렉션의 `Integer` 객체가 반복할 때마다 새로운 객체로 복사되지 않는다."},
+      {"key": "D", "content": "`total += n`에서 `n`이 언박싱되므로 `null` 원소가 있으면 예외가 날 수 있다", "displayOrder": 3, "rationaleMarkdown": "`total += n`은 `n`을 `int`로 언박싱한다. `values`에 `null` 원소가 있으면 그 자리에서 `NullPointerException`이 발생할 수 있다."}
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "산술 연산을 위해 `n`이 원시 타입 값으로 언박싱된다. `values`에 `null` 원소가 있다면 그 원소를 계산하는 순간 `NullPointerException`이 발생할 수 있으므로 컬렉션의 `null` 허용 여부도 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q1",
+    "promptMarkdown": "다음 호출 후 호출자의 `int` 변수가 바뀌지 않는 이유는 무엇인가요?\n\n```java\nvoid increment(int value) {\n    value++;\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.pass-by-value"],
+    "choices": [
+      {"key": "A", "content": "매개변수 `value`가 호출자의 변수와 같은 저장 공간을 공유하므로 `value++`가 호출자에게 반영된다.", "displayOrder": 0, "rationaleMarkdown": "매개변수는 호출자 변수와 별도의 지역 변수다. 이름이 달라서가 아니라 호출할 때 원시 값이 복사되기 때문에 호출자 변수는 바뀌지 않는다."},
+      {"key": "B", "content": "원시 값이 복사되어 별도의 매개변수가 만들어지기 때문이다", "displayOrder": 1, "rationaleMarkdown": "호출할 때 `int` 값이 메서드 매개변수에 복사되므로 증가 연산은 그 복사본만 바꾼다."},
+      {"key": "C", "content": "메서드가 끝나면 매개변수의 최종 값을 호출자 변수에 자동으로 복사해 돌려준다.", "displayOrder": 2, "rationaleMarkdown": "메서드 안에서 매개변수에 새 값을 대입해도 호출자 변수에는 자동으로 반영되지 않는다. 새 값을 돌려주고 호출자가 직접 대입해야 한다."},
+      {"key": "D", "content": "매개변수는 암묵적으로 `final`이어서 `value++`가 컴파일되지 않는다.", "displayOrder": 3, "rationaleMarkdown": "매개변수는 `final`로 선언하지 않으면 메서드 안에서 다시 대입하거나 증가할 수 있다. 이 코드에서는 증가가 매개변수 복사본에 적용된다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "호출 시점의 `int` 값이 매개변수 `value`라는 **별도 변수에 복사**됩니다. `value++`는 그 복사본만 변경하므로 호출자가 가진 원래 변수의 값은 바뀌지 않습니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q2",
+    "promptMarkdown": "참조형 매개변수로 전달한 가변 객체의 내부 상태 변경이 호출자에게 보일 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.pass-by-value"],
+    "choices": [
+      {"key": "A", "content": "객체 자체가 참조에 의한 전달(pass-by-reference)로 전달되기 때문이다", "displayOrder": 0, "rationaleMarkdown": "참조 타입도 Java에서는 값으로 전달된다. 호출자 변수 자체가 아니라 그 변수에 담긴 참조 값의 복사본이 전달된다."},
+      {"key": "B", "content": "매개변수가 호출자 변수 자체와 같은 변수 슬롯이 되기 때문이다", "displayOrder": 1, "rationaleMarkdown": "매개변수와 호출자 쪽 변수는 서로 별개다. 두 변수에 같은 참조 값을 담을 수는 있다."},
+      {"key": "C", "content": "참조 값이 복사되어 두 변수가 같은 객체를 가리킬 수 있기 때문이다", "displayOrder": 2, "rationaleMarkdown": "참조 값이 복사되어 호출자 변수와 매개변수가 같은 가변 객체를 가리킬 수 있다. 그 객체의 상태 변경은 두 참조를 통해 모두 관찰된다."},
+      {"key": "D", "content": "호출할 때 가변 객체 자체가 복제되어 매개변수는 별도의 객체를 수정하기 때문이다.", "displayOrder": 3, "rationaleMarkdown": "Java는 참조형 인수의 객체를 복제하지 않고 참조 값만 복사한다. 두 참조가 같은 객체를 가리키면 객체 상태 변경이 호출자에게도 보인다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Java는 참조형 인수도 참조 값으로 복사해 전달한다. 호출자 쪽 변수와 매개변수는 별개지만, 복사된 두 참조 값이 같은 가변 객체를 가리키면 매개변수를 통해 바꾼 객체 상태를 호출자도 관찰할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q3",
+    "promptMarkdown": "다음 코드가 실행된 뒤 무엇이 출력되나요? 호출자 변수 `caller`가 계속 가리키는 객체도 함께 추적하세요.\n\n```java\nvoid replace(StringBuilder value) {\n    value = new StringBuilder(\"new\");\n}\n\nStringBuilder caller = new StringBuilder(\"old\");\nreplace(caller);\nSystem.out.println(caller);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.pass-by-value"],
+    "choices": [
+      {"key": "A", "content": "`old`가 출력된다. 새 참조는 복사된 매개변수에만 대입되기 때문이다.", "displayOrder": 0, "rationaleMarkdown": "호출 시 `caller`의 참조 값이 `value`에 복사됩니다. 새 객체를 가리키게 되는 것은 매개변수뿐이므로 `caller`는 원래 객체를 유지합니다."},
+      {"key": "B", "content": "`new`가 출력된다. 참조형 인수는 호출자의 변수 자체를 전달하므로 재대입이 호출자에도 반영된다.", "displayOrder": 1, "rationaleMarkdown": "Java는 참조형도 값으로 전달합니다. 메서드는 호출자 변수 자체가 아니라 그 참조 값의 복사본을 받습니다."},
+      {"key": "C", "content": "`new`가 출력된다. `StringBuilder`는 가변 객체이므로 새 객체를 대입하면 원래 객체 내용도 바뀐다.", "displayOrder": 2, "rationaleMarkdown": "`new StringBuilder(\"new\")`는 기존 빌더를 수정하지 않고 별도 객체를 만듭니다. 매개변수에 그 참조를 대입해도 기존 객체 내용은 바뀌지 않습니다."},
+      {"key": "D", "content": "컴파일 오류다. 메서드 매개변수는 암묵적으로 `final`이므로 다시 대입할 수 없다.", "displayOrder": 3, "rationaleMarkdown": "매개변수는 암묵적으로 `final`이 아닙니다. 이 메서드는 컴파일되며 `value`만 새 객체를 가리키도록 바뀝니다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "호출할 때 `caller`의 참조 값이 매개변수 `value`에 복사됩니다. 메서드 안에서 `value`를 새 객체로 재대입해도 `caller`는 바뀌지 않으므로 출력은 `old`입니다. 가리키는 객체의 상태를 변경하는 것과 매개변수에 새 참조를 대입하는 것은 다릅니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q4",
+    "promptMarkdown": "메서드 내부의 `swap(String a, String b)`가 호출자 변수의 문자열 참조를 서로 바꾸지 못하는 핵심 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.pass-by-value"],
+    "choices": [
+      {"key": "A", "content": "`String`은 불변이므로 매개변수에 새 참조 값을 대입할 수 없기 때문이다", "displayOrder": 0, "rationaleMarkdown": "`String`의 불변성은 객체 상태 변경에 관한 성질이다. 지역 매개변수에 다른 참조 값을 대입하는 일을 막지는 않는다."},
+      {"key": "B", "content": "참조형은 참조에 의한 전달이지만 `String`만 예외이기 때문이다", "displayOrder": 1, "rationaleMarkdown": "`String`을 포함한 모든 참조 타입은 참조 값을 값으로 전달한다. `String`에만 별도의 참조 전달 규칙이 적용되지는 않는다."},
+      {"key": "C", "content": "임시 변수를 쓰면 호출자 변수까지 자동으로 교환되기 때문이다", "displayOrder": 2, "rationaleMarkdown": "임시 변수를 이용한 교환은 메서드 매개변수의 복사본만 바꾼다. 호출자 쪽 변수에 담긴 값은 서로 바뀌지 않는다."},
+      {"key": "D", "content": "`a`와 `b`는 호출자 변수 자체가 아니라 복사된 참조 값을 담는 별도 매개변수이기 때문이다", "displayOrder": 3, "rationaleMarkdown": "매개변수 `a`와 `b`는 참조 값의 복사본을 담은 지역 변수다. 여기에 다른 참조를 대입해도 호출자 쪽 변수는 바뀌지 않는다."}
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`a`와 `b`는 호출자 변수 자체가 아니라 **복사된 참조 값을 담는 별도의 지역 변수**다. 메서드 안에서 두 매개변수에 다른 참조 값을 대입해도 호출자 쪽 변수에 저장된 참조는 바뀌지 않는다. `String`의 불변성은 이 현상의 원인이 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q5",
+    "promptMarkdown": "메서드가 호출자의 변수에 새 불변 값을 반영하게 하려면 가장 분명한 방식은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.pass-by-value"],
+    "choices": [
+      {"key": "A", "content": "새 값을 반환하고 호출자가 직접 다시 대입한다", "displayOrder": 0, "rationaleMarkdown": "새 불변 값을 반환하면 호출자가 자신의 변수에 직접 대입할 수 있어 데이터 흐름이 분명해진다."},
+      {"key": "B", "content": "매개변수를 `final`로 선언한다", "displayOrder": 1, "rationaleMarkdown": "`final`은 매개변수에 새 값을 대입하는 일을 막을 뿐, 값을 호출자 쪽 변수에 반영하지 않는다."},
+      {"key": "C", "content": "메서드 안에서 매개변수에 새 값을 대입한다", "displayOrder": 2, "rationaleMarkdown": "매개변수에 다른 참조를 대입해도 메서드의 지역 변수만 바뀐다."},
+      {"key": "D", "content": "모든 원시 타입을 래퍼 타입으로 감싼다", "displayOrder": 3, "rationaleMarkdown": "원시 타입을 래퍼 타입으로 감싸도 참조 값 자체가 값으로 전달된다는 Java 규칙은 같다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "매개변수에 새 값을 대입해도 호출자 변수는 바뀌지 않는다. 새 값을 반환하고 호출자가 `value = update(value)`처럼 직접 다시 대입하게 하면 데이터 흐름과 부수 효과 여부가 분명해진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.pass-by-value.q6",
+    "promptMarkdown": "다음 코드 실행 후 `a[0]`은 무엇인가요? 배열 객체의 변경과 매개변수 재대입을 순서대로 추적해 보세요.\n\n```java\nvoid update(int[] xs) {\n    xs[0] = 9;\n    xs = new int[]{1};\n}\n\nint[] a = {0};\nupdate(a);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.pass-by-value"],
+    "choices": [
+      {"key": "A", "content": "1", "displayOrder": 0, "rationaleMarkdown": "새 배열 대입은 지역 매개변수 `xs`만 바꾼다. `a`는 원래 배열을 계속 가리키며, 그 배열의 원소 `9`는 그대로 남는다."},
+      {"key": "B", "content": "0", "displayOrder": 1, "rationaleMarkdown": "`xs`를 새 배열로 바꾸기 전에 원래 배열의 원소에 `9`를 썼다. 따라서 `a`가 가리키는 배열은 더는 `0`을 담고 있지 않다."},
+      {"key": "C", "content": "9", "displayOrder": 2, "rationaleMarkdown": "호출 직후 `xs`와 `a`는 같은 배열을 가리키므로 `xs[0] = 9`가 그 배열을 바꾼다. 이후 매개변수 `xs`에 새 배열을 대입해도 `a`는 바뀌지 않는다."},
+      {"key": "D", "content": "컴파일 오류", "displayOrder": 3, "rationaleMarkdown": "메서드 호출, 배열 생성, 원소 변경과 매개변수 대입은 모두 유효한 Java 동작이다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "호출 직후 `a`와 매개변수 `xs`는 같은 배열을 가리킵니다. 따라서 `xs[0] = 9`는 **공유 배열 객체의 상태를 변경**해 `a[0]`에서도 보입니다.\n\n그다음 `xs = new int[]{1}`은 매개변수 `xs`의 참조 값만 새 배열로 바꿉니다. 호출자의 `a`는 기존 배열을 계속 가리키므로 최종 `a[0]`은 `9`입니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.arrays-covariance-runtime-check.q1",
+    "promptMarkdown": "Java 배열의 길이에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.arrays-covariance-runtime-check"],
+    "choices": [
+      {"key": "A", "content": "배열은 생성 후 `length`가 고정된다", "displayOrder": 0, "rationaleMarkdown": "배열 객체를 만들 때 `length`가 정해지고 해당 객체의 `length`는 변경되지 않는다. 더 큰 크기가 필요하면 다른 배열을 만들어야 한다."},
+      {"key": "B", "content": "배열은 원소를 넣을 때마다 자동 확장된다", "displayOrder": 1, "rationaleMarkdown": "Java 배열은 원소를 추가할 때 내부 용량을 늘리지 않는다. 크기 확장은 새 배열 생성 등 별도 작업이다."},
+      {"key": "C", "content": "배열 `length`는 항상 0이다", "displayOrder": 2, "rationaleMarkdown": "`length`는 생성 인자와 무관하게 항상 0이 되는 속성이 아니다. 실제로 저장할 칸 수를 나타낸다."},
+      {"key": "D", "content": "`length`는 실행할 때마다 임의로 바뀐다", "displayOrder": 3, "rationaleMarkdown": "배열 객체 하나의 `length`는 실행 중 임의로 바뀌지 않는다. 생성 뒤 크기는 고정된다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "배열은 생성 시 길이가 결정되며 그 배열 객체의 `length`는 이후 바뀌지 않습니다. 더 큰 저장 공간이 필요하면 새 배열을 만들고 값을 옮기는 별도 동작이 필요합니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.arrays-covariance-runtime-check.q2",
+    "promptMarkdown": "다음 대입이 컴파일되는 이유는 무엇인가요?\n\n```java\nString[] names = new String[1];\nObject[] values = names;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.arrays-covariance-runtime-check"],
+    "choices": [
+      {"key": "A", "content": "모든 배열은 불공변(invariant)이기 때문이다", "displayOrder": 0, "rationaleMarkdown": "`String[]` 배열을 `Object[]` 변수에 대입할 수 있는 것은 참조형 배열의 공변성(covariance) 때문입니다. 모든 배열이 불공변(invariant)이기 때문이 아닙니다."},
+      {"key": "B", "content": "`String[]`이 원시 타입 배열이기 때문이다", "displayOrder": 1, "rationaleMarkdown": "`String[]`은 원시 타입 배열이 아니라 참조형 배열입니다."},
+      {"key": "C", "content": "참조형 배열이 공변적이기 때문이다", "displayOrder": 2, "rationaleMarkdown": "Java는 참조형 배열의 공변성을 허용하므로 `String[]` 참조를 `Object[]` 변수에 대입할 수 있다."},
+      {"key": "D", "content": "`Object[]`가 `String[]`으로 자동 복사되기 때문이다", "displayOrder": 3, "rationaleMarkdown": "대입은 배열 원소를 복사하지 않는다. 두 변수는 같은 `String[]` 배열 객체를 가리킨다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Java의 참조형 배열은 공변성을 가지므로 `String[]` 참조값을 `Object[]` 변수에 대입할 수 있다. 배열 객체가 복사되는 것은 아니며 실제 배열의 **실행 시점 원소 타입(runtime component type)**은 여전히 `String`이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.arrays-covariance-runtime-check.q3",
+    "promptMarkdown": "다음 코드를 실행하면 무엇이 발생하나요?\n\n```java\nObject[] values = new String[1];\nvalues[0] = Integer.valueOf(1);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.arrays-covariance-runtime-check"],
+    "choices": [
+      {"key": "A", "content": "정상 저장된다", "displayOrder": 0, "rationaleMarkdown": "대입문은 컴파일되지만 실제 배열이 `String[]`이므로 `Integer`를 저장하는 실행 시점 검사에서 실패한다."},
+      {"key": "B", "content": "컴파일 시점에 `ArrayStoreException`이 발생한다", "displayOrder": 1, "rationaleMarkdown": "정적 타입이 `Object[]`이므로 저장문은 컴파일된다. 실제 배열의 원소 타입 검사는 실행 시점에 수행된다."},
+      {"key": "C", "content": "실행 시점에 `ArrayStoreException`이 발생한다", "displayOrder": 2, "rationaleMarkdown": "실제 배열이 `String[]`이므로 실행 시점 저장 검사에서 `Integer` 대입이 거부되고 `ArrayStoreException`이 발생한다."},
+      {"key": "D", "content": "`Integer`가 `String`으로 자동 변환된다", "displayOrder": 3, "rationaleMarkdown": "Java가 `Integer`를 `String`으로 자동 변환해 배열의 원소 타입에 맞추지는 않는다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "변수의 정적 타입이 `Object[]`이므로 `Integer`를 저장하는 문장은 컴파일된다. 그러나 실제 배열 객체는 `String[]`이어서 실행 시점 원소 타입 검사에 실패하고 `ArrayStoreException`이 발생한다. 배열 공변성은 이처럼 컴파일 시 허용과 실행 시 검사를 함께 요구한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.arrays-covariance-runtime-check.q4",
+    "promptMarkdown": "다음 `values`에 안전하게 저장할 수 있는 값은 무엇인가요? `Object[] values = new String[2];`",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.arrays-covariance-runtime-check"],
+    "choices": [
+      {"key": "A", "content": "`Integer.valueOf(1)`", "displayOrder": 0, "rationaleMarkdown": "실제 배열은 `String[]`이므로 `Integer`는 실행 시점 저장 검사에서 거부된다."},
+      {"key": "B", "content": "`new Object()`", "displayOrder": 1, "rationaleMarkdown": "변수의 정적 원소 타입에는 대입할 수 있어 보여도 실제 `String[]`의 원소 타입과 호환되지 않는다."},
+      {"key": "C", "content": "`new StringBuilder()`", "displayOrder": 2, "rationaleMarkdown": "`StringBuilder`도 `String`이 아니므로 실제 `String[]` 배열에 저장할 수 없다."},
+      {"key": "D", "content": "`null`", "displayOrder": 3, "rationaleMarkdown": "`null`은 특정 객체 인스턴스를 저장하려는 값이 아니므로 참조형 배열에 저장할 수 있다."}
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "실제 배열 객체가 `String[]`이므로 `null`이 아닌 값은 `String`에 대입할 수 있어야 한다. `null`은 특정 객체 인스턴스를 저장하려는 값이 아니므로 허용된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.arrays-covariance-runtime-check.q5",
+    "promptMarkdown": "다음 코드의 실행 결과로 가장 정확한 것은 무엇인가요? 두 번의 배열 저장을 순서대로 보세요.\n\n```java\nObject[] values = new String[2];\nvalues[0] = \"A\";\n\nObject candidate = Integer.valueOf(1);\nvalues[1] = candidate;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.arrays-covariance-runtime-check"],
+    "choices": [
+      {"key": "A", "content": "첫 저장부터 컴파일 오류가 난다", "displayOrder": 0, "rationaleMarkdown": "`Object[]`라는 정적 타입에서는 두 문장 모두 컴파일됩니다. 제약은 실행 시점에 실제 배열의 원소 타입을 검사할 때 드러납니다."},
+      {"key": "B", "content": "첫 저장은 성공하고 두 번째 저장에서 `ArrayStoreException`이 발생하며 `values[0]`의 \"A\"는 유지된다", "displayOrder": 1, "rationaleMarkdown": "첫 문자열 저장은 실제 `String[]`에 허용되므로 유지된다. 두 번째 `Integer` 저장에서 `ArrayStoreException`이 발생하지만 앞선 저장은 되돌아가지 않는다."},
+      {"key": "C", "content": "두 저장 모두 성공하고 `Integer`가 `String`으로 변환된다", "displayOrder": 2, "rationaleMarkdown": "`Integer`를 `String`으로 바꾸는 자동 변환이 없어 두 번째 저장은 성공하지 않는다."},
+      {"key": "D", "content": "두 번째 저장에서 `ClassCastException`이 발생하고 배열 전체가 초기화된다", "displayOrder": 3, "rationaleMarkdown": "실패는 `ClassCastException`이 아니라 `ArrayStoreException`이고, 앞서 성공한 배열 저장을 초기화하지 않는다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "정적 타입이 `Object[]`이므로 두 저장 문장 모두 컴파일된다. 실제 배열은 `String[]`이어서 첫 번째 문자열 저장은 실행 시점 검사를 통과하지만, 두 번째 `Integer` 저장은 원소 타입과 맞지 않아 `ArrayStoreException`이 발생한다. 이미 성공한 첫 번째 저장은 되돌아가지 않으므로 `values[0]`에는 `\"A\"`가 남는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.final-reference-and-immutability.q1",
+    "promptMarkdown": "`final int count = 1;`에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.final-reference-and-immutability"],
+    "choices": [
+      {"key": "A", "content": "`count`에 다른 값을 다시 대입할 수 없다", "displayOrder": 0, "rationaleMarkdown": "`final` 지역 변수에는 한 번 정해진 값을 다른 값으로 다시 대입할 수 없다."},
+      {"key": "B", "content": "모든 객체가 불변이 된다", "displayOrder": 1, "rationaleMarkdown": "원시 타입 지역 변수의 `final` 선언이 다른 객체나 값의 불변성을 만들지는 않는다."},
+      {"key": "C", "content": "`count`는 `static` 필드가 된다", "displayOrder": 2, "rationaleMarkdown": "`final`은 변수의 재대입을 제한하고 `static` 여부는 선언 위치와 수식자가 결정한다."},
+      {"key": "D", "content": "`count`가 스레드 안전한 객체가 된다", "displayOrder": 3, "rationaleMarkdown": "원시 타입 변수에 `final`을 붙여도 객체가 새로 만들어지거나 스레드 안전성이 생기지 않는다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "변수에 붙은 `final`은 그 변수에 다른 값을 다시 대입하지 못하게 한다. 이 선언만으로 객체의 불변성이나 스레드 안전성이 보장되거나 변수가 `static`이 되지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.final-reference-and-immutability.q2",
+    "promptMarkdown": "다음 코드가 가능한 이유는 무엇인가요?\n\n```java\nfinal StringBuilder builder = new StringBuilder();\nbuilder.append(\"x\");\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.final-reference-and-immutability"],
+    "choices": [
+      {"key": "A", "content": "`StringBuilder`가 원시 타입이기 때문이다", "displayOrder": 0, "rationaleMarkdown": "`StringBuilder`는 변경 메서드를 제공하는 참조 타입이지 원시 값이 아니다."},
+      {"key": "B", "content": "`final` 필드는 항상 객체를 복사하기 때문이다", "displayOrder": 1, "rationaleMarkdown": "참조 변수에 `final`을 선언해도 참조 대상 객체를 복제하지 않는다."},
+      {"key": "C", "content": "`append`가 실제 상태를 바꾸지 않기 때문이다", "displayOrder": 2, "rationaleMarkdown": "`append`는 `StringBuilder`가 보유한 문자 내용을 바꾸므로 참조 대상 객체의 상태 변경이다."},
+      {"key": "D", "content": "`final`은 변수에 다른 참조를 대입하는 일만 막고, 현재 가리키는 객체의 변경은 막지 않기 때문이다", "displayOrder": 3, "rationaleMarkdown": "`final`은 `builder`가 다른 객체를 가리키도록 바꾸는 일을 막지만, 현재 객체의 메서드로 내용을 변경하는 것까지 막지는 않는다."}
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`final`이 고정하는 것은 `builder` 변수에 저장된 참조 값입니다. `builder = new StringBuilder()`처럼 다른 참조를 넣을 수는 없지만, 현재 가리키는 변경 가능한 `StringBuilder`의 내부 상태는 `append`로 바꿀 수 있습니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.final-reference-and-immutability.q3",
+    "promptMarkdown": "`final` 메서드와 `final` 클래스의 효과를 올바르게 짝지은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.final-reference-and-immutability"],
+    "choices": [
+      {"key": "A", "content": "`final` 메서드는 필드를, `final` 클래스는 생성자를 삭제한다", "displayOrder": 0, "rationaleMarkdown": "`final`은 필드나 생성자를 삭제하지 않는다. 선언 대상에 따라 재정의·상속·재대입 중 해당 동작을 제한한다."},
+      {"key": "B", "content": "`final` 메서드는 재정의를, `final` 클래스는 상속을 제한한다", "displayOrder": 1, "rationaleMarkdown": "`final` 메서드는 하위 클래스에서 재정의할 수 없고 `final` 클래스는 상속할 수 없다."},
+      {"key": "C", "content": "둘 다 객체의 내부 변경만 제한한다", "displayOrder": 2, "rationaleMarkdown": "`final` 수식자는 해당 타입의 모든 객체 내부 변경을 일반적으로 금지하지 않는다."},
+      {"key": "D", "content": "둘 다 원시 타입 변환만 제한한다", "displayOrder": 3, "rationaleMarkdown": "메서드나 클래스에 붙은 `final`은 숫자 원시 타입 변환 규칙이 아니다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`final` 메서드는 하위 클래스의 재정의를 막고, `final` 클래스는 그 클래스를 상속하지 못하게 한다. 변수에 적용할 때의 재대입 제한과는 대상이 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.final-reference-and-immutability.q4",
+    "promptMarkdown": "다음 타입이 실제로 불변인지 판단하려면 무엇을 추가로 확인해야 하나요?\n\n```java\nfinal class Profile {\n    private final List<String> tags;\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.final-reference-and-immutability"],
+    "choices": [
+      {"key": "A", "content": "클래스 이름이 `Profile`인지 확인하면 충분하다", "displayOrder": 0, "rationaleMarkdown": "클래스 이름만으로 생성 후 내부 상태를 변경할 수 있는지 판단할 수 없다."},
+      {"key": "B", "content": "필드가 `final`이면 내부 `List`도 반드시 불변이다", "displayOrder": 1, "rationaleMarkdown": "`final`은 `List` 참조값의 재대입만 막는다. `List` 메서드를 통한 원소 변경까지 제한하지는 않는다."},
+      {"key": "C", "content": "외부의 변경 가능한 `List`를 그대로 보관하거나 다시 노출하는 경로가 있는지 확인한다", "displayOrder": 2, "rationaleMarkdown": "외부의 변경 가능한 `List`를 그대로 보관하거나 반환하면 호출자가 `tags`를 바꿀 수 있다. 방어적 복사와 노출 경로를 검토한다."},
+      {"key": "D", "content": "`private`가 OS 수준의 메모리 보호를 제공하는지 확인한다", "displayOrder": 3, "rationaleMarkdown": "`private`은 Java의 접근 제어 규칙이지 OS 수준의 메모리 보호나 객체 불변성의 증거가 아니다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`final List<String> tags`는 `tags` 참조값의 재대입만 막는다. 생성자에서 외부의 변경 가능한 `List`를 그대로 저장하거나 같은 `List`를 반환하면 외부에서 객체 상태를 바꿀 수 있다. 불변성을 판단하려면 방어적 복사와 불변 컬렉션 경계를 함께 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.final-reference-and-immutability.q5",
+    "promptMarkdown": "다음 생성자는 컴파일될까요?\n\n```java\nclass Token {\n    final int code;\n\n    Token(boolean valid) {\n        if (valid) {\n            code = 200;\n        } else {\n            throw new IllegalArgumentException();\n        }\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.final-reference-and-immutability"],
+    "choices": [
+      {"key": "A", "content": "컴파일되지 않는다. `final` 필드는 선언과 동시에만 대입할 수 있다", "displayOrder": 0, "rationaleMarkdown": "선언 시 초기화하지 않은 `final` 필드는 선언부뿐 아니라 생성자에서 초기화할 수 있다."},
+      {"key": "B", "content": "컴파일된다. 정상적으로 생성자를 완료하는 경로에서는 `code`가 정확히 한 번 대입되고 다른 경로는 예외로 종료한다", "displayOrder": 1, "rationaleMarkdown": "정상 완료하는 각 생성자 경로가 `code`를 한 번 대입한다. 나머지 분기는 예외로 종료해 초기화되지 않은 `Token` 객체를 반환하지 않는다."},
+      {"key": "C", "content": "컴파일되지 않는다. `else` 경로에서도 반드시 `code`를 대입해야 한다", "displayOrder": 2, "rationaleMarkdown": "예외로 정상 완료하지 않는 생성자 경로는 대입하지 않은 `final` 필드를 가진 객체를 반환할 필요가 없다."},
+      {"key": "D", "content": "컴파일되지만 `valid`가 `false`이면 `code`가 자동으로 0인 `Token`이 반환된다", "displayOrder": 3, "rationaleMarkdown": "`false` 경로는 예외를 던져 객체를 반환하지 않는다. Java가 `code = 0`인 `Token`을 자동 생성하지 않는다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "선언에서 초기화하지 않은 `final` 필드는 생성자에서 대입할 수 있다. `valid == true`인 정상 완료 경로에서는 `code`가 정확히 한 번 대입된다. `false` 경로는 예외로 종료되므로 초기화되지 않은 `Token` 객체가 정상 반환되는 일은 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q1",
+    "promptMarkdown": "문자열 내용이 같은지 비교하는 일반적인 Java 코드는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.string-immutability-equality"],
+    "choices": [
+      {"key": "A", "content": "`a == b`", "displayOrder": 0, "rationaleMarkdown": "두 `String` 참조값에 `==`를 사용하면 객체 동일성을 비교한다. 내용이 같아도 객체가 다르면 `false`다."},
+      {"key": "B", "content": "`a = b`", "displayOrder": 1, "rationaleMarkdown": "대입은 참조값을 저장할 뿐 문자열 내용 비교를 수행하지 않는다."},
+      {"key": "C", "content": "`a.equals(b)`", "displayOrder": 2, "rationaleMarkdown": "`String.equals`는 `String`의 값 동등성 계약에 따라 문자 내용을 비교한다."},
+      {"key": "D", "content": "`a.hashCode() == b.hashCode()`만 확인", "displayOrder": 3, "rationaleMarkdown": "해시 충돌이 허용되므로 `hashCode`가 같다는 사실만으로 문자열이 같다고 증명할 수 없다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`String.equals`는 문자열의 문자 내용을 비교한다. `==`는 두 참조값이 같은 객체를 가리키는지 비교하며, 해시 코드가 같다는 사실만으로 값의 동등성이 보장되지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q2",
+    "promptMarkdown": "다음 코드의 출력은 무엇인가요?\n\n```java\nString s = \"a\";\ns.concat(\"b\");\nSystem.out.println(s);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.string-immutability-equality"],
+    "choices": [
+      {"key": "A", "content": "ab", "displayOrder": 0, "rationaleMarkdown": "`concat`은 `s`를 변경하지 않고 새 `String`을 돌려준다. 결과를 버리면 `s`는 원래 값으로 남는다."},
+      {"key": "B", "content": "null", "displayOrder": 1, "rationaleMarkdown": "`s`는 원래 `null`이 아닌 `String`을 계속 가리키므로 결과가 `null`이 되지 않는다."},
+      {"key": "C", "content": "a", "displayOrder": 2, "rationaleMarkdown": "`String`은 불변이다. `concat`의 반환값을 저장하지 않았으므로 `s`는 원래 문자열을 계속 가리킨다."},
+      {"key": "D", "content": "컴파일 오류", "displayOrder": 3, "rationaleMarkdown": "`String.concat` 호출은 유효하다. 반환값을 사용하지 않아도 컴파일된다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`String`은 불변이므로 `concat`이 기존 `s` 객체의 내용을 바꾸지 않는다. 이어 붙인 문자열을 반환하지만 그 값을 저장하지 않았으므로 `s`는 여전히 `\"a\"`를 가리킨다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q3",
+    "promptMarkdown": "`new String(\"java\")`로 각각 만든 두 문자열 객체를 비교할 때 올바른 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.string-immutability-equality"],
+    "choices": [
+      {"key": "A", "content": "`==`는 true, `equals`는 false", "displayOrder": 0, "rationaleMarkdown": "`new String(...)`으로 각각 객체를 만들면 내용이 같아도 별개의 객체이므로 참조 동일성 비교 결과는 `false`입니다."},
+      {"key": "B", "content": "`==`는 false, `equals`는 true", "displayOrder": 1, "rationaleMarkdown": "두 참조값이 다른 객체를 가리켜도 `String.equals`는 같은 문자 내용을 비교해 `true`를 반환한다."},
+      {"key": "C", "content": "둘 다 false", "displayOrder": 2, "rationaleMarkdown": "문자 내용은 같으므로 `equals`는 `true`이고, 객체 동일성은 다르므로 `==`만 `false`다."},
+      {"key": "D", "content": "둘 다 true이며 항상 같은 객체다", "displayOrder": 3, "rationaleMarkdown": "내용이 같아도 별도로 생성한 두 객체가 동일한 객체가 되는 것은 아니다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "두 `new String(...)` 표현식은 별도의 `String` 객체를 만든다. 따라서 참조 동일성을 비교하는 `==`는 `false`이고, 문자 내용이 같으므로 `String.equals`는 `true`다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q4",
+    "promptMarkdown": "다음 코드의 출력은 무엇인가요?\n\n```java\nString s = \"a\";\nString t = s + \"b\";\nSystem.out.println(s);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.string-immutability-equality"],
+    "choices": [
+      {"key": "A", "content": "ab", "displayOrder": 0, "rationaleMarkdown": "문자열 결합 결과가 `t`에 저장되고 `s` 자체의 뒤에 내용을 붙여 변경하지 않는다. `String`은 불변이다."},
+      {"key": "B", "content": "b", "displayOrder": 1, "rationaleMarkdown": "결합 결과는 `b`만이 아니라 `ab` 전체이며 `t`가 그 값을 가리킨다."},
+      {"key": "C", "content": "null", "displayOrder": 2, "rationaleMarkdown": "`s`는 `null`이 아닌 `String` 참조로 남아 있다. 결합이 이를 비우지 않는다."},
+      {"key": "D", "content": "a", "displayOrder": 3, "rationaleMarkdown": "`String`은 불변이므로 출력할 때 `s`가 처음 가리킨 `a`를 유지한다."}
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "문자열 `+` 연산은 기존 `s`의 내용을 변경하지 않습니다. 이어 붙인 결과는 `t`에 저장되고 `s`는 계속 `\"a\"` 값을 가리키므로 출력은 `a`입니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q5",
+    "promptMarkdown": "다음 중 `null`일 수 있는 문자열 `input`을 문자열 `\"OK\"`와 안전하게 비교하는 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.string-immutability-equality"],
+    "choices": [
+      {"key": "A", "content": "`\"OK\".equals(input)`", "displayOrder": 0, "rationaleMarkdown": "`null`이 아닌 리터럴에서 `equals`를 호출하므로 인수가 `null`이어도 안전하게 `false`를 반환한다."},
+      {"key": "B", "content": "`input.equals(\"OK\")`", "displayOrder": 1, "rationaleMarkdown": "`input`이 `null`이면 그 변수에 메서드를 호출하는 과정에서 `NullPointerException`이 발생한다."},
+      {"key": "C", "content": "`input == \"OK\"`만 사용", "displayOrder": 2, "rationaleMarkdown": "`==`는 문자 내용이 아니라 객체 동일성을 비교하므로 내용 비교 목적에 맞지 않는다."},
+      {"key": "D", "content": "`input.toString().equals(\"OK\")`", "displayOrder": 3, "rationaleMarkdown": "`input.toString()`도 `input`이 `null`이면 역참조 과정에서 예외가 발생한다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "문자열 리터럴 `\"OK\"`는 `null`이 아니므로 `\"OK\".equals(input)`은 `input == null`일 때도 안전하게 `false`를 반환한다. 반대로 `input.equals(...)`나 `input.toString()`은 `input`이 `null`이면 호출 자체에서 `NullPointerException`이 발생한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-immutability-equality.q6",
+    "promptMarkdown": "다음 코드의 출력으로 옳은 것은 무엇인가요? `c`가 어느 객체를 계속 가리키는지 함께 추적하세요.\n\n```java\nString a = \"ab\";\nString b = new String(\"ab\");\nString c = b;\n\nb = b.toUpperCase();\n\nSystem.out.println(\n        a.equals(c) + \":\"\n        + b.equals(c) + \":\"\n        + (b == c));\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.string-immutability-equality"],
+    "choices": [
+      {"key": "A", "content": "true:true:true", "displayOrder": 0, "rationaleMarkdown": "`toUpperCase`는 새 `String`을 반환해 `b`가 그 값을 가리킨다. `c`가 가리키는 원본 객체를 바꾸지 않는다."},
+      {"key": "B", "content": "false:false:false", "displayOrder": 1, "rationaleMarkdown": "`a`와 `c`의 소문자 내용이 같아 `equals`는 `true`를 반환한다."},
+      {"key": "C", "content": "true:true:false", "displayOrder": 2, "rationaleMarkdown": "재대입 후 `b`와 `c`는 다른 내용이고 `b`가 더는 `c`의 객체를 가리키지 않는다."},
+      {"key": "D", "content": "true:false:false", "displayOrder": 3, "rationaleMarkdown": "`c`는 처음의 소문자 `String`을 유지하므로 `a.equals(c)`는 `true`다. 대문자로 재대입된 `b`는 `c`와 내용·객체 동일성이 다르다."}
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`c = b` 시점에 `c`는 원래 `b`가 가리키던 내용 `\"ab\"`의 `String` 객체를 함께 가리킵니다. `b.toUpperCase()`는 그 객체를 수정하지 않고 `\"AB\"` 결과를 반환하고, 재대입된 `b`만 그 결과를 가리킵니다.\n\n따라서 `a.equals(c)`는 내용이 같아 `true`, `b.equals(c)`는 `AB`와 `ab`라 `false`, `b == c`도 서로 다른 객체를 가리켜 `false`입니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-pool-interning.q1",
+    "promptMarkdown": "다음 중 Java 문자열 리터럴(string literal)에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.string-pool-interning"],
+    "choices": [
+      {"key": "A", "content": "문자열 리터럴은 항상 변경 가능한 객체다", "displayOrder": 0, "rationaleMarkdown": "`String` 객체는 불변이다. 문자열 리터럴도 변경 가능한 문자열 객체가 아니다."},
+      {"key": "B", "content": "문자열 리터럴에는 `String` 타입이 없다", "displayOrder": 1, "rationaleMarkdown": "Java 언어 규칙에서 문자열 리터럴의 타입은 `String`이다."},
+      {"key": "C", "content": "내용이 같은 문자열 리터럴은 intern된 동일한 `String` 인스턴스를 참조한다", "displayOrder": 2, "rationaleMarkdown": "내용이 같은 문자열 리터럴은 intern된 동일한 `String` 인스턴스를 참조한다."},
+      {"key": "D", "content": "문자열 리터럴은 평가될 때마다 반드시 새 객체를 만든다", "displayOrder": 3, "rationaleMarkdown": "같은 문자열 리터럴을 평가할 때마다 새 `String` 객체를 만든다는 규칙은 없다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "JLS의 문자열 리터럴 규칙에 따라 내용이 같은 리터럴은 intern된 동일한 `String` 인스턴스를 참조한다. 이 규칙은 리터럴의 참조 동일성을 설명하지만 일반적인 문자열 내용 비교를 `==`로 해도 된다는 뜻은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-pool-interning.q2",
+    "promptMarkdown": "다음 코드 뒤의 참조 비교 결과로 옳은 것은?\n\n```java\nString a = \"java\";\nString b = new String(\"java\");\nString c = b.intern();\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.string-pool-interning"],
+    "choices": [
+      {"key": "A", "content": "`a == b`는 false이고 `a == c`는 true다", "displayOrder": 0, "rationaleMarkdown": "`a`는 문자열 리터럴의 intern된 대표 객체를 가리키고 `b`는 별도로 생성한 객체다. `intern()`으로 얻은 `c`는 대표 참조를 얻는다."},
+      {"key": "B", "content": "`a == b`만 true다", "displayOrder": 1, "rationaleMarkdown": "`b`는 따로 생성해 `a`와 객체 동일성이 다르지만 `c`는 intern된 대표 참조를 받아 `a`와 같다."},
+      {"key": "C", "content": "`a.equals(b)`는 false다", "displayOrder": 2, "rationaleMarkdown": "`a`와 `b`는 별도 객체여도 같은 문자 내용을 담아 `String.equals`는 `true`를 반환한다."},
+      {"key": "D", "content": "`intern()`은 `b` 객체를 변경 가능하게 바꾼다", "displayOrder": 3, "rationaleMarkdown": "`intern()`은 대표 `String` 참조값을 반환할 뿐 불변인 문자열 객체 자체를 변경하지 않는다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`new String(\"java\")`는 문자열 리터럴이 가리키는 객체와 별도의 `String` 객체를 만든다. `intern()`은 같은 내용의 대표 참조값을 반환하므로 이 코드에서 `a == b`는 `false`, `a == c`는 `true`다. 문자열 내용 비교에는 여전히 `equals`를 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-pool-interning.q3",
+    "promptMarkdown": "다음 코드 뒤에 `b == \"java\"`를 내용 비교 용도로 사용하려고 합니다. 가장 안전한 판단은 무엇인가요?\n\n```java\nString a = \"ja\";\nString b = a + \"va\";\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.string-pool-interning"],
+    "choices": [
+      {"key": "A", "content": "내용 비교 목적이면 `==`의 객체 동일성 결과에 기대지 말고 `equals`를 사용한다", "displayOrder": 0, "rationaleMarkdown": "문자 내용 비교가 목적이라면 문자열 결합이 컴파일 시점에 계산되든 실행 시점에 수행되든 `equals`를 사용한다."},
+      {"key": "B", "content": "`+` 결과는 언제나 리터럴과 같은 객체 동일성을 가진다", "displayOrder": 1, "rationaleMarkdown": "이 코드의 `a`는 상수 변수가 아닙니다. 비상수 문자열 연결은 새 `String`을 만들므로 `b`와 리터럴의 참조 동일성은 `false`입니다. 내용 비교에는 `equals`를 사용합니다."},
+      {"key": "C", "content": "`+` 결과는 절대 `String`이 아니다", "displayOrder": 2, "rationaleMarkdown": "문자열 연결 결과도 `String` 값이다. 쟁점은 타입이 아니라 객체 동일성이다."},
+      {"key": "D", "content": "`intern()`을 호출하면 `String`이 변경 가능해진다", "displayOrder": 3, "rationaleMarkdown": "`intern()`은 `String`을 바꾸지 않는다. `String`은 불변이고 내용 비교는 intern 없이 `equals`로 수행한다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "문자열 리터럴과 실행 시점 결합의 동일성 특성을 문자열 내용 비교 규칙으로 확대해서는 안 됩니다. 내용이 같은지 비교하려면 `equals`를 사용해야 컴파일 시 상수 여부나 실행 시 생성 방식에 기대지 않습니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.string-pool-interning.q4",
+    "promptMarkdown": "다음 코드 뒤의 비교 결과로 옳은 것은 무엇인가요? 컴파일 시점의 상수 식과 실행 시점의 문자열 결합을 구분하세요.\n\n```java\nString a = \"ja\" + \"va\";\nString part = \"ja\";\nString b = part + \"va\";\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.string-pool-interning"],
+    "choices": [
+      {"key": "A", "content": "`a == \"java\"`와 `b == \"java\"`가 모두 true다", "displayOrder": 0, "rationaleMarkdown": "이 코드의 part는 상수 변수가 아니다. 비상수 문자열 연결은 새 String을 만들므로 b는 리터럴과 다른 참조다."},
+      {"key": "B", "content": "`a == \"java\"`는 false이고 `b == \"java\"`는 true다", "displayOrder": 1, "rationaleMarkdown": "a는 intern된 상수 문자열 참조라 true이고, b는 비상수 연결로 만든 새 객체라 false다. 제시된 두 결과가 반대다."},
+      {"key": "C", "content": "`a == \"java\"`는 true이고 `b == \"java\"`는 false다", "displayOrder": 2, "rationaleMarkdown": "a는 문자열 상수 식의 intern된 참조이며 b는 비상수 연결로 만든 새 String 객체다. 따라서 true, false다."},
+      {"key": "D", "content": "두 비교는 모두 컴파일 오류다", "displayOrder": 3, "rationaleMarkdown": "두 식과 참조 비교는 모두 Java 문법상 유효하며, 두 참조의 동일성 비교 결과는 서로 다를 수 있습니다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "\"ja\" + \"va\"는 문자열 상수 식이므로 intern된 \"java\" 리터럴과 같은 참조를 사용합니다. 반면 이 코드의 part는 상수 변수가 아니어서 part + \"va\"는 비상수 문자열 연결입니다. JLS는 이 경우 새 String 객체를 만들도록 규정하므로 b == \"java\"는 false입니다. final String part = \"ja\"로 선언하면 상수 변수가 되어 연결도 상수 식이지만, 메서드 호출로 초기화한 final 변수까지 상수인 것은 아닙니다. 실제 내용 비교에는 equals를 사용합니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.stringbuilder-mutable-text.q1",
+    "promptMarkdown": "다음 코드 뒤 `builder.toString()`의 결과는 무엇인가요?\n\n```java\nStringBuilder builder = new StringBuilder(\"a\");\nbuilder.append(\"b\");\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.stringbuilder-mutable-text"],
+    "choices": [
+      {"key": "A", "content": "ab", "displayOrder": 0, "rationaleMarkdown": "`append`는 빌더의 버퍼를 수정해 `a` 뒤에 `b`를 붙인다. `toString`은 바뀐 내용을 `ab`로 반환한다."},
+      {"key": "B", "content": "a", "displayOrder": 1, "rationaleMarkdown": "`append`는 기존 앞부분을 다른 값으로 바꾸지 않고 뒤에 내용을 추가한다."},
+      {"key": "C", "content": "b", "displayOrder": 2, "rationaleMarkdown": "`append`는 기존 `a`를 보존하면서 `b`를 더하고 기존 내용을 버리지 않는다."},
+      {"key": "D", "content": "null", "displayOrder": 3, "rationaleMarkdown": "`builder`는 생성된 `null`이 아닌 객체이고 `append` 뒤에도 `String`이 아니라 `StringBuilder` 인스턴스로 남는다."}
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`append`는 같은 `StringBuilder`의 변경 가능한 버퍼에 `b`를 추가한다. `toString()`은 그 시점의 버퍼 내용인 `ab`를 `String`으로 반환한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.stringbuilder-mutable-text.q2",
+    "promptMarkdown": "다음 코드에서 `snapshot`을 만든 뒤 `builder`를 변경했습니다. `snapshot`의 값은 어떻게 되나요?\n\n```java\nStringBuilder builder = new StringBuilder(\"a\");\nString snapshot = builder.toString();\nbuilder.append(\"b\");\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.stringbuilder-mutable-text"],
+    "choices": [
+      {"key": "A", "content": "`snapshot`은 `ab`로 자동 변경된다", "displayOrder": 0, "rationaleMarkdown": "`append` 전에 `toString`으로 만든 `snapshot`은 별도 `String`이라 이후 빌더의 변경을 따라가지 않는다."},
+      {"key": "B", "content": "`snapshot`은 `null`이 된다", "displayOrder": 1, "rationaleMarkdown": "앞서 만들어진 `String`은 불변이고 `null`이 아니다. 빌더 변경이 `snapshot`을 `null`로 만들지 않는다."},
+      {"key": "C", "content": "`snapshot`은 `a`로 유지된다", "displayOrder": 2, "rationaleMarkdown": "`toString`은 호출 시점 버퍼로 `String` 값을 만든다. 뒤의 `append`로 빌더는 `ab`가 되지만 `snapshot`은 `a`를 유지한다."},
+      {"key": "D", "content": "빌더가 불변이라 `append`가 실패한다", "displayOrder": 3, "rationaleMarkdown": "`StringBuilder`는 가변이므로 `append`할 수 있다. `String`처럼 불변이 아니다."}
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`toString()`으로 만든 `snapshot`은 그 시점의 내용을 가진 별도 `String` 값이며 `String`은 불변이다. 이후 변경 가능한 빌더의 버퍼가 `ab`로 바뀌어도 이미 만든 `snapshot`은 `a`를 유지한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.stringbuilder-mutable-text.q3",
+    "promptMarkdown": "반복문에서 문자열을 누적하는 코드에 `StringBuilder`를 사용하는 주된 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.stringbuilder-mutable-text"],
+    "choices": [
+      {"key": "A", "content": "`StringBuilder`가 모든 스레드에서 자동 동기화된다", "displayOrder": 0, "rationaleMarkdown": "`StringBuilder`는 자체 동기화를 제공하지 않는다. 여러 스레드가 접근한다면 스레드 한정이나 명시적 동기화가 필요하다."},
+      {"key": "B", "content": "변경 가능한 버퍼에 누적해 불필요한 중간 `String` 생성을 줄일 수 있다", "displayOrder": 1, "rationaleMarkdown": "반복 누적에서는 중간 불변 `String` 객체를 매번 만드는 일을 줄일 수 있다. 짧고 단순한 연결은 `+` 연산으로도 충분할 수 있다."},
+      {"key": "C", "content": "`StringBuilder`가 `String`보다 항상 불변이기 때문이다", "displayOrder": 2, "rationaleMarkdown": "`StringBuilder`는 가변이고 `String`은 불변이므로 제시된 관계는 반대다."},
+      {"key": "D", "content": "문자열 내용을 비교할 때 `==`를 쓸 수 있기 때문이다", "displayOrder": 3, "rationaleMarkdown": "`StringBuilder` 사용이 `String` 내용 동등성 규칙을 바꾸거나 `==`를 값 비교로 만들지 않는다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "반복해서 문자열을 조립할 때 `StringBuilder`는 같은 변경 가능한 버퍼에 내용을 누적하므로 중간 `String` 객체의 생성을 줄일 수 있다. 단순한 한두 번의 `+` 연산까지 기계적으로 바꿀 필요는 없으며, 성능이 중요한 경로에서는 측정으로 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.stringbuilder-mutable-text.q4",
+    "promptMarkdown": "다음 코드의 출력은 무엇인가요? 공유하는 빌더의 상태 변경, `String` 스냅샷, 변수 재대입을 각각 추적하세요.\n\n```java\nStringBuilder a = new StringBuilder(\"x\");\nStringBuilder b = a;\nString snapshot = a.toString();\n\nb.append(\"y\");\nb = new StringBuilder(\"z\");\n\nSystem.out.println(a + \":\" + snapshot + \":\" + b);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.stringbuilder-mutable-text"],
+    "choices": [
+      {"key": "A", "content": "x:xy:z", "displayOrder": 0, "rationaleMarkdown": "`b`에 새 참조를 넣기 전에 빌더가 변경되어 `a`는 `x`가 아니라 `xy`를 관찰한다."},
+      {"key": "B", "content": "xy:xy:z", "displayOrder": 1, "rationaleMarkdown": "`append` 전에 `snapshot`을 만들어 값이 `x`로 고정된다. 빌더 버퍼의 변경을 따라가지 않는다."},
+      {"key": "C", "content": "z:x:z", "displayOrder": 2, "rationaleMarkdown": "`b`만 `z` 빌더로 재대입되고 `a`는 앞서 변경된 `xy` 빌더를 계속 가리킨다."},
+      {"key": "D", "content": "xy:x:z", "displayOrder": 3, "rationaleMarkdown": "처음 `a`와 `b`는 같은 변경 가능한 빌더를 가리켜 내용이 `xy`가 된다. 스냅샷은 `x`를 유지하고 이후 `b`만 `z` 빌더로 바뀐다."}
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "처음 `a`와 `b`는 같은 빌더를 가리키므로 `b.append(\"y\")`가 공유 버퍼를 `xy`로 바꾸고 `a`에서도 `xy`가 보입니다. `snapshot`은 `append` **전에** `toString()`으로 만든 불변 `String` `x`라 그대로 남습니다.\n\n마지막 `b = new StringBuilder(\"z\")`는 `b` 변수만 새 빌더를 가리키게 합니다. 따라서 최종 상태는 `a = xy`, `snapshot = x`, `b = z`이고 출력은 `xy:x:z`입니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.stringbuilder-mutable-text.q5",
+    "promptMarkdown": "여러 스레드가 하나의 `StringBuilder`를 공유하는 코드에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": ["java.core.language-types.stringbuilder-mutable-text"],
+    "choices": [
+      {"key": "A", "content": "`StringBuilder`의 각 `append`가 원자적이므로 추가 동기화 없이 항상 안전하다", "displayOrder": 0, "rationaleMarkdown": "`StringBuilder`는 동시 `append` 호출이 원자적이거나 스레드 안전하다고 보장하지 않는다."},
+      {"key": "B", "content": "공유하는 변경 가능 버퍼이므로 스레드 한정, 외부 동기화 또는 다른 동시성 설계가 필요하다", "displayOrder": 1, "rationaleMarkdown": "공유 버퍼를 바꾸는 작업은 한 스레드로 한정하거나 외부 동기화로 쓰기 순서를 조정해야 한다."},
+      {"key": "C", "content": "여러 스레드가 접근하면 JVM이 자동으로 `StringBuffer`로 교체한다", "displayOrder": 2, "rationaleMarkdown": "같은 빌더를 공유한다고 JVM이 자동으로 `StringBuffer`로 바꿔주지 않는다."},
+      {"key": "D", "content": "문제가 되는 것은 읽기뿐이며 여러 스레드의 `append` 순서는 항상 보장된다", "displayOrder": 3, "rationaleMarkdown": "동시 `append` 호출에는 데이터 경쟁이 생길 수 있고 호출했다는 사실만으로 순서가 보장되지는 않는다."}
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`StringBuilder`는 여러 스레드가 같은 변경 가능 버퍼를 동시에 수정해도 안전하다는 계약을 제공하지 않는다. 한 스레드에서만 사용하는 것이 가장 단순하며, 실제로 공유해야 한다면 외부 동기화나 요구사항에 맞는 다른 설계를 선택해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.numeric-conversion-overflow.q5",
+    "promptMarkdown": "외부 API의 `long` ID를 내부 기존 코드의 `int` ID로 넘겨야 한다. 단순 `(int) externalId` 형변환을 사용하면 어떤 문제가 생길 수 있으며, 범위를 벗어난 값을 조용히 잘라내지 않도록 경계에서 어떤 방식으로 검증하는 것이 좋은지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.numeric-conversion-overflow"
+    ],
+    "modelAnswer": "`long` 값을 `int`로 축소 형변환하면 상위 비트가 잘려 전혀 다른 `int` 값으로 바뀔 수 있고 예외가 자동으로 발생하지 않는다. 외부 ID가 `int` 범위라는 계약을 경계에서 명시적으로 검사하거나 `Math.toIntExact`처럼 범위를 벗어나면 실패하는 변환을 사용해 잘못된 식별자가 내부로 들어오지 않게 해야 한다. 타입 축소가 필요한 이유 자체도 장기적으로 제거 가능한지 검토하는 것이 좋다.",
+    "explanationMarkdown": "확장 변환과 달리 **축소 원시 타입 변환(narrowing primitive conversion)**은 값 손실을 일으킬 수 있다. 특히 ID나 금액처럼 의미가 분명한 값은 오버플로가 다른 대상을 가리키는 오류로 이어질 수 있으므로 단순 형변환보다 검증을 거치는 변환 경계를 두는 편이 안전하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "java.core.language-types.boxing-unboxing-wrapper.q7",
+    "promptMarkdown": "`Map<String, Integer> counts`에서 `counts.get(key)` 결과를 `int`에 대입한다. 키가 없거나 저장된 값이 `null`이면 어떤 일이 발생하는가? 두 경우를 구분해야 할 때와 둘 다 0으로 취급할 때 각각 어떤 API와 확인 절차를 선택할지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "java.core.language-types.boxing-unboxing-wrapper"
+    ],
+    "modelAnswer": "`Map.get`은 키가 없거나 해당 키에 `null`이 저장되어 있으면 `null`을 반환한다. 이를 `int`에 대입하면 언박싱 중 `NullPointerException`이 발생한다. 키가 없을 때와 명시적 `null`을 구분해야 하면 `containsKey(key)`와 `get(key)`를 함께 확인하거나 부재 상태를 명시하는 별도 결과 타입을 사용한다. 둘 다 0으로 취급해도 된다면 `Objects.requireNonNullElse(counts.get(key), 0)`처럼 두 경우를 의도적으로 0에 대응시킬 수 있다. `getOrDefault(key, 0)`은 키가 없을 때만 기본값을 반환하므로, 명시적 `null`도 허용되는 Map에서는 그것만으로 충분하지 않다. Map의 계약상 `null` 값이 불가능하고 키 누락만 0으로 볼 때는 `getOrDefault(key, 0)`을 사용할 수 있다.",
+    "explanationMarkdown": "래퍼와 원시 타입 사이의 자동 언박싱은 `null`을 숫자로 바꾸지 않으므로 `NullPointerException`이 발생한다. `Map.get`만으로는 키 누락과 명시적 `null`을 구분할 수 없어 `containsKey` 같은 추가 정보가 필요하다. `getOrDefault`는 매핑이 없을 때에만 기본값을 사용하고, 키가 `null`로 매핑된 경우에는 `null`을 반환한다. 따라서 먼저 누락과 `null`이 같은 의미인지 정책을 정한 뒤 그 정책을 표현하는 API를 선택해야 한다."
+  },
+  {"kind":"question","contentKey":"java.core.language-types.numeric-conversion-overflow.q6","promptMarkdown":"**결과 예측 — Java의 `int`/`long` 산술 규칙.** 다음 코드는 컴파일됩니다. 출력할 두 수를 순서대로 예측해 보세요.\n\n```java\nint a = 2_000_000_000;\nlong x = a + a;\nlong y = (long) a + a;\nSystem.out.println(x + \":\" + y);\n```\n\n`long`에 저장한다는 사실만으로 `a + a`가 어떤 타입으로 계산되는지 먼저 판단해 보세요.","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["java.core.language-types.numeric-conversion-overflow"],"choices":[{"key":"A","content":"`4000000000:4000000000`","displayOrder":0,"rationaleMarkdown":"`x`는 `int` 피연산자끼리 더한 뒤 `long`에 대입하므로 덧셈 단계에서 이미 오버플로가 발생한다."},{"key":"B","content":"`-294967296:4000000000`","displayOrder":1,"rationaleMarkdown":"두 `int`의 합은 `int`로 계산되어 32비트 범위에서 래핑된다. `y`는 첫 피연산자를 `long`으로 변환해 `long` 덧셈으로 계산한다."},{"key":"C","content":"`-294967296:-294967296`","displayOrder":2,"rationaleMarkdown":"명시적 `(long) a`가 첫 피연산자를 `long`으로 바꾸고 나머지 `int`도 확장되므로 `y`에는 `int` 오버플로가 없다."},{"key":"D","content":"`ArithmeticException`을 던져 출력하지 않는다","displayOrder":3,"rationaleMarkdown":"일반 `int` 덧셈은 오버플로에서 `ArithmeticException`을 던지지 않는다. 예외가 필요한 경우 `Math.addExact` 등의 API가 따로 있다."}],"correctChoiceKey":"B","explanationMarkdown":"먼저 `a + a`는 두 피연산자가 모두 `int`이므로 결과 역시 `int`다. 수학적 합 `4_000_000_000`은 32비트 `int` 최대값을 넘어서 `-294967296`으로 래핑된다. 이후 이를 `long`으로 확장하더라도 손실된 상위 비트는 복원되지 않는다.\n\n`(long) a + a`에서는 덧셈 전에 한 피연산자가 `long`이 되어 다른 `int`도 `long`으로 확장된다. 따라서 `4_000_000_000`을 그대로 얻는다. 평가되는 **표현식의 타입**과 결과가 **대입되는 변수의 타입**을 구분하는 문제다."}
+]

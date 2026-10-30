@@ -1,0 +1,51 @@
+{
+  "datasetVersion": "phase-a1-historical-holdout-2026-09-22",
+  "rubricVersion": "csforge-content-quality-v2",
+  "model": "jev-1.13.0",
+  "datasetKind": "FROZEN_HISTORICAL_HOLDOUT",
+  "primaryInstructionLanguage": "ko",
+  "phaseADatasetVersion": "phase-a-2026-09-21",
+  "sourcePrsSelected": [23, 25, 81],
+  "sourceRefProvenanceFile": "phase-a1-case-spec.json",
+  "sourceProvenance": [
+    {"sourcePr": 23, "caseGroups": ["phase-a1-05", "phase-a1-15", "phase-a1-21"]},
+    {"sourcePr": 25, "caseGroups": ["phase-a1-01", "phase-a1-02", "phase-a1-03", "phase-a1-04", "phase-a1-06", "phase-a1-16", "phase-a1-17", "phase-a1-18", "phase-a1-19", "phase-a1-20"]},
+    {"sourcePr": 81, "caseGroups": ["phase-a1-07", "phase-a1-08", "phase-a1-09", "phase-a1-10", "phase-a1-11", "phase-a1-12", "phase-a1-13", "phase-a1-14"]}
+  ],
+  "rowCount": 42,
+  "caseGroupCount": 21,
+  "holdoutPairCount": 21,
+  "languageExperimentCaseGroups": [],
+  "criterionSupport": {
+    "question": {
+      "materialTechnicalError": {"positiveSupport": 3, "negativeSupport": 35, "applicableSupport": 38, "recallEvaluable": true},
+      "multipleDefensibleAnswers": {"positiveSupport": 1, "negativeSupport": 37, "applicableSupport": 38, "recallEvaluable": true, "note": "Only one positive pair is available; sensitivity remains highly uncertain."},
+      "weakDistractor": {"positiveSupport": 8, "negativeSupport": 12, "applicableSupport": 20, "recallEvaluable": true, "note": "MULTIPLE_CHOICE only. All eight positive pairs come from PR #81 and share review-campaign correlation."}
+    },
+    "concept": {
+      "materialTechnicalError": {"positiveSupport": 1, "negativeSupport": 3, "applicableSupport": 4, "recallEvaluable": true}
+    }
+  },
+  "droppedCandidates": [
+    {"contentKey": "database.core.mvcc.versions", "proposalCandidate": 2, "rationale": "The boundary is insufficient to finalize materialTechnicalError Human Gold."},
+    {"contentKey": "network-http.core.tcp.three-way-handshake", "proposalCandidate": 3, "rationale": "The boundary is insufficient to finalize materialTechnicalError Human Gold."}
+  ],
+  "reclassifiedCandidates": [
+    {"contentKey": "network-http.core.tcp.sliding-window", "proposalCandidate": 4, "gold": {"materialTechnicalError": false}, "rationale": "Retained as an authored-content-boundary negative."}
+  ],
+  "independenceStatement": "All 21 case groups come from PRs #23, #25, and #81, were mined only after Rubric V2 wording was locked, were not used for threshold selection, and have zero contentKey overlap with the 60-row Phase A dataset.",
+  "firstRunContract": {
+    "output": "RAW_PROBABILITIES_ONLY",
+    "calibrationStatus": "UNCALIBRATED",
+    "allowPassReviewAdoptionConclusion": false
+  },
+  "thresholdPolicy": "This holdout is not calibration data. Rubric V1 thresholds are not Rubric V2 performance thresholds and must not be reused as such. The first V2 holdout run measures raw separation only.",
+  "estimatedInputCostUsdPerMillionTokens": 0.042,
+  "notes": [
+    "No synthetic defects are present.",
+    "Every AFTER state was separately Human-Gold checked and all applicable Rubric V2 criteria are false.",
+    "weakDistractor positive support is correlated because all eight pairs come from PR #81.",
+    "multipleDefensibleAnswers positiveSupport=1; do not over-interpret sensitivity.",
+    "Phase A.1 results must not be used to change thresholds or rubric wording and then claim final performance on the same holdout."
+  ]
+}

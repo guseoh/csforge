@@ -1,0 +1,476 @@
+/* Canonical visual foundation for the learning-first rebaseline.
+ *
+ * This layer intentionally loads after legacy route styles while the UI is migrated
+ * route by route. Keep it limited to shared color, typography, focus and primitive
+ * surface rules; route hierarchy belongs to each focused redesign step.
+ */
+:root {
+  color-scheme: light;
+
+  --color-page: #f6f7f9;
+  --surface-page: #ffffff;
+  --surface-elevated: #fbfcfd;
+  --surface-interactive: #eef2f6;
+  --surface-selected: #e9f1ff;
+  --surface-accent: #eef4ff;
+
+  --border-subtle: #e1e5ea;
+  --border-default: #cbd2d9;
+  --border-strong: #98a2ad;
+  --border-accent: #2563eb;
+  --border-code: #d4dce4;
+
+  --text-strong: #171a1f;
+  --text-default: #303740;
+  --text-muted: #56616d;
+  --text-faint: #626d78;
+
+  --accent: #2563eb;
+  --accent-strong: #1e40af;
+  --accent-contrast: #ffffff;
+
+  --state-success: #14633d;
+  --state-success-surface: #eaf6ee;
+  --state-success-border: #a5d2b3;
+  --state-warning: #815400;
+  --state-warning-surface: #fff5df;
+  --state-warning-border: #dfc27e;
+  --state-error: #ad3040;
+  --state-error-surface: #fff0f2;
+  --state-error-border: #e2aeb6;
+
+  --surface-code: #f0f3f6;
+  --text-code: #263340;
+  --surface-code-inline: #e9edf1;
+  --text-code-inline: #263340;
+  --syntax-keyword: #8041a8;
+  --syntax-type: #145b8c;
+  --syntax-string: #206c45;
+  --syntax-number: #875200;
+  --syntax-annotation: #a34e20;
+  --syntax-comment: #596775;
+  --selection-surface: #dbeafe;
+  --selection-text: #171a1f;
+  --skeleton-start: #eef1f4;
+  --skeleton-middle: #f8f9fb;
+  --overlay-backdrop: rgb(16 24 32 / 44%);
+  --focus-glow: rgb(37 99 235 / 12%);
+  --heatmap-level-0: #e8edf2;
+  --heatmap-level-1: #cbdcf7;
+  --heatmap-level-2: #7aa7ef;
+  --heatmap-level-3: #2563eb;
+  --shadow-rgb: 23 30 38;
+
+  --font-sans: "Pretendard Variable", Pretendard, "Noto Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+
+  --type-body: 1rem;
+  --type-control: 0.9rem;
+  --type-meta: 0.875rem;
+  --type-label: 0.82rem;
+  --type-reading: 1.09375rem;
+  --line-body: 1.62;
+  --line-reading: 1.82;
+  --reading-measure: 720px;
+
+  color: var(--text-default);
+  background: var(--color-page);
+  font-family: var(--font-sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --color-page: #0c0d0f;
+  --surface-page: #141618;
+  --surface-elevated: #1b1d20;
+  --surface-interactive: #25272a;
+  --surface-selected: #1d2b40;
+  --surface-accent: #1a293d;
+  --border-subtle: #2a2d31;
+  --border-default: #41454b;
+  --border-strong: #5b6068;
+  --border-accent: #82bbff;
+  --border-code: #383c41;
+  --text-strong: #f1f2f4;
+  --text-default: #d5d7da;
+  --text-muted: #a3a7ad;
+  --text-faint: #858a91;
+  --accent: #82bbff;
+  --accent-strong: #b2d6ff;
+  --accent-contrast: #101820;
+  --state-success: #83d3a1;
+  --state-success-surface: #18261e;
+  --state-success-border: #3b5b46;
+  --state-warning: #ffd17c;
+  --state-warning-surface: #29241a;
+  --state-warning-border: #6b5832;
+  --state-error: #ff9eaa;
+  --state-error-surface: #2e1f23;
+  --state-error-border: #6f404a;
+  --surface-code: #191b1e;
+  --text-code: #dfe2e5;
+  --surface-code-inline: #2a2d31;
+  --text-code-inline: #e5e7e9;
+  --syntax-keyword: #d0a7ff;
+  --syntax-type: #8dccff;
+  --syntax-string: #a8e0b9;
+  --syntax-number: #ffd17c;
+  --syntax-annotation: #ffb188;
+  --syntax-comment: #a7b5c1;
+  --selection-surface: #304a68;
+  --selection-text: #f1f2f4;
+  --skeleton-start: #1d2023;
+  --skeleton-middle: #272a2e;
+  --overlay-backdrop: rgb(0 0 0 / 70%);
+  --focus-glow: rgb(130 187 255 / 22%);
+  --heatmap-level-0: #202327;
+  --heatmap-level-1: #304a68;
+  --heatmap-level-2: #4d78aa;
+  --heatmap-level-3: #82bbff;
+  --shadow-rgb: 0 0 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+    --color-page: #0c0d0f;
+    --surface-page: #141618;
+    --surface-elevated: #1b1d20;
+    --surface-interactive: #25272a;
+    --surface-selected: #1d2b40;
+    --surface-accent: #1a293d;
+    --border-subtle: #2a2d31;
+    --border-default: #41454b;
+    --border-strong: #5b6068;
+    --border-accent: #82bbff;
+    --border-code: #383c41;
+    --text-strong: #f1f2f4;
+    --text-default: #d5d7da;
+    --text-muted: #a3a7ad;
+    --text-faint: #858a91;
+    --accent: #82bbff;
+    --accent-strong: #b2d6ff;
+    --accent-contrast: #101820;
+    --state-success: #83d3a1;
+    --state-success-surface: #18261e;
+    --state-success-border: #3b5b46;
+    --state-warning: #ffd17c;
+    --state-warning-surface: #29241a;
+    --state-warning-border: #6b5832;
+    --state-error: #ff9eaa;
+    --state-error-surface: #2e1f23;
+    --state-error-border: #6f404a;
+    --surface-code: #191b1e;
+    --text-code: #dfe2e5;
+    --surface-code-inline: #2a2d31;
+    --text-code-inline: #e5e7e9;
+    --syntax-keyword: #d0a7ff;
+    --syntax-type: #8dccff;
+    --syntax-string: #a8e0b9;
+    --syntax-number: #ffd17c;
+    --syntax-annotation: #ffb188;
+    --syntax-comment: #a7b5c1;
+    --selection-surface: #304a68;
+    --selection-text: #f1f2f4;
+    --skeleton-start: #1d2023;
+    --skeleton-middle: #272a2e;
+    --overlay-backdrop: rgb(0 0 0 / 70%);
+    --focus-glow: rgb(130 187 255 / 22%);
+    --heatmap-level-0: #202327;
+    --heatmap-level-1: #304a68;
+    --heatmap-level-2: #4d78aa;
+    --heatmap-level-3: #82bbff;
+    --shadow-rgb: 0 0 0;
+  }
+}
+
+html {
+  background: var(--color-page);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  color: var(--text-default);
+  background: var(--color-page);
+  font-family: var(--font-sans);
+  font-size: var(--type-body);
+  line-height: var(--line-body);
+  letter-spacing: -0.012em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-strong);
+  font-family: var(--font-sans);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+h1 {
+  font-size: clamp(2rem, 2.8vw, 2.5rem);
+  line-height: 1.22;
+}
+
+h2 {
+  font-size: clamp(1.45rem, 2vw, 1.65rem);
+  line-height: 1.35;
+}
+
+h3 {
+  font-size: 1.15rem;
+  line-height: 1.45;
+}
+
+p,
+li,
+dd,
+dt,
+blockquote,
+figcaption {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-mono);
+  letter-spacing: 0;
+  word-break: normal;
+}
+
+::selection {
+  color: var(--selection-text);
+  background: var(--selection-surface);
+}
+
+.eyebrow {
+  margin-bottom: 8px;
+  color: var(--text-faint);
+  font-size: var(--type-label);
+  font-weight: 650;
+  letter-spacing: 0.015em;
+  text-transform: none;
+}
+
+.lead {
+  color: var(--text-muted);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.result-count,
+.area-metrics,
+.concept-topic,
+.topic-card-meta,
+.helper-text,
+.status-label,
+.save-state {
+  color: var(--text-muted);
+  font-size: var(--type-meta);
+  line-height: 1.55;
+}
+
+.primary-button,
+.secondary-button,
+.text-button,
+button,
+input,
+select,
+textarea {
+  font-family: var(--font-sans);
+  font-size: var(--type-control);
+}
+
+.primary-button {
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  background: var(--accent);
+}
+
+.primary-button:hover {
+  border-color: var(--accent-strong);
+  background: var(--accent-strong);
+}
+
+.secondary-button {
+  border-color: var(--border-default);
+  color: var(--text-default);
+  background: var(--surface-page);
+}
+
+.secondary-button:hover {
+  border-color: var(--border-strong);
+  color: var(--text-strong);
+  background: var(--surface-interactive);
+}
+
+/* Native disabled opacity would wash primary text and fill together, losing contrast. */
+.primary-button:disabled,
+.secondary-button:disabled {
+  opacity: 1;
+  border-color: var(--border-default);
+  color: var(--text-muted);
+  background: var(--surface-interactive);
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.text-link,
+.text-button,
+button.text-link {
+  color: var(--accent);
+}
+
+.text-link:hover,
+.text-button:hover,
+button.text-link:hover {
+  color: var(--accent-strong);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+  outline: 2px solid var(--border-accent);
+  outline-offset: 3px;
+}
+
+input,
+select,
+textarea {
+  border-color: var(--border-default);
+  color: var(--text-strong);
+  background: var(--surface-page);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-faint);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--border-accent);
+  box-shadow: 0 0 0 3px var(--focus-glow);
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--accent);
+}
+
+input[type='checkbox']:focus,
+input[type='radio']:focus {
+  box-shadow: none;
+}
+
+input[type='checkbox']:focus:not(:focus-visible),
+input[type='radio']:focus:not(:focus-visible) {
+  border-color: var(--border-default);
+}
+
+.page-card,
+.state-card,
+.route-message,
+.filter-panel,
+.area-card,
+.concept-list-item,
+.navigation-card,
+.reference-item {
+  border-color: var(--border-subtle);
+  color: var(--text-default);
+  background: var(--surface-page);
+}
+
+.chip {
+  border-color: var(--border-default);
+  color: var(--text-muted);
+  background: var(--surface-page);
+}
+
+.error-state,
+.route-state-error,
+.route-message.error,
+.toast-error {
+  border-color: var(--state-error-border);
+  color: var(--state-error);
+  background: var(--state-error-surface);
+}
+
+.skeleton-block {
+  border-color: var(--border-subtle);
+  background: linear-gradient(90deg, var(--skeleton-start), var(--skeleton-middle), var(--skeleton-start));
+  background-size: 220% 100%;
+}
+
+.markdown-content {
+  color: var(--text-default);
+}
+
+.markdown-content :not(pre) > code,
+.result-answer :not(pre) > code,
+.quiz-prompt :not(pre) > code,
+.answer-block :not(pre) > code {
+  padding: 0.08em 0.34em;
+  border: 1px solid var(--border-code);
+  border-radius: 4px;
+  color: var(--text-code-inline);
+  background: var(--surface-code-inline);
+  font-size: 0.98em;
+  font-family: var(--font-mono);
+}
+
+.markdown-content pre {
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-code);
+  color: var(--text-code);
+  background: var(--surface-code);
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  line-height: 1.62;
+}
+
+.markdown-content pre > code {
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+}
+
+.markdown-content strong {
+  color: var(--text-strong);
+}
+
+@media (max-width: 680px) {
+  :root {
+    --type-control: 0.9rem;
+    --type-meta: 0.86rem;
+    --type-reading: 1.04rem;
+  }
+
+  h1 {
+    font-size: clamp(1.85rem, 8vw, 2.2rem);
+  }
+}

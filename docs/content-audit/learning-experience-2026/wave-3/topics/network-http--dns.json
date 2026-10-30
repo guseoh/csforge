@@ -1,0 +1,397 @@
+{
+  "area": "network-http",
+  "topic": "dns",
+  "topicKey": "network-http.core.dns",
+  "coverage": "10 Concept와 30 Question의 전체 본문, 모든 선택지와 rationale, modelAnswer와 explanation, 난이도와 Concept 연결을 세 bounded 출력에서 직접 읽었다. 트리·zone cut, stub/recursive/authority, referral, dual stack, alias, MX fallback/Null MX, 양성·부정 캐시 및 오류별 재시도 정책을 추적했다. 관련 RFC 절과 JDK의 구현별 캐시 계약을 대조했다. 자동 추출과 과거 PASS를 의미 검토로 대체하지 않았다.",
+  "concepts": [
+    [
+      "network-http.core.dns.domain-hierarchy",
+      "KEEP",
+      "L1 라벨 계층과 전체 이름의 유일성, zone 위임의 차이를 충분히 설명한다.",
+      "www.example.com.을 root→com→example→www로 추적하고 라벨 깊이와 zone cut을 구분한다. dev/prod의 같은 api 라벨이 서로 다른 이름인 예제가 정확하다.",
+      "DIAGRAM 계약에 실제 텍스트 트리가 있어 부모·자식과 위임 경계를 이해할 수 있다. 별도 이미지가 필수는 아니다.",
+      "RFC1034 §3.1의 root null label, 전체 이름과 상대 이름, §4.2.1 zone cut을 실제 확인했다.",
+      "q1B의 모든 오답과 rationale, q2 오른쪽부터의 계층, q3 전체 이름에 의한 충돌 회피를 검토했다."
+    ],
+    [
+      "network-http.core.dns.stub-recursive-resolver",
+      "KEEP",
+      "L1 로컬 요청자와 대신 조회하는 서버, 캐시 층별 책임을 충분히 구분한다.",
+      "OS/런타임 stub→recursive cache→필요한 위임 조회의 흐름과 런타임 캐시가 OS 캐시와 별개일 수 있는 실패 진단이 정확하다. 모든 런타임 정책을 동일한 DNS TTL로 강제하지 않는다.",
+      "TEXT 요청 흐름과 캐시 층 비교가 충분하다.",
+      "RFC1034 §5.3.1의 stub 설정 서버/recursive 요청과 JDK25 InetAddress Caching의 양성·음성·stale TTL 및 구현별 기본값을 실제 읽었다.",
+      "q1C 모든 보기, q2 getaddrinfo가 root를 직접 조회한다는 오해, q3 authority→recursive→OS→JVM 순서의 관측을 검토했다."
+    ],
+    [
+      "network-http.core.dns.authoritative-server",
+      "KEEP",
+      "L1 zone의 권한 데이터와 recursive 캐시의 역할을 충분히 설명한다.",
+      "권한 데이터와 이전 값을 가진 캐시를 구분하고 TTL을 미리 낮추는 배포 순서를 제시한다. 여러 권한 서버가 가능하며 모든 서버의 즉시 동기화를 보장한다고 주장하지 않는다.",
+      "TEXT 권한/재귀 역할 비교와 변경 전후 흐름이 충분하다.",
+      "RFC1034 §4.2.1의 authoritative zone data와 §4.3의 primary/secondary 전파 지연을 대조했다. '현재 원본'은 해당 서버의 zone 데이터라는 범위로 읽었다.",
+      "q1D 모든 보기와 rationale, q2 캐시의 이전 주소와 권한 데이터, q3 기존 TTL 만료를 고려한 변경 계획을 검토했다."
+    ],
+    [
+      "network-http.core.dns.iterative-resolution",
+      "KEEP",
+      "L2 referral을 따라가는 내부 조회와 캐시로 생략되는 단계가 충분하다.",
+      "root→TLD→authority의 위임 응답을 추적하고 CNAME/캐시로 실제 조회 수가 달라짐을 설명한다. authority 단계 timeout을 DNS 부재나 HTTP 오류와 혼동하지 않는다.",
+      "DIAGRAM 계약에 실제 referral 순서 텍스트 흐름이 있다. NS/glue와 TCP 전환 분기를 붙이는 것은 선택 보강이다.",
+      "RFC1034 §4.3.2의 referral/CNAME QNAME 재시작과 §5.3 resolver 자원, RFC7766 §1/4/5의 큰 응답·DNSSEC·TC=1/TCP 지원을 실제 확인했다.",
+      "q1A 모든 보기, q2 캐시 hit 시 root부터 재조회하지 않음, q3 NS/glue·53/UDP/TCP·방화벽을 authority timeout 범위에서 확인하는 진단을 검토했다."
+    ],
+    [
+      "network-http.core.dns.a-aaaa",
+      "KEEP",
+      "L1 이름에 대한 IPv4/IPv6 후보와 실제 연결 가능성을 충분히 구분한다.",
+      "복수 A/AAAA 레코드와 주소 선택을 설명하고 AAAA 존재가 IPv6 경로 성공을 보장하지 않는 사례를 제공한다. Happy Eyeballs는 잘못된 IPv6 배포 자체를 고치지 않는다.",
+      "NONE 계약에 주소 레코드 예시가 충분하다.",
+      "RFC3596 §2.1의 AAAA 128-bit address와 복수 레코드, RFC8305 §2~5의 비동기 질의·주소 정렬·엇갈린 연결 시도를 실제 읽었다.",
+      "q1B 모든 보기, q2 dual-stack 후보, q3 잘못된 AAAA/IPv6 경로와 연결 경쟁의 한계를 검토했다."
+    ],
+    [
+      "network-http.core.dns.cname",
+      "KEEP",
+      "L1 alias와 최종 주소, 체인·순환·zone apex 제약을 충분히 설명한다.",
+      "service→edge→A의 추적과 캐시/동일 응답으로 추가 질의가 생략될 수 있음을 설명한다. 일반 데이터 병존 제한의 표현에 범위를 두고 SOA/NS가 필요한 apex를 구분한다. 원래 서비스 Host/SNI는 alias로 자동 바뀌지 않는다.",
+      "DIAGRAM 계약의 alias 체인 텍스트가 상태를 충분히 보여준다.",
+      "RFC1034 §3.6.2의 alias와 데이터 병존, §4.3.2 QNAME 변경/재시작, §5.2.2 체인 비효율·loop 오류를 실제 확인했다.",
+      "q1C 모든 보기, q2 최종 주소를 얻는 cache/query 경로, q3 TTL만 줄이는 방식과 체인 축소의 차이를 검토했다."
+    ],
+    [
+      "network-http.core.dns.ns-mx",
+      "KEEP",
+      "L1 위임과 메일 목적지, implicit MX와 Null MX의 학습 목표를 충족한다.",
+      "NS/MX의 값은 서버 이름이며 MX 낮은 preference 우선이다. MX absent 시 implicit 0 A/AAAA fallback과 MX present-but-unusable의 no fallback, 0 . Null MX를 정확히 구분한다.",
+      "TEXT NS/MX 역할과 우선순위·fallback 표가 충분하다.",
+      "RFC1035 §3.3.9/3.3.11, RFC5321 §5.1, RFC7505 §3/4의 no-service·다른 MX 병존 금지를 실제 대조했다.",
+      "q1D 모든 보기, q2 낮은 preference/implicit MX, q3 MX 부재와 SMTP reachability·Null MX 구분을 검토했다."
+    ],
+    [
+      "network-http.core.dns.dns-ttl-cache",
+      "KEEP",
+      "L2 캐시 유효기간과 변경 전파, 짧은 TTL의 조회 부하 trade-off가 충분하다.",
+      "t0 TTL60/이전 주소→t10 권한 변경/남은50→t60 재조회 표의 산술과 이전24h TTL을 소급5분으로 줄일 수 없다는 설명이 맞다. DNS 변경은 이미 열린 TCP/QUIC 연결을 이동시키지 않는다.",
+      "TEXT 시간표가 값·남은 TTL·재조회 상태를 충분히 보여준다.",
+      "RFC1035 §3.2.1 TTL 재조회 계약을 확인했다. RFC8767 §4~7은 authority 불가 시 serve-stale 예외를 허용하므로 본문은 정상 refresh 경로의 교육 예시로 한정했다. JDK 캐시 정책도 별도로 대조했다.",
+      "q1A 모든 보기, q2 propagation/load trade-off와 소급 불가, q3 변경 직전 TTL 감소로 기존24h 캐시가 사라지지 않음을 검토했다."
+    ],
+    [
+      "network-http.core.dns.negative-cache",
+      "KEEP",
+      "L2 NXDOMAIN/NODATA 캐시와 조회 실패 캐시의 차이를 충분히 설명한다.",
+      "이름 부재와 타입 부재, SOA 기반 유효기간, 같은 조회 이름에 레코드를 추가한 뒤 기존 음성 캐시가 남는 상태를 정확히 설명한다. SERVFAIL/timeout을 영구 이름 부재로 취급하지 않는다.",
+      "TEXT 실패 종류·캐시·새 레코드 관계 표가 충분하다.",
+      "RFC2308 §5/6의 SOA TTL=min(SOA.MINIMUM,SOA TTL), NXDOMAIN의 QNAME/QCLASS와 NODATA의 QNAME/QTYPE/QCLASS 키, RFC9520 §3.2~3.4의 실패 캐시·DNSSEC 실패 재조회 제한을 실제 확인했다.",
+      "q1B 모든 보기와 q3 권한/recursive/OS·런타임 음성 캐시 진단은 맞다. q2 오타 수정의 전제는 W3-NET-009이다."
+    ],
+    [
+      "network-http.core.dns.dns-failure",
+      "KEEP",
+      "L2 부재 응답과 조회 수행 실패, 단계별 진단·재시도 예산의 깊이가 충분하다.",
+      "NXDOMAIN/NODATA와 SERVFAIL/REFUSED/timeout의 차이, DNSSEC 검증 실패, 100 instance×5 무제한 즉시 재시도의 증폭을 설명한다. 캐시·backoff/jitter·deadline과 이름 부재의 다른 정책을 연결한다.",
+      "DIAGRAM 계약에 응답 유무와 오류 종류별 텍스트 진단 분기가 있다. 장애 상태와 retry budget 시간축은 선택 보강이다.",
+      "RFC1035 §4.1.1 RCODE, RFC2308 음성 캐시, RFC9520 §3.2~3.4의 failure cache 및 DNSSEC 검증 실패를 대조했다. 특정 구현의 retry 횟수를 프로토콜 보장으로 만들지 않는다.",
+      "q1C 모든 보기, q2 무응답과 존재하지 않는 이름 응답 구별, q3 장애 증폭에 대한 bounded retry·cache·recursive 다변화를 검토했다."
+    ]
+  ],
+  "questions": [
+    [
+      "network-http.core.dns.domain-hierarchy.q1",
+      "KEEP",
+      "정답B; root가 모든 주소를 저장한다는 A, 라벨 수=질의 횟수 C, 부모가 자식 모든 RR을 복제한다는 D와 각 rationale를 대조했다. 위임 역할 해설이 맞다.",
+      "EASY 계층 인식; q2 계층 추적/q3 전체 이름 사례와 목적이 다르다. Concept 연결이 정확하다."
+    ],
+    [
+      "network-http.core.dns.domain-hierarchy.q2",
+      "KEEP",
+      "model의 오른쪽부터 root/com/example/www와 explanation의 위임 경계 설명을 본문 트리와 대조했다.",
+      "MEDIUM 계층 설명; 전체 이름과 zone을 동일시하지 않는다. q1과 형식만 반복하지 않는다."
+    ],
+    [
+      "network-http.core.dns.domain-hierarchy.q3",
+      "KEEP",
+      "api.dev와 api.prod의 전체 이름이 다르므로 같은 마지막 라벨이 충돌하지 않는 model/explanation이 맞다.",
+      "MEDIUM namespace 적용; 단일 라벨을 호스트 전역 유일 식별자로 오해하는지 확인한다."
+    ],
+    [
+      "network-http.core.dns.stub-recursive-resolver.q1",
+      "KEEP",
+      "정답C의 캐시/필요 시 대신 조회; authority 역할, stub 직접 root 조회, referral만 반환하는 오답과 rationale를 모두 확인했다.",
+      "EASY 역할 구분; 연결과 난이도가 적절하다."
+    ],
+    [
+      "network-http.core.dns.stub-recursive-resolver.q2",
+      "KEEP",
+      "getaddrinfo 호출의 로컬 요청→설정 recursive 경로와 root 직접 질의 오해에 대한 model/explanation이 맞다.",
+      "MEDIUM 호출과 서버 역할 연결; q1의 용어 인식보다 실행 추론을 요구한다."
+    ],
+    [
+      "network-http.core.dns.stub-recursive-resolver.q3",
+      "KEEP",
+      "authority 최신 값, recursive 캐시, OS와 JVM 캐시를 순서대로 관측하는 model/explanation을 JDK 구현별 정책과 대조했다.",
+      "HARD 층별 원인 분리; 아무 캐시나 먼저 지우는 방식보다 진단 근거를 요구한다. 모든 JVM TTL을 같게 단정하지 않는다."
+    ],
+    [
+      "network-http.core.dns.authoritative-server.q1",
+      "KEEP",
+      "정답D의 zone 데이터/부재 응답과 캐시/HTTP 상태/라우팅 오답 및 rationale가 정확하다.",
+      "EASY 권한 역할; Concept 연결이 적절하다."
+    ],
+    [
+      "network-http.core.dns.authoritative-server.q2",
+      "KEEP",
+      "권한 서버의 zone 데이터와 recursive에 남은 이전 주소를 model/explanation이 정확히 구분한다.",
+      "MEDIUM 데이터 위치에 따른 시간차; 모든 secondary 즉시 일치 보장을 전제하지 않는다."
+    ],
+    [
+      "network-http.core.dns.authoritative-server.q3",
+      "KEEP",
+      "기존 TTL을 고려해 미리 낮추고 이전 캐시 만료 뒤 변경하는 model/explanation이 맞다.",
+      "HARD 운영 계획과 시간차; q2의 원인 설명에서 계획으로 확장한다."
+    ],
+    [
+      "network-http.core.dns.iterative-resolution.q1",
+      "KEEP",
+      "정답A referral; 모든 서버가 대신 끝까지 recursive 수행/위임 시 NXDOMAIN/SOA serial만 반환 오답과 rationale를 확인했다.",
+      "EASY iterative 응답 역할; Concept 연결이 맞다."
+    ],
+    [
+      "network-http.core.dns.iterative-resolution.q2",
+      "KEEP",
+      "캐시와 필요한 위임부터 진행하고 모든 조회가 root부터 시작하지 않는 model/explanation이 맞다.",
+      "MEDIUM 순서 추론; 캐시 hit 조건을 고려해 불필요한 고정 질의 수를 피한다."
+    ],
+    [
+      "network-http.core.dns.iterative-resolution.q3",
+      "KEEP",
+      "TLD referral 성공/authority timeout 상황에서 NS/glue·경로·53 UDP/TCP·큰 DNSSEC 응답의 TCP 전환을 확인하는 model/explanation이 적절하다.",
+      "HARD 실패 단계 진단; 일부 캐시 이용자 성공이 authority 정상의 증거는 아니다. DNSSEC 응답 크기와 TCP 제약을 공식 문서로 대조했다."
+    ],
+    [
+      "network-http.core.dns.a-aaaa.q1",
+      "KEEP",
+      "정답B IPv4/IPv6 후보; port/AAAA 자동 성공/레코드 순서 고정 연결 오답과 rationale를 모두 대조했다.",
+      "EASY 레코드 의미; 여러 주소에서 실제 선택은 client 정책임을 확인한다."
+    ],
+    [
+      "network-http.core.dns.a-aaaa.q2",
+      "KEEP",
+      "A와 AAAA가 dual-stack 연결 후보를 제공하고 실제 경로와 client 선택이 필요하다는 model/explanation이 맞다.",
+      "MEDIUM 이름 해석과 연결 선택의 경계; q1과 적용 수준이 다르다."
+    ],
+    [
+      "network-http.core.dns.a-aaaa.q3",
+      "KEEP",
+      "AAAA만 배포하고 IPv6 경로가 불가한 실패, infra 수정/잘못된 AAAA 제거, Happy Eyeballs의 지연 완화와 한계를 model/explanation이 설명한다.",
+      "HARD 경로 실패와 주소 정책 진단; RFC8305를 대조했고 DNS record 존재를 reachability 보장으로 만들지 않는다."
+    ],
+    [
+      "network-http.core.dns.cname.q1",
+      "KEEP",
+      "정답C alias; IP 직접 저장/Host 강제 변경/apex SOA·NS 대체 오답과 rationale를 모두 확인했다.",
+      "EASY alias와 주소/권한의 차이; 연결이 정확하다."
+    ],
+    [
+      "network-http.core.dns.cname.q2",
+      "KEEP",
+      "alias target의 A/AAAA를 cache 또는 추가 조회로 얻는 model/explanation이 맞다. 항상 추가 round trip이라 단정하지 않는다.",
+      "MEDIUM 체인 추론; q1의 정의 인식에서 조회 과정으로 확장한다."
+    ],
+    [
+      "network-http.core.dns.cname.q3",
+      "KEEP",
+      "체인 축소와 loop/최대 깊이 확인이 필요하며 TTL만 낮추는 것은 해결이 아니라는 model/explanation이 맞다.",
+      "HARD 지연·실패 조건의 원인 구분; Concept 체인/오해 절과 직접 연결된다."
+    ],
+    [
+      "network-http.core.dns.ns-mx.q1",
+      "KEEP",
+      "정답D NS와 메일 exchanger; MX IP 직접 저장/NS recursive 및 SMTP port/CNAME alias 오답과 rationale를 모두 확인했다.",
+      "EASY 레코드 역할; 의미가 다른 실제 DNS 종류와 비교한다."
+    ],
+    [
+      "network-http.core.dns.ns-mx.q2",
+      "KEEP",
+      "낮은 preference 우선과 MX 부재 implicit 0 A/AAAA fallback의 model/explanation을 RFC5321 §5.1과 대조했다.",
+      "MEDIUM 선택과 fallback; MX가 있으나 사용할 수 없는 상태를 부재와 혼동하지 않는다."
+    ],
+    [
+      "network-http.core.dns.ns-mx.q3",
+      "KEEP",
+      "MX 부재가 곧 메일 불가가 아니며 implicit MX의 주소/SMTP reachability, 0 . Null MX를 구분하는 model/explanation이 맞다.",
+      "HARD 다른 부재 조건과 의도된 no-service를 진단한다. RFC7505와 직접 대조했다."
+    ],
+    [
+      "network-http.core.dns.dns-ttl-cache.q1",
+      "KEEP",
+      "정답A 캐시 수명; TCP 연결/HTTP cache/서버 deadline 오답과 rationale를 모두 확인했다.",
+      "EASY 계층별 시간값 구분; Concept 연결이 맞다."
+    ],
+    [
+      "network-http.core.dns.dns-ttl-cache.q2",
+      "KEEP",
+      "짧은 TTL의 변경 반영 대 조회 부하, 기존 캐시 TTL 소급 불가의 model/explanation이 정확하다.",
+      "MEDIUM trade-off; serve-stale 등 확장 정책은 정상 TTL 교육 모델의 별도 예외로 남긴다."
+    ],
+    [
+      "network-http.core.dns.dns-ttl-cache.q3",
+      "KEEP",
+      "기존24h 값의 cache가 새5분 TTL 변경 직후 사라지지 않는 model/explanation이 시간 순서상 맞다.",
+      "HARD 변경 계획의 실패 조건; 열린 연결/런타임 캐시는 추가 경계이고 DNS TTL만으로 모든 전파 시간을 보장하지 않는다."
+    ],
+    [
+      "network-http.core.dns.negative-cache.q1",
+      "KEEP",
+      "정답B 부정 응답의 TTL 저장; positive HTTP/TCP retry/영구 부재 오답과 rationale를 모두 확인했다.",
+      "EASY NXDOMAIN/NODATA와 일반 조회 실패의 구분; 연결이 적절하다."
+    ],
+    [
+      "network-http.core.dns.negative-cache.q2",
+      "TARGETED_ENHANCE",
+      "model/explanation은 같은 QNAME의 권한 레코드 추가 뒤 캐시를 설명하지만 prompt의 'DNS 오타'는 client 조회 이름 수정도 포함한다. RFC2308 §5 캐시 키에 비추어 후자에는 답의 인과가 성립하지 않아 W3-NET-009로 기록했다.",
+      "MEDIUM 실패 원인 설명; 같은 이름의 레코드 수정 조건을 명시해야 모호성이 사라진다. 중복이 아니라 전제 보강이다."
+    ],
+    [
+      "network-http.core.dns.negative-cache.q3",
+      "KEEP",
+      "권한 레코드와 SOA 확인→실패하는 recursive의 음성 TTL→OS/런타임 순서 및 만료/관리 가능한 invalidate의 model/explanation이 맞다.",
+      "HARD 위치별 캐시 진단; 다른 리졸버 성공이 문제 client의 cache 만료를 보장하지 않는다."
+    ],
+    [
+      "network-http.core.dns.dns-failure.q1",
+      "KEEP",
+      "정답C DNS 처리 단계부터 확인; HTTP 상태로 전부 진단/주소 반환=서비스 성공/timeout=영구 부재 오답과 rationale를 모두 확인했다.",
+      "EASY 단계 경계; lookup와 application 성공을 분리한다."
+    ],
+    [
+      "network-http.core.dns.dns-failure.q2",
+      "KEEP",
+      "timeout은 응답을 못 받은 상태이고 NXDOMAIN은 이름 부재 응답이라는 model/explanation이 정확하다.",
+      "MEDIUM 관측의 한계; 부재와 확인 불가를 혼동하지 않는다."
+    ],
+    [
+      "network-http.core.dns.dns-failure.q3",
+      "KEEP",
+      "100 instance×5 retry 증폭에 deadline/retry budget·backoff/jitter·cache·recursive 분산을 적용하고 NXDOMAIN에 같은 무제한 retry를 하지 않는 model/explanation이 적절하다.",
+      "HARD 장애 처리와 부하 연결; 특정 정책 숫자를 RFC 일반 보장으로 단정하지 않는다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://www.rfc-editor.org/rfc/rfc1034",
+      "CURRENT_VERIFIED",
+      "실제 §3.1 라벨/root/FQDN, §3.6.2 CNAME, §4.2.1 zone cut, §4.3.2 referral/alias 재시작, §5.2.2 loop/§5.2.3 temporary failure/§5.3.1 stub 및 resolver 자원 관련 부분을 읽었다. 전체 RFC 전수 검토는 아니다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc3596",
+      "CURRENT_VERIFIED",
+      "실제 §2.1 AAAA 형식과 복수 IPv6 주소/RR 관계를 확인했다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc1035",
+      "CURRENT_VERIFIED",
+      "실제 §3.2.1 TTL, §3.3.9 MX preference/exchange, §3.3.11 NSDNAME와 glue, §4.1.1 RCODE의 SERVFAIL/NXDOMAIN/REFUSED를 확인했다. 역사적 SOA TTL 예외는 RFC2308의 갱신을 적용했다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc5321",
+      "CURRENT_VERIFIED",
+      "실제 §5.1 MX lookup/empty list implicit0/존재하는 MX의 fallback 금지와 temporary/permanent 오류를 읽었다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc7505",
+      "CURRENT_VERIFIED",
+      "실제 §3 MX 0 . 및 다른 MX 금지, §4 즉시 no-service 처리와 부재 MX의 차이를 읽었다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc2308",
+      "CURRENT_VERIFIED",
+      "실제 §5/6 SOA 음성 TTL과 QNAME/QCLASS 및 QTYPE 키, 만료와 캐시 응답 TTL 감소를 읽었다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9520",
+      "CURRENT_VERIFIED",
+      "실제 §3.2 실패 캐시 MUST/재조회 제한/최소1초 최대5분, §3.3 parent 재조회 제한, §3.4 DNSSEC failure cache를 확인했다. RFC2308의 오래된 optional 실패 캐시보다 최신 계약을 우선했다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/net/InetAddress.html",
+      "CURRENT_VERIFIED",
+      "InetAddress Caching의 positive/negative/stale TTL과 구현별 기본값 및 security property를 실제 읽었다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc8305",
+      "CURRENT_VERIFIED",
+      "§2~5의 DNS/address sorting/staggered concurrent connection 및 연결 성공 시 나머지 취소, broken AAAA 관련 부분을 실제 확인했다. 고정 지연값을 모든 client의 보장으로 취급하지 않는다."
+    ],
+    [
+      "https://datatracker.ietf.org/doc/html/rfc7766",
+      "CURRENT_VERIFIED",
+      "RFC Editor 직접 URL은 도구 오류였으나 동일 공식 RFC의 §1/4/5에서 DNSSEC 응답 증가, TC=1 fallback, UDP와 TCP 지원 및 TCP-first 허용을 실제 읽었다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc8767",
+      "CURRENT_VERIFIED",
+      "§4~7 authority refresh 불가의 serve-stale 조건, 양의 응답 TTL과 계속 refresh, zero TTL 금지를 실제 읽었다. 정상 TTL 예시의 예외로 구분한다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-NET-009",
+      "severity": "P1",
+      "contentKeys": [
+        "network-http.core.dns.negative-cache.q2"
+      ],
+      "file": "content/network-http/dns/questions.json",
+      "quote": "부정 응답 캐시 때문에 DNS 오타를 고친 직후에도 실패가 계속될 수 있는 이유를 설명하라.",
+      "problem": "DNS 오타 수정은 client가 조회 이름을 잘못 썼다가 올바른 이름으로 바꾼 경우도 포함한다. modelAnswer는 같은 이름의 권한 서버 레코드를 추가한 경우를 전제한다. RFC2308 §5에서 NXDOMAIN은 QNAME/QCLASS, NODATA는 QNAME/QTYPE/QCLASS를 키로 하므로 다른 이름으로 수정하면 이전 이름의 부정 캐시가 그대로 실패시키는 인과는 성립하지 않는다.",
+      "action": "질의 QNAME을 유지하고 권한 서버에 누락되거나 잘못된 레코드를 수정·추가했다는 조건을 prompt에 명시한다. 설명에는 client 조회 이름 수정과 권한 데이터 수정의 차이를 한 문장 추가한다. 본문과 나머지 문항은 유지한다.",
+      "followupIssues": [
+        202
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "network-http.core.dns.a-aaaa": "631b1c0697dc8cf7012a68d2fb86ccd067b739886802dda833421a97fa9e7d4e",
+    "network-http.core.dns.a-aaaa.q1": "b0a0cbdf143d194ee2da4c2a7a13d52124eaf8e4db112bbfa790ad859542fecf",
+    "network-http.core.dns.a-aaaa.q2": "fb8b1b743a2687f3eebd985a5fdaeecd057d5422b7c28f5e21131f1cc134b25a",
+    "network-http.core.dns.a-aaaa.q3": "692805065f42796eee8597e1e1d569ecf282b12eddf663f695ceed7c06ce12a0",
+    "network-http.core.dns.authoritative-server": "344d591279d389f2cc74db07a8a04a7097555ecec895835b17399fd2a12a9295",
+    "network-http.core.dns.authoritative-server.q1": "ccc99f0598da3adea04cdcfbd4b65519bce8846ef2a2e96219a9c2c019439321",
+    "network-http.core.dns.authoritative-server.q2": "d0f10b2da0e87ebcc94386f2ad605360897840ff57ffa177c913b6964cb25c9c",
+    "network-http.core.dns.authoritative-server.q3": "af5cb9c010f2b19c5c00c6149c9f9da5668773f1939098dd23029068c645dbd4",
+    "network-http.core.dns.cname": "57b3eb1c48502dc7f8c29f7c3badc828ed4c2bbbdb5bf7d32731ecdc5434601b",
+    "network-http.core.dns.cname.q1": "596f7e0d8de6421610070e313441247209de6bf0932249221ced8cb395b38552",
+    "network-http.core.dns.cname.q2": "5ceca501d97e112656b624655bba4f6b1f8862eccc91fdfaed2ab3a2647272f1",
+    "network-http.core.dns.cname.q3": "1ea49e40e1543f6dfc7c919d720904a017856a7844f68e69c51fceebcee07f0a",
+    "network-http.core.dns.dns-failure": "a9f0281fe84d40c1eba4065c1cd375e5e432f9de0d8a52962632d76c14c71c37",
+    "network-http.core.dns.dns-failure.q1": "69a8f403b962f87fbcfdddb70ad450464754afb0d19fe0c2e07ea2c8cf0747ba",
+    "network-http.core.dns.dns-failure.q2": "354777b59a80ffcacccce4e10940f49098ad000558540c894b99f6ab65ec8af9",
+    "network-http.core.dns.dns-failure.q3": "54e6230b4704ad4e2acec86124f5babff405dbae16a46c4bedd5bf6840ec19af",
+    "network-http.core.dns.dns-ttl-cache": "ee020a8d4ce896f85518a9046cd0fec6f4b52c1cac498b310bd0140f82eaca1f",
+    "network-http.core.dns.dns-ttl-cache.q1": "d1b0f842d372927112d1753e6618847347f281d13d62c4f0d0eb5e980fce63d7",
+    "network-http.core.dns.dns-ttl-cache.q2": "2b98cbfbafa9f95814ba2bb66454c00b50c8f13919d5fd530ad7e90253af2b61",
+    "network-http.core.dns.dns-ttl-cache.q3": "5cf7f978f85e465c3b78bb1ede4fc7dfc89bdd34bb022206057cfe5371b92d4c",
+    "network-http.core.dns.domain-hierarchy": "9994462ecb1f59e9807ff8fa363b87c3b562759a0091771ae56502c3bebe4858",
+    "network-http.core.dns.domain-hierarchy.q1": "75abd7488d8ef7d544bf608de43e9253556d47c60a59c5f1581e47da2fed755b",
+    "network-http.core.dns.domain-hierarchy.q2": "122fbba68cd8dfce3d57ac6fdfbacc97ea2bf9d1aeb336d733de79b0b67f8816",
+    "network-http.core.dns.domain-hierarchy.q3": "bbdc943a808a7f22ade089f38ba849e7a3a789cb421a7a0df0a84f70aef84147",
+    "network-http.core.dns.iterative-resolution": "3d30d0b463f15a92bdae3ea0b68e73c9908722c8e770482521a949a97ab9cd1d",
+    "network-http.core.dns.iterative-resolution.q1": "6ad942b6efc97a6cd7b3a2526d719f78d8f6a3464d078eac34dd1520854ff168",
+    "network-http.core.dns.iterative-resolution.q2": "0168e3f3bafce332d0fc5c5ad716f6a27ff8fb835db0f42ccdd8793f314d0a83",
+    "network-http.core.dns.iterative-resolution.q3": "4acad7995d5a251f3a2fe18f1ec797a87e4f7595e8c3d8794ecfc21f7f3a2306",
+    "network-http.core.dns.negative-cache": "d9fc3196b62d463e3969655daee0123d43e19963e75e98c6cdf0e2fafe7e8b7a",
+    "network-http.core.dns.negative-cache.q1": "c3e2f1877a023288f42c189ef5ddd6cf84d5a943ed698bc8f51926205f6e5752",
+    "network-http.core.dns.negative-cache.q2": "1b3fa1b0136fcd80cba476649ea83c850b5743bcc83e961b7029f77c66864e0a",
+    "network-http.core.dns.negative-cache.q3": "394da0a319c6f2988a907f3cc49e984be06fa91186d19eb63dce4d227561a68f",
+    "network-http.core.dns.ns-mx": "8952c35f4550194a2d879493bef43f0c8ecda294e21a46a58c274caa5cc8ed46",
+    "network-http.core.dns.ns-mx.q1": "db9fed9909a72def071d0d0b4d8b990fb60338ae995c32ec6c3c690298f74c7d",
+    "network-http.core.dns.ns-mx.q2": "e144cd3a861e74bea59ddac7641d4244ea52a1097bb4f897820d9261397c2cff",
+    "network-http.core.dns.ns-mx.q3": "32749898cab272d28c22078046f2d309f18585cc73101e0f126db2c46d2a78db",
+    "network-http.core.dns.stub-recursive-resolver": "a40b6d27460ff16a75d428bb1729e53860bda6e06735b376c3525edf4482f6de",
+    "network-http.core.dns.stub-recursive-resolver.q1": "0292fc19886d936e442142f1869ff31e6860a67f0cb212ffd6b912a7c3243953",
+    "network-http.core.dns.stub-recursive-resolver.q2": "5b92e7ca096958a415eb4958fa83e372d522e9d505bda4409a26bd25ff894753",
+    "network-http.core.dns.stub-recursive-resolver.q3": "8f166d4a66198bcfca71b7074bc52bbb5dc61b8d65484d39b730aaf4707d1292"
+  }
+}

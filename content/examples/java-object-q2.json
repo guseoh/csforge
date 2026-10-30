@@ -1,0 +1,10 @@
+{
+  "kind": "question",
+  "contentKey": "java.object.equals-hashcode.q2",
+  "promptMarkdown": "동등성 계약을 설명할 때 허용되는 답안을 적으세요.",
+  "questionType": "SHORT_ANSWER",
+  "difficulty": "MEDIUM",
+  "status": "PUBLISHED",
+  "conceptKeys": ["java.object.equals-hashcode"],
+  "acceptedAnswers": ["hashCode 계약", "hashCode"]
+}

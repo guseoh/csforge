@@ -1,0 +1,454 @@
+{
+  "area": "operating-systems",
+  "topic": "threads",
+  "topicKey": "operating-systems.core.threads",
+  "coverage": "10 Concept와 34 Question의 실제 전체 본문과 모든 필드를 세 bounded 출력에서 읽었다. 주소 공간/자원 공유와 별도 PC·stack, non-atomic lost update의100→110, kernel-visible 대 kthread, many-to-one/M:N blocking, 생성·전환 비용, CPU/I/O/DB20 연결 한계, bounded pool 자식 의존, Java25 carrier/unmount/native·foreign 및 JDK24 monitor pinning 제거를 대조했다. Oracle25 API/guide와24 release 문서, 실제 OpenJDK444 검색 본문, Linux clone 관련 절을 읽었다. OSTEP의 ULT 매핑 relation 확인 범위는 미확정으로 남긴다. 앞서 확인한 SMT 경계와 정확 일치 채점 계약을 적용했다.",
+  "concepts": [
+    [
+      "operating-systems.core.threads.process-vs-thread",
+      "KEEP",
+      "L1 resource/protection boundary와 execution flow boundary를 충분히 구별한다.",
+      "code/heap/open resource 공유 대 PC/register/stack 분리, IPC 비용과 native fault 영향의 절충이 정확하다. '무겁다/가볍다'만으로 설명하지 않는다.",
+      "DIAGRAM 실제 process의 공유 자원과 A/B별 실행 문맥 TEXT 분기가 충분하다.",
+      "OSTEP 실제 도입의 주소 공간 공유/TCB/별도stack 및 Why Use Threads의 parallel/I/O overlap을 대조했다.",
+      "q1 모든 보기, q2 격리 차이, q3 untrusted native plugin의 process fault 경계를 확인했다."
+    ],
+    [
+      "operating-systems.core.threads.thread-shared-state",
+      "KEEP",
+      "L1 shared state와 안전한 갱신의 차이를 충족한다.",
+      "heap/global/static/fd 공유, 개념적 read→compute→write 교차, cache coherence≠compound atomicity, fd offset/socket lifetime 계약이 정확하다.",
+      "DIAGRAM 두thread→공유 상태와 단계 설명이 충분하다.",
+      "OSTEP 실제 shared-data/lost update 관련 본문과 Linux clone CLONE_FILES 공유를 대조했다. C volatile race 예를 모든 언어의 정의된 결과로 일반화하지 않는다.",
+      "q1 모든 보기, q2 fd 공유, q3 두read100→write110, q4 DBtx≠JVM heap 동기화를 확인했다."
+    ],
+    [
+      "operating-systems.core.threads.thread-private-state",
+      "KEEP",
+      "L1 별도 PC/register/stack의 재개 이유와 객체 공유 경계를 충족한다.",
+      "같은 handle의 다른 호출 단계, 지역 참조 위치≠대상 객체 전용, TLS≠heap전체분리가 정확하다. private는 논리 실행 상태로 설명하며 별도process 격리라고 하지 않는다.",
+      "TEXT A handle1/parse 대 B handle2/validate와 PC별도 예가 충분하다.",
+      "OSTEP 실제 별도stack/context와 Oracle25 ThreadLocal의 thread수명/각copy/remove 계약을 대조했다.",
+      "q1 모든 보기, q2 local reference/sharedobject, q3 platform worker reuse의requestID cleanup을 확인했다."
+    ],
+    [
+      "operating-systems.core.threads.kernel-thread",
+      "KEEP",
+      "L2 kernel-visible execution unit의 blocking/parallel 경계를 충족한다.",
+      "Linux 전용 kthread와 용어 구별, T1wait/T2runnable, clone 공유 구성과 현재platform 대virtual의 mapping 차이가 정확하다. 코어가 추가thread수만큼생긴다고하지않는다.",
+      "TEXT process의 별도wait/runnable 분기가 충분하다.",
+      "실제 clone CLONE_VM/FILES와 Oracle25 platform 1:1(typically), 실제444의 OS wrapper/M:N 관련 본문을 대조했다.",
+      "q1 모든 보기, q2 독립스케줄문맥, q3 4→400의하드웨어용량/비용을확인했다."
+    ],
+    [
+      "operating-systems.core.threads.user-level-thread",
+      "KEEP",
+      "L2 user-runtime logical scheduling과 mapping별 blocking 한계를 충족한다.",
+      "runtime logicalqueue→carrier→OS→CPU, many-to-one 하나carrier잠듦, 여러carrier/blocking연동으로영향달라짐이정확하다. 모든ULT가process전체정지라고하지않는다.",
+      "TEXT 3logical→runtime→kernel 실행자원 흐름이 충분하다.",
+      "OSTEP 도입/context/creation 관련 본문은 읽었지만 이 URL에서 ULT mapping/blocking relation을 직접 뒷받침하는 절은 아직 확인하지 못했다. 실제444의 M:1/M:N·carrier scheduling과 Oracle25를 보충 대조해 기술을 확인했고 canonical relation은 NEEDS_REVIEW다.",
+      "q1 모든보기, q2 logical수≠병렬수, q3 하나carrier/모르는blocking의명시조건, q4 일반화반례를확인했다."
+    ],
+    [
+      "operating-systems.core.threads.thread-create-switch-cost",
+      "KEEP",
+      "L2 stack/metadata/생성·정리·전환·지역성과 작업자 부족 절충을 충족한다.",
+      "짧은task마다생성비용, 과다runnable→queue/switch/cache비용가능, process주소공유와비용차이, 과소worker→wait/I/Ooverlap상실이정확하다.",
+      "DIAGRAM 적음/과다 runnable의 단계 관계와 병목 이동이 충분하다.",
+      "OSTEP 실제 별도stack/context/creation 관련 절과 Oracle executor의 reuse/자원 경계를 대조했다. canonical의 cache-cost 세부 설명 여부는 추가 확인이 필요하다는 범위를 유지한다.",
+      "q1 모든보기, q2 플랫폼worker재사용, q3 worker부족queue병목을확인했다."
+    ],
+    [
+      "operating-systems.core.threads.concurrency-vs-parallelism",
+      "KEEP",
+      "L1 겹친 진행과 같은순간실행을 구별한다.",
+      "time-slicing 예 대 여러실행자원 예, I/Owait overlap과 CPU포화, 단일실행자원에서도interleavingrace가가능함이정확하다. 복수physicalcore가유일한실행자원이라고하지않는다.",
+      "TEXT A/B교대와core0/core1병렬예는 두 가능한모델로 충분하다.",
+      "OSTEP 실제 Why Use Threads의 parallel/blockedI/Ooverlap 및 Linux samecore/twoCPU 예를 대조했다.",
+      "q2/q3 I/Ooverlap/2core100task는맞다. q1 singlephysicalcore의SMT·질문범위 모호성은 W3-OS-009다."
+    ],
+    [
+      "operating-systems.core.threads.thread-count-workload",
+      "KEEP",
+      "L2 CPU/I/O와하위자원을통합해thread수를판단한다.",
+      "코어추가없음, CPU이미포화조건, blocking시다른task CPU사용, memory/FD/DBconnection/downstream동시성상한과실측필요가정확하다. 고정최적thread공식이없다.",
+      "TEXT CPU미포화/포화 분기와 다섯 측정 축이 충분하다.",
+      "OSTEP 실제 parallel/I/O overlap 관련 절과 Oracle executor/444의 CPU-bound 대 기다림 workload경계를 대조했다. canonical이 모든 DB풀 튜닝절을 제공한다고 하지 않는다.",
+      "q1 모든보기, q2 CPU1/I/O9의overlap, q3 workers200→400/DB20의병목을확인했다."
+    ],
+    [
+      "operating-systems.core.threads.thread-pool",
+      "TARGETED_ENHANCE",
+      "L1 reuse/queue/backpressure와자식의존실패 목표는충족한다.",
+      "도착150/처리100의queue성장, bounded/거부·caller-runs 정책, 두parent가모든worker점유후childget의resourcecycle은정확하다. 미리준비worker를pool정의로고정한첫문장은lazycreation과구별이필요해W3-OS-010이다.",
+      "DIAGRAM producer→queue→workers와도착/처리차의단계가충분하다. 새그림은필요없다.",
+      "Oracle25 executor 실제 On-demand construction/queue/core-max/rejection·caller-runs 절을 읽었다.",
+      "q1 accepted50과산술, q2 queueoverload, q3 부모2/자식queued의deadlock, q4 overload정책을확인했다."
+    ],
+    [
+      "operating-systems.core.threads.java-virtual-thread-boundary",
+      "KEEP",
+      "L3 JDK/OS scheduling·unmount/pinning 및자원한계를 충분히설명한다.",
+      "carrier lifetime affinity없음, supportedblockingunmount→ready→어떤carrier, Java25 monitor pinning제거(JDK24), native/foreign별도와DB용량불변이정확하다.",
+      "DIAGRAM logical→JDK→platform→OS→CPU와Aunmount/Breuse/Aremount 흐름이 충분하다.",
+      "Oracle25 Thread/API·Virtual Threads의actualcarrier/nativeforeign절과 Oracle24release JEP491변경, 실제444역사본문을 대조했다. 444초기 synchronized제약을25보장으로승격하지않는다. 491 canonical직접접근은미확정이다.",
+      "q2/q3/q4 병렬수·25monitor·DB한계는맞다. q1 carrier thread제외는W3-OS-008이다."
+    ]
+  ],
+  "questions": [
+    [
+      "operating-systems.core.threads.process-vs-thread.q1",
+      "KEEP",
+      "C heap공유/별도stackregister가맞다. A독립주소/B문맥하나/D heap분리PC하나는틀리며모든rationale/해설에공유범위가있다.",
+      "EASY 일반적인같은process모델이다."
+    ],
+    [
+      "operating-systems.core.threads.process-vs-thread.q2",
+      "KEEP",
+      "두process의주소/lifetime경계와같은process의heap공유/치명nativefault전파모델/해설이맞다.",
+      "MEDIUM 모든Java exception이process종료라고하지않는다."
+    ],
+    [
+      "operating-systems.core.threads.process-vs-thread.q3",
+      "KEEP",
+      "주어진native메모리오류에process격리/IPC비용을비교하는모델/해설이타당하다.",
+      "MEDIUM 단순동시성과faultisolation목적을구별한다."
+    ],
+    [
+      "operating-systems.core.threads.thread-shared-state.q1",
+      "KEEP",
+      "A 같은oldreadlostupdate가맞다. B 자동atomic/C core면RMW직렬/D stack이면heap영향없음은틀리며모든rationale/해설을대조했다.",
+      "EASY nonatomic 개념모델이며cachecoherence와구별한다."
+    ],
+    [
+      "operating-systems.core.threads.thread-shared-state.q2",
+      "KEEP",
+      "fd/OFD의offset/socket lifetime에read/write/close가함께영향가능하다는모델/해설이실제cloneFILES와맞다.",
+      "MEDIUM 각thread별독립file상태로오해하지않는다."
+    ],
+    [
+      "operating-systems.core.threads.thread-shared-state.q3",
+      "KEEP",
+      "두thread가쓰기전100을읽고+10이므로accepted110과최종두write110해설이맞다.",
+      "MEDIUM 초기값과실행순서를자체명시해유일답이다."
+    ],
+    [
+      "operating-systems.core.threads.thread-shared-state.q4",
+      "KEEP",
+      "DBtx는DB자원계약이며singleton JVM heap의atomic/visibility/mutual exclusion은별도라는모델/해설이맞다.",
+      "MEDIUM DB격리를JMM보장으로승격하지않는다."
+    ],
+    [
+      "operating-systems.core.threads.thread-private-state.q1",
+      "KEEP",
+      "D PC/register/stack이맞다. A전체주소/B모든heapcode/C 모든fd별도는틀리며모든rationale/해설을확인했다.",
+      "EASY 실행문맥과공유주소범위를구별한다."
+    ],
+    [
+      "operating-systems.core.threads.thread-private-state.q2",
+      "KEEP",
+      "local reference의저장위치와대상sharedheap 도달범위가다르다는모델/해설이맞다.",
+      "MEDIUM 지역변수이므로object전용이라는오해를검증한다."
+    ],
+    [
+      "operating-systems.core.threads.thread-private-state.q3",
+      "KEEP",
+      "platform worker재사용으로ThreadLocal이request보다오래살아cleanup이필요하다는모델/해설이API의threadcopy수명과맞다.",
+      "MEDIUM pool플랫폼thread라는조건을명시한다."
+    ],
+    [
+      "operating-systems.core.threads.kernel-thread.q1",
+      "KEEP",
+      "D 별도runnable/wait문맥이맞다. A전체필수block/B 하나문맥/C 별도주소필수는틀리며각rationale/해설을대조했다.",
+      "EASY kernel-visible범위를Topic에서명시한다."
+    ],
+    [
+      "operating-systems.core.threads.kernel-thread.q2",
+      "KEEP",
+      "kernel별도문맥이면T1wait때runnableT2다른구간/CPU배정가능이라는모델/해설이맞다.",
+      "MEDIUM 같은process가자동전체block이라고하지않는다."
+    ],
+    [
+      "operating-systems.core.threads.kernel-thread.q3",
+      "KEEP",
+      "4→400softwarethread로CPU자원추가없고queue/switch/cache비용가능이라는모델/해설이맞다.",
+      "MEDIUM 정확히4개만동시실행이라고SMT를배제하지않고하드웨어제약을말한다."
+    ],
+    [
+      "operating-systems.core.threads.user-level-thread.q1",
+      "KEEP",
+      "B runtime/library가맞다. A OS각logical반드시/C CPUuserqueue직접/D driver논리queue전부는틀리며모든rationale/해설이두층을구별한다.",
+      "EASY '보통'과mapping별커널visibility조건을유지한다."
+    ],
+    [
+      "operating-systems.core.threads.user-level-thread.q2",
+      "KEEP",
+      "많은logical→적은carrier 다중화와하드웨어실행용량제약모델/해설이맞다.",
+      "MEDIUM 동시성단위와실제CPU병렬성을구별한다."
+    ],
+    [
+      "operating-systems.core.threads.user-level-thread.q3",
+      "KEEP",
+      "하나carrier/인식못한blocking이면나머지logical실행통로상실,nonblocking연동/전용pool/여러carrier모델/해설이맞다.",
+      "HARD many-to-one조건을자체명시했다."
+    ],
+    [
+      "operating-systems.core.threads.user-level-thread.q4",
+      "KEEP",
+      "mapping과blocking연동에따라다른logical계속가능,단순M:1한계를모든ULT에일반화못한다는모델/해설이맞다.",
+      "MEDIUM 구현차이와보편법칙을구별한다."
+    ],
+    [
+      "operating-systems.core.threads.thread-create-switch-cost.q1",
+      "KEEP",
+      "A stackmetadata/scheduling비용가능이맞다. B 경쟁무관/C 실행상태복원없음/D core자동증가는틀리며모든rationale/해설을확인했다.",
+      "EASY sameprocessswitch도무료가아니다."
+    ],
+    [
+      "operating-systems.core.threads.thread-create-switch-cost.q2",
+      "KEEP",
+      "짧은task의platformworker/stackreuse로life-cycle비용분산과동시worker상한모델/해설이맞다.",
+      "MEDIUM virtualthreadpool권장으로확대하지않는다."
+    ],
+    [
+      "operating-systems.core.threads.thread-create-switch-cost.q3",
+      "KEEP",
+      "worker부족으로queue대기병목이동가능,활성수/CPU/downstream/throughput측정모델/해설이타당하다.",
+      "HARD switch숫자하나최적화와end-to-end결과를구별한다."
+    ],
+    [
+      "operating-systems.core.threads.concurrency-vs-parallelism.q1",
+      "TARGETED_ENHANCE",
+      "영문concurrency accepted와time-slice설명은맞다. 그러나단일physicalcore도SMT복수실행자원을제공할수있어parallelism답을배제할조건이없다. W3-OS-009다.",
+      "EASY '영문'을명시해한국어동의어문제는없지만가능한구성의범위를좁혀야한다."
+    ],
+    [
+      "operating-systems.core.threads.concurrency-vs-parallelism.q2",
+      "KEEP",
+      "I/Owait동안다른CPUwork를겹쳐도같은순간CPU계산병렬은필수아님이라는모델/해설이맞다.",
+      "MEDIUM 기다림겹침과계산병렬성구별이다."
+    ],
+    [
+      "operating-systems.core.threads.concurrency-vs-parallelism.q3",
+      "KEEP",
+      "2core100logicaltask관리와하드웨어실행용량불변/queue경쟁모델/해설이맞다.",
+      "MEDIUM softwaretask수가core를늘리지않는다는조건부비교다."
+    ],
+    [
+      "operating-systems.core.threads.thread-count-workload.q1",
+      "KEEP",
+      "B 실행자원제한/경쟁이맞다. A CPU도항상more유리/C 각physicalcore자동/D 비용무관은틀리며모든rationale/해설에포화조건이있다.",
+      "EASY 일반무한처리량주장을반박한다."
+    ],
+    [
+      "operating-systems.core.threads.thread-count-workload.q2",
+      "KEEP",
+      "CPU1ms/I/O9ms의대기구간에다른작업진행가능,downstream한계조건의모델/해설이맞다.",
+      "MEDIUM 정확한최적thread수10을무조건보장하지않는다."
+    ],
+    [
+      "operating-systems.core.threads.thread-count-workload.q3",
+      "KEEP",
+      "workers200→400에도DBconnections20불변으로연결대기증가가능모델/해설이타당하다.",
+      "MEDIUM 모든DBconnection의multiplex구현을보편배제하기보다주어진pool자원모델을사용한다."
+    ],
+    [
+      "operating-systems.core.threads.thread-pool.q1",
+      "KEEP",
+      "arrival150-service100=50의accepted/해설이맞다. 지속도착/처리율과버리지않는조건을자체명시한다.",
+      "EASY steady overload의개수계산이다."
+    ],
+    [
+      "operating-systems.core.threads.thread-pool.q2",
+      "KEEP",
+      "unboundedqueue는capacity추가아닌memory/wait로비용이동이라는모델/해설이맞다.",
+      "MEDIUM 계속arrival>service조건이다."
+    ],
+    [
+      "operating-systems.core.threads.thread-pool.q3",
+      "KEEP",
+      "두parent가모든worker점유하고queuedchildget을기다리므로child실행불가라는모델/해설이정확하다.",
+      "HARD lockcycle없어도실행자원의존cycle이있으며주어진두workerpool모델이다."
+    ],
+    [
+      "operating-systems.core.threads.thread-pool.q4",
+      "KEEP",
+      "거부/caller-runs/상위rate제한의오류·latency·역압계약을정하는모델/해설이타당하다.",
+      "MEDIUM bounded실행용량모델이다. 일반executor는queuefull후max까지worker확장가능하며모든구현이즉시거부라고일반화하지않는다."
+    ],
+    [
+      "operating-systems.core.threads.java-virtual-thread-boundary.q1",
+      "TARGETED_ENHANCE",
+      "accepted carrier는맞지만공식Thread25의carrier thread도질문에대한정답이며정확일치에서거부한다. W3-OS-008이다.",
+      "EASY 영문을요구했지만단어하나로제한하지않는다."
+    ],
+    [
+      "operating-systems.core.threads.java-virtual-thread-boundary.q2",
+      "KEEP",
+      "100000virtualtask도JDK→carrier→OS→CPU경계의실행자원제약을받는모델/해설이맞다.",
+      "MEDIUM concurrency수와CPU병렬수가다르다."
+    ],
+    [
+      "operating-systems.core.threads.java-virtual-thread-boundary.q3",
+      "KEEP",
+      "JDK24 JEP491 monitorpinning제거와Java25 native/foreign별도확인모델/해설이실제Oracle24release/25guide와맞다.",
+      "MEDIUM 초기virtual구현제약을현재판에적용하지않는다."
+    ],
+    [
+      "operating-systems.core.threads.java-virtual-thread-boundary.q4",
+      "KEEP",
+      "cheapblocking동시성이DBconnection/capacity를늘리지않아DBlimit/역압분리모델/해설이맞다.",
+      "HARD thread모델과하위시스템용량의다른상한을추론한다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-intro.pdf",
+      "NEEDS_REVIEW",
+      "실제 도입/별도stack·PC/TCB/creation/Why Use Threads와 shared-data 관련 본문을 읽었다. 관련 기본 Concept에는 유효하다. 그러나 ULT Concept의 relationNote가 요구하는 runtime logical→carrier mapping/blocking 절은 직접 확인하지 못했고 cache-cost 세부 범위도 미확정이다. 키워드 미검색만으로 그 절이 없다고 단정하지 않는다. 이 relation의 추가 확인 때문에 area URL 증거는 보수적으로 NEEDS_REVIEW로 남긴다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man2/clone.2.html",
+      "CURRENT_VERIFIED",
+      "실제 CLONE_FILES의 table 공유/복제와 CLONE_VM의주소공간공유, CLONE_THREAD/SIGHAND의flag조건 관련절을읽었다. resource별공유구성recommendation에맞으며전체1167line/실행테스트검증은아니다."
+    ],
+    [
+      "https://openjdk.org/jeps/444",
+      "CURRENT_VERIFIED",
+      "직접open은실패했지만실제공식검색으로반환된Description/Scheduling/Executing관련본문을읽었다. platform OS wrapper와M:1/M:N·carrier교체·mount/unmount를대조했다. JDK21의역사문서이므로synchronizedpinning제약은25보장으로승격하지않는다."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/concurrent/ThreadPoolExecutor.html",
+      "CURRENT_VERIFIED",
+      "실제pool의reuse/자원경계,core/max·On-demand construction,queue/독립task조건·bounded/unbounded/Rejection·CallerRuns 관련절을읽었다. thread-pool의미리준비표현과defaultlazy를구별했다. API전체845line확인은아니다."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Thread.html",
+      "CURRENT_VERIFIED",
+      "실제Platform/Virtual threads의typically1:1/user-mode scheduling/carrier threads와CPU-bound부적합,ThreadLocal관련API본문을읽었다. 해당실행모델과문항의carrier thread동의어를대조했다."
+    ],
+    [
+      "https://openjdk.org/jeps/491",
+      "NEEDS_REVIEW",
+      "직접canonicalopen이InternalError로실패했다. 사실은실제Oracle24release의JEP491변경과25guide로확인했지만이URL본문접근검증으로승격하지않는다."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/core/virtual-threads.html",
+      "CURRENT_VERIFIED",
+      "실제Scheduling Virtual Threads and Pinned Virtual Threads절의mount/carrier/unmount재사용/native·foreignpinning을읽었다. Java25관련경계와일치하며초기444의synchronized제약을현재보장으로사용하지않는다."
+    ]
+  ],
+  "referenceAccess": {
+    "https://openjdk.org/jeps/444": {
+      "status": "NEEDS_REVIEW",
+      "basis": "직접open실패와공식검색에서실제관련본문을읽은증거를구별한다. 검색본문의semantic확인은했지만직접URL가용성은미확정이다."
+    }
+  },
+  "supplementalSources": [
+    [
+      "https://docs.oracle.com/en/java/javase/24/migrate/significant-changes-jdk-24.html",
+      "CURRENT_VERIFIED",
+      "실제Performance and Runtime Improvements의JEP491 synchronized blocking시underlyingplatformrelease변경을읽어JDK24반영을확인했다. 모든릴리스항목검증은아니다."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/ThreadLocal.html",
+      "CURRENT_VERIFIED",
+      "실제각threadcopy/thread수명/initialValue·set·remove의currentvalue제거및재초기화계약을읽었다. request와worker수명차이를대조했다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man2/sched_setaffinity.2.html",
+      "CURRENT_VERIFIED",
+      "앞서직접읽은같은physicalcore의두logicalCPU에서두process를실행하는공식예를재사용해singlecore문항의SMT경계를확인했다. 예제측정실행재현은아니다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-OS-008",
+      "severity": "P0",
+      "contentKeys": [
+        "operating-systems.core.threads.java-virtual-thread-boundary.q1"
+      ],
+      "file": "content/operating-systems/threads/questions.json",
+      "quote": "Java 가상 스레드가 CPU에서 Java 코드를 실행할 때 올라가는 플랫폼 스레드를 영문으로 무엇이라 부르는가?",
+      "problem": "acceptedAnswers에는 carrier 한 개만 있다. 공식 Java25 Thread API가 쓰는 carrier thread도 정확한 영문 정답이며 prompt는 한 단어만 요구하지 않는다. trim/lowercase 정확 일치 채점에서 이 답은 거부된다.",
+      "action": "기존 q1의 허용 답에 'carrier thread'와 본문 용어 'carrier platform thread'를 추가한다. 정답 개념·해설·채점기 기능은 유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-009",
+      "severity": "P0",
+      "contentKeys": [
+        "operating-systems.core.threads.concurrency-vs-parallelism.q1"
+      ],
+      "file": "content/operating-systems/threads/questions.json",
+      "quote": "단일 코어 CPU에서도 가능한 실행 구성은 무엇인가? 영문 용어로 답하라.",
+      "problem": "단일 물리 core도 SMT로 두 logical CPU/실행 자원을 제공할 수 있어 parallelism도 가능한 답이다. 공식 Linux affinity 예는 같은core의다른CPU에서두process를실행한다. 단일core만으로time-slice concurrency를유일답으로만들수없다.",
+      "action": "SMT없는단일논리CPU에서여러CPU계산흐름을번갈아진행하는구성을영문으로묻는것으로범위를명시한다. concurrency답/해설과본문의가능한두예는유지한다.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W3-OS-010",
+      "severity": "P2",
+      "contentKeys": [
+        "operating-systems.core.threads.thread-pool"
+      ],
+      "file": "content/operating-systems/threads/thread-pool.md",
+      "quote": "미리 준비한 작업 스레드(worker)를 재사용",
+      "problem": "pool정의를미리준비된worker에한정한다. 연결한ThreadPoolExecutor는default로coreworker도task도착시에생성·시작하고prestart는별도선택이다. 재사용의원리와초기생성시점을구별해야한다.",
+      "action": "첫정의를관리하는worker를재사용하는구조로한정하고필요시생성하거나미리시작할수있다는짧은경계를명시한다. boundedworker/queue교육모델과실패추적은유지하고전체executor설정튜토리얼로확장하지않는다.",
+      "followupIssues": [
+        201
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "operating-systems.core.threads.concurrency-vs-parallelism": "3c1adcaea77f074be9711f5e8347f3e18db01e56975208a01f499f509c40b933",
+    "operating-systems.core.threads.concurrency-vs-parallelism.q1": "8a61a140e4b4dbb54530d33bdada55280f334176f018ef0cce1c28195c4dbc4a",
+    "operating-systems.core.threads.concurrency-vs-parallelism.q2": "e7ecaa9f28fad68585fe9a4d9701394e3bb3116557a7c29486c237f62e83130d",
+    "operating-systems.core.threads.concurrency-vs-parallelism.q3": "d0042a5d8d1acc60c40231bb9664b901a208e7073db5488c9e20ba1a404a2709",
+    "operating-systems.core.threads.java-virtual-thread-boundary": "622df337c3c4bcafcd31924ea0a6ed3be8c0b8e3096eb496cb0da32e43cca8b8",
+    "operating-systems.core.threads.java-virtual-thread-boundary.q1": "3d6ae5f3f00ec325808914c7afaf445a6cbb9934ad16e4171ff779ecc4e04baa",
+    "operating-systems.core.threads.java-virtual-thread-boundary.q2": "8b4b5349ebfaf89980d233c86160e4a17607ca889ef2463c9e3013fe503c56e4",
+    "operating-systems.core.threads.java-virtual-thread-boundary.q3": "c33cc749a54eafb0b5ca2776ac7f4daebd0d2eb7d9cabf358ad3fd23371d065a",
+    "operating-systems.core.threads.java-virtual-thread-boundary.q4": "7dc7bca8d6ea0942c6d5c8b71f5d075535e57a952243d34a1617af1a115e09d6",
+    "operating-systems.core.threads.kernel-thread": "92cb6825a0519543b00823168fcf91e34fada5cd2a98d17328ebd3b7d493bb65",
+    "operating-systems.core.threads.kernel-thread.q1": "2148c262527509236fd7def5ec37be1926aeaad964510c109357261df5b1d1ed",
+    "operating-systems.core.threads.kernel-thread.q2": "8890edc9def606737f6dc84a02c19f57e9a6ec6dd9dd85a0f4f06fccf6ea241f",
+    "operating-systems.core.threads.kernel-thread.q3": "f2bdef1d3ad93313c1bcfbfaef6c2e11b2de3b72030131b608806b8f6518079d",
+    "operating-systems.core.threads.process-vs-thread": "330ded5296e5c91ab48d5e6bc8d2f5daa949b2e4b4f0944f50f2234f2e1fee31",
+    "operating-systems.core.threads.process-vs-thread.q1": "594875b9090bcf8993dd0bdda9ff04b08e7baa2b2d22ffc5662937923b05b9e8",
+    "operating-systems.core.threads.process-vs-thread.q2": "dcefa257c59986e4848acc98f7189df0bee88c265b0151660f71178f4219814c",
+    "operating-systems.core.threads.process-vs-thread.q3": "649a0b8d8584d0e01ef2fa55731a11f155a9cee1294b0a88122a18ad92fbd49c",
+    "operating-systems.core.threads.thread-count-workload": "bfd7542958ee8709cd4170331d2e76818fef8386875429fee1c2ead38ce43d90",
+    "operating-systems.core.threads.thread-count-workload.q1": "b8e8470a9a6276ecdcd619cc3186792210d7b1cbaa96a2bd5530371ac138e0d6",
+    "operating-systems.core.threads.thread-count-workload.q2": "756d3ae281b6c038f01dca30b3a04f092c14857c8f5abf196ec13937339e3687",
+    "operating-systems.core.threads.thread-count-workload.q3": "0341484e0c766f320ad7543d0fe3776761f3dbc420cb8ae53722db4bf22eef70",
+    "operating-systems.core.threads.thread-create-switch-cost": "c682c2c2c385c126a740909eaf9a88d53ad2096bbf3b26307df08108523ea015",
+    "operating-systems.core.threads.thread-create-switch-cost.q1": "7740ca8dd2b65b2e6ab2719ce5daf370074b6a1eaea31a2e0571bd0b16cf58da",
+    "operating-systems.core.threads.thread-create-switch-cost.q2": "c74a168ab8f65f27e4a124f948e706703e017f04b0c4b739ddb66d722d762b51",
+    "operating-systems.core.threads.thread-create-switch-cost.q3": "377279a77d3359d77b8e153dcb8ad48198e56410e12c6ca5bf8abf8eceb66a73",
+    "operating-systems.core.threads.thread-pool": "cb1061eb7ec20552a0cb004bf5fea48784c805ce809238cf1e2c802ef5fd7864",
+    "operating-systems.core.threads.thread-pool.q1": "66a3609df780d5c5874bfbcbc26ef403f7af643032613b48d3c79d0e8520497e",
+    "operating-systems.core.threads.thread-pool.q2": "9cb2bbb0e65a37a74631a481afdb6b6d35afe6a54ee90a2d1e4c88e07d083f78",
+    "operating-systems.core.threads.thread-pool.q3": "0b1f865853bc5fdfdac71fb4090b0f7d7d63b7ff7cbd6d8d5d7df69c53201653",
+    "operating-systems.core.threads.thread-pool.q4": "9ec587711795c1f280e90178a46ca47fe081d73d6073bab014ede2791116b53a",
+    "operating-systems.core.threads.thread-private-state": "27f817e2fe9b6781fd0f077c72dc64dfee717ffc1085e3948b2dfb9875ddfdb6",
+    "operating-systems.core.threads.thread-private-state.q1": "b0ee45ab3e6bf390d26a637560dc2a1f3a3417af44386112cfe55eaa4fbf8001",
+    "operating-systems.core.threads.thread-private-state.q2": "d03a14e5e38ad4446e61c00cf423985428ffa581f4a221294de2615513dca08a",
+    "operating-systems.core.threads.thread-private-state.q3": "83fc3acd41e2ecb46c5dc8718518a36874197d7ab2615b6faaa43cbcca9694f5",
+    "operating-systems.core.threads.thread-shared-state": "7d5cf49e96670d03368cab9e7d7c6f166050c9faf30a5870718148ef1f589fbd",
+    "operating-systems.core.threads.thread-shared-state.q1": "04c6399be9fbdfcebe7f99079d620bbb0473e1a0e8109c5f156d1c108bb0204d",
+    "operating-systems.core.threads.thread-shared-state.q2": "d752864315f9deecd001e0682002025eeb2548989f490078f0d3f35a58394039",
+    "operating-systems.core.threads.thread-shared-state.q3": "cc8841241427821c64f17130b1e7f1dfdd50053c712ed4d1f58d772bc95ebeb2",
+    "operating-systems.core.threads.thread-shared-state.q4": "ee24a006c050dbe71b81cdb5c5629c53b70e0906ec5fa807feebf257411c9154",
+    "operating-systems.core.threads.user-level-thread": "acee4aeb33ce4a8f24e16f3c6be5e89f9012ca2d32f62b2d8a95636336070811",
+    "operating-systems.core.threads.user-level-thread.q1": "c7288ee74fda432407d3a85b88a9f84e90aff7beb3530d67907668eb4740b087",
+    "operating-systems.core.threads.user-level-thread.q2": "b0c801f5734a4d55eccd760fe3c4f4205b26947ac5be218427ad206d22194d95",
+    "operating-systems.core.threads.user-level-thread.q3": "61f9d08527188fd3c02a9498d3af6caee4329dd9008037381bc28e11816fb9a6",
+    "operating-systems.core.threads.user-level-thread.q4": "89cc44fcac1114e8e5547ccf577bb577afd4438c11bd2d1d37e1133630589bc3"
+  }
+}

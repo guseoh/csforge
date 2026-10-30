@@ -1,0 +1,446 @@
+/* Canonical long-form Concept workspace. Keep prose readable while centering the article/TOC composition. */
+.concept-reading-workspace {
+  display: grid;
+  grid-template-columns: 236px minmax(0, 760px) 180px;
+  column-gap: 40px;
+  align-items: start;
+  justify-content: center;
+  width: min(1280px, calc(100% - 56px));
+  margin: 0 auto;
+}
+
+.concept-reading-workspace .concept-page {
+  width: 100%;
+  max-width: 760px;
+  min-width: 0;
+}
+
+/* When the rail collapses, recenter the reading group instead of leaving the article pinned to the old rail origin. */
+.concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+  grid-template-columns: 52px minmax(0, 760px) 180px;
+  column-gap: 32px;
+  justify-content: center;
+}
+
+.concept-learning-rail {
+  padding-right: 20px;
+}
+
+.concept-learning-rail .rail-progress {
+  margin-bottom: 30px;
+}
+
+.concept-learning-rail .rail-topic-list {
+  margin-bottom: 30px;
+}
+
+.concept-learning-rail .rail-topic {
+  min-height: 44px;
+  font-size: 0.84rem;
+}
+
+.concept-rail-current-heading {
+  align-items: end;
+  margin-bottom: 9px;
+  padding-top: 3px;
+}
+
+.concept-rail-current-heading .rail-section-title {
+  max-width: 180px;
+  overflow: hidden;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.concept-learning-rail .rail-concept-list {
+  display: grid;
+  gap: 4px;
+}
+
+.concept-learning-rail .rail-concept {
+  position: relative;
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr) 16px;
+  min-height: 44px;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+  line-height: 1.4;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.concept-learning-rail .rail-concept:hover {
+  background: var(--surface-interactive);
+  color: var(--text-default);
+}
+
+.concept-learning-rail .rail-concept.active {
+  background: var(--surface-elevated);
+  color: var(--text-strong);
+  box-shadow: none;
+}
+
+.concept-learning-rail .rail-concept.active::before {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 0;
+  width: 3px;
+  border-radius: 999px;
+  background: var(--accent);
+  content: '';
+}
+
+.concept-learning-rail .rail-concept-index {
+  color: var(--text-faint);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.concept-learning-rail .rail-concept-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.concept-learning-rail .rail-status {
+  justify-self: end;
+  color: var(--text-faint);
+  font-size: 0.76rem;
+}
+
+.concept-learning-rail .rail-status.status-completed {
+  color: var(--state-success);
+}
+
+.concept-learning-rail .rail-status.status-review_needed {
+  color: var(--state-warning);
+}
+
+.concept-learning-rail .rail-status.status-learning {
+  color: var(--accent-strong);
+}
+
+.concept-page .breadcrumb {
+  margin-bottom: 26px;
+  font-size: 0.82rem;
+}
+
+.concept-page .concept-header {
+  margin-bottom: 26px;
+}
+
+.concept-page .concept-kicker {
+  margin-bottom: 11px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  letter-spacing: 0.01em;
+}
+
+.concept-page .concept-header h1 {
+  max-width: 740px;
+  margin-top: 16px;
+  color: var(--text-strong);
+  font-size: clamp(2rem, 2.55vw, 2.45rem);
+  letter-spacing: -0.035em;
+  line-height: 1.16;
+}
+
+.concept-page .lead {
+  max-width: 710px;
+  margin-top: 14px;
+  color: var(--text-muted);
+  font-size: 0.98rem;
+  line-height: 1.7;
+}
+
+.concept-actions {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  margin: 0 0 36px;
+  padding: 12px 0 16px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.concept-status-actions,
+.concept-utility-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.concept-status-actions {
+  display: grid;
+  gap: 8px;
+}
+
+.concept-action-label {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.concept-action-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.concept-actions .primary-button,
+.concept-actions .secondary-button {
+  min-height: 38px;
+  padding: 8px 13px;
+  font-size: 0.8rem;
+}
+
+.concept-status-button.active,
+.concept-status-button[aria-pressed='true'] {
+  border-color: var(--border-accent);
+  color: var(--text-strong);
+  background: var(--surface-selected);
+  opacity: 1;
+}
+
+.concept-status-button.active:disabled,
+.concept-status-button[aria-pressed='true']:disabled {
+  cursor: default;
+}
+
+.concept-utility-actions .secondary-button {
+  color: var(--text-default);
+}
+
+.concept-reading-content .markdown-content {
+  color: var(--text-default);
+  font-size: 1rem;
+  line-height: 1.76;
+  word-break: keep-all;
+}
+
+.concept-reading-content h2,
+.concept-reading-content h3,
+.personal-note-section,
+.reference-section {
+  scroll-margin-top: 96px;
+}
+
+.concept-reading-content h2 {
+  margin-top: 46px;
+  margin-bottom: 18px;
+  color: var(--text-strong);
+  font-size: 1.42rem;
+  letter-spacing: -0.02em;
+  line-height: 1.4;
+}
+
+.concept-reading-content h3 {
+  margin-top: 34px;
+  margin-bottom: 14px;
+  color: var(--text-strong);
+  font-size: 1.1rem;
+  letter-spacing: -0.01em;
+  line-height: 1.5;
+}
+
+.concept-reading-content p,
+.concept-reading-content ul,
+.concept-reading-content ol {
+  margin-bottom: 20px;
+}
+
+.concept-reading-content li + li {
+  margin-top: 6px;
+}
+
+.concept-reading-content strong {
+  color: var(--text-strong);
+  font-weight: 700;
+}
+
+.concept-reading-content blockquote {
+  margin: 28px 0 32px;
+  padding: 18px 20px;
+  border: 1px solid var(--border-accent);
+  border-left-width: 3px;
+  border-left-color: var(--accent);
+  background: var(--surface-accent);
+  color: var(--text-default);
+  line-height: 1.72;
+}
+
+.concept-reading-content pre {
+  margin: 24px 0 30px;
+  padding: 18px 20px;
+  border-color: var(--border-subtle);
+  border-radius: 9px;
+  background: var(--color-page);
+  font-size: 0.92rem;
+  line-height: 1.64;
+}
+
+.concept-reading-content code {
+  font-size: 0.94em;
+}
+
+.concept-reading-content img {
+  margin: 30px 0 36px;
+  padding: 14px;
+  border-color: var(--border-default);
+  border-radius: 10px;
+  box-shadow: 0 14px 38px rgb(var(--shadow-rgb) / 18%);
+}
+
+.concept-reading-content table {
+  margin: 26px 0 34px;
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.concept-reading-content th,
+.concept-reading-content td {
+  padding: 11px 13px;
+}
+
+.concept-page .detail-section {
+  margin-top: 56px;
+  padding-top: 28px;
+}
+
+.concept-page .detail-section .section-heading h2 {
+  font-size: 1.25rem;
+}
+
+.personal-note-section .note-editor {
+  min-height: 170px;
+  padding: 16px 17px;
+  font-size: 0.96rem;
+  line-height: 1.7;
+}
+
+.reference-item {
+  min-height: 66px;
+  padding: 15px 4px;
+}
+
+.reference-item strong {
+  font-size: 0.92rem;
+}
+
+.reference-item > div > span {
+  font-size: 0.8rem;
+}
+
+.reference-item small {
+  margin-top: 5px;
+  color: var(--text-faint);
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+
+.concept-toc {
+  position: sticky;
+  top: 94px;
+  align-self: start;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  padding: 3px 0 18px 18px;
+  border-left: 1px solid var(--border-subtle);
+  scrollbar-width: thin;
+}
+
+.concept-toc-title {
+  margin: 0 0 13px;
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  font-weight: 760;
+  letter-spacing: 0.03em;
+}
+
+.concept-toc nav {
+  display: grid;
+  gap: 2px;
+}
+
+.concept-toc a {
+  position: relative;
+  display: block;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: var(--text-faint);
+  font-size: 0.8rem;
+  line-height: 1.42;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.concept-toc a:hover {
+  background: var(--surface-interactive);
+  color: var(--text-default);
+}
+
+.concept-toc a.active {
+  background: var(--surface-elevated);
+  color: var(--text-strong);
+}
+
+.concept-toc a.active::before {
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: -19px;
+  width: 2px;
+  background: var(--accent);
+  content: '';
+}
+
+.concept-toc .toc-level-3 {
+  padding-left: 17px;
+  font-size: 0.78rem;
+}
+
+@media (max-width: 1280px) {
+  .concept-reading-workspace,
+  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+    grid-template-columns: max-content minmax(0, 760px);
+    column-gap: 36px;
+    width: min(1060px, calc(100% - 48px));
+    justify-content: center;
+  }
+
+  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+    grid-template-columns: 52px minmax(0, 760px);
+    column-gap: 28px;
+  }
+
+  .concept-toc {
+    display: none;
+  }
+}
+
+@media (max-width: 1120px) {
+  .concept-reading-workspace,
+  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: 30px;
+    width: min(960px, calc(100% - 40px));
+  }
+
+  .concept-reading-workspace:has(.concept-learning-rail[data-collapsed='true']) {
+    grid-template-columns: 52px minmax(0, 1fr);
+    column-gap: 24px;
+  }
+
+  .concept-learning-rail .rail-topic,
+  .concept-learning-rail .rail-concept {
+    font-size: 0.8rem;
+  }
+}

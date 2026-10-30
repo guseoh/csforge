@@ -1,0 +1,118 @@
+name: Content Review Priority
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: Optional pull request number; overrides base_ref and head_ref
+        required: false
+        type: string
+      base_ref:
+        description: Git base ref for changed Question extraction
+        required: true
+        default: origin/main
+        type: string
+      head_ref:
+        description: Git head ref for changed Question extraction
+        required: true
+        default: HEAD
+        type: string
+      max_candidates:
+        description: Stop before provider calls when this candidate count is exceeded
+        required: true
+        default: 50
+        type: number
+      top:
+        description: Optional number of ranked rows shown in the Markdown review queue
+        required: false
+        type: string
+      top_percent:
+        description: Optional percentage of ranked rows shown in the Markdown review queue
+        required: false
+        type: string
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  review-priority:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Resolve review refs
+        id: refs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ inputs.pr_number }}
+          BASE_REF: ${{ inputs.base_ref }}
+          HEAD_REF: ${{ inputs.head_ref }}
+        shell: bash
+        run: |
+          if [[ -n "$PR_NUMBER" ]]; then
+            if [[ ! "$PR_NUMBER" =~ ^[0-9]+$ ]]; then
+              echo "pr_number must be numeric" >&2
+              exit 1
+            fi
+            base_branch="$(gh pr view "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --json baseRefName --jq .baseRefName)"
+            git fetch origin "$base_branch"
+            git fetch origin "pull/$PR_NUMBER/head"
+            base="origin/$base_branch"
+            head="$(git rev-parse FETCH_HEAD)"
+          else
+            base="$BASE_REF"
+            head="$HEAD_REF"
+          fi
+          git rev-parse --verify "$base^{commit}" >/dev/null
+          git rev-parse --verify "$head^{commit}" >/dev/null
+          echo "base=$base" >> "$GITHUB_OUTPUT"
+          echo "head=$head" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: experiments/jev-content-quality/package-lock.json
+
+      - name: Install review tool
+        working-directory: experiments/jev-content-quality
+        run: npm ci
+
+      - name: Validate frozen benchmark contracts
+        working-directory: experiments/jev-content-quality
+        run: npm run validate
+
+      - name: Evaluate changed MC Questions
+        working-directory: experiments/jev-content-quality
+        env:
+          TYPESAFE_API_KEY: ${{ secrets.TYPESAFE_API_KEY }}
+          REVIEW_BASE: ${{ steps.refs.outputs.base }}
+          REVIEW_HEAD: ${{ steps.refs.outputs.head }}
+          MAX_CANDIDATES: ${{ inputs.max_candidates }}
+          TOP: ${{ inputs.top }}
+          TOP_PERCENT: ${{ inputs.top_percent }}
+        shell: bash
+        run: |
+          args=(--base="$REVIEW_BASE" --head="$REVIEW_HEAD" --max-candidates="$MAX_CANDIDATES" --output-dir=results/review-priority)
+          if [[ -n "$TOP" ]]; then args+=(--top="$TOP"); fi
+          if [[ -n "$TOP_PERCENT" ]]; then args+=(--top-percent="$TOP_PERCENT"); fi
+          node --import tsx src/review-cli.ts changed "${args[@]}"
+
+      - name: Add review summary
+        if: always() && hashFiles('experiments/jev-content-quality/results/review-priority/jev-review-priority-report.md') != ''
+        working-directory: experiments/jev-content-quality
+        run: cat results/review-priority/jev-review-priority-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload review artifacts
+        if: always() && hashFiles('experiments/jev-content-quality/results/review-priority/jev-review-priority-report.md') != ''
+        uses: actions/upload-artifact@v6
+        with:
+          name: jev-content-review-priority
+          path: |
+            experiments/jev-content-quality/results/review-priority/jev-review-priority-results.jsonl
+            experiments/jev-content-quality/results/review-priority/jev-review-priority-report.md
+          if-no-files-found: error
+          retention-days: 14

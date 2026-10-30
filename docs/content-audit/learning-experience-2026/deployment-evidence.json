@@ -1,0 +1,609 @@
+{
+  "observedDate": "2026-10-12",
+  "deploymentId": 6851629801,
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "baseUrl": "https://csforge-befnm9k0a-guseoh.vercel.app",
+  "scope": "HTTP delivery/source-byte parity only; not semantic or responsive visual PASS",
+  "assets": [
+    {
+      "url": "/learning/java/array-covariance.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/array-covariance.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/array-covariance.svg",
+      "responseSha256": "57787a8d870e04eaf72a278995621ecab051b7d834121a89614edf2928541289",
+      "sourceSha256": "57787a8d870e04eaf72a278995621ecab051b7d834121a89614edf2928541289",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/array-list-linked-list.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/array-list-linked-list.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/array-list-linked-list.svg",
+      "responseSha256": "732f402ea904e2006d819b409d2e967604ddd61e2c6bad02d1c68293a2e3630f",
+      "sourceSha256": "9713fed3a6c8ca418a4fea1a825edf20bd35fc5ab0a43c4247a7a50f916531b2",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/cas-retry.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/cas-retry.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/cas-retry.svg",
+      "responseSha256": "6b8cf94fb63b03e7a7876d48f2ed4d3f46c896ee8e69a9c5d2f995277b1fae85",
+      "sourceSha256": "a18b10037ff2af73d72fc241dc79d8d3bd52564579b31fa47999c997b820809f",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/class-loading-lifecycle.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/class-loading-lifecycle.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/class-loading-lifecycle.svg",
+      "responseSha256": "7812488b67ff2c73d9ae438da3c497412df4d683cedfcb3529cb970b23af2c96",
+      "sourceSha256": "718a9371320204f55a248f3baa69c7f5b2d7f911a0186fcaf5cceec20e0264f3",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/classloader-type-identity.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/classloader-type-identity.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/classloader-type-identity.svg",
+      "responseSha256": "d8cefd7b0198311ac75cd5f6f8d811c2211dc274e05a3ec162facfcac00a7d2e",
+      "sourceSha256": "9bf3db70923d9ed779c3b962f33ad178764fb9a1a34eecb6d239c4480587d0ec",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/dst-gap-overlap.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/dst-gap-overlap.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/dst-gap-overlap.svg",
+      "responseSha256": "40b02e99e0b371bfc85961a45378575f55a725f45e41bbe112906fe968ba60b4",
+      "sourceSha256": "1d253617aa3f55302d0b49efeec5a839f174e67ef31fa45159ff03d4441ab19b",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/dynamic-proxy-flow.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/dynamic-proxy-flow.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/dynamic-proxy-flow.svg",
+      "responseSha256": "299df12a3a4b5aca3044b0c18598ea803baf23809edcf19073c82e2f36ccf7d1",
+      "sourceSha256": "a3e54d8adcf65b2ea0d8946c8e1c3d183e703429aff31c27949c6b1c66a31df4",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/exception-boundaries.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/exception-boundaries.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/exception-boundaries.svg",
+      "responseSha256": "a8a83fac0c172d87af8428e553ff6a3edc526fa84cec9b6b860e6373f6cd943b",
+      "sourceSha256": "acf450f6316945dd6a9bde795e63b25e6981c2d057c1afade9fd6e29138159f8",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/gc-reachability.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/gc-reachability.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/gc-reachability.svg",
+      "responseSha256": "ed28d0cce351cb94f2e17c04dd23246dbe76aae8d56746ac94992dde4f0934b7",
+      "sourceSha256": "4268b93e4008ba1406590b6acc867c6ca430dfe1c5ce7005de707f5db5eddeaf",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/generics-pecs.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/generics-pecs.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/generics-pecs.svg",
+      "responseSha256": "5d1c40b6766f8e7a85901816d4f63feef16ee9c0bd346f89e35d27b993adfa2a",
+      "sourceSha256": "50826061d0b780ea3662f63a796ec2cf5935dd3b45a507767de06529c8056cfe",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/happens-before.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/happens-before.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/happens-before.svg",
+      "responseSha256": "00c84df37fb51a9d8f4a71478a0aa39a0a2b2b624df9d4b4b47554bda2917052",
+      "sourceSha256": "23e0978eca90d69645bc645eab7e800fc925c31b9cb40e5678e37de0cc17783c",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/hashmap-buckets.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/hashmap-buckets.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/hashmap-buckets.svg",
+      "responseSha256": "fd723e23c5524af4d90e0b51fcf47dc8b300b49df1ebe606b71cc6999abc48c9",
+      "sourceSha256": "7d0ac69416fa7eb5c989c274a4cd14742247f3f349f62651a5261e7f659bc3ca",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/instant-zones.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/instant-zones.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/instant-zones.svg",
+      "responseSha256": "b8f882f61a9f4d6fd68f2221872ed966d296e9f467495491c7211e145e5c2047",
+      "sourceSha256": "9509c641889992d1435ee87e59a6f45714cde4af1e2b62963994d4d75e24b684",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/java-execution-boundary.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/java-execution-boundary.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/java-execution-boundary.svg",
+      "responseSha256": "02b4dc15c8ae062e850e61b027ed6443f2795ccbc73010af823b2dda50a21f00",
+      "sourceSha256": "d23703efeed8a631d01e28d660ed209aee0b3b3b92522412e0924408f36a410e",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/java-memory-retained-path.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/java-memory-retained-path.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/java-memory-retained-path.svg",
+      "responseSha256": "68df4a4ee84bb001fe79b0c5ef2b46c6f83ac378429ead6b64a38e7f0fa41b92",
+      "sourceSha256": "869a42100728b78721afe2f620d5b0501de3399c904e0c10d4d0f7fb43c1cfb5",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/jvm-process-memory.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/jvm-process-memory.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/jvm-process-memory.svg",
+      "responseSha256": "50d22753217bf0ad9b74dae48ea258551682c9861e6cfe728f27e8435f849565",
+      "sourceSha256": "efb2da276dd8e1b8be0419ee5dfb95929d444866f09eefbc02919a3f7d5afda8",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/jvm-runtime-data-areas.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/jvm-runtime-data-areas.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/jvm-runtime-data-areas.svg",
+      "responseSha256": "bb8f76c564c2119547cef024e468e5059ff13bb7f3cd4d14ed1c2189903e843d",
+      "sourceSha256": "f77a70efb0dfb407e24c99d5ea901f50b3c0ffaa7a6011ccb131a06858f3fd96",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/nio-buffer-flip.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/nio-buffer-flip.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/nio-buffer-flip.svg",
+      "responseSha256": "626acb573edf0abbaf08ee4b8078eb28d37fb30096bb34e1cb46a2486b578ce2",
+      "sourceSha256": "de27374474575dfce1241393f7871493e45198258c2528cd3b84c775bf7f4851",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/nio-selector-readiness.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/nio-selector-readiness.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/nio-selector-readiness.svg",
+      "responseSha256": "1b2f3e63c4a38fc5cc5b83a39e2f12711dae335bf322d05d069ded886a961eb2",
+      "sourceSha256": "129b120590b0d03382af9d0b7c80e5646b0f620f9e94468de58196b50f6b17ff",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/pass-by-value.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/pass-by-value.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/pass-by-value.svg",
+      "responseSha256": "5463bd75c85a0d52d521f477e91160b9746112d2cbef7e8e13c33fe44ca623fa",
+      "sourceSha256": "5463bd75c85a0d52d521f477e91160b9746112d2cbef7e8e13c33fe44ca623fa",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/priority-queue-heap.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/priority-queue-heap.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/priority-queue-heap.svg",
+      "responseSha256": "838d2f9cad55836105e19fbbbfbd8a952b2901ba1169a5fa4a88d422b96a7526",
+      "sourceSha256": "2ecc5a78c7a136bb535182a8af862203ca13ad09678bc9b50215073d20e89f13",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/race-condition.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/race-condition.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/race-condition.svg",
+      "responseSha256": "d9309c88cf5ffa6cb6e36225804ac1c1e43b8106e2cb82dacc8c3acc4630a269",
+      "sourceSha256": "3a683a8500bee39466837cb94faaef0f439f260c6430ca9bb8c190cf47f29551",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/strategy-pattern.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/strategy-pattern.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/strategy-pattern.svg",
+      "responseSha256": "d57c31f6a12912252704f49c9e8740ba02238e8eee6d17d149c56c41a70b54bd",
+      "sourceSha256": "d57c31f6a12912252704f49c9e8740ba02238e8eee6d17d149c56c41a70b54bd",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/stream-pipeline.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/stream-pipeline.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/stream-pipeline.svg",
+      "responseSha256": "fab61ae31f178d686161467c108fe4e65ec4f470b978c3ad0c300dd4003bba1e",
+      "sourceSha256": "bc401f4f60ad39818b1aa7f6f0236d69b714b03cef54e312058d3bd8810a8040",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/stringbuilder-mutable-text.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/stringbuilder-mutable-text.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/stringbuilder-mutable-text.svg",
+      "responseSha256": "c37f129c3323c17b9811ef75bfcc3dba25079652c1fb728cf933b8560c827a5b",
+      "sourceSha256": "4f6806dfa6fcf971f8e90d08527cf2196e13bb0c375767a23b4d87863855ee0a",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/values-and-references.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/values-and-references.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/values-and-references.svg",
+      "responseSha256": "70de54ae02f30871d8738475d0a6307c6479dda299f51d4c5bd7aa01454abb2a",
+      "sourceSha256": "70de54ae02f30871d8738475d0a6307c6479dda299f51d4c5bd7aa01454abb2a",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/java/virtual-thread-carriers.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/virtual-thread-carriers.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/java/virtual-thread-carriers.svg",
+      "responseSha256": "b48a2a30948463428e9c849b6c5fd932861af9ff2e1759c84e12c8f5b03b2f18",
+      "sourceSha256": "20923ede4dd6ce997e9d8ec31c5a7bcff997bb06bfb3ada7d4f9c653298e8857",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/block-allocation-tradeoff.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/block-allocation-tradeoff.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/block-allocation-tradeoff.svg",
+      "responseSha256": "bddff9c3fd1f561f34c0eb9759eb15bf7412f0f46b27c9e53b155501546fe56d",
+      "sourceSha256": "bddff9c3fd1f561f34c0eb9759eb15bf7412f0f46b27c9e53b155501546fe56d",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/condition-variable-wait-signal.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/condition-variable-wait-signal.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/condition-variable-wait-signal.svg",
+      "responseSha256": "98dc9a0a9ea14e36ff855e5a18e94200fd7ce889c62929e378a90ed6b927ae8f",
+      "sourceSha256": "9e058086afe78ff857cc7ac0d4d1fdad6761b7fa01dbd2b73a32f33ff1e7d5c7",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/container-process-model.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/container-process-model.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/container-process-model.svg",
+      "responseSha256": "5d141222b7d431c2183e0d46f8d3d18ee4dbdde73799ff915b745eb6a620219e",
+      "sourceSha256": "5d141222b7d431c2183e0d46f8d3d18ee4dbdde73799ff915b745eb6a620219e",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/contention-queue.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/contention-queue.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/contention-queue.svg",
+      "responseSha256": "511808e017488feb1cf99ce3ffcadde3f54d4a225c49352adc881afae7743d03",
+      "sourceSha256": "7eb04c36e74216c19b7313b959f56aff8ad46a1ca69e96a40b731aadf3a9e7a4",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/context-switch-flow.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/context-switch-flow.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/context-switch-flow.svg",
+      "responseSha256": "77fff46725a09b4f6b627e6eb18c5d84922ccfcd52303e2d4374577250a2ecf6",
+      "sourceSha256": "ba65721955b04852b2c23277a6c339c5057f32db15cb3eb908148e94f1c2b8b3",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/deadlock-avoidance-safe-sequence.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/deadlock-avoidance-safe-sequence.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/deadlock-avoidance-safe-sequence.svg",
+      "responseSha256": "1b27eb08e1fc467e9b6f1ac9f970485c3afc2a92c901fa4ace1ff288e2078d8d",
+      "sourceSha256": "66476ac15724366f41a413da751724500461c534855f36ef286fc8350a27eac8",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/deadlock-cycle.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/deadlock-cycle.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/deadlock-cycle.svg",
+      "responseSha256": "c4ab688493150468bac9d17e6aa9a616365c3ced9de68a5d9f4b1ff2d45e99bd",
+      "sourceSha256": "1da7e23f1696e3088f852c332a295e5a070c6d12979bbdc3c5c247903cadce86",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/device-io-kernel-path.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/device-io-kernel-path.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/device-io-kernel-path.svg",
+      "responseSha256": "52a8e4294c0fb625ce7d8843f98e1e4f359899a203c07558f14cc79ad7cb813d",
+      "sourceSha256": "52a8e4294c0fb625ce7d8843f98e1e4f359899a203c07558f14cc79ad7cb813d",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/epoll-interest-ready.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/epoll-interest-ready.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/epoll-interest-ready.svg",
+      "responseSha256": "9572116059cd3c46660b25d3894f667f4ac9d371f5184f6b138955c4c7840eb0",
+      "sourceSha256": "9572116059cd3c46660b25d3894f667f4ac9d371f5184f6b138955c4c7840eb0",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/file-descriptor-open-state.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/file-descriptor-open-state.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/file-descriptor-open-state.svg",
+      "responseSha256": "11fdfaad9a90d783e9930e2bfa5e96635084ac9c3bf56ce649db9b797394f50b",
+      "sourceSha256": "11fdfaad9a90d783e9930e2bfa5e96635084ac9c3bf56ce649db9b797394f50b",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/host-kernel-sharing.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/host-kernel-sharing.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/host-kernel-sharing.svg",
+      "responseSha256": "fa37fca78cbdc9450b24f0e79d800ddcab45c52819d39fc0c340e6ff027a9275",
+      "sourceSha256": "fa37fca78cbdc9450b24f0e79d800ddcab45c52819d39fc0c340e6ff027a9275",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/inode-file-layout.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/inode-file-layout.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/inode-file-layout.svg",
+      "responseSha256": "11232f1cfcf28b7b160b9bc287b4f85e9c433380a5917add5229b3d8f6f27fce",
+      "sourceSha256": "11232f1cfcf28b7b160b9bc287b4f85e9c433380a5917add5229b3d8f6f27fce",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/ipc-tradeoff.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/ipc-tradeoff.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/ipc-tradeoff.svg",
+      "responseSha256": "1b93a3788b0624ba36c20c0d89cc41c2fd3fddc1fb8d8c67a0e0f15810a2dee1",
+      "sourceSha256": "1b93a3788b0624ba36c20c0d89cc41c2fd3fddc1fb8d8c67a0e0f15810a2dee1",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/linux-namespace-view.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/linux-namespace-view.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/linux-namespace-view.svg",
+      "responseSha256": "e481845164daf5091f48a3d469ea781965b40ed5748bddb79f279bbf79780aa9",
+      "sourceSha256": "e481845164daf5091f48a3d469ea781965b40ed5748bddb79f279bbf79780aa9",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/mmap-file-access.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/mmap-file-access.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/mmap-file-access.svg",
+      "responseSha256": "fe58d343be1538b3daa0a018692430f7088700847b373deea0f41487b6371d56",
+      "sourceSha256": "fe58d343be1538b3daa0a018692430f7088700847b373deea0f41487b6371d56",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/multicore-affinity.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/multicore-affinity.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/multicore-affinity.svg",
+      "responseSha256": "19128fefcc3a0b3241343e770c73ab22688ed99181234c64ded5dacd0f138111",
+      "sourceSha256": "28e350b1e1c850d7a651a999311b414cc48b4b4c86e01fb925bdc7a1ac542382",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/page-fault-flow.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-fault-flow.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-fault-flow.svg",
+      "responseSha256": "eba057662fa346881b46a12ff9ca2f7ca36aff05d470154bbb5ffb91307ed9c7",
+      "sourceSha256": "5551c94cd3229a7cf2c65fe31b8059c23dd297794b7b0aa12ba19c333e0da581",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/page-replacement.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-replacement.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-replacement.svg",
+      "responseSha256": "49cb879b719270c4c3be63c9520e308007ba9ab2a543a3e5391c6386112718c9",
+      "sourceSha256": "d2ea8538cf031c7c580fcdbf7910acac408e74da0757caacdd77d25cf5368728",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/page-table-translation.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-table-translation.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/page-table-translation.svg",
+      "responseSha256": "83132b3b2fae74afd08bd83bb4728aa2d60b928933ef06687843fba48e02ae57",
+      "sourceSha256": "89324d6e7dc65f250eafcb5deab9ee7e86476bd9ac3c23ad12af6652ec00808d",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/pipe-buffer-eof.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/pipe-buffer-eof.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/pipe-buffer-eof.svg",
+      "responseSha256": "7823b63fded0a24113d7cdc9101f89d33b91fdc45e55a9b6b117944cb58696e4",
+      "sourceSha256": "7823b63fded0a24113d7cdc9101f89d33b91fdc45e55a9b6b117944cb58696e4",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/process-isolation.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/process-isolation.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/process-isolation.svg",
+      "responseSha256": "0579a51194e80f3b7761b370ae74503a3216d82378773e73f0f10fb86b7aefd9",
+      "sourceSha256": "0579a51194e80f3b7761b370ae74503a3216d82378773e73f0f10fb86b7aefd9",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/read-write-lock.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/read-write-lock.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/read-write-lock.svg",
+      "responseSha256": "5a44ea7e338f85127d9a5ea63c5f57ff9ae2894158b1a2727219d4db7c94a02a",
+      "sourceSha256": "834363ec482b31b198f13c51af317dcfd6c74003e8fbff8e355cc924c74b7dec",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/readiness-vs-completion.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/readiness-vs-completion.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/readiness-vs-completion.svg",
+      "responseSha256": "8647c776ad5ef8a3a0a9a574dd9570b42fd01cf3679e080b4f435a1eb4337344",
+      "sourceSha256": "8647c776ad5ef8a3a0a9a574dd9570b42fd01cf3679e080b4f435a1eb4337344",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/resource-allocation-graph.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/resource-allocation-graph.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/resource-allocation-graph.svg",
+      "responseSha256": "936b4d429f3760bf5317c9a446fd09796ab1a15b1b09ef9a147244926717a282",
+      "sourceSha256": "ce363853309535d9fb58248b175939ae904b8161d7a6039afff4054a29545e7c",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/round-robin-quantum.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/round-robin-quantum.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/round-robin-quantum.svg",
+      "responseSha256": "2108ee3a2f4eead59c749b1e55f0cf39967e8202cf2d34468d17a24587d01fd9",
+      "sourceSha256": "80ac17adf4d1fe71b6b0367a0dd524edf6248690a9b748258e93f1cf9f640803",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/semaphore-permits.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/semaphore-permits.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/semaphore-permits.svg",
+      "responseSha256": "d7c84cb96d883547b6a8dd1c06b1b5c53a95315eb8507f6aecbb4a80467b14fa",
+      "sourceSha256": "62020b14688969ddcb98f3241fdbd0e5e11c1ab1a487228ca8f0af7197192c17",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/shared-memory-mapping.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/shared-memory-mapping.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/shared-memory-mapping.svg",
+      "responseSha256": "0b1ab59e922d045ce40e21386cb21bcacd68bc487c6e94f6c779aef1f3282d85",
+      "sourceSha256": "0b1ab59e922d045ce40e21386cb21bcacd68bc487c6e94f6c779aef1f3282d85",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/stack-heap-address-space.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/stack-heap-address-space.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/stack-heap-address-space.svg",
+      "responseSha256": "7f949596e0a56c8f68cf34648a21f8365076c6cd8f9e16db5453e8ef58617fd9",
+      "sourceSha256": "fa753c77b3505930a02ed15cc9b453d07ec3ef3e890be5834c08b648c97e2e58",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/starvation-aging.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/starvation-aging.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/starvation-aging.svg",
+      "responseSha256": "88c8531f8385cdff8a669fc79bb9c973f3fe619ab44f4fed8c2ff6a1dd6efb11",
+      "sourceSha256": "5115667d7fd427f1ad90f05e14e73917825d7dcdcb60c160c1c57e9d41553583",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/thrashing-loop.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/thrashing-loop.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/thrashing-loop.svg",
+      "responseSha256": "3b65369c063c6245821d4e2db6cedc7ebb483c1e9142cd7da5f7585c98b1ae9b",
+      "sourceSha256": "e54847626db27c6a4776c3afbba94ac858a6169fb59febd21e1e738eb3876a98",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/unix-domain-socket.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/unix-domain-socket.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/unix-domain-socket.svg",
+      "responseSha256": "3b5578e5443ce24f0f9093a63da7913f2ab72df610fff82846a186c247892d3d",
+      "sourceSha256": "3b5578e5443ce24f0f9093a63da7913f2ab72df610fff82846a186c247892d3d",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/virtual-address-space.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/virtual-address-space.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/virtual-address-space.svg",
+      "responseSha256": "0144d42914486b85a62a99e5db29b8653886036cc2a7d8518c881024aa87cefc",
+      "sourceSha256": "818d372e1a6acc15c508d9a2ccc394d06a2393a0827231c543d5780b0d28b1d7",
+      "matchesSourceIgnoringLineEndings": true
+    },
+    {
+      "url": "/learning/operating-systems/write-flush-fsync.svg",
+      "deploymentUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/write-flush-fsync.svg",
+      "status": 200,
+      "contentType": "image/svg+xml",
+      "finalUrl": "https://csforge-befnm9k0a-guseoh.vercel.app/learning/operating-systems/write-flush-fsync.svg",
+      "responseSha256": "a52326086ec384ca2ad34a8e474dc4ae7f9a73b9990ed40976e3060887e0ebea",
+      "sourceSha256": "a52326086ec384ca2ad34a8e474dc4ae7f9a73b9990ed40976e3060887e0ebea",
+      "matchesSourceIgnoringLineEndings": true
+    }
+  ]
+}

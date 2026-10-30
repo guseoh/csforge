@@ -1,0 +1,81 @@
+---
+kind: concept
+contentKey: network-http.core.tls.tls-termination
+topicContentKey: network-http.core.tls
+slug: tls-termination
+title: "TLS 종료(Termination) 경계"
+summary: "리버스 프록시에서 TLS를 종료하면 클라이언트-프록시와 프록시-백엔드가 서로 다른 연결과 신뢰 경계가 되는 이유를 설명한다."
+level: 2
+status: PUBLISHED
+displayOrder: 80
+references:
+  - url: "https://www.rfc-editor.org/rfc/rfc8446"
+    title: "RFC 8446: TLS 1.3"
+    referenceType: OFFICIAL
+    language: en
+    displayOrder: 1
+    relationNote: "RFC 8446은 RFC 9846(2026년)에 의해 대체되었다. TLS 1.3 기존 모델의 역사적 설명 근거로 읽는다."
+  - url: "https://www.rfc-editor.org/rfc/rfc9846"
+    title: "RFC 9846: TLS 1.3"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "현행 TLS 1.3 표준의 핸드셰이크·키·보안 요구사항을 확인한다."
+    displayOrder: 2
+    relationNote: "RFC 9846 §1.2의 8446 대비 변경 요약과 현재 개념에 해당하는 본문 절을 읽는다."
+  - url: "https://www.rfc-editor.org/rfc/rfc7239.html#section-8.1"
+    title: "RFC 7239 §8.1: Forwarded Header Security"
+    referenceType: OFFICIAL
+    language: en
+    depth: section
+    recommendation: "TLS 종료 프록시에서 전달된 요청 메타데이터 신뢰 경계를 확인한다."
+    displayOrder: 3
+---
+# TLS 종료(Termination) 경계
+
+리버스 프록시나 로드 밸런서가 클라이언트와 직접 TLS 핸드셰이크를 수행하면 그 장비가 **TLS 종단점(endpoint)**이 된다. 클라이언트가 보낸 암호화된 데이터는 프록시에서 복호화되고, 프록시는 HTTP 내용을 읽고 필요한 처리를 한 뒤 백엔드로 별도의 연결을 만들어 전달한다. 이를 TLS 종료(TLS termination)라고 한다.
+
+```text
+클라이언트 ── TLS 연결 A ──> [프록시: TLS 종료·복호화·HTTP 처리]
+                           │
+                           └── HTTP 또는 TLS 연결 B ──> 백엔드
+```
+
+여기서 `클라이언트 → 프록시`와 `프록시 → 백엔드`는 하나의 종단 간 TLS 연결이 아니다. 첫 번째 연결의 인증서와 키 상태는 프록시에서 끝나고, 두 번째 구간은 평문 HTTP일 수도 있고 새로운 TLS 연결일 수도 있다.
+
+### 첫 번째 TLS가 성공해도 백엔드 구간이 자동으로 보호되지는 않는다
+
+프록시가 백엔드와 평문 HTTP로 통신한다면 TLS의 보호 범위는 프록시에서 끝난다. 백엔드 구간도 암호화해야 한다면 프록시와 백엔드 사이에서 별도의 TLS 연결을 만들어야 한다.
+
+이 두 연결의 인증도 각각 독립적이다.
+
+```text
+연결 A
+클라이언트가 외부 서비스 인증서 검증
+
+연결 B가 TLS라면
+프록시가 백엔드 인증서와 서비스 식별 정보 검증
+```
+
+클라이언트가 프록시의 인증서를 올바르게 검증했다는 사실이 프록시→백엔드 연결의 상대 신원까지 자동으로 증명하지는 않는다.
+
+### TLS 종료 지점은 신뢰 경계를 바꾼다
+
+프록시에서 HTTP가 복호화되므로 프록시는 요청 헤더와 본문을 읽고 수정할 수 있다. 또한 백엔드에 새 요청을 만들면서 원래 요청의 URL 스킴, Host 필드, 클라이언트 주소 같은 정보를 `Forwarded`나 `X-Forwarded-*` 계열 헤더로 전달할 수 있다.
+
+하지만 이런 값은 클라이언트와 백엔드 사이에서 TLS가 직접 보존한 정보가 아니다. **중간 프록시가 새로운 HTTP 홉에서 다시 작성해 전달한 메타데이터**다.
+
+따라서 백엔드가 이런 헤더를 보안 판단에 사용하려면 아무 인터넷 클라이언트가 보낸 값을 그대로 믿어서는 안 된다. 요청이 실제로 신뢰한 프록시를 거쳐 왔는지 확인하고, 프록시가 외부에서 들어온 위조 헤더를 제거·재작성하는 신뢰 경계를 구성해야 한다.
+
+### `HTTPS 서비스`와 `모든 내부 홉이 TLS`는 같은 말이 아니다
+
+사용자 브라우저에 HTTPS 자물쇠가 보인다는 것은 브라우저와 자신이 연결한 TLS 종단점 사이가 보호된다는 뜻이다. 그 뒤에 CDN, 로드 밸런서, 서비스 메시, 애플리케이션 서버가 여러 홉으로 존재한다면 각 홉의 보호 방식은 별도로 확인해야 한다.
+
+```text
+브라우저 → CDN → LB → 애플리케이션
+   TLS A     TLS B?   TLS C?
+```
+
+각 `?`는 인프라 설계에 따라 다르다. 첫 구간이 TLS라는 이유만으로 나머지 구간까지 자동으로 암호화되지는 않는다.
+
+핵심은 **TLS termination이 암호화가 끝나는 지점이자 새로운 신뢰 경계가 시작되는 지점이며, 그 뒤의 연결·인증·전달 메타데이터는 별도의 보안 계약으로 다뤄야 한다는 점**이다.

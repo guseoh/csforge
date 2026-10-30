@@ -1,0 +1,841 @@
+{
+  "area": "java",
+  "wave": "Wave 4",
+  "topic": "object-model",
+  "topicKey": "java.core.object-model",
+  "baselineSha": "efe73a15da14c996bd08344181d4d6f87073803d",
+  "reviewedAt": "2026-10-14",
+  "reviewMethod": "object-model 12 Concept 전체 본문과 68 Question 모든 실제 필드를 직접 읽고 MC62/Descriptive3/Scenario3를개별판정했다. 정답·모든보기/rationale·모범답안·해설·모호성·난도·중복목표·Concept연결과 C의목표/깊이/상태/코드/가독성/도식/Reference를각기록했다. 기존PR178근거와Java25JLS계약을대조하고자동파싱/길이/이전PASS로KEEP을생성하지않았다. 실행은초기화/Reference반례probe에만한정하며다른JavaTopic은확장하지않았다.",
+  "topics": [
+    {
+      "key": "java.core.object-model",
+      "coverage": "12C/68Q전체. L1생성/static/encapsulation후L2초기화·책임·subtype/composition·dispatch/overload/cast/interface/소유권의학습순서와prerequisite가적절. 언어값/참조기초와객체협력설계를구분. 추가SCENARIO/설명형6개포함;난도quota·불필요rewrite없음."
+    }
+  ],
+  "concepts": [
+    [
+      "java.core.object-model.class-object-constructor",
+      "TARGETED_ENHANCE",
+      "L1 CORE의 타입/객체/생성자와 유효 초기 상태 목표를 두 Order, 양수 검사, 선언/new 대비로 충분히 달성한다.",
+      "id/quantity 검증 후 정상 반환, this 필드와 parameter, 기본 생성자와 명시 constructor의 차이가 JLS8/12.5와 일치한다. JVM 물리 배치와 프레임워크 no-arg 요구를 구분하고 불필요한 factory를 강제하지 않는다.",
+      "NONE: new→생성·constructor→객체→order 참조의 ASCII 보조가 충분하다. 새 SVG 필요 없음.",
+      "JLS8.8/8.8.9 확인. Tecoble constructor 글의 named factory 예시는 관련성이 있지만 int score 미대입을 null/NPE로 설명하는 원문 오류가 있어 최소 출처 보강 대상(W4-JOM-003). 본문 모델 오류가 아니다.",
+      "q1~q5 전체 보기/rationale/설명을 읽었다. D/B/C/A/D 단일 정답과 Box 정상 생성 양수·throw 경계가 맞으며 ref 문제 때문에 문항을 고치지 않는다."
+    ],
+    [
+      "java.core.object-model.static-vs-instance-members",
+      "KEEP",
+      "L1 CORE: Member 두 인스턴스 name과 공유 total2, this 유무, static 사용 선택과 공유 위험을 설명한다.",
+      "static 클래스 귀속과 instance 객체 귀속, static method의 수신 객체 없음, class-level 가변 상태와 Spring singleton 생명주기 차이가 타당하다. 객체별 field 메모리 layout을 단정하지 않는다.",
+      "TEXT: class total2와 a kim/b lee의 ASCII 관계가 공유/독립 상태를 명확히 보인다. 새 그림 quota 없음.",
+      "JLS8.3.1.1 static field incarnation 및 static method 관련 절 확인. 같은 클래스 정체성 범위의 공유이며 다른 ClassLoader의 타입까지 하나의 전역으로 확장하지 않는다.",
+      "q1~q5의 instance/shared/static this/total2/2:2:4를 개별 검토. q5는 생성별 s++와 별도 i값의 복합 추적이므로 HARD 유지."
+    ],
+    [
+      "java.core.object-model.initialization-order-constructor-chaining",
+      "TARGETED_ENHANCE",
+      "L2 CORE의 class/instance 초기화와 this/super 연결 목표는 적절하지만 생성 중 dispatch에서 어떤 필드 상태가 관찰되는지 실제 설명이 부족하다(W4-JOM-001).",
+      "Parent→Child, this(id,1), Java25 prologue 첫줄 강제 부정, 생성 중 override 호출 위험은 맞다. name 예시는 예상과 다른 상태라고만 하므로 default null→Parent에서 Child.print→Child initializer kim의 인과와 필드/블록 소스 순서를 최소 보강해야 한다.",
+      "TEXT: static/class와 두 instance 분리 ASCII는 유용하다. 추가 상태 표에 default 값/prologue/parent/현재 field·block/epilogue의 순서를 담으면 충분하며 새 SVG 필요 없음.",
+      "JLS12.4/12.5의 7단계와 JLS8.8.7.1 early construction 계약을 확인했다. probe로 ordinary null→kim, early direct field write ready를 관찰했으며 HotSpot 특수 보장이 아니다.",
+      "q1~q6 정답 C/B/C/C/C/A와 Java25 q2/q4의 이미 보정된 prologue 규칙이 맞다. q3 A rationale의 PCI 오류 설명만 P2 개선 대상(W4-JOM-002); 정답 변경 불필요."
+    ],
+    [
+      "java.core.object-model.encapsulation-invariants",
+      "KEEP",
+      "L1 CORE: private만으로 quantity 규칙이 안 생김→bare setter→decrease 검증→cancel 책임→복수 객체 조정 경계를 자연스럽게 설명한다.",
+      "amount<=0/재고부족에서 변경 전 실패, quantity-=amount의 단일 흐름, getter 허용/외부 상태 전이 분산 위험을 읽었다. private을 암호화나 완전한 불변으로 일반화하지 않는다.",
+      "NONE: 나쁜 setter와 좋은 행동 코드가 규칙의 소유 위치를 보여준다. 그림 부재 결함 없음.",
+      "JLS6.6 접근제어 관련 절과 Tecoble의 Car 메시지/내부 컬렉션 unmodifiable getter 사례를 확인. 관련 설계 역할만 검증했고 글의 생략·미완성 코드 전체 compile을 PASS하지 않는다.",
+      "q1~q7 모든 MC 해설 및 내부 items/totalPrice DESCRIPTIVE 답을 검토했다. 검증 없는 setter 위험과 reader getter의 용도를 구별하며 private/reflection 경계도 명시한다."
+    ],
+    [
+      "java.core.object-model.abstraction-responsibility",
+      "KEEP",
+      "L2 STANDARD: SDK 결합→authorize/cancel 계약→Object/Map의 의미 손실→Order.complete→과대/과소 추상화 trade-off가 충분하다.",
+      "책임·계약의 언어와 외부 adapter를 구분하고 interface 자체가 retry/idempotency를 보장한다고 하지 않는다. 단일 구현에도 외부 경계 필요 여부로 선택하며 generic architecture를 강요하지 않는다.",
+      "NONE: PaymentGateway→외부 API ASCII 보조와 대비 코드로 추상화의 학습 목표를 달성한다.",
+      "JLS9의 interface 계약/메서드 선언을 대조했다. 언어 문법이 domain 책임 설계의 모든 처방을 증명하는 것으로 쓰지 않고 본문의 사례와 수기 설계 추론을 분리.",
+      "q1~q5의 안정된 계약/테스트 대역/거대 interface/SDK adapter 및 SCENARIO 실패 계약 변환을 읽었다. q4는 선택, q5는 이유·책임 설명으로 구별된다."
+    ],
+    [
+      "java.core.object-model.inheritance-is-a",
+      "KEEP",
+      "L2 STANDARD: CardPayment subtype, protected 구현 결합, 취약 기반 클래스, 계약 위반과 합성 대안을 충분히 설명한다.",
+      "Payment.pay 대체, Report/FileUtil 관계, UnsupportedOperationException 신호는 문법적 금지와 행동 대체 가능성을 구별한다. inheritance 또는 composition을 무조건 정답으로 일반화하지 않는다.",
+      "TEXT: is-a CardPayment→Payment와 부자연 Report→FileUtil, calculator 협력 코드가 충분하다.",
+      "JLS8.1.4 subtype/상속과 Tecoble Lotto/WinningLotto의 상위 구현 변경·협력 참조 대안을 확인. 글의 composition 설계 역할만 검증.",
+      "q1~q5의SavingsAccount계약/보호상태분산/Report기능이용/Penguin행동/FixedDeposit강한사전조건을 확인. q2 D rationale의 public 대신 private 비교만 P2로 분리(W4-JOM-002)."
+    ],
+    [
+      "java.core.object-model.composition-collaboration",
+      "KEEP",
+      "L2 CORE: DiscountPolicy delegate, 타입 계층과 has-a 대비, 계약 결합은 남음, 실제 변경 축과 과도한 분해 trade-off를 설명한다.",
+      "constructor로 협력 참조를 받고 discount(order)로 위임하는 흐름을 확인. 정책 교체는 객체 조합/생성 선택의 설계 가능성이며 final 필드가 자동 런타임 setter를 만든다는 주장은 없다.",
+      "DIAGRAM: OrderService→DiscountPolicy와 Fixed/Rate 구현, inheritance/composition 비교 ASCII 및 표가 책임·위임을 충분히 시각화한다. 이미지가 없다는 이유만으로 보강하지 않음.",
+      "Oracle object tutorial의 상태/행동/협력 원리, Tecoble 상속/합성 사례를 확인. tutorial은 JDK8 입문 자료이며 Java25 문법 근거로 일반화하지 않는다.",
+      "q1~q7의 has-a/생성 의존/fake/정책 교체/알림 Sender/과도한 wrapper/3×4 독립 축 조합을 각각 검토. 추상화 Topic과 책임 배치 vs 객체 조합 목적을 구분한다."
+    ],
+    [
+      "java.core.object-model.polymorphism-dynamic-dispatch",
+      "KEEP",
+      "L2 CORE: 선언 타입 계약 검사→실제 Dog.sound 선택, fetch 호출불가, 필드/static 예외, 공통 Payment 계약의 가치가 충분하다.",
+      "Parent field hidden access와 instance dispatch 구분, interface 역할과 의미 유지, 자연스러운 if도 허용하는 설명이 타당하다. vtable/JIT 구현을 일반 보장으로 쓰지 않는다.",
+      "TEXT: compile Animal.sound 허용→runtime Dog.sound 흐름과 field 코드가 선언/실제 타입을 선명히 분리한다.",
+      "JLS15.12.1/15.12.4.4 및 15.11.1을 대조. Tecoble Figure override 사례는 관련 보조이며 overload/functional 예시가 전부 runtime dispatch라는 뜻은 아니다.",
+      "q1~q6의 Dog/B 구현, field/static 제외,List/ArrayList,Shape,AB 조합을 검토. q6 A 해설의 AA 반박 초점만 P2 개선(W4-JOM-002)."
+    ],
+    [
+      "java.core.object-model.overload-vs-override",
+      "KEEP",
+      "L2 CORE: print(Object) 정적 선택→Child override→혼합 C-Object 출력의 두 단계를 충분히 풀고 반환형만 변경 불가를 설명한다.",
+      "Parent target/실제 Child/Object 인수, 반환형만 다른 find는 signature 충돌. 선언 타입 기반 overload와 해당 signature의 runtime implementation을 혼동하지 않는다.",
+      "NONE: 코드와 번호 붙인 compile/runtime 두 단계가 충분하며 도식 추가는 불필요.",
+      "JLS15.12.1/15.12.2.5/15.12.4.4와 JLS8.4.2/8.4.8의 signature/override 관련 절 확인.",
+      "q1~q5의 서로 다른 parameter/override/Child Object 선택/return-only 충돌/null String 가장 구체적 후보를 읽었다. 모두 올바른 답과 원인 설명."
+    ],
+    [
+      "java.core.object-model.reference-casting-instanceof",
+      "KEEP",
+      "L2 CORE: Dog→Animal 같은 객체, Animal(actual Dog/Cat) downcast, pattern scope와 null false, 반복 타입 분기의 설계 신호를 설명한다.",
+      "객체 복제/변형 없이 참조 타입 검사, Object 변수재대입과 pattern 변수 독립 binding을 질문과 연결. 모든 instanceof를 금지하지 않고 sealed/input 분류 예외도 둔다.",
+      "TEXT: 실제Dog는cast성공/Cat는ClassCastException ASCII와 if pattern 코드가 실패 경로를 보여준다.",
+      "JLS5.1.5/5.1.6 및 15.20.2 대조. Tecoble은 Piece 타입분기의 책임 이동 사례만 학습 역할로 확인. 단발 nanoTime 비교를 JVM/Java25 성능 보장으로 수용하지 않는다.",
+      "q1~q5 upcast/null false/Integer→String 실패/pattern length4/source ref재대입 후text4를 모두 확인. pattern이같은변수슬롯이라고오해하는경계를검증한다."
+    ],
+    [
+      "java.core.object-model.interface-vs-abstract-class",
+      "KEEP",
+      "L2 STANDARD: 역할 계약/서로 다른 계층 vs Clock 상태·constructor·기반 구현이라는 선택 축과 과도한 추상화를 비교한다.",
+      "interface default/static/private 구현 가능, instance 상태/constructor 없음, class 단일상속/interface 다중역할을 구분한다. Java init와 framework생명주기를같은것으로 설명하지 않는다.",
+      "NONE: PaymentProcessor와 BaseJob 코드, 선택 기준 표로 충분하다.",
+      "JLS9.3/9.4 및 JLS8 abstract class/constructor 관련 절 확인. 인터페이스 static final의 참조 대상까지 자동 immutable이라고 일반화하지 않는다.",
+      "q1~q5의 공통 역할/두 역할/공통 상태/Job+Retryable 분리/FileCache·DatabaseCache와상태계층 DESCRIPTIVE를 읽어검증했다."
+    ],
+    [
+      "java.core.object-model.immutability-defensive-copy",
+      "KEEP",
+      "L2 CORE: Team입력 alias→copyOf 구조 독립→원소공유→출력복사/view차이→비용/필요깊이 순서가 충분하다.",
+      "List<String> 구조 snapshot과 MutableMember 얕은 원소 공유를 분리. 내부 immutable 반환가능/뷰 원본변경 반영은 타당하며 copyOf가 반드시 매번 새 allocation인 것으로 일반화하지 않는다.",
+      "DIAGRAM: caller/Team→같은 ArrayList vs별도구조, copy/original→동일 MutableMember ASCII 그래프가 소유권을 효과적으로 설명한다. SVG 부재를 결함으로 만들지 않음.",
+      "List.copyOf API의 원본 후속변경 미반영·null 거부를 확인. TecobleCars의newArrayList입력복사/unmodifiable반환/원소불변을확인하되Object.toString출력을물리주소로읽지않도록학습범위를한정.",
+      "q1~q7 final/입력alias/view-snapshot/Date노출/nestedshallow/immutableMoney/깊은snapshot SCENARIO를 모두 검토. 언어타입Topicfinal기초와실제소유권설계를구별한다."
+    ]
+  ],
+  "questions": [
+    [
+      "java.core.object-model.class-object-constructor.q1",
+      "KEEP",
+      "D 클래스는상태/동작타입,객체는runtime인스턴스. A단일객체제한없음/Bcompile시에만아님/C동일개념아님. 모든해설일치.",
+      "EASY 기본모델 확인. 물리메모리위치를정답의기준으로삼지않는다."
+    ],
+    [
+      "java.core.object-model.class-object-constructor.q2",
+      "KEEP",
+      "B 반환형없는초기화선언. A void는일반method/C메서드복사아님/D여러constructor오버로드가능. 전체해설타당.",
+      "EASY 생성자역할. 접근수준만다르면오버로드가능하다는뜻으로D해설을확대하지않음."
+    ],
+    [
+      "java.core.object-model.class-object-constructor.q3",
+      "KEEP",
+      "C User(String)미선언. A constructor인수가능/BString인수가능/Dpackage constructor이며기본private규칙없음. 전체해설일치.",
+      "MEDIUM 실제constructor signature를확인하며언어가모든오버로드를자동생성하지않음을검증."
+    ],
+    [
+      "java.core.object-model.class-object-constructor.q4",
+      "KEEP",
+      "A 음수잔액거부로초기불변조건유지. B GC촉진아님/C전체입력거부아님/Dstatic전환없음. 모델/설명일치.",
+      "MEDIUM 유효상태생성의이유. 약한오답일부만으로재작성하지않는다."
+    ],
+    [
+      "java.core.object-model.class-object-constructor.q5",
+      "KEEP",
+      "D 양수만정상Box/<=0throw. A blankfinalconstructor할당가능/B예외정상반환없음/Cthis.size는field. 설명과정답타당.",
+      "MEDIUM shadowing/검증/final생성경계조합. this escape같은미제시경로를추가하지않음."
+    ],
+    [
+      "java.core.object-model.static-vs-instance-members.q1",
+      "KEEP",
+      "C instancefield. Astatic공유/Bfinal은귀속미결정/Dlocal은호출범위상태. 모든rationale와설명일치.",
+      "EASY 객체별상태필요조건. final단독만으로instance가보장되지않는다."
+    ],
+    [
+      "java.core.object-model.static-vs-instance-members.q2",
+      "KEEP",
+      "D class공유field. A객체별복사없음/Bmethod수명아님/Cstatic은read-only아님. 전체해설일치.",
+      "EASY static귀속과가변성구분. 같은클래스정체성의공유범위다."
+    ],
+    [
+      "java.core.object-model.static-vs-instance-members.q3",
+      "KEEP",
+      "B static에현재this없음. A정적필드read가능/Cthis는instance문맥가능/Dstaticprivate강제없음. 정답/해설타당.",
+      "MEDIUM 수신객체없는호출과필드불허이유를검증. 특정객체인수로접근은허용한다."
+    ],
+    [
+      "java.core.object-model.static-vs-instance-members.q4",
+      "KEEP",
+      "C2. 첫newtotal1/둘째2. A0/B1공유누적누락/Dclassfieldconstructor수정유효. 전체해설일치.",
+      "MEDIUM 순차실행코드다. 미제시동시성race를넣어결과를흐리지않음."
+    ],
+    [
+      "java.core.object-model.static-vs-instance-members.q5",
+      "KEEP",
+      "B2:2:4. a생성i1/s2,b생성i2/s3,a.inc i2/s4. A증가누락/Cb.i는s추적아님/Ds도inc증가. 해설일치.",
+      "HARD 두instance/static/postincrement단계결합으로적절. 초기class상태는주어진코드의첫사용전제."
+    ],
+    [
+      "java.core.object-model.initialization-order-constructor-chaining.q1",
+      "KEEP",
+      "C classinit시보통첫activeuse전에한번. A매객체반복아님/B종료후아님/Dcompile시코드실행아님. 설명은정확한트리거를JLS로한정.",
+      "EASY 일반적인초기화시점. compile-timeconstant읽기와클래스로딩전체를init와동일시하지않음."
+    ],
+    [
+      "java.core.object-model.initialization-order-constructor-chaining.q2",
+      "KEEP",
+      "B parent정상완료뒤Childfieldinitializer/block. A prologue가일반initializer를선행시키지않음/Cparentbody먼저/Dchildepilogue전initializer. Java25해설일치.",
+      "EASY prologue직접fieldwrite와선언초기화식은다르다. 이미PR178에반영된보정이므로새오류로취급하지않음."
+    ],
+    [
+      "java.core.object-model.initialization-order-constructor-chaining.q3",
+      "TARGETED_ENHANCE",
+      "C PIC 정답/전체설명맞음. BChildbody가마지막/DParent가먼저맞음. A PCI 해설은P가I보다먼저라는PCI에도맞는사실만말해틀린C/I순서를반박하지못한다(W4-JOM-002).",
+      "MEDIUM parent/childblock/epilogue순서추적. 정답은유지하고Afeedback만I가C보다먼저라는차이로수정."
+    ],
+    [
+      "java.core.object-model.initialization-order-constructor-chaining.q4",
+      "KEEP",
+      "C prologue검증/허용directfieldwrite와read/method제한. A전부허용아님/B앞문장전면금지아님/Dthis+super연속불가. 전체해설맞음.",
+      "MEDIUM Java25계약의제약과허용을같이검증. 이전super첫줄보정내용을회귀시키지않음."
+    ],
+    [
+      "java.core.object-model.initialization-order-constructor-chaining.q5",
+      "KEEP",
+      "C AXB. this(1)→implicit A()A→B(int)X→B()B. A/B순서오류,D위임유효의rationale맞음.",
+      "HARD 재귀constructor경로추적. 필드initializer를위임마다두번실행한다고설명하지않음."
+    ],
+    [
+      "java.core.object-model.initialization-order-constructor-chaining.q6",
+      "KEEP",
+      "A STIPJC. 최초classParentS/ChildT,instanceParentI/P후ChildJ/C. Bstatic/instance혼동,Creverseclass,Dparent-childinstance순서오류.",
+      "HARD class/instance두계층순서결합. 처음실행전제명시되어static한번실행규칙과일치."
+    ],
+    [
+      "java.core.object-model.encapsulation-invariants.q1",
+      "KEEP",
+      "C 상태변경경로통제. Aprivate암호화아님/B절대reflection차단보안아님/Dimmutable아님. 전체해설일치.",
+      "EASY 접근제어vs불변조건. Reflection항상우회가능이라고도주장하지않음."
+    ],
+    [
+      "java.core.object-model.encapsulation-invariants.q2",
+      "KEEP",
+      "C pay조건/전이검증. A setter자동보장없음/Bboolean에Payment의미없음/D호출자만검사아님. 전체해설일치.",
+      "EASY 행위API의가능한이점이며pay라는이름만으로구현검증을보장하지않는다."
+    ],
+    [
+      "java.core.object-model.encapsulation-invariants.q3",
+      "KEEP",
+      "A 검증없는setter가규칙우회가능. B값전달이어도this.balance변경가능/Cclassmethodprivate접근가능/D이름자동검증없음.",
+      "MEDIUM 대표위험을묻는can문맥과본문bare setter를따른다. 검증된모든setter가불변조건을깨뜨린다고일반화하지않음."
+    ],
+    [
+      "java.core.object-model.encapsulation-invariants.q4",
+      "KEEP",
+      "B 생성경계에서유효User만정상반환. A정규화별개/Ccontroller전용아님/D입력오류에서실패가능. 설명과일치.",
+      "MEDIUM 필수email의생성불변조건. 외부정책검증을전부domain에강제하지않음."
+    ],
+    [
+      "java.core.object-model.encapsulation-invariants.q5",
+      "KEEP",
+      "AaddItem과total함께갱신. B내부mutableList노출/Cpublicfield문서만/DObjectMap자동불변없음. 각해설맞음.",
+      "MEDIUM 관련상태의일관성목표. transactionalthread안전보장을암시하지않는다."
+    ],
+    [
+      "java.core.object-model.encapsulation-invariants.q6",
+      "KEEP",
+      "Dprivate+생성/행동API같이검토. A자동immutable아님/B절대관찰차단아님/C입력·전이검증필요. 전체해설일치.",
+      "MEDIUM q1기본정의와q6전체생성/전이경계점검을구별한다."
+    ],
+    [
+      "java.core.object-model.encapsulation-invariants.q7",
+      "KEEP",
+      "DESCRIPTIVE: 외부items제거시totalPrice불일치,private는가변참조노출못막음,view/snapshot+add/remove동작경계가타당하다. model/explanation일치.",
+      "MEDIUM 두상태관계와alias결합을설명. view가deep불변이라는주장없음. choices/acceptedAnswers없는설명형문항."
+    ],
+    [
+      "java.core.object-model.abstraction-responsibility.q1",
+      "KEEP",
+      "B 필요한계약/결과와세부숨김. A전필드노출/C메서드수quota/D구현조립을caller에누출하는선택은부적절.",
+      "EASY 의미를드러내는경계목표. 구현조립자체를항상금지하는전역규칙으로확대하지않음."
+    ],
+    [
+      "java.core.object-model.abstraction-responsibility.q2",
+      "KEEP",
+      "D Gateway교체/테스트분리. A내부알고리즘자동통일/B자동retry/C추가구현이항상결합증가모두아님. 설명일치.",
+      "MEDIUM interface의설계이점과운영정책비보장을구분."
+    ],
+    [
+      "java.core.object-model.abstraction-responsibility.q3",
+      "KEEP",
+      "A 과대한계약불필요한책임결합. B메서드수로상속불가되지않음/Cprivate만아님/D구현immutable아님. 전체해설맞음.",
+      "MEDIUM 책임분리와변경전파. 무조건최소메서드수가정답이라는뜻아님."
+    ],
+    [
+      "java.core.object-model.abstraction-responsibility.q4",
+      "KEEP",
+      "D authorize/cancel+SDKadapter. A넓은vendor결합/BSDK전체복제/CObjectMap의미타입손실. 전체해설타당.",
+      "MEDIUM 교체가능성/두동작필요를명시하여adapter선택이정당화됨. 불필요한추상화기계적권고아님."
+    ],
+    [
+      "java.core.object-model.abstraction-responsibility.q5",
+      "KEEP",
+      "SCENARIO: SDK타입/예외/상태가내부에누출,안쪽Gateway계약과adapter변환책임, retry/idempotency소유별도정의가타당.",
+      "HARD 여러외부표현과실패계약분리추론. q4선택과달리경계의이유/책임을서술."
+    ],
+    [
+      "java.core.object-model.inheritance-is-a.q1",
+      "KEEP",
+      "B SavingsAccount가Account행동계약만족조건. ACarhasEngine/C서비스는Order종류아님/DList는String아님. 전체해설일치.",
+      "EASY is-a 의미와포함관계구분. B를이름만으로무조건승인하지않고계약조건이명시돼있음."
+    ],
+    [
+      "java.core.object-model.inheritance-is-a.q2",
+      "TARGETED_ENHANCE",
+      "A 상태규칙분산위험은맞음. Bfield존재/Coverride금지아님도맞음. D rationale는public과의비교를private보다넓다는말로반박해초점이맞지않는다(W4-JOM-002).",
+      "MEDIUM D는좁은접근이항상invariant보호를뜻하지않음으로설명해야함. 정답A/본문은유지."
+    ],
+    [
+      "java.core.object-model.inheritance-is-a.q3",
+      "KEEP",
+      "D Report는FileUtil의대체가능한종류가아님. A상속지원/B구현재사용가능/C인스턴스화가능여부는별개. 해설타당.",
+      "MEDIUM 기능재사용vs의미있는하위타입. 이름만이아니라주어진Report기능사용목적문맥으로판정."
+    ],
+    [
+      "java.core.object-model.inheritance-is-a.q4",
+      "KEEP",
+      "B Bird전체fly계약과Penguin행동불일치. A분류가항상금지아님/Ccheckedexception은다른규칙/Dinterfaces사용가능.",
+      "MEDIUM LSP설계신호. 모든throw가위반이라는주장이아니라명시된행동비지원문맥에한정."
+    ],
+    [
+      "java.core.object-model.inheritance-is-a.q5",
+      "KEEP",
+      "DESCRIPTIVE: Account허용출금에만기추가사전조건은대체가능성위반,작은공통Account/withdraw역할분리또는정책합성을설명.",
+      "HARD 사전조건비교와대안책임배치. 계약전제가명시되고model/explanation이일치한다."
+    ],
+    [
+      "java.core.object-model.composition-collaboration.q1",
+      "KEEP",
+      "D Order가PricingPolicy보유/위임. Ais-a/Breferencewidening/Cprimitive변환은has-a가아님. 전체해설일치.",
+      "EASY Java일반객체composition 의미이며UML소유생명주기엄격정의를추가하지않음."
+    ],
+    [
+      "java.core.object-model.composition-collaboration.q2",
+      "KEEP",
+      "D 생성의존명시/test대체. A객체필드복사/Bstatic자동아님/C다른조합불가아님. 설명타당.",
+      "EASY constructor협력과값전달. 필드가final이면그instance의setter교체불가와새객체조합가능을구분."
+    ],
+    [
+      "java.core.object-model.composition-collaboration.q3",
+      "KEEP",
+      "D 주문정체성유지/정책조합. Ainterface계약결합은남음/B하위타입폭발/C합성교체불가능아님.",
+      "MEDIUM 독립변경축에명시된요구. 임의runtime교체API를언어가자동생성하는것으로설명하지않음."
+    ],
+    [
+      "java.core.object-model.composition-collaboration.q4",
+      "KEEP",
+      "C 외부network와독립한협력계약test. A운영구현삭제아님/BHTTP강제아님/Dfake인터페이스가능. 설명타당.",
+      "MEDIUM test대역vs실제통합검증을구분. fake통과가실제결제SDK전부보장한다는주장없음."
+    ],
+    [
+      "java.core.object-model.composition-collaboration.q5",
+      "KEEP",
+      "A NotificationService→Sender위임. BEmailSender상속is-a아님/Cstaticfield만으로교체계약미표현/D내부field복사아님.",
+      "MEDIUM 설정에따른전송기교체요구명시. 기존정확한문항유지."
+    ],
+    [
+      "java.core.object-model.composition-collaboration.q6",
+      "KEEP",
+      "C 변경축/대체이유없는안정계산에interface/wrapper과도. A여러정책/Bfake필요/D명시협력은정당한경계.",
+      "MEDIUM 합성을무조건많이적용하지않는trade-off검증. 설계quota없음."
+    ],
+    [
+      "java.core.object-model.composition-collaboration.q7",
+      "KEEP",
+      "SCENARIO: 할인3/배송4를별도필드계약으로조합,Order공통흐름/불변조건유지,허용조합·lifetime생성검증. model/explanation일치.",
+      "HARD 독립변경축의곱과소유책임을서술. 협력객체개수가제품기능을자동보장하지않음."
+    ],
+    [
+      "java.core.object-model.polymorphism-dynamic-dispatch.q1",
+      "KEEP",
+      "A overriddenDog.sound. B정적타입은호출검사/Coverload는compile/D새Animal복제없음. 전체해설일치.",
+      "EASY 본문의Animal/Dogoverride문맥. 실제메서드선언없이도질문자체가재정의전제를설명."
+    ],
+    [
+      "java.core.object-model.polymorphism-dynamic-dispatch.q2",
+      "KEEP",
+      "A B출력. B선언A구현고정아님/C자동super+sub연속실행없음/D정상override유효.",
+      "MEDIUM 구체코드판정. q1핵심계약을code로적용하며답/설명맞음."
+    ],
+    [
+      "java.core.object-model.polymorphism-dynamic-dispatch.q3",
+      "KEEP",
+      "D field/static은일반instance dynamicdispatch아님. Aoverride/Binterfaceinstance/C상위참조override는대상.",
+      "MEDIUM dispatch범위구분. 필드·static을instance와같은규칙으로일반화하지않음."
+    ],
+    [
+      "java.core.object-model.polymorphism-dynamic-dispatch.q4",
+      "KEEP",
+      "B List계약→ArrayList구현. A새List복제없음/CList는interface/D실제ArrayListinstance메서드실행.",
+      "MEDIUM classhierarchy밖interface계약예시로목표확장. genericerasure하위구현을단정하지않는다."
+    ],
+    [
+      "java.core.object-model.polymorphism-dynamic-dispatch.q5",
+      "KEEP",
+      "A commonShape호출로각area구현. B동일값강제/C실제타입사라짐/D내부field자동노출아님.",
+      "MEDIUM interface/상위contract에의존하는설계효과. 모든분기제거를보장하지않음."
+    ],
+    [
+      "java.core.object-model.polymorphism-dynamic-dispatch.q6",
+      "TARGETED_ENHANCE",
+      "B AB 정답/전체해설맞음. C/Dfield선택반박맞음. A AA rationale는x.value가A라는AA에도맞는사실만말하고label이B라는틀린둘째문자를설명하지않는다(W4-JOM-002).",
+      "HARD fieldhiding+methoddispatch혼합. 정답은유지하고A feedback만B.label/secondB로수정."
+    ],
+    [
+      "java.core.object-model.overload-vs-override.q1",
+      "KEEP",
+      "B same이름/differentparams. Areturn-onlysignature충돌/C실제객체차이는dispatch/D상속만필요아님. 전체해설타당.",
+      "EASY signature조건. generic서로다른typearg만의erasure충돌까지이기초보기의필수주제로확장하지않음."
+    ],
+    [
+      "java.core.object-model.overload-vs-override.q2",
+      "KEEP",
+      "B 상위instance계약재정의. Aoverload/Cfieldhiding/Dreturn-only는새signature아님공변반환별도.",
+      "EASY override규칙과@Override의검사역할. 반환·접근호환조건을해설이명시한다."
+    ],
+    [
+      "java.core.object-model.overload-vs-override.q3",
+      "KEEP",
+      "C C출력. 정적P에f(String)없어Objectsignature,실제C가override. A부모구현고정/S추가overload후보/Dcompile오류모두틀림.",
+      "MEDIUM compile후보→runtime동일signature의두단계. 실제객체String인수만으로Child추가overload고르지않음."
+    ],
+    [
+      "java.core.object-model.overload-vs-override.q4",
+      "KEEP",
+      "D return-onlysignature충돌. Along유효/BStringparam가능/Cparse동명이허용. 모두해설맞음.",
+      "MEDIUM 타입선언스케치이며semicolon/body미표기는현재학습목표의새schema결함으로분류하지않는다."
+    ],
+    [
+      "java.core.object-model.overload-vs-override.q5",
+      "KEEP",
+      "A null두참조후보/Stringmore-specific. Bprimitive아님/CObject-String관계있음/Dcompilecandidate맞음.",
+      "MEDIUM JLS15.12.2.5와일치. unrelated참조타입nullambiguity는설명에서별도로경계를밝힌다."
+    ],
+    [
+      "java.core.object-model.reference-casting-instanceof.q1",
+      "KEEP",
+      "A Dogsubtype→Animalwidening. B모든class자동상속아님/CnewAnimal복사아님/DAnimalprimitive아님.",
+      "EASY 같은객체/다른참조계약. 선언된Dog→Animal전제를명시해안전한변환."
+    ],
+    [
+      "java.core.object-model.reference-casting-instanceof.q2",
+      "KEEP",
+      "Dfalse. A null객체아님/BinstanceofnullNPE없음/CObject-String검사유효. 설명타당.",
+      "EASY 명시된Objectvalue null. 패턴match도nullfalse경계와일치."
+    ],
+    [
+      "java.core.object-model.reference-casting-instanceof.q3",
+      "KEEP",
+      "A compile후ClassCastException. BInteger→String객체변환없음/Cnull아님/DString.valueOf자동삽입없음.",
+      "MEDIUM staticallyObject→String허용/runtimeInteger불일치. cast와값변환을구분."
+    ],
+    [
+      "java.core.object-model.reference-casting-instanceof.q4",
+      "KEEP",
+      "A4. Stringpattern성공/textjava길이4. Bempty아님/Ccompatible/D유효Javapattern. 전체해설일치.",
+      "MEDIUM pattern검사와flow범위의타입변수사용을검증."
+    ],
+    [
+      "java.core.object-model.reference-casting-instanceof.q5",
+      "KEEP",
+      "A4. patterntext는원래Stringref별도binding,sourcevalue만Integerrebind. B동반변경없음/Ctypeerror없음/D유효compile.",
+      "MEDIUM alias변수와patternbinding구분. effectivelyfinal을암묵적인rebind금지로오해하지않음."
+    ],
+    [
+      "java.core.object-model.interface-vs-abstract-class.q1",
+      "KEEP",
+      "A 공통역할계약. Bfield접근자동변경없음/C구현한개제한없음/D모든본문필수아님추상method가능.",
+      "EASY interface역할. default/static/private도설명해현대Java와일치."
+    ],
+    [
+      "java.core.object-model.interface-vs-abstract-class.q2",
+      "KEEP",
+      "C 서로다른두역할. A두class상속불가/Bconstructor자동2회없음/Dinstance상태공유저장소아님.",
+      "MEDIUM singleclasshierarchy vs multipleinterface roles. staticfield의참조대상과instance저장을혼동하지않음."
+    ],
+    [
+      "java.core.object-model.interface-vs-abstract-class.q3",
+      "KEEP",
+      "B 공통state/생성불변/일부구현계층. A역할only면interface/Cmultipleclass불가/Dabstract구현가능.",
+      "MEDIUM 공통구현있음여부만으로interfacedefault를배제하지않고상태·생성도조건에포함."
+    ],
+    [
+      "java.core.object-model.interface-vs-abstract-class.q4",
+      "KEEP",
+      "D abstractJobstate/template+Retryablerole. A관련없는lifetime거대base/Bstaticstate대체불가/Cmultipleclass불가.",
+      "MEDIUM 두요구를각다른계약에배치. 실제retry실패처리구현까지자동보장하는것아님."
+    ],
+    [
+      "java.core.object-model.interface-vs-abstract-class.q5",
+      "KEEP",
+      "DESCRIPTIVE: FileCache/DatabaseCache역할은interface,공통createdAt/생성/구현계층은abstract선택. model/explanation이일치.",
+      "MEDIUM 자기말로선택축설명. 구현유무나method수로기계적으로나누지않음."
+    ],
+    [
+      "java.core.object-model.immutability-defensive-copy.q1",
+      "KEEP",
+      "C finalref재대입제한. AListmutable가능/Bthreadsync아님/D원소immutable자동아님. 전체해설타당.",
+      "EASY prerequisite final언어타입기초를소유권Topic에서회수. JMMfinal필드publication전문으로확대하지않음."
+    ],
+    [
+      "java.core.object-model.immutability-defensive-copy.q2",
+      "KEEP",
+      "D원본수정내부alias관찰. Aunmodifiable자동없음/Bconstructor2회아님/C원소null변화없음. 설명일치.",
+      "EASY 입력소유권. 참조복사와구조복제를구별한다."
+    ],
+    [
+      "java.core.object-model.immutability-defensive-copy.q3",
+      "KEEP",
+      "Dunmodifiableviewread-through vs copyOf이후구조변경미반영. Adeep원소복제아님/BcopyOf수정불가/C단순typeinfer차이아님.",
+      "MEDIUM API계약을직접대조. copyOf가이미unmodifiable입력에서도항상새객체라는주장없음."
+    ],
+    [
+      "java.core.object-model.immutability-defensive-copy.q4",
+      "KEEP",
+      "DmutableDate노출외부setTime로내부상태변경가능. A호출자체immutable아님/BDate는mutable/Cfinalgetter금지없음.",
+      "MEDIUM 출력소유권. 보조DateAPIsetTime과대조하며LocalDate와구분."
+    ],
+    [
+      "java.core.object-model.immutability-defensive-copy.q5",
+      "KEEP",
+      "CinnerListalias변경은copy에서도관찰가능. Aouterlen0아님/BString가변화없음/D원소ref복사있음.",
+      "MEDIUM 구조/원소의얕은copy. innerList가가변일때라는can조건을유지."
+    ],
+    [
+      "java.core.object-model.immutability-defensive-copy.q6",
+      "KEEP",
+      "C구조복사+Money가실제immutable이면공유안전. Afinal원본보관/B원본반환은외부수정/D문자열변환의미손실.",
+      "MEDIUM Money불변의조건을보기/해설모두명시하고가변이면추가copy필요를설명. 알수없는Money를무조건불변으로보장하지않음."
+    ],
+    [
+      "java.core.object-model.immutability-defensive-copy.q7",
+      "KEEP",
+      "SCENARIO: outercopyOf는innerListdeepcopy아님,모든가변inner를copyOf/필요깊이로snapshot. model/explanation이같은경계를설명.",
+      "HARD 중첩alias와소유권전이를자기말로추론. String원소까지불필요하게deepcopy하지않음."
+    ]
+  ],
+  "sources": [
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html",
+      "CURRENT_VERIFIED",
+      "8.8 생성자/8.8.9 자동기본constructor,8.3.1.1 static incarnation,abstract class와state 공유의 관련절을 object-model에서 직접 확인. language-types의같은URL판정재사용아님."
+    ],
+    [
+      "https://tecoble.techcourse.co.kr/post/2021-05-17-constructor/",
+      "CURRENT_VERIFIED",
+      "생성자overload/this경로/namedfactory예시를읽음. int score를null/NPE라설명하는본문오류를확정(W4-JOM-003). 검토완료status는자료무결점PASS가아님."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.4",
+      "CURRENT_VERIFIED",
+      "classactiveuse/Parent→Child static initializer 순서와textualorder관련절을대조. loading과initialization분리."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.5",
+      "CURRENT_VERIFIED",
+      "defaultvalues후constructor7단계:prologue/this-superrecursion/instanceinitializer소스순서/epilogue,생성중override예시0→3과earlyfieldwrite3→3확인."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.8.7.1",
+      "CURRENT_VERIFIED",
+      "earlyconstructioncontext와this/super생성경로의제약을Java25절로읽고q2/q4를대조."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-6.html#jls-6.6",
+      "CURRENT_VERIFIED",
+      "private멤버언어접근과protected패키지/subtype규칙대조. 암호화/자동불변/절대reflection불가로일반화하지않음."
+    ],
+    [
+      "https://tecoble.techcourse.co.kr/post/2020-04-28-ask-instead-of-getter/",
+      "CURRENT_VERIFIED",
+      "Cars에서Car에비교책임을메시지로옮기는예시/읽기getter허용/컬렉션unmodifiable뷰를읽어설계보조역할확인. 생략·return누락등snippet의전체compile검증이나모든JavaBean에getter/setter필수라는보편보장은승인하지않는다."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html",
+      "CURRENT_VERIFIED",
+      "interface역할/instance상태미보유,9.3 staticfinalfield/9.4 default-static-private메서드의관련절확인. 추상화domain책임배치는수기설계판단과구분."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.1.4",
+      "CURRENT_VERIFIED",
+      "직접상위class/subclass언어관계를대조. LSP행동설계는문법만으로자동보장되지않음."
+    ],
+    [
+      "https://tecoble.techcourse.co.kr/post/2020-05-18-inheritance-vs-composition/",
+      "CURRENT_VERIFIED",
+      "Lotto/WinningLotto protected상태결합과필드로협력하는대안예시를읽음. inheritance/composition 두Concept의관련역할확인,항상상속금지로읽지않음."
+    ],
+    [
+      "https://docs.oracle.com/javase/tutorial/java/concepts/object.html",
+      "CURRENT_VERIFIED",
+      "상태/행동/다른객체와협력의기초절확인. JDK8 tutorial임을유지하며Java25새문법의규범근거로쓰지않는다."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12",
+      "CURRENT_VERIFIED",
+      "compiletype검색/most-specific/actualruntimeclass에서virtual-interface lookup을읽어poly/overload를각목표로대조."
+    ],
+    [
+      "https://tecoble.techcourse.co.kr/post/2020-10-27-polymorphism/",
+      "CURRENT_VERIFIED",
+      "Figure/subtypeoverride예시와공통타입의역할을읽음. 글의overload/functionalinterface까지모두runtimeoverride라는근거로사용하지않음."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.8",
+      "CURRENT_VERIFIED",
+      "instance overriding과static hiding,접근/반환호환관련절대조. return-onlysignature충돌은8.4.2도확인."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html",
+      "CURRENT_VERIFIED",
+      "5.1.5 wideningreference와5.1.6 checkedcast의실제타입/CCE규칙을object-model에직접대조. 다른Topicboxing/숫자근거가자동승격한것아님."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.20.2",
+      "CURRENT_VERIFIED",
+      "nullfalse,pattern성공시변수binding및typecheck의관련절대조. source변수와pattern변수동일슬롯아님."
+    ],
+    [
+      "https://tecoble.techcourse.co.kr/post/2021-04-26-instanceof/",
+      "CURRENT_VERIFIED",
+      "Piece/King/Pawn타입별점수를공통책임에위임하는설계사례만확인. 후반단발nanoTime비교는신뢰할성능측정/Java25언어보장으로수용하지않음."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)",
+      "CURRENT_VERIFIED",
+      "구조snapshot후원본변경미반영/null거부/원소deepcopy미보장을object-model의중첩소유권목표에대조."
+    ],
+    [
+      "https://tecoble.techcourse.co.kr/post/2020-05-18-immutable-object/",
+      "CURRENT_VERIFIED",
+      "Cars입력newArrayList복사/getterunmodifiable/참조원소도불변필요인관련예시읽음. toString형식출력을물리메모리주소로확정하는표현은언어보장으로받아들이지않음."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.5",
+      "CURRENT_VERIFIED",
+      "instance int기본값0으로constructorReference의null주장을반증."
+    ],
+    [
+      "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.11.1",
+      "CURRENT_VERIFIED",
+      "field접근은primary정적타입의멤버선택이며methoddispatch와구분."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collections.html#unmodifiableList(java.util.List)",
+      "CURRENT_VERIFIED",
+      "반환뷰query가원본을read-through하고뷰mutation은UOE."
+    ],
+    [
+      "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Date.html#setTime(long)",
+      "CURRENT_VERIFIED",
+      "setTime이Date객체를바꾸는API라getteralias의불변위반가능성확인."
+    ]
+  ],
+  "referenceAccess": {},
+  "findings": [
+    {
+      "id": "W4-JOM-001",
+      "severity": "P1",
+      "contentKeys": [
+        "java.core.object-model.initialization-order-constructor-chaining"
+      ],
+      "file": "content/java/object-model/initialization-order-constructor-chaining.md",
+      "quote": "System.out.println(name); // 생성 중에는 기대와 다른 상태일 수 있음",
+      "problem": "Parent생성자에서Child.print가실행되는핵심예시가어떤값을보는지기대와다를수있다는말에머문다. default값null과Child의nameinitializer kim의실행시점을설명하지않아학습자가실행결과/실패경계를자기힘으로설명하기어렵다. 현재객체field/block의소스순서및Java25prologue가직접fieldwrite를허용하는단계도본문의실행흐름에연결할필요가있다. 잘못된기술모델이나전체rewrite대상은아니다.",
+      "action": "기존예시에new Child와관찰결과null→kim의작은상태표를추가한다. defaultvalues→prologue(있는경우)→this/super경로→현재class field/block textualorder→epilogue를명시하고일반initializer와prologue직접할당을구별한다. q2/q4의올바른Java25설명과정답은유지한다.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.5",
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.8.7.1"
+      ],
+      "runtimeEvidence": "ObjectModelProbe의ordinary=null뒤ordinary=kim,early=ready. 한Temurin25실행관찰이며규범근거는JLS.",
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W4-JOM-002",
+      "severity": "P2",
+      "contentKeys": [
+        "java.core.object-model.initialization-order-constructor-chaining.q3",
+        "java.core.object-model.inheritance-is-a.q2",
+        "java.core.object-model.polymorphism-dynamic-dispatch.q6"
+      ],
+      "file": "content/java/object-model/questions.json",
+      "quote": "`Parent` 생성자의 `P`는 하위 클래스 초기화 블록의 `I`보다 먼저 실행된다. 상위 클래스 생성이 완료된 뒤 하위 클래스 초기화가 진행된다.",
+      "additionalEvidence": [
+        {
+          "file": "content/java/object-model/questions.json",
+          "quote": "`protected`는 같은 패키지와 하위 클래스 경로에 노출되므로 `private`보다 접근 범위가 넓다."
+        },
+        {
+          "file": "content/java/object-model/questions.json",
+          "quote": "필드 조회는 메서드 오버라이딩처럼 동적으로 선택되지 않는다. `x.value`는 참조 타입 `A`에 선언된 필드를 읽는다."
+        }
+      ],
+      "problem": "세문항의정답/전체explanation은맞지만특정오답feedback이틀린부분을반박하지않는다. initq3 A PCI도P가I앞이라실제틀린C/I순서를짚어야한다. inheritanceq2 D는public과비교하는데해설은private와비교한다. polyq6 A AA도첫문자A가맞고틀린부분은label()의둘째문자다.",
+      "action": "세rationale만각각I가C보다먼저,접근범위좁힘과invariant보호는다름,B.label이둘째B를반환함으로맞춘다. 정답/난도/전체해설/Concept는유지하며P2로전체PASS를취소하지않는다.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-12.html#jls-12.5",
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-6.html#jls-6.6",
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-15.html#jls-15.12"
+      ],
+      "followupIssues": [
+        201
+      ]
+    },
+    {
+      "id": "W4-JOM-003",
+      "severity": "P0",
+      "contentKeys": [
+        "java.core.object-model.class-object-constructor"
+      ],
+      "file": "content/java/object-model/class-object-constructor.md",
+      "quote": "https://tecoble.techcourse.co.kr/post/2021-05-17-constructor/",
+      "problem": "연결된학습자료는private int score를선언하고score를대입하지않는첫constructor에서null이들어가NPE가생길수있다고설명한다. int instancefield의기본값은0이며이것은틀린기술적근거다. canonical본문과5개문항은맞지만학습자를잘못된초기화모델로유도하는Reference이다.",
+      "externalEvidence": [
+        {
+          "url": "https://tecoble.techcourse.co.kr/post/2021-05-17-constructor/",
+          "checkedAt": "2026-10-14",
+          "sourceLocation": "본문Student의private int score예시와그뒤첫constructor의null/NPE설명",
+          "shortQuote": "첫번째 생성자를 이용하면 score에는 null 값이 들어가게 된다는 문제가 있습니다."
+        }
+      ],
+      "action": "Reference를교체하거나관계설명에int기본값0과글의null/NPE설명오류를명확히한정한다. namedfactory/constructoroverload본래학습목표와정확한canonical본문/문항은유지한다. primary JLS4.12.5를직접근거로연결하는최소범위만후속검토한다.",
+      "officialEvidence": [
+        "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.5"
+      ],
+      "runtimeEvidence": "ObjectModelProbe의omittedIntScore=0. 공식JLS와기사코드를대조한결과이며upstream문서수정/전체article코드실행은하지않음.",
+      "followupIssues": [
+        201,
+        222
+      ]
+    }
+  ],
+  "carriedForwardFindings": [],
+  "visualizationAssets": [],
+  "sourceHashes": {
+    "java.core.object-model.abstraction-responsibility": "ac46fc3a9862244a5d8f8cab0a5874ddc52b66bd0472e8a45c022d172cb46eaf",
+    "java.core.object-model.class-object-constructor": "61b0f37de0a721795947d8c3b199fcf23cd4d5b0dad78ad411fc48801f55738c",
+    "java.core.object-model.composition-collaboration": "021074413e8aa8f224b25477505dee2b3276b7aa5691bee1d3296dbe40c4454f",
+    "java.core.object-model.encapsulation-invariants": "c70d35473b3270f4599a2e574829086410b828bbe6b3f837b4ef7d6c063c4b4f",
+    "java.core.object-model.immutability-defensive-copy": "d73ea5adcf6f6eaae9989eec347f532d1618a32383a1fe4778647578a1b422e9",
+    "java.core.object-model.inheritance-is-a": "567655226b5c184da50f1056e2e6ed0772a28476c2d8827c8381a945af4819b4",
+    "java.core.object-model.initialization-order-constructor-chaining": "e2bdcf851f16b52300966ab9818f6e789a4e56e6de600f7f7e997e7ff747d3bc",
+    "java.core.object-model.interface-vs-abstract-class": "777669311e717348b7915d178922eabb41f86e7a3bebe8c07e44922394669748",
+    "java.core.object-model.overload-vs-override": "aacc9580247bd319c5c44bf607565ad3e7d4b110a5ab238bdd47ff1c816222ae",
+    "java.core.object-model.polymorphism-dynamic-dispatch": "54c3becb7b916291a36f4f4899df54ac311ab24afe92c9adddacf77567203e75",
+    "java.core.object-model.reference-casting-instanceof": "16aac4ed0c22edae45bbeeff11abd1d68a51f090a6a9019aec82368a634c900e",
+    "java.core.object-model.static-vs-instance-members": "734356cbc0bf498ce9bbef55c48f6960c7701c93c205d742c2f17a137577d11d",
+    "java.core.object-model.class-object-constructor.q1": "f0a537cebaceb9a40a8e04230918cdec6f00e0bcdb6ede3caa35ff3b0bd91228",
+    "java.core.object-model.class-object-constructor.q2": "a752eb79ed66dac5439d6fbbdd1d118b53df1ea4ba02e8f66bfd2ba441d462d3",
+    "java.core.object-model.class-object-constructor.q3": "3eca9419760e8054860ac1d24e6277f068c2fbf1ea5a58af229d7a02c94379e7",
+    "java.core.object-model.class-object-constructor.q4": "2e47e621991720d882825c5e0ea25efc0488ffe83b87a91b083596a56b4aa10b",
+    "java.core.object-model.class-object-constructor.q5": "e5fd0518defee81ddde19b3eae02085600cc0cc0cf618711cf2c85808bdd06af",
+    "java.core.object-model.static-vs-instance-members.q1": "45e73ff8c7e57833eddbe8b742cb9f56b81ba970e24ce5f175c81fc2f1e31ca3",
+    "java.core.object-model.static-vs-instance-members.q2": "2f8ab266ac8bb655207844db5a954491da902d829432afb8cfaf3742271b4a24",
+    "java.core.object-model.static-vs-instance-members.q3": "29af5c2fc0ca65464a5826d9ddccacb59d24d6e872b40a02e31ee5052a0c4cc9",
+    "java.core.object-model.static-vs-instance-members.q4": "8d941efb922855cce33e181873ab8faf6bae31b572753a2be4a8f056b66c001f",
+    "java.core.object-model.static-vs-instance-members.q5": "585c315a5435d0e38ef20eeac6fa295b97a4ad51454eda53639c5d9af2b507b9",
+    "java.core.object-model.initialization-order-constructor-chaining.q1": "64a9d131bad8864eb89e6adb6e21a491ab0def8a755086f7924034c755ebcbd2",
+    "java.core.object-model.initialization-order-constructor-chaining.q2": "8bd3d47cadfc395caaae0a8006e440cb4c6fc74454065596310221d83bf6bab5",
+    "java.core.object-model.initialization-order-constructor-chaining.q3": "8fbd7b3036f999e841f1aa660e0daf8fdec39fbf61b442950ce0b2bd9438c539",
+    "java.core.object-model.initialization-order-constructor-chaining.q4": "f3a4bd1559e09dbef09b6895914cf7541063800bc8b0070646149d41d15e5e2a",
+    "java.core.object-model.initialization-order-constructor-chaining.q5": "9ca2e65b00e37d4a7916c245896b48ddb1c171332b1fe5ae589fa4213e922ef0",
+    "java.core.object-model.initialization-order-constructor-chaining.q6": "59a04ef299d2eabe63245b9e38529ac6c9be85b118be27d90d8118500f001e31",
+    "java.core.object-model.encapsulation-invariants.q1": "d184b5e30a395b5ad349795355416123aac87f62d34377d0dc1394553eefb723",
+    "java.core.object-model.encapsulation-invariants.q2": "f33499d9635e0aaaf2d7d6df67d8d7ecc5069c2dc69c6d74ad71b29bac8100a0",
+    "java.core.object-model.encapsulation-invariants.q3": "fb7f337095ce8e946857c6ed330db3032511a7de7081b4befac7306890997d58",
+    "java.core.object-model.encapsulation-invariants.q4": "fc917a0843346f2b5268665e403284ae17d06bf8d5739e9fc8441238efcb4e3c",
+    "java.core.object-model.encapsulation-invariants.q5": "c2a59f0fae011a68526ecec1719f4984c6a7cfa5314859b7bf7fbdf8407f4a33",
+    "java.core.object-model.encapsulation-invariants.q6": "3670fd2d4a35c867465c08a92c0a40a2d92b07df5342baab7ed00656a3383cc6",
+    "java.core.object-model.abstraction-responsibility.q1": "6606cd4bff70380f4801e907ff369ebd749bd904c606c32218183f61e419d379",
+    "java.core.object-model.abstraction-responsibility.q2": "df70f1d0283aea3cf09a3894d7af484e20fd791cc85498f543288fc1d4fbb341",
+    "java.core.object-model.abstraction-responsibility.q3": "489408dfce8cccdb8fc0051ec7dcb8f42462b13aefcd6970e027108197e7647a",
+    "java.core.object-model.abstraction-responsibility.q4": "d527d3921c4b7ca4f76bf5b2336ea7d6d3e576b051c636d5ac9d9f638d030d13",
+    "java.core.object-model.inheritance-is-a.q1": "623fc07d053dc15842e4be98ec29d11d8c8ef5478466e051a8f8a1979b1ef0d1",
+    "java.core.object-model.inheritance-is-a.q2": "508a864e58ac741ae88695a4ca4959870f17a1030b869983fb627a247cd8006c",
+    "java.core.object-model.inheritance-is-a.q3": "7fdd28ec8a88c396faeded58ee7dbe35f1acea929833fc853d0edcb7ef6d1c99",
+    "java.core.object-model.inheritance-is-a.q4": "7e8ba8734e084e3f8b4c81314508f30c371bf7034b99922c4288653b3dc7fc50",
+    "java.core.object-model.composition-collaboration.q1": "70534344bbd3acd57f6898a343967e90f3f56b735ab92dc2391f77c465f5f394",
+    "java.core.object-model.composition-collaboration.q2": "95a9cb61dd3ed61b3f5a00b4d8b3661cdacb5118d9a858500372ba3ee65a7a30",
+    "java.core.object-model.composition-collaboration.q3": "07e232191a289154497d5a31946c1c5ea7724c8da4628873434282c22da9588e",
+    "java.core.object-model.composition-collaboration.q4": "4db431534b51709a63700718641c37e6aa9a39caf1e0d133a4c1776e9c2a4232",
+    "java.core.object-model.composition-collaboration.q5": "89a547b8fc6ef31faed3feff486392900003fd8dc83d22c690610d3863c61add",
+    "java.core.object-model.composition-collaboration.q6": "c05bff79090d28e7eeddc39f97d4aa9cb0e80cba0050d15ace73d4b334564c82",
+    "java.core.object-model.polymorphism-dynamic-dispatch.q1": "6bf8f38d79a1e1d73f2f6689d241e2c8f16845e0b0f3ffc347e1cae45c913660",
+    "java.core.object-model.polymorphism-dynamic-dispatch.q2": "2671af5bdf42a3daa6c48842f36cdad60fe36b5ed2a9a3353dfcf2a5f483c9f6",
+    "java.core.object-model.polymorphism-dynamic-dispatch.q3": "5781efec2bf5a7b017369b5a41f8202fa6432d76830f0447bde8820a5e0001d6",
+    "java.core.object-model.polymorphism-dynamic-dispatch.q4": "6d0ef70745cbb38f0ad3ae93dd48ba95bdfab9029f3456c13e7b19f1fdb884c5",
+    "java.core.object-model.polymorphism-dynamic-dispatch.q5": "3ae8bfd0fdc29b04b1dc5d00b793aad4241455292ed0cf5769c63b489609e165",
+    "java.core.object-model.polymorphism-dynamic-dispatch.q6": "4dd6ec24c898072130e8a2462ead6f88a45a434f4ca18b19fc37f0dd99eae190",
+    "java.core.object-model.overload-vs-override.q1": "bad1a255bd36b59838cf86c90693baa9e58cc6cbb2eefd1146b73274a1ab34df",
+    "java.core.object-model.overload-vs-override.q2": "5d6ca3dde7652db143e3d490b7af7f32ec7475c0a79dd1b8d3b8ac42cb30e388",
+    "java.core.object-model.overload-vs-override.q3": "05872522517c1a61b3fe3553ab414a0e679aa0a8f754cb8e55a85ea76474191e",
+    "java.core.object-model.overload-vs-override.q4": "76344596bc80c4ba276c1721ea65060e9134d8a7a87354f934f5c746b419f0e3",
+    "java.core.object-model.overload-vs-override.q5": "e6776f2e208262ac9bfc906dfc350fe3f705abef6b2229e2c7b4ceb7a9b48a99",
+    "java.core.object-model.reference-casting-instanceof.q1": "2ab5f65ddfac045f1daa666d6e162fe9d7d6e97a7494a2e17436c019d043a606",
+    "java.core.object-model.reference-casting-instanceof.q2": "80376603f7550f287d7ca535cd9612dbae2eca87a92bba6393d421e993b96e00",
+    "java.core.object-model.reference-casting-instanceof.q3": "e4a985550eec1aa607d79dcc88a938d89082c656fb7baefae85567a94a77df5a",
+    "java.core.object-model.reference-casting-instanceof.q4": "6f6e99e745ef06f1838c717a1498dc76cfa5ee9fd28699b4d059d51798594a5e",
+    "java.core.object-model.reference-casting-instanceof.q5": "915e8063c541ea2951c333ecc7cf3b000a61911c517cfe226e972da6b6e961b1",
+    "java.core.object-model.interface-vs-abstract-class.q1": "4a9f2ecf62a8c8dee544ba5ea970d073ca0370fde5050abbf759b4b76a25f08c",
+    "java.core.object-model.interface-vs-abstract-class.q2": "f89e0584f84db2404c21ad89e5ea393c7f03004b1ae66181fa749db66d9872f8",
+    "java.core.object-model.interface-vs-abstract-class.q3": "241a827760291ab7f0f51c85bad6f2e985d6d90f9bda6321aab3e8f14770c39b",
+    "java.core.object-model.interface-vs-abstract-class.q4": "6dc54334ef11a6e4cc408144b968d186ecd859fe37b7b688ccdec0ac5124d240",
+    "java.core.object-model.immutability-defensive-copy.q1": "68835a1f591aca08e9edbb53892b2ccf7fe99ad4a7abb85a025cc564e6534671",
+    "java.core.object-model.immutability-defensive-copy.q2": "2db703d4e080e0d19356e4df38216f7a140e3d982a2af2499898e1ed484f8b1a",
+    "java.core.object-model.immutability-defensive-copy.q3": "94e1176276cbd9eae244b028dd5fdb0fa313a8cf429cb613607529644117d6ae",
+    "java.core.object-model.immutability-defensive-copy.q4": "05114538bddd3a2f90dd1beeda7de5832d2a691339e969ad04a20cac8b8ff45c",
+    "java.core.object-model.immutability-defensive-copy.q5": "85a267d99dae785df21284cf01e71e17a4017b90a7119896f929fe02db6300ea",
+    "java.core.object-model.immutability-defensive-copy.q6": "6e5ddc5a9274ece9898009a87065ab55678d8571b1d95eeb464fe867c1239f73",
+    "java.core.object-model.encapsulation-invariants.q7": "2773096d3e1f15aa5578e663633f6a24669b0d2a33d3c25dbc79a7a54f2e60b4",
+    "java.core.object-model.abstraction-responsibility.q5": "c2be4f538852d6c4e0b3b6b327c187f92952fc5a6d3f1d1c12a184fa3f6ea337",
+    "java.core.object-model.inheritance-is-a.q5": "8d6ae72995cef97e0f19a7ed67dfab77b37918a5e7b8c4b038f822fa43c40ef9",
+    "java.core.object-model.composition-collaboration.q7": "8a53cfdd06c31b9a0423733b49b5d2ef2be13c49e90dad4b9babd2f79dee8eb4",
+    "java.core.object-model.interface-vs-abstract-class.q5": "5f7f2722d8914e3ffc85984e50eda4c684f7bff3a4f9d8b4cbd7ba2f7b166a90",
+    "java.core.object-model.immutability-defensive-copy.q7": "367908566b9feb12d9d15a84db54c029daee7da7002bb5a7cf03477704d2e4d4"
+  },
+  "curriculumSha256": "0aad122de20d9205274f96887b562473a3a23de3dd406cbd684031438d4bbe0c",
+  "topicCatalogSha256": "2a167f43030df4dfc9742225d86dfcefdcd5cff2fc0d702c0b9101e00e6b172c",
+  "priorQualityReview": {
+    "pr": 178,
+    "url": "https://github.com/guseoh/csforge/pull/178",
+    "headSha": "e94902dfe7154ef054f0c591e5ab49d4cca81fac",
+    "evidence": "이전실행에서직접읽은PR본문/4review근거를재사용하되현재object-model전체를직접검토했다. git diff --name-only PR178head..현재HEAD -- content/java/object-model는변경0. Java25initq2/q4의prologue직접field초기화와상위constructor뒤일반initializer구분은기존해결내용으로KEEP한다. 한국어/난도개선은회귀시키지않고SourceReference의새명백한오류와설명공백만기록."
+  },
+  "probeEvidence": {
+    "file": "docs/content-audit/learning-experience-2026/wave-4/probes/ObjectModelProbe.java",
+    "sourceSha256": "ccc9a3fd7aad6b579ec601a15f83f9ac30859b0377d47d9532bd765ddef718e3",
+    "command": "java docs/content-audit/learning-experience-2026/wave-4/probes/ObjectModelProbe.java",
+    "runtime": "Temurin OpenJDK25.0.4.1+1-LTS, Windows",
+    "exitCode": 0,
+    "stdout": [
+      "runtime=25.0.4.1+1-LTS",
+      "ordinary=null",
+      "ordinary=kim",
+      "early=ready",
+      "omittedIntScore=0"
+    ],
+    "limits": "초기화/초기fieldwrite/Reference의int기본값쟁점만실행. 전체68문항/모든본문코드실행,perf,Reader화면/모바일/theme/humanQA아님. 보장근거는JLS와별도수기코드추론."
+  }
+}

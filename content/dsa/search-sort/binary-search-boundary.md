@@ -1,0 +1,43 @@
+---
+kind: concept
+contentKey: dsa.core.search-sort.binary-search-boundary
+topicContentKey: dsa.core.search-sort
+slug: binary-search-boundary
+title: "이진 탐색 경계값"
+summary: "left·right 불변식으로 lower/upper boundary를 구현하는 조건을 설명한다."
+level: 2
+status: PUBLISHED
+displayOrder: 30
+references:
+  - url: "https://algs4.cs.princeton.edu/31elementary/"
+    title: "Algorithms, 4th Edition: Elementary Symbol Tables"
+    referenceType: BOOK
+    language: en
+    depth: section
+    recommendation: "순차 탐색과 정렬 배열의 이진 탐색 전제·비용 및 순서 기반 연산을 비교한다."
+    displayOrder: 1
+---
+# 이진 탐색 경계값
+
+Boundary search는 특정 값을 하나 찾는 것이 아니라 **조건이 처음 false에서 true로 바뀌는 위치**를 찾는다. 정렬 배열에서 lower bound는 `value >= target`이 처음 참인 위치이고, upper bound는 `value > target`이 처음 참인 위치다.
+
+```text
+value:   1 2 2 2 5 8
+>= 2 ?:  F T T T T T
+           ↑ lower bound
+```
+
+비감소 순으로 정렬된 배열의 lower bound에서 `[left, right)`는 **아직 확인하지 않은 원소의 구간**이고, 가능한 정답 경계 위치는 **닫힌 구간 `[left, right]`**에 남는다. `[0,left)`는 이미 false, `[right,n)`은 이미 true라고 확인된 원소다. Mid가 조건을 만족하면 `right = mid`로 갱신해 `mid`를 미확인 구간에서는 제거하되 **정답 경계로는 보존**한다. 만족하지 않으면 `left = mid + 1`로 이동해 false인 `mid`까지 제거한다. 모든 값이 false면 정답은 `n`이므로 `[left,right)` 안에 정답 원소가 반드시 존재한다는 식으로 설명하면 안 된다.
+
+```text
+while left < right:
+    mid = left + (right - left) / 2
+    if predicate(mid):
+        right = mid
+    else:
+        left = mid + 1
+```
+
+매 반복에서 후보 구간이 줄고 종료 시 `left == right`가 첫 true 위치가 된다. 모든 값이 조건을 만족하지 않으면 결과는 `n`, 처음부터 모두 만족하면 0이 될 수 있으므로 반환 범위 `[0, n]`도 contract의 일부다.
+
+Lower bound와 upper bound는 비교 조건 하나가 다르지만 의미가 다르다. 중복 값의 개수는 `[lower, upper)` 길이로 구할 수 있기 때문에 `<`, `<=`, `>=`, `>` 중 어떤 predicate를 사용하는지 정확히 고정해야 한다.

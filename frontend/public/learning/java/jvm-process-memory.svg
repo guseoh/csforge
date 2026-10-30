@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1180 650" role="img" aria-labelledby="title desc">
+  <title id="title">Java process memory와 heap 밖 영역</title>
+  <desc id="desc">컨테이너나 OS가 보는 Java process memory 안에 Java heap, metaspace, thread stack, direct/native memory, JIT code cache가 함께 존재하며 Xmx는 heap만 제한하는 관계를 보여 준다.</desc>
+  <defs>
+    <style>.bg{fill:#17131f}.title{fill:#f5efff;font:700 25px Inter,Arial,sans-serif}.label{fill:#f0e8fa;font:650 17px Inter,Arial,sans-serif}.small{fill:#a797b5;font:500 14px Inter,Arial,sans-serif}.process{fill:#1d1727;stroke:#77539a;stroke-width:2}.heap{fill:#18352e;stroke:#4cc090;stroke-width:2}.meta{fill:#2a1d3c;stroke:#a56df4;stroke-width:2}.native{fill:#33251c;stroke:#c48a47;stroke-width:2}.warning{fill:#3a2229;stroke:#d06f7d;stroke-width:2}</style>
+  </defs>
+  <rect class="bg" width="1180" height="650" rx="20"/>
+  <text class="title" x="48" y="55">-Xmx는 Java heap의 한도이지 Java process 전체 RSS의 한도가 아니다</text>
+
+  <rect class="process" x="48" y="95" width="1084" height="430" rx="18"/>
+  <text class="label" x="82" y="132">Java process / container memory</text>
+
+  <rect class="heap" x="82" y="165" width="460" height="150" rx="13"/>
+  <text class="label" x="120" y="205">Java Heap</text>
+  <text class="small" x="120" y="234">일반 Java object / array의 논리적 할당 영역</text>
+  <text class="small" x="120" y="263">GC가 관리</text>
+  <text class="small" x="120" y="292">-Xmx가 직접 제한하는 대표 영역</text>
+
+  <rect class="meta" x="576" y="165" width="250" height="150" rx="13"/>
+  <text class="label" x="610" y="205">Metaspace</text>
+  <text class="small" x="610" y="234">HotSpot class metadata</text>
+  <text class="small" x="610" y="263">JVMS method area와</text>
+  <text class="small" x="610" y="286">동일한 spec 용어는 아님</text>
+
+  <rect class="native" x="860" y="165" width="238" height="150" rx="13"/>
+  <text class="label" x="894" y="205">Thread stacks</text>
+  <text class="small" x="894" y="234">platform thread의</text>
+  <text class="small" x="894" y="257">stack/native resource</text>
+  <text class="small" x="894" y="286">thread 수에 영향</text>
+
+  <rect class="native" x="82" y="352" width="310" height="128" rx="13"/>
+  <text class="label" x="118" y="392">Direct / native allocation</text>
+  <text class="small" x="118" y="421">DirectByteBuffer backing storage</text>
+  <text class="small" x="118" y="447">native library · mmap 등</text>
+
+  <rect class="native" x="426" y="352" width="270" height="128" rx="13"/>
+  <text class="label" x="462" y="392">JIT / Code cache</text>
+  <text class="small" x="462" y="421">compiled native code와</text>
+  <text class="small" x="462" y="447">runtime metadata</text>
+
+  <rect class="warning" x="730" y="352" width="368" height="128" rx="13"/>
+  <text class="label" x="766" y="392">NMT로도 RSS 전부는 설명 못 함</text>
+  <text class="small" x="766" y="421">HotSpot 내부 native memory 관찰에 유용</text>
+  <text class="small" x="766" y="447">third-party/JDK native allocation은 별도 확인</text>
+
+  <text class="small" x="48" y="570">예: -Xmx=1 GB인데 RSS=1.6 GB인 것 자체는 모순이 아니다. Heap 밖 memory consumer가 존재할 수 있다.</text>
+  <text class="small" x="48" y="602">컨테이너 limit을 정할 때 heap 최대값 외 metaspace·thread·direct/native·JVM overhead를 위한 여유와 실제 측정이 필요하다.</text>
+</svg>

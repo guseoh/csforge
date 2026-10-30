@@ -1,0 +1,421 @@
+{
+  "area": "network-http",
+  "topic": "http-message",
+  "topicKey": "network-http.core.http-message",
+  "coverage": "9 Concept와 27 Question을 3 Concept씩 세 출력에서 전체 직접 읽었다. 모든 보기/rationale/model/explanation과 난이도·중복·Concept 연결을 확인했다. generic HTTP 의미 대H1 start-line, targetURI대request-target/Host, framing→parser→DTO→validation, resource/representation·media/charset/contentcoding·Accept/Vary와 CL/TE·desync를 실제 RFC9110/9112 및HTTP3pseudo-fields 관련절에 대조했다.",
+  "concepts": [
+    [
+      "network-http.core.http-message.request-message",
+      "KEEP",
+      "L1 method/target/fields/optionalcontent와 업무 단계의 깊이가 충분하다.",
+      "JSON {name,age} 바이트→framing→Content-Type→JSONparse→DTO→validation와 auth/인가/DB흐름을 구분한다. Concept 본문은 generic HTTP를 시작줄문법으로 강제하지 않는다.",
+      "TEXT 구조tree와두파싱/처리flow가 충분하다.",
+      "RFC9110 §3.2/6.4·7.2의target/fields/content범위와RFC9112 §3.2/6.3 실제H1구문을대조했다. SpringConverter는예시application역할이며HTTP기능으로오해하지않는다.",
+      "q1 H1범위누락은W3-NET-015, q2 targetURI/request-target표현은W3-NET-016이다. q3 CL/TE없는POST의zero body는맞다."
+    ],
+    [
+      "network-http.core.http-message.response-message",
+      "KEEP",
+      "L1 status/fields/content와 async완료·응답주체의 구분이 충분하다.",
+      "200/204/304와empty/errorcontent,202접수대후속완료조회,proxy/cache응답대originlog의 경계를 설명한다. 어떤status200도업무commit증거라고단정하지않는다.",
+      "TEXT 구조tree와status별content·202작업흐름이 충분하다.",
+      "RFC9110 §6.4.1 HEAD/204/304nocontent/otherzero-length와§15.3.3 202accepted-but-notcompleted를실제읽었다.",
+      "q1정답C는맞지만전오답의비현실적범위는W3-NET-017이다. q2 요소역할과q3 empty200대truncatedresponse계약/프레이밍을확인했다."
+    ],
+    [
+      "network-http.core.http-message.header-body",
+      "KEEP",
+      "L1 metadata/content·framing/parser/DTO/업무검증분리가 충분하다.",
+      "fieldtree와application/json예시, Content-Type≠바이트경계, H1CL/TE대H2/3frame/stream, validJSON age-10대업무거부를 구분한다.",
+      "DIAGRAM 계약의 계층별parseflow/tree가 충분하다. wire모든header를갖춘메시지예시가아닌field/content발췌임을범위로읽었다.",
+      "RFC9110 §8.1/8.3의표현처리·contentcoding해제와RFC9112 §2/6.3의parse/framing을직접대조했다.",
+      "q1D 모든 보기, q2 framingdesync대JSON/업무검증, q3 fieldtotal/individual/count/time제한과proxy/origin정규화를 확인했다."
+    ],
+    [
+      "network-http.core.http-message.representation",
+      "KEEP",
+      "L1 resourceidentity대data+metadata 및variant/coding이 충분하다.",
+      "/users/42 JSON/HTML/gzipJSON과resourceURI동일, Content-Type/Encoding순서, languagevariant와Vary의cache선택조건을 정확히설명한다.",
+      "TEXT resource→두representationtree와codingflow/비교표가 충분하다.",
+      "RFC9110 §3.2 representationmetadata+data, §8.1 orderedcoding model 및§12.5.5 Varycachekey확장을실제읽었다.",
+      "q1A 모든 보기, q2 Accept/serverpolicy+validator, q3 실제wrongclientvariant캐시문제에Vary/CDNkey를맞추는답을확인했다. content-negotiation.q3와목표가가까워후자는더구체적trace로보강할후보다."
+    ],
+    [
+      "network-http.core.http-message.media-type",
+      "KEEP",
+      "L1 type/subtype·charset대contentcoding과declaredtype대validity의 구분이 충분하다.",
+      "JSON/HTML처리모델과text/html;charset=UTF8, gzipJSON의type유지대Content-Encoding해제→JSONparse가 정확하다. type선언으로문법/업무검증이자동완료되지않는다.",
+      "NONE 계약에type/subtype와coding/parsingtextflow가 충분하다.",
+      "RFC9110 §8.1/8.3/8.3.1의codingorder·mediadataformat+processingmodel과sniffing위험을실제읽었다.",
+      "q1B 모든 보기, q2 parser/render/security차이, q3 JSON바이트/textplain불일치와MIMEsniffing의interop위험을확인했다."
+    ],
+    [
+      "network-http.core.http-message.content-type",
+      "KEEP",
+      "L1 지금content형식대응답선호·프레이밍·validity를 충분히설명한다.",
+      "requestJSON예시와Content-Type/Accept방향비교, framing→parse→DTO→업무단계 및CL/TE대type역할이 정확하다. POSTsnippet은Content-Type역할의발췌이며완전한wiremessage가아니다; Host/CL생략표시는선택가독성보강이다.",
+      "NONE 계약의방향·파싱flow와짧은field예시가 충분하다.",
+      "RFC9110 §8.3 Content-Type/coding해제·SHOULDgenerate/absenttype MAYoctetstream·sniffing을실제읽었다. Missingtype이면모든server반드시415라고일반화하지않는다.",
+      "q1C 모든 보기, q2현재요청대미래응답, q3 실제415를반환한서버의media처리단계대JSONsyntax검증차이를확인했다."
+    ],
+    [
+      "network-http.core.http-message.accept",
+      "KEEP",
+      "L1 response미디어선호·q/wildcard·servercapability대캐시영향의 깊이가 충분하다.",
+      "JSONdefaultq대HTML0.8, Content-TypeJSON/AcceptHTML도정상,application/*대*/*·server제공조건/406가능과VaryAccept를 설명한다. 본문은Accept를절대명령으로강제하지않는다.",
+      "NONE 계약에actualheader와조건합성flow가 충분하다.",
+      "RFC9110 §12.4.1의406또는field무시허용, §12.4.2/12.5.1의quality/specificity·§12.5.5Vary를실제확인했다.",
+      "q1D 모든 보기와q3JSONAPIerror의HTMLfallback계약문제는맞다. q2의교집합만이라는해설범위는W3-NET-019이다."
+    ],
+    [
+      "network-http.core.http-message.content-negotiation",
+      "KEEP",
+      "L2 multi-axisvariant선택대cache효율·resourceidentity구분이 충분하다.",
+      "JSON/HTML·ko/en·coding조건과서버policy, VaryAcceptLanguage와variant축증가의hit/storage비용이 정확하다. 제공조건없을때다른계약/406가능을명시한다.",
+      "DIAGRAM 계약에inputs→availablevariants→koJSON와cachevariant두요청textflow가 충분하다.",
+      "RFC9110 §12.4.1/12.5.1의negotiation예외와§12.5.5 Vary가조건부reusekey를확장하는규칙을실제읽었다.",
+      "q1정답A는맞지만오답이모두다른계층이라W3-NET-017이다. q2cachevarianttrade-off는맞고q3실제언어선택차이가있다는전제누락은W3-NET-018이다."
+    ],
+    [
+      "network-http.core.http-message.content-length-transfer",
+      "TARGETED_ENHANCE",
+      "L2 메시지경계·octet·CL/TE·smuggling·version구분은 충분하다.",
+      "persistentstream의요청경계,UTF8문자수차이,chunk0종료·contentcoding별도,CL+TEsender금지/TE우선·requestzero-body·H2/3별도framing이 정확하다. 다만모순입력후forward제거필드·connectionclose구체상태는W3-NET-020이다.",
+      "TEXT chunk순서와proxy[A전체]대origin[A][B]가desync를 충분히보여준다. reject/forward/close의작은분기상태를같이보강할후보다.",
+      "RFC9112 §6.1/6.2/6.3의CLTE금지·TE우선·forwardCL제거·응답뒤close필수와zero/incomplete/close-delimited조건을실제읽었다.",
+      "q1B 모든 보기와q3동일bytes다른hopboundary는맞다. q2처리정책의필수close/forward조건은W3-NET-020이다."
+    ]
+  ],
+  "questions": [
+    [
+      "network-http.core.http-message.request-message.q1",
+      "TARGETED_ENHANCE",
+      "B method/target/fields/optionalcontent의H1설명과A responsecode/C mandatorycontent/D TCPsegment한개오답rationale는맞다. 그러나prompt/explanation이genericHTTP시작줄로표현해W3-NET-015이다.",
+      "EASY 일반의미대wireversion경계;HTTP/1.1을명시하는최소보강이필요하다."
+    ],
+    [
+      "network-http.core.http-message.request-message.q2",
+      "TARGETED_ENHANCE",
+      "model은request-target과Host/actualTCP를구별하려하지만'요청대상의authority'라는표현은origin-form에는authority가없다는구문을놓친다. targetURI에서온Host와request-target형식을분리할W3-NET-016이다.",
+      "MEDIUM 실제H1구문명칭을물어단순논리대상보다정확한scope가필요하다."
+    ],
+    [
+      "network-http.core.http-message.request-message.q3",
+      "KEEP",
+      "CL/TE모두없는H1request의bodylength0→뒤JSON이nextmessage로파싱될수있고정확CL또는지원chunked가필요하다는model/explanation을RFC9112§6.3에대조했다.",
+      "MEDIUM bytes전송≠현재requestbody;H1과우선조건을명시해다른버전과혼동하지않는다."
+    ],
+    [
+      "network-http.core.http-message.response-message.q1",
+      "TARGETED_ENHANCE",
+      "C status/fields/optionalcontent정답과모든rationale는맞다. 하지만A stack+TLSprivatekey/B DB전체commitrows/D SYNonly가모두HTTP응답오해와거리가멀어W3-NET-017이다.",
+      "EASY 정답식별이가능하나응답의존재/완료/status축을실제로비교하는distractor로보강할필요가있다."
+    ],
+    [
+      "network-http.core.http-message.response-message.q2",
+      "KEEP",
+      "model/explanation은statusHTTP결과대Content-Type/cache/locationfields대선택content를나누고202비동기미완료를 설명한다.",
+      "MEDIUM 요소별책임;200만으로DBcommit을증명하지않는다."
+    ],
+    [
+      "network-http.core.http-message.response-message.q3",
+      "KEEP",
+      "empty200는API계약허용과framing/actualbytes/proxyserverlog를대조해정상empty대truncated를구별해야한다는model/explanation이 맞다.",
+      "MEDIUM status대표현계약/완전성;모든200에nonempty본문필수라는보장이없다."
+    ],
+    [
+      "network-http.core.http-message.header-body.q1",
+      "KEEP",
+      "D fieldsmetadata/contentbytes 정답; A URLonly/B TCPSYN+DNS/C fieldparse=JSON+업무완료의모든rationale와계층별설명을확인했다.",
+      "EASY A/B는쉬운계층오답이나C가parse검증단계혼동을직접검증한다."
+    ],
+    [
+      "network-http.core.http-message.header-body.q2",
+      "KEEP",
+      "model/explanation의framing→mediaparse→DTO→업무검증과proxy/origindesync/smuggling별도문제가 정확하다.",
+      "MEDIUM 파싱단계분리의기작과security효과;연결이맞다."
+    ],
+    [
+      "network-http.core.http-message.header-body.q3",
+      "KEEP",
+      "total/individualheader/count/time상한과proxyorigin범위·normalization정책을맞추는model/explanation이 적절하다.",
+      "MEDIUM resourcecost대parser불일치방어;모든제품공통고정limit숫자를단정하지않는다."
+    ],
+    [
+      "network-http.core.http-message.representation.q1",
+      "KEEP",
+      "A resource상태data+metadata/여러표현 정답; DBrow동일객체/형식언어변형불가/contentcoding이면URI강제변경오답과모든rationale가 정확하다.",
+      "EASY 실제representation오해를비교해답이유일하다."
+    ],
+    [
+      "network-http.core.http-message.representation.q2",
+      "KEEP",
+      "sameURIresource의JSON/HTML표현과Accept/serverpolicy,Content-Type/Vary/validator일관성을model/explanation이 설명한다.",
+      "MEDIUM identity대representation선택;같은resource=항상같은bytes오해를검증한다."
+    ],
+    [
+      "network-http.core.http-message.representation.q3",
+      "KEEP",
+      "실제다른client용표현이반환됐다는prompt에negotiationcriteria대cachekeymismatch·Vary/CDNkey대조의model/explanation이 맞다.",
+      "MEDIUM 잘못된variant반환이전제라정상공통fallback과구분된다. content-negotiation.q3는목표가가깝고전제보강때더구체적trace가권장된다."
+    ],
+    [
+      "network-http.core.http-message.media-type.q1",
+      "KEEP",
+      "B JSON처리규칙의메타데이터 정답; A Accept선호/C syntaxschema업무통과/D mandatorycache의모든rationale가 정확하다.",
+      "EASY declaration대validation/caching구분;답이유일하다."
+    ],
+    [
+      "network-http.core.http-message.media-type.q2",
+      "KEEP",
+      "model/explanation의parser/render/securitypolicy차이와charset/Content-Encoding별도축을RFC9110§8.3에대조했다.",
+      "MEDIUM 실제type선언의역할;file확장자만의문제가아니다."
+    ],
+    [
+      "network-http.core.http-message.media-type.q3",
+      "KEEP",
+      "JSONAPItextplain과client추측불일치에actualContent-Type계약을맞추고MIMEsniffing위험을줄이는model/explanation이 맞다.",
+      "MEDIUM 계약불일치의interop/security영향;모든JSON모양text가무조건applicationJSON이어야한다는일반보장이아니라명시된API맥락이다."
+    ],
+    [
+      "network-http.core.http-message.content-type.q1",
+      "KEEP",
+      "C 현재request/responsemedia와parameter 정답; A route/IP/B response선호만/D schema인가통과오답과rationale가 정확하다.",
+      "EASY 현재표현대Accept/프레이밍·validation구분;연결이맞다."
+    ],
+    [
+      "network-http.core.http-message.content-type.q2",
+      "KEEP",
+      "Content-Type은보내는요청content,Accept는받을responsemedia허용/선호라는model/explanation이 정확하다.",
+      "MEDIUM 방향과대체불가이유;두값항상같음오해를검증한다."
+    ],
+    [
+      "network-http.core.http-message.content-type.q3",
+      "KEEP",
+      "실제missingContent-Type을415로거부한server에현재media처리단계실패와applicationJSON명시·syntax/validation별도라는model/explanation이 맞다.",
+      "MEDIUM 관찰된서버정책이전제;RFC의absenttype처리MAY대모든server반드시415로일반화하지않는다."
+    ],
+    [
+      "network-http.core.http-message.accept.q1",
+      "KEEP",
+      "D responsemedia선호 정답; A authcredential/B currentcontenttype/C TCPkeepaliveDNS TTL의모든rationale와q/wildcard/server제공조건을 확인했다.",
+      "EASY B가중요한Content-Type방향오해를검증하며A/C는쉬운계층대비이다."
+    ],
+    [
+      "network-http.core.http-message.accept.q2",
+      "TARGETED_ENHANCE",
+      "model의server가능조건/406may/Vary는맞지만explanation의'교집합에서응답선택'은교집합없을때RFC9110§12.4.1의field무시허용과API정책차이를가르치지않아W3-NET-019로기록했다.",
+      "MEDIUM selection조건과서버policy를구분하는한문장보강이필요하다. 정답전체재작성은아니다."
+    ],
+    [
+      "network-http.core.http-message.accept.q3",
+      "KEEP",
+      "JSONAPI오류경로가HTML로바뀌는문제에가능범위협상또는명시공통errorformat계약·예측가능parser를제안한model/explanation이 적절하다.",
+      "MEDIUM API계약품질문제이며Accept무시가항상RFC위반이라고단정하지않는다."
+    ],
+    [
+      "network-http.core.http-message.content-negotiation.q1",
+      "TARGETED_ENHANCE",
+      "A responsevariant선택정답및B TCPwindows/C DNSroles/D DBisolation오답rationale는맞지만모두다른계층이라협상이해없이소거가능해W3-NET-017이다.",
+      "EASY Accept/Content-Type/charset/coding·resourceidentity등실제오해를비교하도록distractor보강이필요하다."
+    ],
+    [
+      "network-http.core.http-message.content-negotiation.q2",
+      "KEEP",
+      "표현선택에영향을주는Accept/Language를variantkey/Vary/CDN설정에반영하고axis분산trade-off를설계하는model/explanation이 정확하다.",
+      "MEDIUM 협상입력이실제response를바꾼다는조건을명시해정상공통응답을오류로만들지않는다."
+    ],
+    [
+      "network-http.core.http-message.content-negotiation.q3",
+      "TARGETED_ENHANCE",
+      "prompt는Accept-Language다른client의samecachedresponse만주지만model/explanation은서로다른언어가선택될것을전제한다. single언어/fallback이면same response도정상일수있어W3-NET-018이다.",
+      "MEDIUM 전제모호성과representation.q3에가까운목표;원본선택차이와request/cachetrace를명시하는보강이필요하다."
+    ],
+    [
+      "network-http.core.http-message.content-length-transfer.q1",
+      "KEEP",
+      "B applicablecontentoctets 정답; A entiremessage/C decoded문자수/D CL+TE합산의모든rationale와우선규칙설명이 맞다.",
+      "EASY 적용가능조건·H1을명시해HEAD/304표현길이나H2/3를일반화하지않는다."
+    ],
+    [
+      "network-http.core.http-message.content-length-transfer.q2",
+      "TARGETED_ENHANCE",
+      "model의CLoctets/TEchunk경계·sender둘다금지·TE우선과엄격errorpolicy는맞다. 하지만permissibleTE처리대reject조건·모든응답뒤MUSTclose와forwardCL제거가빠져W3-NET-020이다.",
+      "MEDIUM '어떻게다뤄야하나'질문에는모순입력후connectionstate를명시해야함. stricterrejectpolicy권고와RFC최소계약을분리한다."
+    ],
+    [
+      "network-http.core.http-message.content-length-transfer.q3",
+      "KEEP",
+      "같은bytes에서proxy/origin의A끝/B시작이달라hiddenrequest가생기고consistentframing/거부정책이필요한model/explanation이 맞다.",
+      "HARD reusedconnection의다음user경계오염까지설명한다. 단순length계산반복이아니다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://www.rfc-editor.org/rfc/rfc9110",
+      "CURRENT_VERIFIED",
+      "공식Datatracker동일본문에서실제 §3.2 representation, §6.4.1 no/zero content, §7.2 Host, §8.1/8.3/8.3.1 type/coding·sniffing, §12.4.1/12.4.2/12.5.1 negotiationmayignore/quality/specificity, §12.5.5 Varyexpandscachekey, §15.3.3 202를읽었다. canonicalURL은앞선접근오류로referenceAccess에별도미확인표시한다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9112",
+      "CURRENT_VERIFIED",
+      "실제 §2.1/2.2 start-line/parse, §3.2의4request-target형식과origin-form pathquery/Host, §6.1~6.3 CLTEsender금지·TE우선·forwardCL제거·응답뒤connectionclose·zero/incomplete/close-delimitedbody를읽었다."
+    ]
+  ],
+  "referenceAccess": {
+    "https://www.rfc-editor.org/rfc/rfc9110": {
+      "status": "NEEDS_REVIEW",
+      "basis": "canonicalURL은request-journey때웹도구Internal Error였다. 공식Datatracker동일본문으로내용은검증했으며죽은링크/404로판정하지않는다."
+    }
+  },
+  "supplementalSources": [
+    [
+      "https://datatracker.ietf.org/doc/html/rfc9110",
+      "CURRENT_VERIFIED",
+      "sources에기록한실제representation/content/media/negotiation/Vary/202관련절을읽었다. 문서전체전수검토표시는아니다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9114",
+      "CURRENT_VERIFIED",
+      "실제 §4.3/4.3.1/4.3.2의messagecontrolpseudo-fields·method/scheme/authority/path/status와H1version/start-line정보미전송을읽었다. H3가genericHTTP시작줄이라는설명을갖지않음을대조했다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-NET-015",
+      "severity": "P2",
+      "contentKeys": [
+        "network-http.core.http-message.request-message.q1"
+      ],
+      "file": "content/network-http/http-message/questions.json",
+      "quote": "HTTP 요청 메시지의 시작 줄, 필드, 콘텐츠 관계를 설명한 것으로 맞는 것은?",
+      "problem": "정답과해설은시작줄에서method/target을전달하는H1구문을genericHTTP요청구조로설명한다. RFC9112 §2/3은H1start-line이고RFC9114 §4.3은controlpseudo-fields를정의한다. Concept본문은이미version별의미/구조를구별한다.",
+      "action": "prompt·rationale·explanation에HTTP/1.1을명시하고필요하면H2/3의동일control정보는pseudo-fields라는한문장을붙인다. 모든HTTP버전의공통wireline으로외우게하지않는다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-NET-016",
+      "severity": "P2",
+      "contentKeys": [
+        "network-http.core.http-message.request-message.q2"
+      ],
+      "file": "content/network-http/http-message/questions.json",
+      "quote": "`Host`는 HTTP/1.1에서 요청 대상의 authority 값을 전달해 같은 IP·포트에서 여러 가상 호스트를 구분하는 데 사용될 수 있다.",
+      "problem": "질문은프로토콜request-target과Host의역할차이를묻는데model은targetURI와request-target을'요청대상의authority'로섞는다. 가장흔한origin-form request-target은path/query만이며Host는원래targetURI의host/port이다. authority-form은CONNECT의다른형식이다. 논리서비스대actualIP설명은맞지만필드구문경계가불명확하다.",
+      "action": "origin-form의GET /path?query와Host:example.com을한예시로구별하고Host가targetURIauthority에서온다고설명한다. absolute/authority/asterisk-form을조건으로짧게언급하고request-target항상authority를포함한다는오해를막는다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-NET-017",
+      "severity": "P2",
+      "contentKeys": [
+        "network-http.core.http-message.response-message.q1",
+        "network-http.core.http-message.content-negotiation.q1"
+      ],
+      "file": "content/network-http/http-message/questions.json",
+      "quote": "클라이언트 프로세스의 스택 정보와 서버의 TLS 개인 키",
+      "problem": "response.q1은A stack/privatekey,B DBcommit전체rows,D SYNonly가모두응답구성에대한현실적인오해와멀다. negotiation.q1도B TCPwindows/C DNSroles/D DBisolation뿐이어서negotiation을모르고계층키워드만으로정답을고를수있다. 정답·rationale오류는없지만이해검증력이낮다.",
+      "action": "response문항은status200이면nonempty/202최종완료/필드가본문형식자동검증등실제오해로,negotiation문항은Content-Typerequest선언대Acceptresponse선택/variant면URI필수변경/qvalue단독강제등의혼동으로오답을교체한다. EASY난이도와정답학습목표는유지한다.",
+      "followupIssues": [
+        202
+      ],
+      "additionalEvidence": [
+        {
+          "file": "content/network-http/http-message/questions.json",
+          "quote": "데이터베이스 트랜잭션 격리 수준"
+        }
+      ]
+    },
+    {
+      "id": "W3-NET-018",
+      "severity": "P1",
+      "contentKeys": [
+        "network-http.core.http-message.content-negotiation.q3"
+      ],
+      "file": "content/network-http/http-message/questions.json",
+      "quote": "`Accept-Language`가 다른 두 클라이언트가 같은 캐시 응답을 받는다. 원인과 수정 방향을 설명하라.",
+      "problem": "두Accept-Language가다르다는사실만으로원본이서로다른표현을선택한다거나동일cache응답이오류임을도출할수없다. 서버가한언어만지원하거나두요청이같은fallback을선택하면정상일수있다. model/explanation은Vary/cachekey누락을확정해복수가능한답을제거한다. representation.q3와같은Vary목표가반복되는데후자의prompt는이미다른client용표현이라는실제오류를명시한다.",
+      "action": "원본은ko/en두언어표현을제공하고각직접요청에서서로다른본문을확인했으며cache경유때다른언어가반환됐다는조건을추가한다. Vary값/두요청·cachehittrace로실행추론을묻게해representation.q3의단순개념반복도줄인다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-NET-019",
+      "severity": "P2",
+      "contentKeys": [
+        "network-http.core.http-message.accept.q2"
+      ],
+      "file": "content/network-http/http-message/questions.json",
+      "quote": "콘텐츠 협상은 클라이언트의 선호를 무조건 따르는 것이 아니라 ‘클라이언트가 허용하는 것’과 ‘서버가 제공할 수 있는 것’의 교집합에서 응답을 선택하는 과정이다.",
+      "problem": "교집합에서선택한다는교육모델은해당협상입력을존중하는경로에유용하지만교집합이없을때의프로토콜허용과API정책을구별하지않는다. RFC9110 §12.4.1은406을보내거나해당협상필드를무시한응답을보내는두경로를허용한다. 현재본문의'Accept는강제명령이아님'과맞춰질필요가있다.",
+      "action": "협상입력을존중하는경로라는조건을붙이고,만족표현없으면RFC상406또는field무시가허용되지만JSON-onlyAPI등의명시계약은더엄격할수있다는한문장을추가한다. 정상q/specificity설명은유지한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-NET-020",
+      "severity": "P1",
+      "contentKeys": [
+        "network-http.core.http-message.content-length-transfer",
+        "network-http.core.http-message.content-length-transfer.q2"
+      ],
+      "file": "content/network-http/http-message/content-length-transfer.md",
+      "quote": "수신 메시지에 둘이 모두 존재하면 `Transfer-Encoding`이 메시지 길이 결정에서 우선하지만, 이런 조합 자체가 요청 스머글링(request smuggling) 같은 공격을 나타낼 수 있어 오류로 취급할 이유가 크다.",
+      "problem": "CL+TEsender금지/TE우선/desync설명은맞다. 하지만이입력을실제로어떻게처리하는지에관한핵심connection상태가빠져있다. RFC9112 §6.1은server가reject또는TE만으로처리할수있지만응답뒤MUSTclose를요구하고§6.3은forward를택한중개자가receivedCL을반드시제거하도록한다. '엄격오류처리·정규화'만으로는각홉에무엇을남기고연결을언제버리는지학습자가추적하기어렵다.",
+      "action": "reject/TE처리의허용정책과응답뒤close필수,forward시CL제거/TE처리필수를짧은분기표로추가한다. q2model에도동일핵심조건을반영하며전체framing본문재작성은하지않는다.",
+      "followupIssues": [
+        202
+      ],
+      "additionalEvidence": [
+        {
+          "file": "content/network-http/http-message/questions.json",
+          "quote": "HTTP/1.1에서 `Content-Length`와 `Transfer-Encoding`의 역할과 둘이 함께 나타난 메시지를 어떻게 다뤄야 하는지 설명하라."
+        }
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "network-http.core.http-message.accept": "beef3bbbd6058eb8639accd413b739109c742f0dff32f2cef65a2afac9a9a2d0",
+    "network-http.core.http-message.accept.q1": "6fb8262da1ce057ec2172d246874a4733f90f1bad248b2c5ff4dbc644945dddd",
+    "network-http.core.http-message.accept.q2": "25cf412ab2f777948b8f27982fceac17bc96dff3ebc04088947662191326d38e",
+    "network-http.core.http-message.accept.q3": "a67423b63f7887055d59e9b0e919c2f69b5f6cf0847c39cd84f180af5cf74124",
+    "network-http.core.http-message.content-length-transfer": "70b59e298432a2fe7b11c6a6f1eb9a3e51febffaf4f2e101578cf63a09b11504",
+    "network-http.core.http-message.content-length-transfer.q1": "d66db81762f929fffcb28c1a39fb580b7b2243469c9e0a7905f1cf7e03bb65af",
+    "network-http.core.http-message.content-length-transfer.q2": "a8674896eb95a786ab8391c2fbf751b28cebfa418d2c1985ad321863a6f422f8",
+    "network-http.core.http-message.content-length-transfer.q3": "5f225ba659edda7f308451340cc2b831aa9a8d07758c41f26daf088644d2c4c0",
+    "network-http.core.http-message.content-negotiation": "0c13408bcc9473afb2617554b191652d8f4c332eefea012200106b0539568c5b",
+    "network-http.core.http-message.content-negotiation.q1": "a3eb8bc45d6ab5bcb64ac57b9ef144651e50b3bf7362b689e2be08d588e44b75",
+    "network-http.core.http-message.content-negotiation.q2": "88b4202552d6b09561d2b36f5d31e75d5e54927fbef326b36e8146ccd144e551",
+    "network-http.core.http-message.content-negotiation.q3": "0dee6ce5ff4e395cde7b82f6ad5bc5ccde7c60c2c8115246ce9bfd7fc5a26835",
+    "network-http.core.http-message.content-type": "e9806b5d1f5f8f3a5f1850769566c0587f16215c1f4a684cf1b486e8eb57340a",
+    "network-http.core.http-message.content-type.q1": "3ee216e7895ad55e13129e90cfa3533be372109933e7cc43e6ee64ff47cf42da",
+    "network-http.core.http-message.content-type.q2": "8bd188d6b4a20cea44aa91e41d08c6416673a01f8bbbd2352ced91120b98608c",
+    "network-http.core.http-message.content-type.q3": "cdf29c4be0eac99405b28bf7341757cdbabaad324e3a1884cb13e634bca9ad34",
+    "network-http.core.http-message.header-body": "8ce0f90134d3e62fe6e8b0cf5fca614f134c17052c39930119dd8e1dc2c92816",
+    "network-http.core.http-message.header-body.q1": "990bdfd41058508d96d4430540839cbe70e553d0b63656cb4905cc0b51311bfa",
+    "network-http.core.http-message.header-body.q2": "9a9bcf002974bc3dd43dc18f2dcca07d291185eb080cb7168281275695191147",
+    "network-http.core.http-message.header-body.q3": "02ad07a2320a1b51b54928671f4b656d7948d2301276f3a709add51617682902",
+    "network-http.core.http-message.media-type": "887bf8ac7673c502f65256762c941aa1319e4a6b0ab2efd34213ac5aca144bce",
+    "network-http.core.http-message.media-type.q1": "15e10d379e90e4e028f152236d3d6a8bfd272bbf9b31e1246ad85b77e896342b",
+    "network-http.core.http-message.media-type.q2": "a5683d48561f341adc1dfff02607bbb2742e3d48b96240801fa198d3abaa24ae",
+    "network-http.core.http-message.media-type.q3": "dc03bfaea5f5a1928ca27ae86e9326c981bc5bc7844fd85602121e155caf82d2",
+    "network-http.core.http-message.representation": "abc8763ace2b31ddc867d7fd9b3c0535e785e5d33c64c4e70715fd3899d14038",
+    "network-http.core.http-message.representation.q1": "5e1eb0b3f6e1c8a0ae7a0bdb78387f8183fe76f5f65136a0c2c0256bcb88a8ef",
+    "network-http.core.http-message.representation.q2": "3e97c2f396538a375493fbc6ec0f7c4d324b9a97b6eaaf149ccb8042e2ff188f",
+    "network-http.core.http-message.representation.q3": "40946eb8e275a28e1ed5d388bead16b7213000d65bc4a3770299b27f5f2895cb",
+    "network-http.core.http-message.request-message": "fa3902be7a682c75fba07b2613c578bafc3b58948347ace436ae25886eb70de5",
+    "network-http.core.http-message.request-message.q1": "fef6161ed990540b041c479da5833dc2753645c29cf41420c594340769addaeb",
+    "network-http.core.http-message.request-message.q2": "13ca1699ac4f027a85247fb33d4587f37de1e3906da1bfad0c64a5eb3838d089",
+    "network-http.core.http-message.request-message.q3": "cbef3ceccc2d7dd63cdefb13563d42df579aef0ed2a23ad0bc3c2896b8c7f470",
+    "network-http.core.http-message.response-message": "2352025fd503089e7c7a1a454bf4a402280f9968e115a186a58c1f69199c6243",
+    "network-http.core.http-message.response-message.q1": "bb9a394a06ba67e476d8f5f1f4e99599e7ff30201db325af2cc2792de694fbc2",
+    "network-http.core.http-message.response-message.q2": "4dcba296dccd74a834f7b7afed8c38f1ceae7b3ce34280ac72c356b23e8e8672",
+    "network-http.core.http-message.response-message.q3": "8382c16236149c1a5d215c363647ca86e7915091968870fd6cc1ad0053051f47"
+  }
+}

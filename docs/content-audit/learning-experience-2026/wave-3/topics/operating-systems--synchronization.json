@@ -1,0 +1,322 @@
+{
+  "area": "operating-systems",
+  "topic": "synchronization",
+  "topicKey": "operating-systems.core.synchronization",
+  "coverage": "7 Concept·24 Question의 실제 본문과 모든 문항 필드를 읽었다. Mutex 소유권, permit 변화, condition wait의 원자적 unlock/등록과 재획득, monitor 경계, reader/writer admission, bucket/resize 범위, 실제 contention 비용을 검토했다. POSIX 설명과 OSTEP의 해당 절을 대조하고 기존 SVG 4개의 전체 소스·레이블·좌표를 읽었다. 픽셀 렌더 QA는 수행하지 않았다.",
+  "concepts": [
+    [
+      "operating-systems.core.synchronization.mutex",
+      "KEEP",
+      "L1 같은 불변조건의 모든 접근에 공통 보호 규칙이 필요한 이유를 충족한다.",
+      "T1 lock/갱신/unlock과 T2 대기 순서를 설명한다. 소유자 unlock의 일반 모델과 재진입·공정성·timeout의 API별 차이를 구분한다. 긴 외부 호출을 분리할 때 상태 재검증이 필요하다.",
+      "TEXT 소유·대기 순서와 실패 조건이 충분하다.",
+      "pthread_mutex_lock POSIX 설명의 소유권·유형별 relock/unlock 조건과 대조했다.",
+      "q1의 모든 접근 규칙, q2의 semaphore와 소유권 비교, q3의 300ms 외부 호출과 재검증을 확인했다."
+    ],
+    [
+      "operating-systems.core.synchronization.semaphore",
+      "KEEP",
+      "L1 용량과 가용 permit을 구별하고 획득·반납을 추적한다.",
+      "3→2→1→0 뒤 T4 대기와 T2 반납 후 진행이 타당하다. Binary semaphore를 mutex와 동일시하지 않는다. 획득 성공한 permit만 모든 종료 경로에서 반납하고 과다 반납을 방지해야 한다.",
+      "DIAGRAM 기존 semaphore-permits.svg의 T1..T4 상태와 반납 화살표가 설명에 부합한다.",
+      "sem_overview의 비음수 가용 값과 OSTEP의 binary/signal 예제를 대조했다. OSTEP의 음수 대기자 수 의사코드를 POSIX 가용 값으로 일반화하지 않는다.",
+      "q1 blocking 조건, q2 다른 thread의 post, q3 예외 시 leak, q4 용량5/가용7의 과다 반납을 개별 확인했다."
+    ],
+    [
+      "operating-systems.core.synchronization.condition-variable",
+      "KEEP",
+      "L2 조건 대기와 mutex의 다른 책임을 충족한다.",
+      "wait가 mutex를 원자적으로 풀고 대기 등록한 뒤 반환 전에 재획득하며 producer의 put/signal/unlock 뒤 while로 재검사한다. Signal은 자원 예약이나 조건 참의 보장이 아니다. 전형적 Mesa/POSIX 모델이며 모든 monitor 의미로 확대하지 않는다.",
+      "DIAGRAM condition-variable-wait-signal.svg의 empty→wait→put/signal→재획득/재검사 흐름을 유지한다.",
+      "pthread_cond_wait의 atomicity·locked return·spurious wakeup과 OSTEP Mesa/두 consumer 반례를 대조했다.",
+      "q1 모든 보기, q2 while 이유, q3 unlock과 sleep 사이 lost wakeup, q4 signal의 비예약 성질을 확인했다."
+    ],
+    [
+      "operating-systems.core.synchronization.monitor",
+      "KEEP",
+      "L2 공유 상태·연산·상호배제·조건 대기의 한 소유 경계를 설명한다.",
+      "Bounded buffer의 notFull/notEmpty와 caller가 lock을 조립하지 않는 이유가 명확하다. 내부 가변 상태 유출이 경계를 깨며 Java intrinsic wait/notify는 예시로 한정한다. 외부 callback의 장기 실행·재진입·lock 관계는 정책에 따른 위험이다.",
+      "TEXT enqueue/dequeue와 두 predicate의 책임이 충분하다.",
+      "UIC 5.8.1의 private state·동시 한 활성 연산·condition 및 signal-and-wait/continue 구분을 대조했다.",
+      "q1의 네 구성 경계와 모든 오답, q2 상태/규칙 소유, q3 callback의 불명확한 실행·lock 위험을 확인했다."
+    ],
+    [
+      "operating-systems.core.synchronization.read-write-lock",
+      "KEEP",
+      "L2 read 공유와 write 배제의 조건 및 admission trade-off를 충족한다.",
+      "get 이름이어도 lazy init/count 갱신은 write라는 경계가 유용하다. Reader preference의 writer starvation과 writer preference의 신규 reader 지연, 공정성·upgrade/downgrade 계약 차이를 명시한다.",
+      "DIAGRAM read-write-lock.svg의 reader 병렬 구간과 writer 배타 구간 및 정책 의존 주석이 정확하다.",
+      "pthread_rwlock_rdlock의 writer 배제와 대기 writer에 대한 정책/구현 의존 admission을 대조했다.",
+      "q1 D의 실제 비갱신·입장 가능 조건, q2 read99%만으로 성능 보장 불가, q3 starvation/reader 지연을 확인했다."
+    ],
+    [
+      "operating-systems.core.synchronization.lock-granularity",
+      "KEEP",
+      "L2 보호 단위·병렬성·복합 불변조건의 비용을 비교한다.",
+      "Coarse lock은 단순한 경계 대신 독립 작업을 직렬화한다. Bucket별 lock은 독립성 전제와 resize의 전체 mapping 보호·고정 lock 순서가 필요하다. Lock 수 자체로 throughput을 예측하지 않는다.",
+      "TEXT bucket0/L0 등의 대응과 resize 경계가 충분하다.",
+      "OSTEP lock의 배제·성능/공정성 구분과 실제 Toss 사례의 공유 임계 지점을 대조했다. 특정 라이브러리 전략을 일반 보장으로 취급하지 않는다.",
+      "q1 모든 보기, q2 bucket 대 resize, q3 64 shard의 측정·복합 경계 실패를 확인했다."
+    ],
+    [
+      "operating-systems.core.synchronization.contention",
+      "KEEP",
+      "L2 실제 대기·spin·retry와 선언된 lock 수를 구별한다.",
+      "Hold time과 arrival이 대기열을 만들고 blocking/wakeup·spin CPU 비용이 다르다. Lock-free도 cache-line 소유권과 재시도 경합이 가능하다. 원자 연산마다 반드시 CAS loop라는 주장은 하지 않는다.",
+      "DIAGRAM contention-queue.svg의 owner/대기자4명과 hold/wait·throughput/tail 축이 학습 목표에 맞다.",
+      "OSTEP 성능·two-phase 절과 Toss JDK11/Boot2.7.9 역사적 KeepAliveCache 사례를 읽었다. JDK25의 동일 구현 보장이나 자체 benchmark로 인용하지 않는다.",
+      "q1 실제 동일 지점 경쟁, q2 외부 I/O와 tail, q3 lock-free≠contention-free, q4 측정 항목을 확인했다."
+    ]
+  ],
+  "questions": [
+    [
+      "operating-systems.core.synchronization.mutex.q1",
+      "KEEP",
+      "C 공통 불변조건의 모든 경로에 같은 보호 규칙. A 각자 mutex/B readonly 무조건 안전/D 긴 구간이 race 감소라는 모든 보기와 rationale·explanation을 대조했다.",
+      "EASY 보호 규칙 목표. Readonly의 publication 문제와 충돌 없이 본문에 연결된다."
+    ],
+    [
+      "operating-systems.core.synchronization.mutex.q2",
+      "KEEP",
+      "model/explanation의 mutex owner unlock 대 N permit·타 thread signal 구분이 정확하다.",
+      "MEDIUM API 유형의 별도 조건을 보편적 공정성으로 확대하지 않는다."
+    ],
+    [
+      "operating-systems.core.synchronization.mutex.q3",
+      "KEEP",
+      "50 요청·300ms 외부 API를 lock 안에 두면 직렬 대기와 tail이 증가한다. 밖으로 분리할 때 상태 재검증이 필요한 model/explanation이 타당하다.",
+      "MEDIUM 긴 임계 구간의 구현 판단이며 이동만으로 정확성 보장이라고 하지 않는다."
+    ],
+    [
+      "operating-systems.core.synchronization.semaphore.q1",
+      "KEEP",
+      "B 가용0이면 blocking acquire 대기. A 자동 용량 증가/C 기존 permit 회수/D readonly 우회는 틀리며 모든 rationale와 explanation이 맞다.",
+      "EASY 일반 blocking 획득 전제를 설명에 명시한다. tryAcquire까지 대기한다고 일반화하지 않는다."
+    ],
+    [
+      "operating-systems.core.synchronization.semaphore.q2",
+      "KEEP",
+      "model/explanation의 binary0/1과 mutex 유사 배제, 소유자 아닌 thread의 post를 통한 신호 차이가 맞다.",
+      "MEDIUM mutex q2 비교와 관련되지만 semaphore의 신호 역할을 별도로 평가한다."
+    ],
+    [
+      "operating-systems.core.synchronization.semaphore.q3",
+      "KEEP",
+      "20 permit을 획득한 호출의 예외 경로 미반납은 가용 수를 고갈시킨다. model/explanation의 정상/예외/timeout/cancel 종료 경로 반납은 획득한 permit의 수명 관리로 읽힌다.",
+      "MEDIUM 획득 성공 전 무조건 release라는 처방이 아니다. q4 과다 반납과 함께 검증한다."
+    ],
+    [
+      "operating-systems.core.synchronization.semaphore.q4",
+      "KEEP",
+      "실제 용량5인데 가용7이면 과다 반납으로 최대7 호출을 허용하여 제한을 깨는 model/explanation이 정확하다.",
+      "MEDIUM leak 문항과 반대 방향의 불변조건 위반을 평가한다."
+    ],
+    [
+      "operating-systems.core.synchronization.condition-variable.q1",
+      "KEEP",
+      "A predicate 변경을 효율적으로 기다리고 다시 검사한다. B mutex 없이 조건 저장/C signal 소유권 예약/D N permit 역할이라는 오답·모든 rationale를 확인했다.",
+      "EASY mutex/semaphore와 역할을 구분한다."
+    ],
+    [
+      "operating-systems.core.synchronization.condition-variable.q2",
+      "KEEP",
+      "spurious wakeup 또는 먼저 소비한 다른 consumer 때문에 while로 predicate를 재검사하는 model/explanation이 정확하다.",
+      "MEDIUM if 코드의 실패 조건을 평가한다."
+    ],
+    [
+      "operating-systems.core.synchronization.condition-variable.q3",
+      "KEEP",
+      "empty 검사→unlock→producer put/signal→consumer sleep 순서의 lost wakeup을 model/explanation이 정확히 추적한다. Mutex 해제와 대기 등록의 원자적 연결이 필요하다.",
+      "HARD 별도 unlock/sleep 구현의 반례이며 POSIX wait가 이미 제공하는 계약과 구별한다."
+    ],
+    [
+      "operating-systems.core.synchronization.condition-variable.q4",
+      "KEEP",
+      "signal 시점 이후 predicate가 다시 거짓일 수 있고 자원이 예약되지 않는 model/explanation이 맞다.",
+      "MEDIUM q2의 코드 선택에 이어 signal의 의미를 검증한다."
+    ],
+    [
+      "operating-systems.core.synchronization.monitor.q1",
+      "KEEP",
+      "C 공유 상태·연산·배제·조건 대기를 한 경계로 묶는다. A 신호만/B 상태 외부/D caller가 lock 조합이라는 오답 및 각 rationale가 정확하다.",
+      "EASY 캡슐화와 동기화 경계의 목표를 확인한다."
+    ],
+    [
+      "operating-systems.core.synchronization.monitor.q2",
+      "KEEP",
+      "model/explanation의 상태와 규칙의 같은 소유자, caller의 lock 조립 방지, 내부 가변 상태 노출 위험이 타당하다.",
+      "MEDIUM mutex 하나의 존재와 monitor 설계의 책임을 구분한다."
+    ],
+    [
+      "operating-systems.core.synchronization.monitor.q3",
+      "KEEP",
+      "외부 callback을 lock 안에서 호출하면 실행 시간·재진입·다른 lock 관계를 제어하기 어려운 model/explanation이 맞다.",
+      "HARD 정책에 따라 생길 수 있는 위험으로 설명하며 모든 callback이 반드시 deadlock이라는 답이 아니다."
+    ],
+    [
+      "operating-systems.core.synchronization.read-write-lock.q1",
+      "KEEP",
+      "D 실제 비갱신 read이며 writer/admission 규칙이 허용해야 한다. A read 항상 배제/B get에서 변경 가능/C writer 중 read 무조건 허용이라는 오답·모든 rationale가 맞다.",
+      "EASY 메서드 이름이 아닌 상태 변경과 입장 정책을 확인한다."
+    ],
+    [
+      "operating-systems.core.synchronization.read-write-lock.q2",
+      "KEEP",
+      "read99%만으로 유리하지 않다. model/explanation의 관리 비용·짧은 구간·낮은 실제 경합·writer SLO 판단이 맞다.",
+      "MEDIUM 성능의 무조건 보장을 피하고 측정 조건을 제시한다."
+    ],
+    [
+      "operating-systems.core.synchronization.read-write-lock.q3",
+      "KEEP",
+      "reader preference와 계속 들어오는 reader는 writer starvation을 만들 수 있다. writer 우선/공정 정책은 신규 reader 지연 비용이 있다는 model/explanation이 정확하다.",
+      "MEDIUM admission 정책의 양방향 trade-off를 검증한다."
+    ],
+    [
+      "operating-systems.core.synchronization.lock-granularity.q1",
+      "KEEP",
+      "A coarse 경계의 불변조건 관리 단순성과 독립 작업 대기. B 적은 lock이면 경합 없음/C coarse가 항상 더 많은 lock 순서/D coarse가 작은 조각이라는 오답·각 rationale를 확인했다.",
+      "EASY 보호 단위의 정의·비교가 본문과 맞다."
+    ],
+    [
+      "operating-systems.core.synchronization.lock-granularity.q2",
+      "KEEP",
+      "bucket별 독립 접근과 resize의 전체 mapping 변경은 범위가 다르다. model/explanation의 전역 프로토콜·lock 순서가 타당하다.",
+      "MEDIUM 병렬성만 늘리고 전체 불변조건을 놓치는 실패를 평가한다."
+    ],
+    [
+      "operating-systems.core.synchronization.lock-granularity.q3",
+      "KEEP",
+      "64 shard라도 공유 병목이 남거나 관리/복합 연산 비용과 lock 순서 위험이 늘 수 있다는 model/explanation이 맞다.",
+      "HARD lock 수와 실제 contention의 차이·정확성 비용을 확인한다."
+    ],
+    [
+      "operating-systems.core.synchronization.contention.q1",
+      "KEEP",
+      "B 동일 지점의 실제 wait/spin/retry 경쟁. A lock 선언만/C 짧으면 경쟁 없음/D 대기 없는 상태라는 오답·모든 rationale가 정확하다.",
+      "EASY 선언 수가 아닌 실행 현상을 평가한다."
+    ],
+    [
+      "operating-systems.core.synchronization.contention.q2",
+      "KEEP",
+      "외부 I/O로 hold가 길어지면 같은 arrival에서 처리 용량과 대기열/tail이 악화될 수 있다는 model/explanation이 정확하다.",
+      "MEDIUM 구체 비용 모델이며 I/O 지연을 CPU 실행 시간으로 혼동하지 않는다."
+    ],
+    [
+      "operating-systems.core.synchronization.contention.q3",
+      "KEEP",
+      "lock-free counter도 cache coherence/재시도 비용의 동일 지점 경쟁이 가능하다는 model/explanation이 맞다.",
+      "HARD 진행 보장과 성능을 구분하며 모든 atomic이 software CAS loop라는 명제가 아니다."
+    ],
+    [
+      "operating-systems.core.synchronization.contention.q4",
+      "KEEP",
+      "model/explanation의 hold·획득/대기시간·대기자·blocking/spin CPU·throughput/tail을 함께 측정하는 항목이 충분하다.",
+      "MEDIUM 단일 지표 개선을 전체 개선으로 취급하지 않는다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-locks.pdf",
+      "CURRENT_VERIFIED",
+      "실제 TAS/CAS, spin 성능·공정성 및 two-phase 절을 읽고 해당 배제·비용 모델을 대조했다. 역사적 glibc 사례를 현행 전체 구현으로 승인하지 않는다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man3/pthread_mutex_lock.3p.html",
+      "CURRENT_VERIFIED",
+      "POSIX.1-2017 mirror DESCRIPTION과 유형·robust 표의 소유권/relock/unlock 및 waiter 선택을 읽었다. Linux의 모든 mutex 구현 보장과 구분한다."
+    ],
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-sema.pdf",
+      "CURRENT_VERIFIED",
+      "31.1~31.3의 초기값·wait/post·binary1·parent/child0 및 양방향 실행 순서를 실제 읽었다. 음수 대기자 수 의사코드는 별도 모델이다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man7/sem_overview.7.html",
+      "CURRENT_VERIFIED",
+      "DESCRIPTION의 비음수 가용 값, 0 blocking wait, post 증가 및 named/unnamed 수명·공유 범위를 읽었다."
+    ],
+    [
+      "https://pages.cs.wisc.edu/~remzi/OSTEP/threads-cv.pdf",
+      "CURRENT_VERIFIED",
+      "30.1의 atomic unlock/sleep·relock과 30.2의 Mesa/Hoare, 두 consumer의 if 실패, while와 두 condition의 bounded buffer 절을 읽었다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man3/pthread_cond_wait.3p.html",
+      "CURRENT_VERIFIED",
+      "DESCRIPTION의 locked mutex, atomic release/block, locked return, spurious wakeup/predicate 재평가 및 mutex dynamic binding을 읽었다."
+    ],
+    [
+      "https://man7.org/linux/man-pages/man3/pthread_rwlock_rdlock.3p.html",
+      "CURRENT_VERIFIED",
+      "DESCRIPTION의 writer 배제와 scheduling option/대기 writer에 대한 구현 의존 admission, matching unlock을 읽었다."
+    ],
+    [
+      "https://toss.tech/article/engineering-note-3",
+      "CURRENT_VERIFIED",
+      "작성자 실제 사례의 JDK11/Boot2.7.9 HttpURLConnection→KeepAliveCache 공유 synchronized put, Feign client 설정과 client/JDK 변경을 읽었다. 역사적 사례의 실제 공유 병목 학습 가치만 확인했다."
+    ]
+  ],
+  "supplementalSources": [
+    [
+      "https://www.cs.uic.edu/~jbell/CourseNotes/OperatingSystems/5_Synchronization.html",
+      "CURRENT_VERIFIED",
+      "5.8.1의 private state·한 활성 monitor 연산·condition과 signal-and-wait/continue 구분을 실제 읽어 monitor의 추상 모델을 확인했다."
+    ]
+  ],
+  "findings": [],
+  "visualizationAssets": [
+    {
+      "file": "frontend/public/learning/operating-systems/semaphore-permits.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "d7c84cb96d883547b6a8dd1c06b1b5c53a95315eb8507f6aecbb4a80467b14fa"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/condition-variable-wait-signal.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "98dc9a0a9ea14e36ff855e5a18e94200fd7ce889c62929e378a90ed6b927ae8f"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/read-write-lock.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "5a44ea7e338f85127d9a5ea63c5f57ff9ae2894158b1a2727219d4db7c94a02a"
+    },
+    {
+      "file": "frontend/public/learning/operating-systems/contention-queue.svg",
+      "reviewScope": "COMPLETE_SVG_SOURCE_SEMANTIC_GEOMETRY; NO_RENDER_QA",
+      "sourceSha256": "511808e017488feb1cf99ce3ffcadde3f54d4a225c49352adc881afae7743d03"
+    }
+  ],
+  "sourceHashes": {
+    "operating-systems.core.synchronization.condition-variable": "9345f2d6db3b43e059d2a33a87d09f5d226a84897984b24c02861af29b3ed469",
+    "operating-systems.core.synchronization.condition-variable.q1": "6d9b8cec63309452c86116d5f492b7816d67f2de6cdf923bfb5ab09011e24efa",
+    "operating-systems.core.synchronization.condition-variable.q2": "458d075808a34b9a17900c080d67a45717533124e2753198dc7b4ae882708ffa",
+    "operating-systems.core.synchronization.condition-variable.q3": "97947fafd527e625ed39e03786d15f0f45aa59b9cdb1feab701c87b8ea6e9518",
+    "operating-systems.core.synchronization.condition-variable.q4": "9110336fb9ac782104d8726b39560006cb8a0b4559e4fd030f09c6bb6c488cfa",
+    "operating-systems.core.synchronization.contention": "34f2432990d853c9bf8cd7be06cd7aa2cbe6c10aba96483ef186a01aa7be0d25",
+    "operating-systems.core.synchronization.contention.q1": "bc537e204f2da5a4596ababd849e4733ece1196a0b85dc46ee70899c0d9feb2e",
+    "operating-systems.core.synchronization.contention.q2": "a5e817e85823ed8ab9f3e104ce4296968b689531796006f1aa410a04ccfa3d3a",
+    "operating-systems.core.synchronization.contention.q3": "a371cdbe3f513f5b3cbb16939665d7fc4f16edceb47df8f2bb4d6377b4e02793",
+    "operating-systems.core.synchronization.contention.q4": "dc7f669343bbf8433c4e32e91a0cc5181cc605695037b9f66480720d8415aedb",
+    "operating-systems.core.synchronization.lock-granularity": "8b7682fcc66be304afb18bf88c17ea8297ac93d65b0d2faa9a5456ced8a11bd9",
+    "operating-systems.core.synchronization.lock-granularity.q1": "7b6b24cdaf84c6746531e0e233ec1419c87c6ef5df36ac77cde44f5f3253326d",
+    "operating-systems.core.synchronization.lock-granularity.q2": "df9a75d1ff5fc93d85a80b58415114ebd439898378c9e843cc0e39a965853ecd",
+    "operating-systems.core.synchronization.lock-granularity.q3": "6410a95089c36ce694b1d8567af6eff4ac28683078581e072854deb946810be3",
+    "operating-systems.core.synchronization.monitor": "d5621999bd6acc6b128ddd4d8738cdd1c9a0e91e7c812f6a69c2369fa50ae5bf",
+    "operating-systems.core.synchronization.monitor.q1": "da0c31a05351571ccf15a6fdae23a6128e999ae2ae50ef6d51e82a811e348678",
+    "operating-systems.core.synchronization.monitor.q2": "837f00f13527dfaaf9d939d3d13398fc72fdc1e782075cbbbed8fc3e7e5b079c",
+    "operating-systems.core.synchronization.monitor.q3": "adc19320aaf429bad1b428e5a18927b535fad09909c88d99dd68bf26b8775e81",
+    "operating-systems.core.synchronization.mutex": "babca61284b588393385111385fe4ad35a0d7ec13de3ce9e38c4f8a9505934d8",
+    "operating-systems.core.synchronization.mutex.q1": "213fe306910ac9ddb9c4ae0a193ac0cd55df9c1ff61ea5fd6786e9a2bb4d4011",
+    "operating-systems.core.synchronization.mutex.q2": "7db7a58f34cb6c8c91817d15987b49a259a63c97f0ff808c628652077df4b7ac",
+    "operating-systems.core.synchronization.mutex.q3": "be5b37c314c856941d246b6df8c18b1970380d7a396fd84b29e6c06cd1ef3522",
+    "operating-systems.core.synchronization.read-write-lock": "a04719ebb64b5bf2440539ec99c81b27025d192a9f3b3e626c3739c37c7282af",
+    "operating-systems.core.synchronization.read-write-lock.q1": "6068a24b93e095f76963a3018ef2740ce5249050146bad7ae2c7c95c6f453b41",
+    "operating-systems.core.synchronization.read-write-lock.q2": "ff123fb524823a0010b087a5f0bb2a89531a7dad57b903c74ea1461c198223f4",
+    "operating-systems.core.synchronization.read-write-lock.q3": "2c2aa82e73709a972881d7159cd9db1e673c228b2b5ab38ba21c46b41faaeb79",
+    "operating-systems.core.synchronization.semaphore": "46d135d9f986106a5de538bd66379333178b3c3748d4692084afaefa770b8e7e",
+    "operating-systems.core.synchronization.semaphore.q1": "b42afc7e6f66043483217051f985e3b1fb48ef7bd3700b03f37ff8e977939121",
+    "operating-systems.core.synchronization.semaphore.q2": "57e7b85073087e72dc9d6cf12aefe6cc43731881be019a9cbb6624a32b7edf46",
+    "operating-systems.core.synchronization.semaphore.q3": "fb3e351671d85304cc18975af187304d8488999a414aba0f9f203a9508ab584c",
+    "operating-systems.core.synchronization.semaphore.q4": "0ebe38890476fa809275ec930935c612c9207d7b2102cc8bda37a4b7aac8cf15"
+  }
+}

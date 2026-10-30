@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 520" role="img" aria-labelledby="title desc">
+  <title id="title">Java memory leak의 retained path</title>
+  <desc id="desc">업무적으로 끝난 객체가 static cache나 ThreadLocal 같은 장수 owner를 통해 GC root에서 계속 reachable하면 GC가 정상적으로 보존하는 retained path를 보여 준다.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#a56df4"/></marker>
+    <style>.bg{fill:#17131f}.title{fill:#f5efff;font:700 25px Inter,Arial,sans-serif}.label{fill:#f0e8fa;font:650 17px Inter,Arial,sans-serif}.small{fill:#a797b5;font:500 14px Inter,Arial,sans-serif}.root{fill:#2a1d3c;stroke:#a56df4;stroke-width:2}.owner{fill:#33251c;stroke:#c48a47;stroke-width:2}.leak{fill:#3a2229;stroke:#d06f7d;stroke-width:2}.ok{fill:#18352e;stroke:#4cc090;stroke-width:2}.line{stroke:#a56df4;stroke-width:2;fill:none;marker-end:url(#arrow)}.cut{stroke:#4cc090;stroke-width:3;stroke-dasharray:7 6}</style>
+  </defs>
+  <rect class="bg" width="1120" height="520" rx="20"/>
+  <text class="title" x="48" y="55">Memory leak은 GC 실패보다 “필요 없는 객체가 왜 아직 reachable한가”의 문제다</text>
+
+  <rect class="root" x="60" y="170" width="180" height="76" rx="12"/><text class="label" x="105" y="214">GC Root</text>
+  <rect class="owner" x="310" y="155" width="230" height="106" rx="12"/><text class="label" x="350" y="197">장수 owner</text><text class="small" x="350" y="223">static cache / worker ThreadLocal</text>
+  <rect class="leak" x="610" y="155" width="210" height="106" rx="12"/><text class="label" x="654" y="197">Session</text><text class="small" x="654" y="223">업무상 이미 종료</text>
+  <rect class="leak" x="890" y="155" width="170" height="106" rx="12"/><text class="label" x="925" y="197">Payload</text><text class="small" x="925" y="223">large graph</text>
+
+  <path class="line" d="M240 208H310"/><path class="line" d="M540 208H610"/><path class="line" d="M820 208H890"/>
+  <text class="small" x="310" y="305">이 경로가 남아 있으면 GC 관점에서는 정상적으로 reachable</text>
+
+  <rect class="ok" x="310" y="355" width="510" height="76" rx="12"/>
+  <text class="label" x="350" y="389">해결 방향: owner의 lifecycle 정책 수정</text><text class="small" x="350" y="414">remove · unregister · bounded cache · queue capacity · ClassLoader release</text>
+  <line class="cut" x1="560" y1="274" x2="560" y2="338"/>
+  <text class="small" x="48" y="478">Heap에서 큰 객체 하나만 찾는 것보다 GC root까지의 retained path와 ownership 종료 지점을 추적하는 것이 핵심이다.</text>
+</svg>

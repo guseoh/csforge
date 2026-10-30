@@ -1,0 +1,336 @@
+{
+  "area": "network-http",
+  "topic": "tls",
+  "topicKey": "network-http.core.tls",
+  "coverage": "8 Concept와 24 Question을 두 bounded 출력에서 직접 전수 읽었고 TLS termination의 출력 생략된 짧은 문장도 파일에서 복구해 읽었다. 모든 선택지/rationale/model/explanation, 난이도/연결을 확인했다. 채널 보호/업무 인가, certificate/chain/SAN/개인 키 증명, ECDHE/PSK·방향별 AEAD/nonce·KeyUpdate와 termination의 새 홉 신뢰 경계를 관련 공식 RFC에 대조했다. RFC8446이 2026년 RFC9846으로 대체된 사실과 §1.2 변경 목록도 실제 확인했으며 최신 RFC 전체를 검토한 것으로 주장하지 않는다.",
+  "concepts": [
+    [
+      "network-http.core.tls.tls-purpose",
+      "TARGETED_ENHANCE",
+      "L1 기밀성·무결성·일반 인증서 HTTPS의 상대 인증 목표를 충분히 설명한다.",
+      "두 TLS 종단점 범위와 proxy 뒤 새연결, 로그/메모리·userauth/인가/commit의 별도 책임 표와 흐름이 정확하다. 모든 TLS가 인증서를 반드시 사용한다고 하지 않는다.",
+      "NONE 계약이며 보호 범위 표·두 홉 흐름으로 충분하다.",
+      "RFC8446 보호·인증 방식과 RFC7239 §8.1 forwarding의 신뢰 경계를 대조했다. 정확한 기존 기본 설명은 유지하되 현행 RFC9846을 추가할 Reference 갱신은 W3-NET-012이다.",
+      "q1D 모든 보기, q2 암호/무결성/인증 구분, q3 valid 다른서비스 cert+key MITM을 확인했다."
+    ],
+    [
+      "network-http.core.tls.certificate",
+      "TARGETED_ENHANCE",
+      "L1 공개키·서비스 identity와 issuer 서명/유효성·보유 증명의 구분이 충분하다.",
+      "SAN DNS/IP, chain대name대CertificateVerify를 표로 구분하고 cert에privatekey없음, 다른서비스유효cert와 대칭 record보호를 설명한다. 서버 publickey는 handshake 서명 검증이며 certificate issuer서명은 issuerkey로 검증하는 별도 path다.",
+      "NONE 계약의 역할 표와 두 검증 질문이 충분하다.",
+      "RFC8446 §2/4.4.2/4.4.3과 RFC5280 §6.1 path/current-time 계약을 직접 대조했다. 최신 기본 규격 Reference 보강은 W3-NET-012이다.",
+      "q1A 모든 보기, q2 장기 signing key와 임시ECDHE 역할, q3 expiry·실제termination chain배포/겹침기간을 확인했다."
+    ],
+    [
+      "network-http.core.tls.pki",
+      "TARGETED_ENHANCE",
+      "L2 trust anchor→leaf path와 hostname의 별도 조건이 충분하다.",
+      "leaf/intermediate/클라이언트trustanchor textchain과 signatures·CAconstraints·validity·keyusage, 서버가 root를 보내서 trust를 만드는 것이 아님을 정확히 설명한다.",
+      "DIAGRAM 계약의 실제 chain과 클라이언트anchor 위치가 충분하다. 화살표는 발급 경로이며 네트워크 전송 순서가 아님을 본문이 구분한다.",
+      "RFC5280 §6.1/6.1.1의 path와 out-of-band trustanchor, RFC8446 §4.4.2.4의 상세validation은5280 범위라는 조건을 실제 확인했다. W3-NET-012의 최신 규격 및5280 직접절 안내가 최소 보강이다.",
+      "q1B 모든 보기와 q2 path/name조건은 맞다. q3 서버leaf 미배포대CAanchor 미배포 혼동은 W3-NET-011이다."
+    ],
+    [
+      "network-http.core.tls.hostname-verification",
+      "KEEP",
+      "L2 reference identity와 SAN, SNI와 검증의 차이를 충분히 설명한다.",
+      "api대other mismatch, SAN dNSName·IP iPAddress, CN대체 배제, wildcard한라벨, SNI선택→SAN검증 순서가 정확하다. 같은 IP도name mismatch를 없애지 않는다.",
+      "TEXT 입력값 역할 표·SNI후별도 검증 흐름이 충분하다.",
+      "RFC9525 §1.3/1.2와 §6.3/6.4·7.1의 SAN/CN배제·IP바이트일치/wildcard한라벨을 공식Datatracker동일본문에서 실제 확인했다. canonical .html URL은 도구 오류로 접근 확인이 남아 있다.",
+      "q1C 모든 보기, q2 trustchain≠expectedname, q3 URI IP를DNS SAN만으로 검증할수없음·DNSname 또는IP SAN의 안전한해결을 확인했다."
+    ],
+    [
+      "network-http.core.tls.tls-handshake",
+      "TARGETED_ENHANCE",
+      "L2 협상/키/인증·Finished와 예외 흐름을 충분히 설명한다.",
+      "일반 cert1RTT ClientHello→ServerHello→encrypted messages→CertificateVerify→Finished 순서와 AEAD/hash대keygroup/signature협상 구분이 정확하다. PSK/resumption/0RTT를 별도조건으로 명시한다.",
+      "DIAGRAM 계약의 양방향 메시지순서와 cert/verify/finished역할 표가 효과적이다. 서버appdata가clientFinished전에가능한 상세예외는 일반도식의 필수누락결함이 아니다.",
+      "RFC8446 §2 Figure1/§4.4.3/4.4.4·B.4와 §7.1의 transcript/key schedule을 실제 대조했다. 최신RFC9846 안내는 W3-NET-012이다.",
+      "q1D 모든 보기, q2 방향별derivedAEAD key, q3 cert교체와wrongprivatekey/SNIpair mismatch의 단계별진단을 확인했다."
+    ],
+    [
+      "network-http.core.tls.key-agreement",
+      "TARGETED_ENHANCE",
+      "L2 sharedsecret 직접미전송과 authentication분리가 충분하다.",
+      "a/B 대 b/A 계산은 산술덧셈코드가 아닌 입력 역할 도식임을 본문이 설명한다. ephemeralshare대certificate signing key, FS와 cert/PSK예외를 구분한다. 모든TLS13이ECDHEcert뿐이라고 강제하지 않는다.",
+      "TEXT 양쪽private/public입력과같은secret,역할표가 충분하다.",
+      "RFC8446 §2/7.1 및 E.1의 freshECDHE/forwardsecrecy를 읽었다. RFC9846 §1.2의KEM포괄표현/KeyShare재사용금지 갱신 목록도 실제 확인했다. 예시ECDHE 설명은 유지하고 최신Reference 추가는 W3-NET-012이다.",
+      "q1A 모든 보기, q2 keyagreement대identity, q3 attacker와도sharedsecret만들수있어cert/namecheck필요함을 확인했다."
+    ],
+    [
+      "network-http.core.tls.symmetric-session-key",
+      "TARGETED_ENHANCE",
+      "L1 record대칭보호·방향/단계별키와종단점평문경계가 충분하다.",
+      "handshake/application 및 C→S/S→C키를 나누고 KeyUpdate가 가능하며 독립connection의key/recordstate를 복제하지 않는다. AEAD 실패거부와 내부log/DB평문별도보호가 정확하다.",
+      "TEXT keytree와평문→record→평문흐름이 충분하다.",
+      "RFC8446 §5.2/5.3 AEAD와seqXORIV nonce, §7.1 handshake/app별방향secret를 실제 읽었다. RFC9846 §1.2의 keyusage/KeyUpdate요구 강화 목록과 대비한 최신Reference보강은 W3-NET-012이다.",
+      "q1B 모든 보기, q2 connection/direction격리, q3 samekeyIV복사+seq0재시작nonce반복을 확인했다."
+    ],
+    [
+      "network-http.core.tls.tls-termination",
+      "TARGETED_ENHANCE",
+      "L2 proxy복호화와별도backendconnection의trustboundary깊이가 충분하다.",
+      "TLS A종료→HTTP/TLS B, 독립cert/name검증과Forwarded metadata생성주체·외부위조값제거/허용proxy·directaccess정책을 정확히설명한다. TLS A가내부모든홉을보호한다는오해를 막는다.",
+      "DIAGRAM 계약에A/B구간과plaintextendpoint, CDN/LB뒤TLS?표시가 충분하다.",
+      "RFC8446 §9.3 terminator추가고려와 RFC7239 §8.1 client/proxy변조·whitelist·securedhop 조건을 실제읽었다. forwarding직접Reference후보와최신TLS규격보강은 W3-NET-012에 포함한다.",
+      "q1C 모든 보기, q2 backendTLS/mTLS·metadata정책, q3 originalscheme필요대spoofing방지의 두문제를 함께해결하는설계를 확인했다."
+    ]
+  ],
+  "questions": [
+    [
+      "network-http.core.tls.tls-purpose.q1",
+      "KEEP",
+      "D 검증된상대/채널보호 정답; A user인가/B 모든backend홉자동TLS/C POSTexactly-once와모든rationale가 정확하다. PSK방식도해설이구분한다.",
+      "EASY 보장범위; 애플리케이션권한/업무성공은범위밖으로명확하다."
+    ],
+    [
+      "network-http.core.tls.tls-purpose.q2",
+      "KEEP",
+      "model/explanation은도청대변조검출대expectedpeeridentity를나누고user인가별도를설명한다.",
+      "MEDIUM 각각해결하는위험을설명하며연결이맞다."
+    ],
+    [
+      "network-http.core.tls.tls-purpose.q3",
+      "KEEP",
+      "hostnamecheck만꺼도attacker의다른유효cert+privatekey와TLS가가능하다는model/explanation이신뢰체인검사존재와모순되지않는다.",
+      "MEDIUM 경로장악조건을명시해위협모델이구체적이다. SAN검증유지해법이맞다."
+    ],
+    [
+      "network-http.core.tls.certificate.q1",
+      "KEEP",
+      "A identity/pubkey/issuer/validity 정답; privatekey배포/user권한/currentDNSlistener오답과모든rationale, CertificateVerify해설을확인했다.",
+      "EASY 서명된정보와실시간서비스상태를구분한다."
+    ],
+    [
+      "network-http.core.tls.certificate.q2",
+      "KEEP",
+      "model/explanation의privatekey미전송·현재transcript서명·ephemeralECDHE대장기signingkey를확인했다. peerpubkey로CertificateVerify검증하는범위이며issuercert서명은별도path검증이다.",
+      "MEDIUM TLS13cert흐름을명시해다른버전/PSK흐름을강제하지않는다."
+    ],
+    [
+      "network-http.core.tls.certificate.q3",
+      "KEEP",
+      "현재시각>notAfter거부가능성,자동갱신/알림·실제종료점chain배포·overlap/rollback의model/explanation을validity계약과대조했다.",
+      "MEDIUM expiredcert운영실패와예방;chain정상이라도기간실패가능함을확인한다."
+    ],
+    [
+      "network-http.core.tls.pki.q1",
+      "KEEP",
+      "B CA서명/trustanchor 정답; A CA복호화/인가/C namecheck생략/D CAprivatekey저장오답과rationale가정확하다.",
+      "EASY 발급과clienttrust역할; 연결이적절하다."
+    ],
+    [
+      "network-http.core.tls.pki.q2",
+      "KEEP",
+      "model/explanation은anchor까지signature/constraints/validity/usage검증뒤SANname별도를명시한다.",
+      "MEDIUM chain신뢰와서비스identity의두조건을설명한다."
+    ],
+    [
+      "network-http.core.tls.pki.q3",
+      "TARGETED_ENHANCE",
+      "model/explanation은privateCAanchor미신뢰를해결하지만prompt는CA가발급한서버cert미배포를실패조건으로읽힌다. 이미issueranchor를신뢰하면leaf마다truststore에넣을필요없어W3-NET-011이다.",
+      "MEDIUM truststore배포문항의대상을CAtrustanchor로명확히해야한다. trust-all배제해법자체는맞다."
+    ],
+    [
+      "network-http.core.tls.hostname-verification.q1",
+      "KEEP",
+      "C expectedidentity대SAN 정답; chain만/SNI면자동/Host면keyproof기간생략오답과모든rationale가정확하다.",
+      "EASY SNI입력과검증결과를구별하며답이유일하다."
+    ],
+    [
+      "network-http.core.tls.hostname-verification.q2",
+      "KEEP",
+      "model/explanation은신뢰CA의othercert가api용이라는증거가아님을설명하고원래expectedname대SAN비교를명시한다.",
+      "MEDIUM chain검증과name검증목표차이; purpose.q3와관련되지만원인설명대공격시나리오로구별된다."
+    ],
+    [
+      "network-http.core.tls.hostname-verification.q3",
+      "KEEP",
+      "URI IP10.0.2.15를reference로쓰면DNS SAN api.example.com만으로일치하지않는다. DNSname접속/해석 또는iPAddress SAN과SNI/authority확인의model/explanation이RFC9525§6.4와맞다.",
+      "HARD URI IP기준이라는전제가있어IP로연결하되별도DNSidentity를설정한client와혼동하지않는다."
+    ],
+    [
+      "network-http.core.tls.tls-handshake.q1",
+      "KEEP",
+      "D 버전/암호/키재료/설정인증 정답; DB스키마권한/TCPmessageboundary/commit증명의오답과rationale를확인했다.",
+      "EASY 채널설정목적; A/C는쉽지만B가전송계약혼동을확인한다. 모든TLS흐름에cert필수라하지않는다."
+    ],
+    [
+      "network-http.core.tls.tls-handshake.q2",
+      "KEEP",
+      "model/explanation의효율적AEAD·agreement+transcriptkey schedule·directionsecret·키평문미전송이RFC8446§7.1과일치한다.",
+      "MEDIUM derived키목적과생성기작; 모든connection/direction같은키공유를부정한다."
+    ],
+    [
+      "network-http.core.tls.tls-handshake.q3",
+      "KEEP",
+      "chain/name통과뒤CertificateVerify실패라면certpubkey와activeprivatekey/SNIpair배포불일치를확인한다는model/explanation이맞다.",
+      "HARD 실패단계가명확하며가능원인을의심하라고물어유일원인으로단정하지않는다."
+    ],
+    [
+      "network-http.core.tls.key-agreement.q1",
+      "KEEP",
+      "A secret미전송계산 정답; B 평문header/C hostname불필요/D 영구모든connection재사용오답과모든rationale를확인했다.",
+      "EASY sharedsecret대auth목적; ECDHE같은agreement예시범위다."
+    ],
+    [
+      "network-http.core.tls.key-agreement.q2",
+      "KEEP",
+      "model/explanation의temporaryshare대certificate/keyproof/namecheck가서로다른책임임을확인했다.",
+      "MEDIUM 일반certECDHE를명시해PSK/KEM예외를모든TLS13동작으로강제하지않는다."
+    ],
+    [
+      "network-http.core.tls.key-agreement.q3",
+      "KEEP",
+      "attacker와도정상agreement/암호화가가능하므로원래server의chain/name을검증해야한다는model/explanation이맞다.",
+      "MEDIUM auth없음의MITM위험; purpose.q3의hostname-only비활성화와전제가다르다."
+    ],
+    [
+      "network-http.core.tls.symmetric-session-key.q1",
+      "KEEP",
+      "B 효율+AEAD 정답; nonce관리불필요/모든connection같은키/endpointlog자동암호오답과rationale를확인했다.",
+      "EASY symmetric보호목적과실패경계; 답이유일하다."
+    ],
+    [
+      "network-http.core.tls.symmetric-session-key.q2",
+      "KEEP",
+      "model/explanation의한connection노출격리·directionsecret·recordseq/KeyUpdate lifecycle·endpoint평문별도가맞다.",
+      "MEDIUM 키분리의효과; 키분리=모든종단점데이터보호라는오해를막는다."
+    ],
+    [
+      "network-http.core.tls.symmetric-session-key.q3",
+      "KEEP",
+      "동일key+IV를독립터널에복사하고seq0으로재시작하면nonce=XOR(IV,seq)가반복된다는model/explanation을RFC8446§5.3에직접대조했다.",
+      "HARD 구체상태복제와AEADnonce전제위반추론;정상독립handshake해법이맞다."
+    ],
+    [
+      "network-http.core.tls.tls-termination.q1",
+      "KEEP",
+      "C TLSpeer복호화뒤newhop 정답; DNSreferral/라우터linkframe/업무인가오답과rationale를확인했다.",
+      "EASY 네트워크중간위치와TLS종료역할구분; 일반라우터는종료점이아니다."
+    ],
+    [
+      "network-http.core.tls.tls-termination.q2",
+      "KEEP",
+      "backend홉위협모델·별도TLS/name검증·필요시mTLS·허용proxymetadata의model/explanation이적절하다.",
+      "MEDIUM 구간별보호설계; 내부망이면무조건평문안전이라는보장이없다."
+    ],
+    [
+      "network-http.core.tls.tls-termination.q3",
+      "KEEP",
+      "originalhttpsscheme필요와외부XFP위조방지에boundaryproxy제거/정규화·관측proto재작성·backendallowproxy/directaccess정책을함께적용하는model/explanation이RFC7239§8.1과맞다.",
+      "HARD 두실패를한trustboundary로해결하며단순header존재를신뢰근거로하지않는다."
+    ]
+  ],
+  "sources": [
+    [
+      "https://www.rfc-editor.org/rfc/rfc8446",
+      "CURRENT_VERIFIED",
+      "실제 §2 Figure1/cert/PSK조건·CertificateVerify/Finished, §4.4.2.4 validation범위와§4.4.3 keyproof, §5.2/5.3 AEAD/seqXORIV, §7.1 direction/handshake/appsecret·transcript, B.4 cipherAEAD/hash 및E.1 freshECDHE FS 관련부분을읽었다. 역사적8446의부분검증이며현행9846전수검증이라는뜻은아니다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc9525.html",
+      "CURRENT_VERIFIED",
+      "canonicalURL접근은도구오류였으나공식Datatracker동일RFC의§1.2/1.3 chain별도·SANonly/CN배제, §6.4 IPoctet비교/§7.1 한라벨wildcard를실제읽어본문계약을대조했다. 직접URL접근상태는referenceAccess에서NEEDS_REVIEW로분리한다."
+    ]
+  ],
+  "referenceAccess": {
+    "https://www.rfc-editor.org/rfc/rfc9525.html": {
+      "status": "NEEDS_REVIEW",
+      "basis": "웹도구canonical .html URL Internal Error; 404/죽은링크로판정하지않는다. 공식Datatracker동일RFC본문은실제로확인했다."
+    }
+  },
+  "supplementalSources": [
+    [
+      "https://datatracker.ietf.org/doc/html/rfc9525",
+      "CURRENT_VERIFIED",
+      "실제§1.2/1.3과6.4/7.1의path와serviceidentity별도·SAN DNS/IP·CN배제·wildcard깊이를읽었다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc5280",
+      "CURRENT_VERIFIED",
+      "실제 §6.1/6.1.1의prospectivepath/currenttime/서명·issuer·out-of-bandtrustanchor입력·selfsignedanchor는path밖임을읽었다. CRL전체알고리즘전수검증은아니다."
+    ],
+    [
+      "https://www.rfc-editor.org/rfc/rfc7239",
+      "CURRENT_VERIFIED",
+      "실제 §8.1 forwardingmetadata는client를포함모든노드가바꿀수있고whitelist만으로이전값이나securedhop이보장되지않음을읽었다."
+    ],
+    [
+      "https://datatracker.ietf.org/doc/rfc9846/",
+      "CURRENT_VERIFIED",
+      "공식게시정보July2026/obsolete8446과실제§1.2를읽었다. backwardcompatibleminorupdate·keyshare재사용금지/KeyUpdate요구강화/KEM포괄표현·알림변경등목록의부분검증이다. 현행문서전체crypto알고리즘검토는아니다."
+    ]
+  ],
+  "findings": [
+    {
+      "id": "W3-NET-011",
+      "severity": "P1",
+      "contentKeys": [
+        "network-http.core.tls.pki.q3"
+      ],
+      "file": "content/network-http/tls/questions.json",
+      "quote": "사설 CA가 발급한 내부 HTTPS 인증서를 클라이언트의 신뢰 저장소에 배포하지 않았을 때 연결이 실패하는 이유와 올바른 해결 방법을 설명하라.",
+      "problem": "Prompt는 사설 CA가 발급한 서버 인증서를 trust store에 넣지 않아 연결이 실패한다고 전제한다. 그러나 issuer CA의 trust anchor를 이미 신뢰하고 서버가 필요한 chain을 보내면 leaf별 trust store 배포 없이 검증된다. modelAnswer의 '신뢰 기준점에 도달하지 못함'은 사설 CA 기준점 미배포라는 다른 전제가 필요하다. RFC5280 §6.1/6.1.1과 본문도 anchor와 target leaf를 구분한다.",
+      "action": "Prompt를 사설 CA의 신뢰 기준점이 client trust store에 없고 다른 유효 경로도 없는 상황으로 명확히 한다. model의 관리되는 CA 공개 인증서 배포와 hostnamecheck 유지, trust-all 금지는 그대로 보존한다.",
+      "followupIssues": [
+        202
+      ]
+    },
+    {
+      "id": "W3-NET-012",
+      "severity": "P2",
+      "contentKeys": [
+        "network-http.core.tls.tls-purpose",
+        "network-http.core.tls.certificate",
+        "network-http.core.tls.pki",
+        "network-http.core.tls.tls-handshake",
+        "network-http.core.tls.key-agreement",
+        "network-http.core.tls.symmetric-session-key",
+        "network-http.core.tls.tls-termination"
+      ],
+      "file": "content/network-http/tls/tls-handshake.md",
+      "quote": "https://www.rfc-editor.org/rfc/rfc8446",
+      "problem": "직접 읽은 7개 본문이 모두 RFC8446만을 TLS 기본 Reference로 제시한다. 공식 Datatracker에서 2026년7월 RFC9846이8446을대체했으며 §1.2는KeyShare재사용금지·KeyUpdate요구강화·KEM포괄표현등 실제 계약 갱신을 명시한다. 현재 교육용 기본 흐름이 전부 틀린 것은 아니지만 현행 규격 학습 경로와 역사적 설명 범위를 구분할 필요가 있다.",
+      "action": "7개 Concept의 정확한 기본 설명을 유지하고 RFC9846을 현행 기본 Reference로 추가하거나 교체하며 필요한 관련 절을 안내한다. 8446을 남기면 역사적 TLS13 근거임을 표시한다. PKI는5280 §6.1, termination은7239 §8.1 직접안내를 함께 최소보강한다. 최신RFC전체나KEM심화구현까지재작성하지않는다.",
+      "followupIssues": [
+        202
+      ]
+    }
+  ],
+  "sourceHashes": {
+    "network-http.core.tls.certificate": "38f7e0ee3f067065321c43e84b6d824bb12d69c1c5e58bc687526d06482208bc",
+    "network-http.core.tls.certificate.q1": "04d50a29086bf695bdc3533c34363fbb8197cb853c868335795bd71ae7635ea3",
+    "network-http.core.tls.certificate.q2": "db9c9e671e1c196a4181be94acb7d3621d4c8663eaacf629a3eedbcdf638058a",
+    "network-http.core.tls.certificate.q3": "125aac9adcc57af242d5f2645c41a487eec6035206bf770dc3091ef8f3ae455b",
+    "network-http.core.tls.hostname-verification": "edae6df0538f1c469e88ae14431eb6aacc3bcf42912df623367c6a12eb7f40db",
+    "network-http.core.tls.hostname-verification.q1": "e0e52027e5651b4329bf9bf61f1ea91f37162ebd7cdf13e889136f35f2305475",
+    "network-http.core.tls.hostname-verification.q2": "f34911d3a89fddddc7ad83c593ff133e6a1ce8b9c0a173d263b00f708205d4db",
+    "network-http.core.tls.hostname-verification.q3": "242936bb33a08de4227b80e6e3691358f78d865ca74eb1ec7f686c44eb243471",
+    "network-http.core.tls.key-agreement": "d6b356d20dd6b35cc817024469c4c627abf76e13c569ccfc4c9f859f3a391c13",
+    "network-http.core.tls.key-agreement.q1": "752b891bab1651dcb2a391ae9dcbabbb6da9ee4fa98067122756e501c0f9fb67",
+    "network-http.core.tls.key-agreement.q2": "cd39ca73d619a2d9ce634865f9191e9132d16356051c46edca11aa6c32ecbe47",
+    "network-http.core.tls.key-agreement.q3": "529e49d1a711f5d72d0726d13c0e49efc1a6ade9d71f877cac44e81d1b5a3613",
+    "network-http.core.tls.pki": "bd09680e035ac301537ef5aac1ced212c6b26b0eae477f74c598db16cad205fe",
+    "network-http.core.tls.pki.q1": "8a956106fe27990dd99095209e6712c375b297b7072501ce7bb0e0934da4d5c4",
+    "network-http.core.tls.pki.q2": "37bccfb48d27afbcca2ee1b17f37262532fb653d953ed5d530e9d0e0c5c40d72",
+    "network-http.core.tls.pki.q3": "145527d97cdb69bb8f7c904b3d2de845d04da4215f81cc0a07e0e0dd4079eaf2",
+    "network-http.core.tls.symmetric-session-key": "bc6ec82fbb6c2a2c1980861e8457bb8dabedfea4777b3e93da27f2e10d23e265",
+    "network-http.core.tls.symmetric-session-key.q1": "0a2a952fc1486da22c40089ac268dc05a95d044d02ffe2bbf6c46741f8956911",
+    "network-http.core.tls.symmetric-session-key.q2": "a10eadbdfa79a76b602f6c4c494eff5097be34401ae969d825752726eb589cd9",
+    "network-http.core.tls.symmetric-session-key.q3": "320f9d1d5b0f1e49493335cd24ad7c5e743b443546f26d3911212cd064f12e15",
+    "network-http.core.tls.tls-handshake": "633c25ec36ef7c10b54df41aa1c0400fa2f57faec64dd91e9a195a756ccbc8a7",
+    "network-http.core.tls.tls-handshake.q1": "daebd2fb9e56074d1e541744239de7678912044157f34317ab5c16ed4cd811d1",
+    "network-http.core.tls.tls-handshake.q2": "ff0c15b668014c2252de9514ee436b978d7ee3adb257855cc02c9a7c73f27bfd",
+    "network-http.core.tls.tls-handshake.q3": "a1e32f9ffe7d32c67d3ada2cf143d4a0bc99e3393aa986ea311caff589137477",
+    "network-http.core.tls.tls-purpose": "f7ba527958acae6bd8700d07de76d379635ed3565e4e00e4feafb1eef4739330",
+    "network-http.core.tls.tls-purpose.q1": "07ae0fd505d9a53794628a54ed0004d475120cfaef2239bd5595275dfd5874a1",
+    "network-http.core.tls.tls-purpose.q2": "6e051cd79350a1f6ee549a3e772cf63f02891c04531bad8d623db7e34b72e944",
+    "network-http.core.tls.tls-purpose.q3": "01d0ec5b9f27120fa466d855dd3540be8830160f241af9cb2f6030c8713bee7a",
+    "network-http.core.tls.tls-termination": "eea352270f43fcfb4c533ce7f2dec94e1bf254776b5d619562079af01393a330",
+    "network-http.core.tls.tls-termination.q1": "d551b0a3eb6d25d15de3cde29fc2225243570fc8ab16274f1ac92046f9aa09ef",
+    "network-http.core.tls.tls-termination.q2": "38f19667f472a9f80a133c26ba67354bf91e3e5ad770ec3ffe28bac05c1f7002",
+    "network-http.core.tls.tls-termination.q3": "b235c83ac63f1996590d827826cc94d57dd8fb939fba871ada8464c0fffb8ddf"
+  }
+}

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 520" role="img" aria-labelledby="title desc">
+  <title id="title">PriorityQueue heap and polling order</title>
+  <desc id="desc">PriorityQueue가 전체 정렬 배열이 아니라 head 우선순위를 유지하는 heap이며 poll을 반복하면 우선순위 순서로 꺼내는 흐름</desc>
+  <defs><marker id="arrow" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto"><path d="M0 0L9 4.5L0 9Z" fill="#a56df4"/></marker><style>.bg{fill:#17131f}.title{fill:#f5efff;font:700 25px Inter,Arial,sans-serif}.label{fill:#f0e8fa;font:650 17px Inter,Arial,sans-serif}.small{fill:#a797b5;font:500 14px Inter,Arial,sans-serif}.node{fill:#21192e;stroke:#6d478f;stroke-width:2}.head{fill:#18352e;stroke:#4cc090;stroke-width:2}.line{stroke:#8e72a6;stroke-width:2;fill:none}.arrow{stroke:#a56df4;stroke-width:2;fill:none;marker-end:url(#arrow)}.pill{fill:#2a1d3c;stroke:#a56df4;stroke-width:2}</style></defs>
+  <rect class="bg" width="1100" height="520" rx="20"/>
+  <text class="title" x="48" y="54">PriorityQueue는 “전체 정렬 목록”이 아니다</text>
+  <text class="small" x="48" y="82">heap은 지금 꺼낼 head를 보장하고, 나머지 원소 전체의 순회 순서는 정렬 계약이 아니다</text>
+
+  <text class="label" x="82" y="132">heap property</text>
+  <rect class="head" x="205" y="154" width="96" height="58" rx="12"/><text class="label" x="241" y="190">1</text>
+  <rect class="node" x="110" y="274" width="96" height="58" rx="12"/><text class="label" x="146" y="310">4</text>
+  <rect class="node" x="300" y="274" width="96" height="58" rx="12"/><text class="label" x="336" y="310">3</text>
+  <rect class="node" x="58" y="388" width="96" height="58" rx="12"/><text class="label" x="94" y="424">9</text>
+  <rect class="node" x="162" y="388" width="96" height="58" rx="12"/><text class="label" x="198" y="424">7</text>
+  <rect class="node" x="286" y="388" width="96" height="58" rx="12"/><text class="label" x="322" y="424">8</text>
+  <rect class="node" x="390" y="388" width="96" height="58" rx="12"/><text class="label" x="426" y="424">5</text>
+  <path class="line" d="M253 212L158 274M253 212L348 274M158 332L106 388M158 332L210 388M348 332L334 388M348 332L438 388"/>
+  <text class="small" x="83" y="476">부모가 자식보다 우선할 뿐, 같은 level의 모든 값이 전체 정렬되어 있을 필요는 없다.</text>
+
+  <path class="arrow" d="M520 275H615"/>
+  <rect class="pill" x="642" y="156" width="186" height="62" rx="14"/><text class="label" x="702" y="193">poll() → 1</text>
+  <path class="arrow" d="M735 218V259"/>
+  <rect class="pill" x="642" y="259" width="186" height="62" rx="14"/><text class="label" x="702" y="296">poll() → 3</text>
+  <path class="arrow" d="M735 321V362"/>
+  <rect class="pill" x="642" y="362" width="186" height="62" rx="14"/><text class="label" x="702" y="399">poll() → 4</text>
+  <text class="small" x="640" y="462">poll을 반복하면 매번 현재 head를 제거하고 heap을 다시 맞춘다.</text>
+
+  <text class="label" x="882" y="166">iterator()</text>
+  <text class="small" x="874" y="199">정렬 순서 보장 없음</text>
+  <text class="small" x="874" y="244">1, 4, 3, 9, 7, 8, 5</text>
+  <text class="small" x="874" y="275">같은 내부 표현을 볼 수도 있지만</text>
+  <text class="small" x="874" y="297">이 순서를 API 계약으로 쓰면 안 된다.</text>
+</svg>

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="230" viewBox="0 0 760 230" role="img" aria-labelledby="title desc">
+  <title id="title">Java source에서 JVM 실행까지의 경계</title>
+  <desc id="desc">source code가 javac를 거쳐 class file이 되고 JVM이 runtime에 실행한다.</desc>
+  <rect width="760" height="230" rx="14" fill="#fbfafc"/>
+  <text x="34" y="42" font-family="sans-serif" font-size="18" font-weight="700" fill="#292132">Source · Compiler · Class File · JVM은 서로 다른 책임이다</text>
+  <g font-family="sans-serif" font-size="15" text-anchor="middle"><rect x="34" y="90" width="150" height="58" rx="9" fill="#eee8ff" stroke="#7a5ac7" stroke-width="2"/><text x="109" y="124" fill="#39275d">.java source</text><rect x="224" y="90" width="120" height="58" rx="9" fill="#f4efff" stroke="#9c84d6" stroke-width="2"/><text x="284" y="124" fill="#39275d">javac</text><rect x="384" y="90" width="150" height="58" rx="9" fill="#f4efff" stroke="#9c84d6" stroke-width="2"/><text x="459" y="124" fill="#39275d">.class bytecode</text><rect x="574" y="90" width="150" height="58" rx="9" fill="#dff4e9" stroke="#4b9b71" stroke-width="2"/><text x="649" y="124" fill="#245b40">JVM runtime</text></g>
+  <g stroke="#8b70ca" stroke-width="2" fill="none"><path d="M184 119h32m-8-7 8 7-8 7M344 119h32m-8-7 8 7-8 7M534 119h32m-8-7 8 7-8 7"/></g>
+  <text x="34" y="190" font-family="sans-serif" font-size="14" fill="#665c70">bytecode는 native machine code와 같지 않으며 JVM 구현이 실행 방식을 결정한다</text>
+</svg>

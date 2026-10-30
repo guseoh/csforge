@@ -1,0 +1,116 @@
+{
+  "id": 39906684135,
+  "url": "https://github.com/guseoh/csforge/actions/runs/39906684135",
+  "headSha": "18f0d10e662789123d6a61a26b29c52e4862e283",
+  "branch": "refactor",
+  "event": "push",
+  "status": "completed",
+  "conclusion": "success",
+  "createdAt": "2026-10-23T05:36:21Z",
+  "updatedAt": "2026-10-23T05:41:39Z",
+  "jobs": [
+    {
+      "name": "validate",
+      "status": "completed",
+      "conclusion": "success",
+      "url": "https://github.com/guseoh/csforge/actions/runs/39906684135/job/120260149769",
+      "startedAt": "2026-10-23T05:36:24Z",
+      "completedAt": "2026-10-23T05:41:38Z",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:36:25Z",
+          "completedAt": "2026-10-23T05:36:26Z"
+        },
+        {
+          "name": "Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:36:26Z",
+          "completedAt": "2026-10-23T05:36:27Z"
+        },
+        {
+          "name": "Run actions/setup-java@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:36:27Z",
+          "completedAt": "2026-10-23T05:36:30Z"
+        },
+        {
+          "name": "Run actions/setup-node@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:36:30Z",
+          "completedAt": "2026-10-23T05:36:32Z"
+        },
+        {
+          "name": "Backend tests",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:36:32Z",
+          "completedAt": "2026-10-23T05:40:50Z"
+        },
+        {
+          "name": "Backend build",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:40:50Z",
+          "completedAt": "2026-10-23T05:41:01Z"
+        },
+        {
+          "name": "Frontend validation",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:41:01Z",
+          "completedAt": "2026-10-23T05:41:35Z"
+        },
+        {
+          "name": "Compose validation",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:41:35Z",
+          "completedAt": "2026-10-23T05:41:36Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:41:36Z",
+          "completedAt": "2026-10-23T05:41:36Z"
+        },
+        {
+          "name": "Post Run actions/setup-java@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:41:36Z",
+          "completedAt": "2026-10-23T05:41:36Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v7",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:41:36Z",
+          "completedAt": "2026-10-23T05:41:36Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "startedAt": "2026-10-23T05:41:36Z",
+          "completedAt": "2026-10-23T05:41:36Z"
+        }
+      ]
+    },
+    {
+      "name": "Deploy backend to Cloud Run",
+      "status": "completed",
+      "conclusion": "skipped",
+      "url": "https://github.com/guseoh/csforge/actions/runs/39906684135/job/120261668861",
+      "startedAt": "2026-10-23T05:41:38Z",
+      "completedAt": "2026-10-23T05:41:38Z",
+      "steps": []
+    }
+  ]
+}

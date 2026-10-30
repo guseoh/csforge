@@ -1,0 +1,296 @@
+[
+  {
+    "url": "https://d2.naver.com/helloworld/1219",
+    "checkedAt": "2026-10-28",
+    "method": "Chrome rendered article: title/date and scope confirmed; web text extraction returned shell only",
+    "role": "historical supplement"
+  },
+  {
+    "url": "https://d2.naver.com/helloworld/76650",
+    "checkedAt": "2026-10-28",
+    "method": "Chrome rendered article: title/date and scope confirmed; web text extraction returned shell only",
+    "role": "historical supplement"
+  },
+  {
+    "url": "https://d2.naver.com/helloworld/831311",
+    "checkedAt": "2026-10-28",
+    "method": "Chrome rendered article: title/date and scope confirmed; web text extraction returned shell only",
+    "role": "historical supplement"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedInputStream.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/BufferedWriter.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/InputStream.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/io/Reader.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Comparable.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Iterable.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#equals(java.lang.Object)",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#hashCode()",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Object.html#toString()",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/SafeVarargs.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/Buffer.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/Channel.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/SelectableChannel.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/SelectionKey.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/channels/Selector.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/Charset.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/charset/StandardCharsets.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Files.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/nio/file/Path.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayDeque.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/ArrayList.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Collections.html#unmodifiableList(java.util.List)",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Comparator.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Deque.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashMap.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/HashSet.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Iterator.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/LinkedList.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#copyOf(java.util.Collection)",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/List.html#of()",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/PriorityQueue.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Set.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeMap.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/TreeSet.html",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.10",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.12.2",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.5.1",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.6",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.7",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-4.html#jls-4.8",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-5.html#jls-5.1.9",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-8.html#jls-8.4.4",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  },
+  {
+    "url": "https://docs.oracle.com/javase/specs/jls/se25/html/jls-9.html#jls-9.6.4.7",
+    "checkedAt": "2026-10-28",
+    "method": "Oracle Java SE 25 API / JLS chapter retrieved with web tool; section contract compared",
+    "role": "primary"
+  }
+]
