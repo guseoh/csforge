@@ -1,6 +1,0 @@
-results/*.jsonl
-results/*.json
-results/review-priority/
-results/rationale-quality/
-.env
-node_modules/
