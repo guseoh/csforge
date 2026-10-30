@@ -8,6 +8,7 @@ import {
   subscribeToAppUpdateSafety,
 } from '../lib/app-update-safety'
 import { applyPwaUpdate, shouldShowAppUpdatePrompt } from '../lib/pwa-update'
+import { isReleaseMismatch } from '../lib/release-identity'
 
 const updateCheckIntervalMs = 30 * 60 * 1000
 const reminderDelayMs = 5 * 60 * 1000
@@ -19,6 +20,7 @@ export function AppUpdatePrompt() {
   const [dismissed, setDismissed] = useState(false)
   const [applying, setApplying] = useState(false)
   const [applyError, setApplyError] = useState<string | null>(null)
+  const [releaseMismatch, setReleaseMismatch] = useState(false)
   const safety = useSyncExternalStore(
     subscribeToAppUpdateSafety,
     getAppUpdateSafetySnapshot,
@@ -32,33 +34,51 @@ export function AppUpdatePrompt() {
     onRegisteredSW,
   })
 
+  const checkReleaseIdentity = useCallback(async () => {
+    if (document.visibilityState !== 'visible') return
+    try {
+      const response = await fetch('/build-info.json', { cache: 'no-store' })
+      if (!response.ok) return
+      const mismatch = isReleaseMismatch(__CSFORGE_CLIENT_SHA__, await response.json())
+      setReleaseMismatch(mismatch)
+      if (mismatch) void registrationRef.current?.update().catch(() => {})
+    } catch {
+      // Offline readers can continue using the locally cached application.
+    }
+  }, [])
+
   useEffect(() => {
     setDismissed(false)
     setApplyError(null)
-  }, [location.pathname, location.searchStr, location.hash])
+    void checkReleaseIdentity()
+  }, [location.pathname, location.searchStr, location.hash, checkReleaseIdentity])
 
   useEffect(() => {
     const checkForUpdate = () => {
       setDismissed(false)
       if (document.visibilityState === 'visible') {
         void registrationRef.current?.update().catch(() => {})
+        void checkReleaseIdentity()
       }
     }
     window.addEventListener('focus', checkForUpdate)
     const interval = window.setInterval(() => {
-      if (document.visibilityState === 'visible') void registrationRef.current?.update().catch(() => {})
+      if (document.visibilityState === 'visible') {
+        void registrationRef.current?.update().catch(() => {})
+        void checkReleaseIdentity()
+      }
     }, updateCheckIntervalMs)
     return () => {
       window.removeEventListener('focus', checkForUpdate)
       window.clearInterval(interval)
     }
-  }, [])
+  }, [checkReleaseIdentity])
 
   useEffect(() => () => {
     if (reminderTimerRef.current !== undefined) window.clearTimeout(reminderTimerRef.current)
   }, [])
 
-  if (!shouldShowAppUpdatePrompt(updateReady, dismissed)) return null
+  if (!shouldShowAppUpdatePrompt(updateReady || releaseMismatch, dismissed)) return null
 
   const blocker = getAppUpdateBlocker(safety)
   const blockerMessage = blocker === 'quiz-save-failed'
@@ -98,16 +118,21 @@ export function AppUpdatePrompt() {
   return (
     <aside className="app-update-prompt" aria-labelledby="app-update-heading" aria-live="polite">
       <div className="app-update-copy">
-        <strong id="app-update-heading">새 버전이 준비되었습니다.</strong>
-        <span>현재 작업을 저장한 뒤 업데이트할 수 있습니다.</span>
+        <strong id="app-update-heading">{updateReady ? '새 버전이 준비되었습니다.' : '현재 앱과 배포 버전이 다릅니다.'}</strong>
+        <span>{releaseMismatch
+          ? '이전 앱에서는 새로운 학습 도식이 JSON 텍스트로 표시될 수 있습니다. 저장 중인 작업을 마친 뒤 최신 버전을 적용하세요.'
+          : '현재 작업을 저장한 뒤 업데이트할 수 있습니다.'}</span>
         {safety.noteDirty > 0 && <span>메모 변경 사항은 브라우저 임시 저장에 보관됩니다.</span>}
         {blockerMessage && <span className="error-text" role="alert">{blockerMessage}</span>}
         {applyError && !blockerMessage && <span className="error-text" role="alert">{applyError}</span>}
       </div>
       <div className="app-update-actions">
-        <button className="primary-button" type="button" disabled={applying || Boolean(blocker)} onClick={() => void applyUpdate()}>
+        {updateReady ? <button className="primary-button" type="button" disabled={applying || Boolean(blocker)} onClick={() => void applyUpdate()}>
           {applying ? '저장 후 업데이트 중…' : '업데이트 적용'}
-        </button>
+        </button> : <button className="primary-button" type="button" onClick={() => {
+          void registrationRef.current?.update().catch(() => {})
+          void checkReleaseIdentity()
+        }}>업데이트 다시 확인</button>}
         <button className="text-button" type="button" disabled={applying} onClick={deferUpdate}>나중에</button>
       </div>
     </aside>
