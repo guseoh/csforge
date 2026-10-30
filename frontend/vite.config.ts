@@ -28,6 +28,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'prompt',
       workbox: {
+        // Read the active release identity from the network, never from an old SW precache.
+        globIgnores: ['**/build-info.json'],
         skipWaiting: false,
         clientsClaim: false,
         navigateFallbackDenylist: [

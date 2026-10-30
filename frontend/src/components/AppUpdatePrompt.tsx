@@ -37,7 +37,7 @@ export function AppUpdatePrompt() {
   const checkReleaseIdentity = useCallback(async () => {
     if (document.visibilityState !== 'visible') return
     try {
-      const response = await fetch('/build-info.json', { cache: 'no-store' })
+      const response = await fetch(`/build-info.json?client=${encodeURIComponent(__CSFORGE_CLIENT_SHA__)}`, { cache: 'no-store' })
       if (!response.ok) return
       const mismatch = isReleaseMismatch(__CSFORGE_CLIENT_SHA__, await response.json())
       setReleaseMismatch(mismatch)
