@@ -41,12 +41,9 @@ spec:
                       name: REPLACE_WITH_DB_URL_SECRET
                       key: latest
                 - name: DB_USERNAME
-                  valueFrom:
-                    secretKeyRef:
-                      name: REPLACE_WITH_DB_USER_SECRET
-                      key: latest
+                  value: csforge_content_sync
                 - name: DB_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: DB_PASSWORD
+                      name: csforge-content-sync-db-password
                       key: latest

@@ -22,8 +22,9 @@ elif args[:3]==['run','revisions','describe']: print('image@'+os.environ.get('BA
     cases = [('invalid_mode',{'SYNC_MODE':'INVALID'},False), ('invalid_scope',{'SYNC_SCOPE':'OTHER'},False),
         ('invalid_sha',{'SOURCE_SHA':'invalid'},False),('invalid_digest',{'DIGEST':'invalid'},False),
         ('backend_mismatch',{'BACKEND':'sha256:'+'2'*64},False),('frontend_mismatch',{'FRONTEND':'b'*40},False),
-        ('audit',{'SYNC_MODE':'AUDIT'},True),('apply',{},True),
+        ('audit',{'SYNC_MODE':'AUDIT'},True),('initialize',{'SYNC_MODE':'INITIALIZE','SYNC_SCOPE':'ALL_TOPICS'},True),('apply',{},True),
         ('all_topics',{'SYNC_SCOPE':'ALL_TOPICS'},True),('all_concepts',{'SYNC_SCOPE':'ALL_CONCEPTS'},True),
+        ('all_questions',{'SYNC_SCOPE':'ALL_QUESTIONS'},True),
         ('question_plan',{'SYNC_MODE':'QUESTION_PLAN','SYNC_SCOPE':'JAVA_QUESTIONS'},True),
         ('question_wrong_scope',{'SYNC_MODE':'QUESTION_PLAN'},False),
         ('question_missing_plan',{'SYNC_MODE':'QUESTION_APPLY','SYNC_SCOPE':'JAVA_QUESTIONS'},False),
@@ -38,4 +39,13 @@ elif args[:3]==['run','revisions','describe']: print('image@'+os.environ.get('BA
         mutations = [c for c in calls if c[:4] in (['gcloud','run','jobs','update'],['gcloud','run','jobs','execute'])]
         assert (result.returncode==0)==success, (name,result.stderr.decode()[-1000:])
         assert len(mutations)==(2 if success else 0), (name,mutations)
+        if success:
+            update = next(call for call in mutations if call[:4] == ['gcloud','run','jobs','update'])
+            assert '--update-env-vars=DB_USERNAME=csforge_content_sync' in update, update
+            assert '--update-secrets=DB_PASSWORD=csforge-content-sync-db-password:latest' in update, update
+            execute = next(call for call in mutations if call[:4] == ['gcloud','run','jobs','execute'])
+            run_env = next(value.split('=',1)[1] for value in execute if value.startswith('--update-env-vars='))
+            values = dict(pair.split('=',1) for pair in run_env.split(','))
+            expected_apply = 'true' if overrides.get('SYNC_MODE', common['SYNC_MODE']) in ('INITIALIZE','APPLY') else 'false'
+            assert values['SYNC_APPLY_ENABLED'] == expected_apply, (name,values)
         print(name+': PASS')

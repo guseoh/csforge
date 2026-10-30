@@ -6,6 +6,8 @@ project=csforge-508510
 project_number=1003183509924
 region=asia-southeast1
 job=csforge-content-sync
+db_secret=csforge-content-sync-db-password
+db_username=csforge_content_sync
 runtime="csforge-content-sync-runtime@${project}.iam.gserviceaccount.com"
 executor="csforge-content-sync-executor@${project}.iam.gserviceaccount.com"
 : "${SOURCE_SHA:?Set the reviewed serving main SHA}"
@@ -17,9 +19,13 @@ chmod 700 "$working"
 gcloud run services describe csforge --project="$project" --region="$region" --format=json > "$working/service.json"
 gcloud iam workload-identity-pools providers describe csforge --project="$project" --location=global \
   --workload-identity-pool=github --format=json > "$working/provider.json"
-python3 - "$working" <<'PY'
+gcloud secrets describe "$db_secret" --project="$project" >/dev/null
+gcloud secrets versions list "$db_secret" --project="$project" --filter='state=ENABLED' \
+  --format='value(name)' > "$working/db-secret-versions"
+[[ -s "$working/db-secret-versions" ]] || { echo 'The restricted DB password secret needs an enabled version.' >&2; exit 1; }
+python3 - "$working" "$db_secret" "$db_username" <<'PY'
 import json,pathlib,sys,urllib.parse
-root=pathlib.Path(sys.argv[1]); service=json.loads((root/'service.json').read_text())
+root=pathlib.Path(sys.argv[1]); db_secret,db_username=sys.argv[2:]; service=json.loads((root/'service.json').read_text())
 traffic=[t for t in service['status']['traffic'] if t.get('percent',0)>0]
 assert len(traffic)==1 and traffic[0]['percent']==100, 'Split traffic blocks provisioning'
 containers=service['spec']['template']['spec']['containers']
@@ -28,12 +34,13 @@ env={e['name']:e for e in containers[0]['env']}
 url=urllib.parse.urlparse(env['DB_URL']['value'].removeprefix('jdbc:'))
 assert url.hostname=='ep-orange-voice-b3u0nln6.c-4.ap-southeast-1.aws.neon.tech'
 assert url.path=='/neondb' and url.username is None and url.password is None
-assert 'secretKeyRef' in env['DB_PASSWORD']['valueFrom'], 'Reuse a secret reference only'
 condition=json.loads((root/'provider.json').read_text())['attributeCondition']
 assert condition.strip()=="assertion.repository == 'guseoh/csforge' && assertion.ref == 'refs/heads/main'", 'Review WIF trust condition'
 (root/'revision').write_text(traffic[0]['revisionName'])
-(root/'db-secret').write_text(env['DB_PASSWORD']['valueFrom']['secretKeyRef']['name'])
-(root/'db-env.json').write_text(json.dumps([env[n] for n in ('DB_URL','DB_USERNAME','DB_PASSWORD')]))
+(root/'db-env.json').write_text(json.dumps([
+    env['DB_URL'], {'name':'DB_USERNAME','value':db_username},
+    {'name':'DB_PASSWORD','valueFrom':{'secretKeyRef':{'name':db_secret,'key':'latest'}}}
+]))
 PY
 revision=$(cat "$working/revision")
 image="${region}-docker.pkg.dev/${project}/csforge/csforge:${SOURCE_SHA}"
@@ -61,7 +68,6 @@ for account in csforge-content-sync-runtime csforge-content-sync-executor; do
     gcloud iam service-accounts create "$account" --project="$project" --display-name="$account" >/dev/null
   fi
 done
-db_secret=$(cat "$working/db-secret")
 gcloud secrets add-iam-policy-binding "$db_secret" --project="$project" \
   --member="serviceAccount:$runtime" --role=roles/secretmanager.secretAccessor --condition=None >/dev/null
 python3 - "$working" "$runtime" "${image%:*}@${digest}" "$SOURCE_SHA" <<'PY'

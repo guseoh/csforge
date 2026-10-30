@@ -42,6 +42,7 @@ public class ContentSyncService {
         var previous = initialize ? new ContentSyncManifest(Map.of())
                 : json.readValue(checkpoint.orElseThrow().getManifest(), ContentSyncManifest.class);
         var changed = initialize ? Set.<String>of() : planner.changed(previous, manifest);
+        var filesToApply = new HashSet<>(changed);
         var existingKeys = previous.files().values().stream().flatMap(e -> e.identities().stream()).collect(java.util.stream.Collectors.toSet());
         int updated = 0, created = 0, unchanged = 0;
         var plan = batches.plan(files);
@@ -53,13 +54,14 @@ public class ContentSyncService {
                 if (item.classification() == ImportClassification.CREATED
                         && existingKeys.contains(item.kind() + ":" + item.contentKey()))
                     throw new IllegalStateException("Previously synchronized identity missing from DB: " + item.contentKey());
-                if (item.classification() != ImportClassification.UNCHANGED
-                        && (initialize || !changed.contains(item.fileName())))
+                if (item.classification() != ImportClassification.UNCHANGED && !initialize
+                        && !changed.contains(item.fileName()))
                     throw new IllegalStateException("Unreviewed baseline drift: " + item.contentKey());
+                if (item.classification() != ImportClassification.UNCHANGED) filesToApply.add(item.fileName());
             }
         }
-        if (!initialize && !changed.isEmpty()) {
-            var delta = batches.plan(files.stream().filter(f -> changed.contains(f.path())).toList());
+        if (!filesToApply.isEmpty()) {
+            var delta = batches.plan(files.stream().filter(f -> filesToApply.contains(f.path())).toList());
             for (var batch : delta.batches()) {
                 var analysis = analyzer.analyze(batch.command());
                 policy.validate(analysis, scope);

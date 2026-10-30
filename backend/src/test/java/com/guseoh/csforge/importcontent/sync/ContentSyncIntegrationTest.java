@@ -81,13 +81,43 @@ class ContentSyncIntegrationTest {
 
     private void verifyAllAreaBaselines() {
         var topic = packaged.load().stream().filter(f -> f.path().equals("java/topics.json")).findFirst().orElseThrow();
-        input.set(List.of(topic));
-        assertEquals(0, sync.synchronize(ContentSyncScope.ALL_TOPICS, A, "", ContentSyncAuditDigest.calculate(input.get()), true).updated());
+        seed(List.of(topic));
+        var changedTopics = (tools.jackson.databind.node.ArrayNode) json.readTree(topic.content());
+        for (var item : changedTopics) {
+            if (item.path("contentKey").asText().equals("java.core.language-types")) {
+                ((tools.jackson.databind.node.ObjectNode) item).put("active", false);
+            }
+        }
+        var invalidTopic = new CanonicalContentFile(topic.path(), json.writeValueAsBytes(changedTopics));
+        input.set(List.of(invalidTopic));
+        assertThrows(IllegalStateException.class, () -> sync.synchronize(ContentSyncScope.ALL_TOPICS, A, "",
+                ContentSyncAuditDigest.calculate(input.get()), true));
+        assertEquals(0, jdbc.queryForObject("select count(*) from content_sync_checkpoint where scope = 'ALL_TOPICS'", Integer.class));
+
+        changedTopics = (tools.jackson.databind.node.ArrayNode) json.readTree(topic.content());
+        for (var item : changedTopics) {
+            if (item.path("contentKey").asText().equals("java.core.language-types")) {
+                ((tools.jackson.databind.node.ObjectNode) item).put("title", item.path("title").asText() + " 초기화 검증");
+            }
+        }
+        var safeTopic = new CanonicalContentFile(topic.path(), json.writeValueAsBytes(changedTopics));
+        input.set(List.of(safeTopic));
+        assertEquals(1, sync.synchronize(ContentSyncScope.ALL_TOPICS, A, "",
+                ContentSyncAuditDigest.calculate(input.get()), true).updated());
+
         var original = packaged.load().stream().filter(f -> f.path().equals("java/language-types/pass-by-value.md")).findFirst().orElseThrow();
-        // 이전 검증에서 본문을 수정했으므로 drift가 있는 상태의 초기화는 거부돼야 한다.
-        input.set(List.of(original));
-        assertThrows(IllegalStateException.class, () -> sync.synchronize(ContentSyncScope.ALL_CONCEPTS, A, "", ContentSyncAuditDigest.calculate(input.get()), true));
+        var history = jdbc.queryForList("select * from concept_view_history order by id");
+        String invalidContent = new String(original.content(), StandardCharsets.UTF_8).replace("level: 1", "level: 3");
+        var invalidConcept = new CanonicalContentFile(original.path(), invalidContent.getBytes(StandardCharsets.UTF_8));
+        input.set(List.of(invalidConcept));
+        assertThrows(IllegalStateException.class, () -> sync.synchronize(ContentSyncScope.ALL_CONCEPTS, A, "",
+                ContentSyncAuditDigest.calculate(input.get()), true));
         assertEquals(0, jdbc.queryForObject("select count(*) from content_sync_checkpoint where scope = 'ALL_CONCEPTS'", Integer.class));
+
+        input.set(List.of(original));
+        assertEquals(1, sync.synchronize(ContentSyncScope.ALL_CONCEPTS, A, "",
+                ContentSyncAuditDigest.calculate(input.get()), true).updated());
+        assertEquals(history, jdbc.queryForList("select * from concept_view_history order by id"));
     }
 
     private void verifyQuestionHistoryPolicy() {

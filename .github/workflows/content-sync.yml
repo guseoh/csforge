@@ -7,13 +7,13 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Audit is read-only; initialization requires exact reconciliation
+        description: Audit is read-only; initialization safely reconciles approved canonical fields
         type: choice
         options: [AUDIT, RECOVERY_CHECK, INITIALIZE, APPLY, QUESTION_PLAN, QUESTION_APPLY]
         default: AUDIT
       scope:
         type: choice
-        options: [JAVA_CONCEPTS, JAVA_QUESTIONS, ALL_TOPICS, ALL_CONCEPTS]
+        options: [JAVA_CONCEPTS, JAVA_QUESTIONS, ALL_TOPICS, ALL_CONCEPTS, ALL_QUESTIONS]
         default: JAVA_CONCEPTS
       question_source_digest:
         type: string
@@ -37,10 +37,12 @@ jobs:
   sync:
     if: >-
       (github.event_name == 'workflow_dispatch' &&
-       (inputs.mode == 'AUDIT' || inputs.mode == 'RECOVERY_CHECK' || inputs.mode == 'INITIALIZE' || inputs.mode == 'QUESTION_PLAN')) ||
-      (vars.CSFORGE_CONTENT_SYNC_ENABLED == 'true' &&
+       (inputs.mode == 'RECOVERY_CHECK' || inputs.mode == 'AUDIT')) ||
+      (vars.CSFORGE_CONTENT_SYNC_DB_ROLE_READY == 'true' &&
        (github.event_name == 'workflow_dispatch' ||
-        (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' &&
+        (vars.CSFORGE_CONTENT_SYNC_ENABLED == 'true' &&
+         vars.CSFORGE_AUTO_CONTENT_SYNC_ENABLED == 'true' &&
+         github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' &&
          github.event.workflow_run.head_repository.full_name == github.repository)))
     runs-on: ubuntu-latest
     environment: production-content-sync
@@ -106,4 +108,11 @@ jobs:
         env:
           SYNC_MODE: APPLY
           SYNC_SCOPE: ALL_CONCEPTS
+        run: bash infra/content-sync/execute.sh
+      - name: Synchronize all questions
+        if: github.event_name == 'workflow_run' && vars.CSFORGE_ALL_QUESTION_SYNC_ENABLED == 'true'
+        shell: bash
+        env:
+          SYNC_MODE: APPLY
+          SYNC_SCOPE: ALL_QUESTIONS
         run: bash infra/content-sync/execute.sh
