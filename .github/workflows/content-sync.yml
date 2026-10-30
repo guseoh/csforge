@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: Audit is read-only; initialization requires exact reconciliation
+        description: Audit is read-only; initialization safely reconciles approved canonical fields
         type: choice
         options: [AUDIT, RECOVERY_CHECK, INITIALIZE, APPLY, QUESTION_PLAN, QUESTION_APPLY]
         default: AUDIT
@@ -36,11 +36,12 @@ concurrency:
 jobs:
   sync:
     if: >-
-      (github.event_name == 'workflow_dispatch' &&
-       (inputs.mode == 'AUDIT' || inputs.mode == 'RECOVERY_CHECK' || inputs.mode == 'INITIALIZE' || inputs.mode == 'QUESTION_PLAN')) ||
-      (vars.CSFORGE_CONTENT_SYNC_ENABLED == 'true' &&
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'RECOVERY_CHECK') ||
+      (vars.CSFORGE_CONTENT_SYNC_DB_ROLE_READY == 'true' &&
        (github.event_name == 'workflow_dispatch' ||
-        (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' &&
+        (vars.CSFORGE_CONTENT_SYNC_ENABLED == 'true' &&
+         vars.CSFORGE_AUTO_CONTENT_SYNC_ENABLED == 'true' &&
+         github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.head_branch == 'main' &&
          github.event.workflow_run.head_repository.full_name == github.repository)))
     runs-on: ubuntu-latest
     environment: production-content-sync
