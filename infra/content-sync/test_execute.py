@@ -42,7 +42,7 @@ elif args[:3]==['run','revisions','describe']: print('image@'+os.environ.get('BA
         if success:
             update = next(call for call in mutations if call[:4] == ['gcloud','run','jobs','update'])
             assert '--update-env-vars=DB_USERNAME=csforge_content_sync' in update, update
-            assert '--update-secrets=DB_PASSWORD=csforge-content-sync-db-password:latest' in update, update
+            assert '--update-secrets=DB_PASSWORD=sforge-content-sync-db-password:latest' in update, update
             execute = next(call for call in mutations if call[:4] == ['gcloud','run','jobs','execute'])
             run_env = next(value.split('=',1)[1] for value in execute if value.startswith('--update-env-vars='))
             values = dict(pair.split('=',1) for pair in run_env.split(','))
