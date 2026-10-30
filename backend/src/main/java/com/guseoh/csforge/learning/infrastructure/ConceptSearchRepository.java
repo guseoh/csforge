@@ -1,35 +1,32 @@
 package com.guseoh.csforge.learning.infrastructure;
 
-import java.time.Instant;
-import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.StringJoiner;
 
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Expression;
-import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
-import jakarta.persistence.criteria.Order;
-import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
-import jakarta.persistence.criteria.Subquery;
 import org.springframework.stereotype.Repository;
 
 import com.guseoh.csforge.learning.application.ConceptSearchCriteria;
 import com.guseoh.csforge.learning.application.ConceptSearchItem;
 import com.guseoh.csforge.learning.application.ConceptSearchResult;
-import com.guseoh.csforge.learning.domain.Concept;
-import com.guseoh.csforge.learning.domain.ConceptProgress;
+import com.guseoh.csforge.learning.application.ConceptSort;
 import com.guseoh.csforge.learning.domain.ContentStatus;
-import com.guseoh.csforge.learning.domain.LearningArea;
 import com.guseoh.csforge.learning.domain.LearningStatus;
-import com.guseoh.csforge.learning.domain.Topic;
 
+/** 사용자 학습 상태를 포함한 Concept 검색 조건과 정렬을 JPQL로 구성한다. */
 @Repository
 public class ConceptSearchRepository {
+
+    private static final String FROM = """
+            from Concept c
+            join c.topic t
+            join t.learningArea a
+            left join ConceptProgress p on p.concept = c
+            """;
 
     private final EntityManager entityManager;
 
@@ -38,138 +35,87 @@ public class ConceptSearchRepository {
     }
 
     public ConceptSearchResult search(ConceptSearchCriteria criteria) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<ConceptSearchItem> dataQuery = builder.createQuery(ConceptSearchItem.class);
-        Root<Concept> concept = dataQuery.from(Concept.class);
-        Join<Concept, Topic> topic = concept.join("topic");
-        Join<Topic, LearningArea> area = topic.join("learningArea");
-        Join<Concept, ConceptProgress> progress = concept.join("progress", JoinType.LEFT);
+        QueryParts parts = queryParts(criteria);
+        String select = """
+                select new com.guseoh.csforge.learning.application.ConceptSearchItem(
+                    c.id, a.slug, a.name, t.id, t.slug, t.title, c.title, c.summary,
+                    c.level, c.status, coalesce(p.status, :unseen),
+                    coalesce(p.bookmarked, false), p.lastViewedAt)
+                """;
+        TypedQuery<ConceptSearchItem> dataQuery = entityManager.createQuery(
+                select + FROM + parts.whereClause() + orderBy(criteria.sort()),
+                ConceptSearchItem.class);
+        bind(dataQuery, parts.parameters());
+        dataQuery.setParameter("unseen", LearningStatus.UNSEEN);
+        dataQuery.setFirstResult(Math.multiplyExact(criteria.page(), criteria.size()));
+        dataQuery.setMaxResults(criteria.size());
 
-        dataQuery.select(builder.construct(
-                ConceptSearchItem.class,
-                concept.get("id"),
-                area.get("slug"),
-                area.get("name"),
-                topic.get("id"),
-                topic.get("slug"),
-                topic.get("title"),
-                concept.get("title"),
-                concept.get("summary"),
-                concept.get("level"),
-                concept.get("status"),
-                builder.coalesce(progress.<LearningStatus>get("status"), LearningStatus.UNSEEN),
-                builder.coalesce(progress.<Boolean>get("bookmarked"), false),
-                progress.get("lastViewedAt")));
-        dataQuery.where(predicates(dataQuery, builder, concept, topic, area, progress, criteria));
-        dataQuery.orderBy(orderBy(builder, concept, topic, area, progress, criteria));
+        TypedQuery<Long> countQuery = entityManager.createQuery(
+                "select count(c.id) " + FROM + parts.whereClause(), Long.class);
+        bind(countQuery, parts.parameters());
 
-        TypedQuery<ConceptSearchItem> query = entityManager.createQuery(dataQuery);
-        query.setFirstResult(Math.multiplyExact(criteria.page(), criteria.size()));
-        query.setMaxResults(criteria.size());
-
-        return new ConceptSearchResult(query.getResultList(), count(criteria));
+        List<ConceptSearchItem> items = dataQuery.getResultList();
+        return new ConceptSearchResult(items, countQuery.getSingleResult());
     }
 
-    private long count(ConceptSearchCriteria criteria) {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
-        Root<Concept> concept = countQuery.from(Concept.class);
-        Join<Concept, Topic> topic = concept.join("topic");
-        Join<Topic, LearningArea> area = topic.join("learningArea");
-        Join<Concept, ConceptProgress> progress = concept.join("progress", JoinType.LEFT);
+    private QueryParts queryParts(ConceptSearchCriteria criteria) {
+        StringJoiner where = new StringJoiner(" and ", " where ", "");
+        Map<String, Object> parameters = new LinkedHashMap<>();
+        where.add("c.status = :published");
+        where.add("t.active = true");
+        where.add("a.active = true");
+        parameters.put("published", ContentStatus.PUBLISHED);
 
-        countQuery.select(builder.count(concept));
-        countQuery.where(predicates(countQuery, builder, concept, topic, area, progress, criteria));
-        return entityManager.createQuery(countQuery).getSingleResult();
-    }
-
-    private Predicate[] predicates(
-            CriteriaQuery<?> parentQuery,
-            CriteriaBuilder builder,
-            Root<Concept> concept,
-            Join<Concept, Topic> topic,
-            Join<Topic, LearningArea> area,
-            Join<Concept, ConceptProgress> progress,
-            ConceptSearchCriteria criteria) {
-        List<Predicate> predicates = new ArrayList<>();
-        predicates.add(builder.equal(concept.get("status"), ContentStatus.PUBLISHED));
-        predicates.add(builder.isTrue(topic.get("active")));
-        predicates.add(builder.isTrue(area.get("active")));
-
-        if (criteria.areaSlug() != null) {
-            predicates.add(builder.equal(area.get("slug"), criteria.areaSlug()));
-        }
-        if (criteria.topicId() != null) {
-            predicates.add(builder.equal(topic.get("id"), criteria.topicId()));
-        }
-        if (criteria.level() != null) {
-            predicates.add(builder.equal(concept.get("level"), criteria.level()));
-        }
+        addPredicate(where, parameters, criteria.areaSlug(), "a.slug = :areaSlug", "areaSlug");
+        addPredicate(where, parameters, criteria.topicId(), "t.id = :topicId", "topicId");
+        addPredicate(where, parameters, criteria.level(), "c.level = :level", "level");
+        addPredicate(where, parameters, criteria.learningStatus(),
+                "coalesce(p.status, :unseen) = :learningStatus", "learningStatus");
         if (criteria.learningStatus() != null) {
-            Expression<LearningStatus> status = builder.coalesce(
-                    progress.<LearningStatus>get("status"),
-                    LearningStatus.UNSEEN);
-            predicates.add(builder.equal(status, criteria.learningStatus()));
+            parameters.put("unseen", LearningStatus.UNSEEN);
         }
-        if (criteria.bookmarked() != null) {
-            Expression<Boolean> bookmarked = builder.coalesce(progress.<Boolean>get("bookmarked"), false);
-            predicates.add(builder.equal(bookmarked, criteria.bookmarked()));
-        }
-        if (criteria.bookmarkCategoryId() != null) {
+        addPredicate(where, parameters, criteria.bookmarked(),
+                "coalesce(p.bookmarked, false) = :bookmarked", "bookmarked");
 
-            Subquery<Long> match = parentQuery.subquery(Long.class);
-            Root<com.guseoh.csforge.learning.domain.BookmarkCategoryAssignment> assignment =
-                    match.from(com.guseoh.csforge.learning.domain.BookmarkCategoryAssignment.class);
-            match.select(assignment.get("conceptId"));
-            match.where(
-                    builder.equal(assignment.get("conceptId"), concept.get("id")),
-                    builder.equal(assignment.get("category").get("id"), criteria.bookmarkCategoryId()));
-            predicates.add(builder.isTrue(progress.get("bookmarked")));
-            predicates.add(builder.exists(match));
+        if (criteria.bookmarkCategoryId() != null) {
+            where.add("coalesce(p.bookmarked, false) = true");
+            where.add("exists (select assignment.conceptId from BookmarkCategoryAssignment assignment "
+                    + "where assignment.conceptId = c.id and assignment.category.id = :bookmarkCategoryId)");
+            parameters.put("bookmarkCategoryId", criteria.bookmarkCategoryId());
         }
         if (criteria.query() != null) {
-            String pattern = "%" + criteria.query().toLowerCase(Locale.ROOT) + "%";
-            Expression<String> summary = builder.coalesce(concept.<String>get("summary"), "");
-            predicates.add(builder.or(
-                    builder.like(builder.lower(concept.get("title")), pattern),
-                    builder.like(builder.lower(summary), pattern)));
+            where.add("(lower(c.title) like :query or lower(coalesce(c.summary, '')) like :query)");
+            parameters.put("query", "%" + criteria.query().toLowerCase(Locale.ROOT) + "%");
         }
-        return predicates.toArray(Predicate[]::new);
+        return new QueryParts(where.toString(), parameters);
     }
 
-    private List<Order> orderBy(
-            CriteriaBuilder builder,
-            Root<Concept> concept,
-            Join<Concept, Topic> topic,
-            Join<Topic, LearningArea> area,
-            Join<Concept, ConceptProgress> progress,
-            ConceptSearchCriteria criteria) {
-        return switch (criteria.sort()) {
-            case CURRICULUM -> List.of(
-                    builder.asc(area.get("displayOrder")),
-                    builder.asc(topic.get("displayOrder")),
-                    builder.asc(concept.get("displayOrder")),
-                    builder.asc(concept.get("id")));
-            case TITLE -> List.of(
-                    builder.asc(builder.lower(concept.get("title"))),
-                    builder.asc(concept.get("id")));
-            case UPDATED -> List.of(
-                    builder.desc(concept.<Instant>get("updatedAt")),
-                    builder.asc(concept.get("id")));
-            case VIEWED -> viewedOrder(builder, concept, progress);
+    private <T> void addPredicate(
+            StringJoiner where,
+            Map<String, Object> parameters,
+            T value,
+            String predicate,
+            String parameter) {
+        if (value != null) {
+            where.add(predicate);
+            parameters.put(parameter, value);
+        }
+    }
+
+    private void bind(TypedQuery<?> query, Map<String, Object> parameters) {
+        parameters.forEach((name, value) -> query.setParameter(name, value));
+    }
+
+    private String orderBy(ConceptSort sort) {
+        return switch (sort) {
+            case CURRICULUM -> " order by a.displayOrder, t.displayOrder, c.displayOrder, c.id";
+            case TITLE -> " order by lower(c.title), c.id";
+            case UPDATED -> " order by c.updatedAt desc, c.id";
+            case VIEWED -> " order by case when p.lastViewedAt is null then 1 else 0 end, "
+                    + "p.lastViewedAt desc, c.id";
         };
     }
 
-    private List<Order> viewedOrder(
-            CriteriaBuilder builder,
-            Root<Concept> concept,
-            Join<Concept, ConceptProgress> progress) {
-        Expression<Integer> nullRank = builder.<Integer>selectCase()
-                .when(builder.isNull(progress.get("lastViewedAt")), 1)
-                .otherwise(0);
-        return List.of(
-                builder.asc(nullRank),
-                builder.desc(progress.<Instant>get("lastViewedAt")),
-                builder.asc(concept.get("id")));
+    private record QueryParts(String whereClause, Map<String, Object> parameters) {
     }
 }

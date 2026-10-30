@@ -345,7 +345,7 @@ class QuizIntegrationTest {
                 Connection lockConnection = dataSource.getConnection()) {
             lockConnection.setAutoCommit(false);
             try (Statement statement = lockConnection.createStatement()) {
-                statement.execute("LOCK TABLE quiz_session IN SHARE MODE");
+                statement.execute("SELECT id FROM content_import_lock WHERE id = 1 FOR UPDATE");
             }
 
             CountDownLatch ready = new CountDownLatch(2);
@@ -354,7 +354,7 @@ class QuizIntegrationTest {
             Future<HttpResponse<String>> second = submitQuizCreate(executor, ready, start, requestId, secondBody);
             assertTrue(ready.await(5, TimeUnit.SECONDS), "Both HTTP requests should be ready to start");
             start.countDown();
-            assertTrue(awaitBlockedQuizSessionInserts(2), "Both requests should reach the quiz session insert");
+            assertTrue(awaitBlockedContentImportLocks(2), "Both requests should wait at the shared content/history guard");
 
             lockConnection.commit();
             return List.of(first.get(10, TimeUnit.SECONDS), second.get(10, TimeUnit.SECONDS));
@@ -376,7 +376,7 @@ class QuizIntegrationTest {
         });
     }
 
-    private boolean awaitBlockedQuizSessionInserts(int expectedCount) throws InterruptedException {
+    private boolean awaitBlockedContentImportLocks(int expectedCount) throws InterruptedException {
         long deadline = System.nanoTime() + TimeUnit.SECONDS.toNanos(10);
         while (System.nanoTime() < deadline) {
             Integer blocked = jdbc.queryForObject("""
@@ -385,7 +385,7 @@ class QuizIntegrationTest {
                     WHERE datname = current_database()
                       AND wait_event_type = 'Lock'
                       AND state = 'active'
-                      AND query ILIKE '%insert into quiz_session%'
+                      AND query ILIKE '%content_import_lock%'
                     """, Integer.class);
             if (blocked != null && blocked == expectedCount) return true;
             Thread.sleep(10);
