@@ -100,6 +100,12 @@ public class ContentSyncJob {
             String baseline = env.getProperty("SYNC_EXPECTED_BASELINE_SHA");
             if (baseline == null) baseline = context.getBean(com.guseoh.csforge.importcontent.domain.ContentSyncCheckpointRepository.class)
                     .findById(scope.name()).map(com.guseoh.csforge.importcontent.domain.ContentSyncCheckpoint::getSourceSha).orElse("");
+            if (scope == ContentSyncScope.ALL_QUESTIONS) {
+                var result = context.getBean(QuestionContentSyncService.class).synchronize(sha,
+                        baseline, env.getProperty("SYNC_MANIFEST_DIGEST", scopedDigest), mode.equals("INITIALIZE"));
+                System.out.println("CONTENT_SYNC_SUCCESS " + result);
+                return;
+            }
             var result = context.getBean(ContentSyncService.class).synchronize(scope, sha,
                     baseline, env.getProperty("SYNC_MANIFEST_DIGEST", scopedDigest), mode.equals("INITIALIZE"));
             System.out.println("CONTENT_SYNC_SUCCESS " + result);

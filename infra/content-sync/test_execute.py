@@ -24,6 +24,7 @@ elif args[:3]==['run','revisions','describe']: print('image@'+os.environ.get('BA
         ('backend_mismatch',{'BACKEND':'sha256:'+'2'*64},False),('frontend_mismatch',{'FRONTEND':'b'*40},False),
         ('audit',{'SYNC_MODE':'AUDIT'},True),('apply',{},True),
         ('all_topics',{'SYNC_SCOPE':'ALL_TOPICS'},True),('all_concepts',{'SYNC_SCOPE':'ALL_CONCEPTS'},True),
+        ('all_questions',{'SYNC_SCOPE':'ALL_QUESTIONS'},True),
         ('question_plan',{'SYNC_MODE':'QUESTION_PLAN','SYNC_SCOPE':'JAVA_QUESTIONS'},True),
         ('question_wrong_scope',{'SYNC_MODE':'QUESTION_PLAN'},False),
         ('question_missing_plan',{'SYNC_MODE':'QUESTION_APPLY','SYNC_SCOPE':'JAVA_QUESTIONS'},False),
