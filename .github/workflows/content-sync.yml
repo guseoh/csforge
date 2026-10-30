@@ -36,7 +36,8 @@ concurrency:
 jobs:
   sync:
     if: >-
-      (github.event_name == 'workflow_dispatch' && inputs.mode == 'RECOVERY_CHECK') ||
+      (github.event_name == 'workflow_dispatch' &&
+       (inputs.mode == 'RECOVERY_CHECK' || inputs.mode == 'AUDIT')) ||
       (vars.CSFORGE_CONTENT_SYNC_DB_ROLE_READY == 'true' &&
        (github.event_name == 'workflow_dispatch' ||
         (vars.CSFORGE_CONTENT_SYNC_ENABLED == 'true' &&
