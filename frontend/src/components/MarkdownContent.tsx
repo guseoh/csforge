@@ -17,7 +17,7 @@ const MarkdownPre: Components['pre'] = ({ node, children }) => {
     const classes = code.properties.className
     const classNames: string[] = Array.isArray(classes)
       ? classes.filter((value): value is string => typeof value === 'string')
-      : typeof classes === 'string' ? classes.split(/\\s+/) : []
+      : typeof classes === 'string' ? classes.split(/\s+/) : []
     const language = classNames.find((value) => value.startsWith('language-'))?.slice('language-'.length)
     const source = code.children.filter((child) => child.type === 'text').map((child) => child.value).join('')
     // Recover a valid canonical visualization even if an import has lost its fence language.

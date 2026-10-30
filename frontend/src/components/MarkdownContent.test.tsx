@@ -83,23 +83,23 @@ describe('MarkdownContent canonical visualization recovery', () => {
   })
 
   it.each(['csforge-viz', 'text', ''])('renders a valid visualization in a %s code fence', (language) => {
-    const html = renderMarkdown(fence + language + '\\n' + payload + '\\n' + fence)
+    const html = renderMarkdown(fence + language + '\n' + payload + '\n' + fence)
     expect(html).toContain('learning-visualization')
     expect(html).not.toContain('markdown-code-block')
     expect(html).not.toContain('코드 복사')
   })
 
   it('keeps explicitly documented JSON source as code, not a visualization', () => {
-    const html = renderMarkdown(fence + 'json\\n' + payload + '\\n' + fence)
+    const html = renderMarkdown(fence + 'json\n' + payload + '\n' + fence)
     expect(html).toContain('markdown-code-block')
     expect(html).not.toContain('learning-visualization')
   })
 
   it('does not silently render unknown or invalid visualization configuration', () => {
-    const html = renderMarkdown(fence + 'text\\n' + JSON.stringify({
+    const html = renderMarkdown(fence + 'text\n' + JSON.stringify({
       version: 2, type: 'java-definite-assignment', title: '오래된 데이터',
       description: '지원되지 않는 형식',
-    }) + '\\n' + fence)
+    }) + '\n' + fence)
     expect(html).toContain('markdown-code-block')
   })
 })
