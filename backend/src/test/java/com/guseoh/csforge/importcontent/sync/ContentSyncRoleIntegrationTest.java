@@ -37,6 +37,8 @@ class ContentSyncRoleIntegrationTest {
     @Autowired ClasspathCanonicalContentSource packaged;
     @Autowired ContentSyncService contentSync;
     @Autowired QuestionContentSyncService questionSync;
+    @Autowired ContentImportPreviewService preview;
+    @Autowired ContentImportApplyService apply;
     @Autowired PlatformTransactionManager transactions;
     @Autowired tools.jackson.databind.ObjectMapper json;
 
@@ -75,12 +77,34 @@ class ContentSyncRoleIntegrationTest {
         String key = question.get("contentKey").asText();
         var selectedQuestionFile = new CanonicalContentFile(questionFile.path(), json.writeValueAsBytes(List.of(question)));
 
+        seed(topic);
         sourceFiles.set(List.of(topic));
         restricted(() -> contentSync.synchronize(ContentSyncScope.ALL_TOPICS, "a".repeat(40), "",
                 ContentSyncAuditDigest.calculate(sourceFiles.get()), true));
+        var topics = (tools.jackson.databind.node.ArrayNode) json.readTree(topic.content());
+        for (var item : topics) {
+            if (item.path("contentKey").asText().equals("java.core.language-types")) {
+                ((tools.jackson.databind.node.ObjectNode) item).put("title", item.path("title").asText() + " 제한 역할 검증");
+            }
+        }
+        sourceFiles.set(List.of(new CanonicalContentFile(topic.path(), json.writeValueAsBytes(topics))));
+        var topicUpdate = restricted(() -> contentSync.synchronize(ContentSyncScope.ALL_TOPICS, "b".repeat(40), "a".repeat(40),
+                ContentSyncAuditDigest.calculate(sourceFiles.get()), false));
+        assertEquals(1, topicUpdate.updated());
+
+        seed(concept);
         sourceFiles.set(List.of(concept));
         restricted(() -> contentSync.synchronize(ContentSyncScope.ALL_CONCEPTS, "a".repeat(40), "",
                 ContentSyncAuditDigest.calculate(sourceFiles.get()), true));
+        byte[] suffix = "\n\n제한 역할 검증\n".getBytes(java.nio.charset.StandardCharsets.UTF_8);
+        byte[] changedContent = java.util.Arrays.copyOf(concept.content(), concept.content().length + suffix.length);
+        System.arraycopy(suffix, 0, changedContent, concept.content().length, suffix.length);
+        var changedConcept = new CanonicalContentFile(concept.path(), changedContent);
+        sourceFiles.set(List.of(changedConcept));
+        var conceptUpdate = restricted(() -> contentSync.synchronize(ContentSyncScope.ALL_CONCEPTS, "b".repeat(40), "a".repeat(40),
+                ContentSyncAuditDigest.calculate(sourceFiles.get()), false));
+        assertEquals(1, conceptUpdate.updated());
+
         sourceFiles.set(List.of(selectedQuestionFile));
         var initialized = restricted(() -> questionSync.synchronize("a".repeat(40), "",
                 ContentSyncAuditDigest.calculate(sourceFiles.get()), true));
@@ -110,6 +134,13 @@ class ContentSyncRoleIntegrationTest {
         assertEquals(attempts, jdbc.queryForList("select * from attempt order by id"));
         assertNotEquals(question.get("explanationMarkdown").asText(), jdbc.queryForObject(
                 "select explanation_markdown from question where content_key = ?", String.class, key));
+    }
+
+    private void seed(CanonicalContentFile file) {
+        var command = new ImportFilesCommand(List.of(new ImportSourceFile(file.path(), file.content())));
+        var result = preview.preview(command);
+        assertTrue(result.canApply(), result.toString());
+        apply.apply(command, result.previewDigest());
     }
 
     private <T> T restricted(java.util.concurrent.Callable<T> action) throws Exception {
