@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useSearch } from '@tanstack/react-router'
 import { useQuery } from '@tanstack/react-query'
-import { EmptyState, ErrorState, PageSkeleton } from '../components/AsyncStates'
+import { ErrorState, PageSkeleton } from '../components/AsyncStates'
 import { ConceptReferences } from '../components/ConceptReferences'
 import { MarkdownContent } from '../components/MarkdownContent'
 import { getConcept, getConcepts } from '../lib/learning-api'
@@ -13,7 +13,7 @@ import type { CompareSearch } from '../lib/compare-search'
 
 type Heading = { id: string; title: string; sub: boolean }
 
-/** Independent scroll and TOC keep each canonical article intact. Does not record learning activity. */
+/** Natural document scrolling keeps both canonical articles readable without nested panes. Does not record learning activity. */
 export function CompareColumn({ concept, side }: { concept: PublicConcept; side: 'left' | 'right' }) {
   const scroll = useRef<HTMLDivElement>(null)
   const [headings, setHeadings] = useState<Heading[]>([])
@@ -36,13 +36,13 @@ export function CompareColumn({ concept, side }: { concept: PublicConcept; side:
           <Link className="text-button" to="/quiz" search={{ ...defaultQuizSearch, areas: concept.area.slug, concepts: String(concept.id) }}>관련 문제 풀기</Link>
         </nav>
       </header>
-      <div className="compare-column-scroll" ref={scroll} tabIndex={0} role="region" aria-label={`${concept.title} 읽기 영역`}>
+      <div className="compare-column-body" ref={scroll} role="region" aria-label={`${concept.title} 읽기 영역`}>
         {concept.summary && <div className="compare-summary"><strong>핵심 요약</strong><p>{concept.summary}</p></div>}
         {headings.length > 0 && <details className="compare-toc">
           <summary>이 개념의 목차 ({headings.length})</summary>
           <nav aria-label={`${concept.title} 목차`}>
             {headings.map((h) => <a key={h.id} className={h.sub ? 'sub' : undefined} href={`#${h.id}`}
-              onClick={(event) => { event.preventDefault(); scroll.current?.querySelector(`#${h.id}`)?.scrollIntoView({ block: 'nearest' }) }}>{h.title}</a>)}
+              onClick={(event) => { event.preventDefault(); scroll.current?.querySelector(`#${h.id}`)?.scrollIntoView({ block: 'start' }) }}>{h.title}</a>)}
           </nav>
         </details>}
         <article className="compare-article" aria-label={`${concept.title} 본문`}>
@@ -65,7 +65,10 @@ export function ConceptComparePage() {
   const { left, right } = useSearch({ from: '/compare' })
   const navigate = useNavigate({ from: '/compare' })
   const [term, setTerm] = useState('')
+  const [activeSide, setActiveSide] = useState<'left' | 'right'>(left === undefined ? 'left' : 'right')
+  const pickerInput = useRef<HTMLInputElement>(null)
   const q = term.trim()
+  const targetSide = left === undefined ? 'left' : activeSide
   const first = useQuery({ queryKey: ['concept', left, scope], queryFn: () => loadConcept(left!), enabled: left !== undefined })
   const second = useQuery({
     queryKey: ['concept', right, scope], queryFn: () => loadConcept(right!),
@@ -78,11 +81,22 @@ export function ConceptComparePage() {
   })
   const duplicate = left !== undefined && right !== undefined && left === right
   const choose = (id: number) => {
-    const search: CompareSearch = left === undefined ? { left: id } : { left, right: id }
+    const search: CompareSearch = targetSide === 'left'
+      ? { left: id, ...(right !== undefined && right !== id ? { right } : {}) }
+      : left === undefined ? { left: id } : { left, right: id }
+    if (id === (targetSide === 'left' ? right : left)) return
     void navigate({ search })
+    setActiveSide('right')
     setTerm('')
   }
-  const clearSecond = () => void navigate({ search: { left } })
+  const focusSide = (side: 'left' | 'right') => {
+    setActiveSide(side)
+    pickerInput.current?.focus()
+  }
+  const clearSecond = () => {
+    setActiveSide('right')
+    void navigate({ search: { left } })
+  }
 
   useEffect(() => {
     document.title = '개념 비교 · CSForge'
@@ -92,48 +106,81 @@ export function ConceptComparePage() {
   return <section className="page-section compare-page">
     <nav className="breadcrumb" aria-label="탐색 경로"><Link to="/learning" search={defaultLearningSearch}>학습</Link><span>/</span><strong>개념 비교</strong></nav>
     <header className="compare-heading">
-      <p className="eyebrow">개념 비교 읽기</p><h1>두 개념 나란히 읽기</h1>
-      <p className="lead">두 설명을 직접 비교해 적용 상황을 판단하세요. 본문을 기계적으로 diff하거나 AI로 판정하지 않습니다.</p>
+      <p className="eyebrow">개념 비교</p>
+      <h1>두 개념 나란히 읽기</h1>
+      <p className="lead">내용과 실행 흐름을 직접 비교해 보세요. 원문을 수정하거나 자동으로 차이점을 판정하지 않습니다.</p>
     </header>
-    <section className="compare-picker" aria-label="비교 개념 선택">
-      <label htmlFor="compare-search">{left === undefined ? '첫 번째 개념 검색' : '비교할 개념 검색'}</label>
-      <input id="compare-search" type="search" value={term} onChange={(event) => setTerm(event.target.value)}
-        placeholder="제목 또는 요약 (2글자 이상)" />
-      {q.length >= 2 && <div className="compare-choices" aria-live="polite">
-        {choices.isPending ? <p role="status">검색 중…</p> : choices.isError
-          ? <div role="alert">검색에 실패했습니다. <button className="text-button" type="button" onClick={() => void choices.refetch()}>재시도</button></div>
-          : choices.data?.items.length ? choices.data.items.map((c) => (
-            <button key={c.id} type="button" disabled={c.id === left} onClick={() => choose(c.id)}>
-              <strong>{c.title}</strong><span>{c.areaName} · {c.topicTitle} · 레벨 {c.level}</span>
-            </button>
-          )) : <p>검색한 공개 개념이 없습니다.</p>}
-      </div>}
-      {first.data && right === undefined && first.data.relatedConcepts.length > 0 && <div className="compare-related">
-        <p>관련 개념 선택 (기존 연결 기준)</p>
-        {first.data.relatedConcepts.map((related) =>
-          <button key={related.id} type="button" onClick={() => choose(related.id)}>{related.title}</button>)}
-      </div>}
-      {left !== undefined && <div className="compare-picker-actions">
-        <button className="text-button" type="button" onClick={() => void navigate({ search: {} })}>처음부터 선택</button>
-        {right !== undefined && <button className="text-button" type="button" onClick={clearSecond}>두 번째 개념 변경</button>}
-        {right !== undefined && !duplicate && <button className="text-button" type="button"
-          onClick={() => void navigate({ search: { left: right, right: left } })}>좌우 바꾸기</button>}
-      </div>}
+    <section className="compare-selector" aria-label="비교 개념 선택">
+      <div className="compare-slots" role="group" aria-label="변경할 개념 선택">
+        <button type="button" className={`compare-slot${targetSide === 'left' ? ' selected' : ''}`}
+          aria-pressed={targetSide === 'left'} onClick={() => focusSide('left')}>
+          <span>01 · 첫 번째 개념</span>
+          <strong>{first.data?.title ?? (left === undefined ? '개념을 선택하세요' : '개념을 불러오는 중')}</strong>
+          <small>클릭해서 변경</small>
+        </button>
+        <button type="button" className={`compare-slot${targetSide === 'right' ? ' selected' : ''}`}
+          aria-pressed={targetSide === 'right'} disabled={left === undefined}
+          onClick={() => focusSide('right')}>
+          <span>02 · 두 번째 개념</span>
+          <strong>{second.data?.title ?? (right === undefined ? '비교할 개념을 선택하세요' : '개념을 불러오는 중')}</strong>
+          <small>클릭해서 변경</small>
+        </button>
+      </div>
+      <div className="compare-picker">
+        <label htmlFor="compare-search">{targetSide === 'left' ? '첫 번째 개념 검색' : '두 번째 개념 검색'}</label>
+        <input ref={pickerInput} id="compare-search" type="search" value={term} onChange={(event) => setTerm(event.target.value)}
+          placeholder="제목 또는 요약으로 검색 (2글자 이상)" autoComplete="off" />
+        {q.length >= 2 && <div className="compare-choices" aria-live="polite">
+          {choices.isPending ? <p role="status">검색 중…</p> : choices.isError
+            ? <div role="alert">검색에 실패했습니다. <button className="text-button" type="button" onClick={() => void choices.refetch()}>재시도</button></div>
+            : choices.data?.items.length ? choices.data.items.map((c) => (
+              <button key={c.id} type="button" disabled={c.id === left || c.id === right} onClick={() => choose(c.id)}>
+                <strong>{c.title}</strong><span>{c.areaName} · {c.topicTitle} · 레벨 {c.level}</span>
+              </button>
+            )) : <p>검색한 개념이 없습니다.</p>}
+        </div>}
+        {first.data && right === undefined && targetSide === 'right' && first.data.relatedConcepts.length > 0 && <div className="compare-related">
+          <p>관련 개념에서 바로 선택</p>
+          {first.data.relatedConcepts.map((related) =>
+            <button key={related.id} type="button" disabled={related.id === left}
+              onClick={() => choose(related.id)}>{related.title}</button>)}
+        </div>}
+        {left !== undefined && <div className="compare-picker-actions">
+          <button className="text-button" type="button" onClick={() => {
+            setActiveSide('left')
+            setTerm('')
+            void navigate({ search: {} })
+          }}>선택 초기화</button>
+          {right !== undefined && <button className="text-button" type="button" onClick={clearSecond}>두 번째 개념 제거</button>}
+          {right !== undefined && !duplicate && <button className="text-button" type="button"
+            onClick={() => void navigate({ search: { left: right, right: left } })}>좌우 바꾸기</button>}
+        </div>}
+      </div>
     </section>
-    {left === undefined && <EmptyState message="먼저 한 개념을 찾아 선택하세요." />}
+    {left === undefined && <div className="compare-grid">
+      <div className="compare-placeholder" role="status">
+        <strong>첫 번째 개념</strong><p>위 검색에서 먼저 읽을 개념을 선택하세요.</p>
+      </div>
+      <div className="compare-placeholder">
+        <strong>두 번째 개념</strong><p>첫 번째 개념을 선택한 뒤 비교할 개념을 고를 수 있습니다.</p>
+      </div>
+    </div>}
     {left !== undefined && first.isPending && <PageSkeleton rows={3} />}
     {left !== undefined && (first.isError || (!first.isPending && !first.data)) &&
       <ErrorState message="첫 번째 개념이 없거나 공개되지 않았습니다." onRetry={() => void first.refetch()} />}
     {duplicate && <div className="compare-notice" role="alert">같은 개념끼리는 비교할 수 없습니다. <button className="text-button" type="button" onClick={clearSecond}>다시 선택</button></div>}
-    {first.data && right === undefined && <p className="compare-notice" role="status">두 번째 개념을 선택하면 나란히 볼 수 있습니다.</p>}
-    {first.data && !duplicate && <div className={right === undefined ? 'compare-grid single' : 'compare-grid'}>
+    {first.data && !duplicate && <div className="compare-grid">
       <CompareColumn key={`left-${left}`} concept={first.data} side="left" />
-      {right !== undefined && (second.isPending ? <PageSkeleton rows={3} /> :
+      {right === undefined ? <div className="compare-placeholder" role="status">
+        <strong>두 번째 개념을 선택하세요</strong>
+        <p>관련 개념을 선택하거나 제목으로 검색하면 두 본문이 나란히 표시됩니다.</p>
+        <button className="secondary-button" type="button" onClick={() => focusSide('right')}>비교할 개념 찾기</button>
+      </div> : second.isPending ? <PageSkeleton rows={3} /> :
         second.isError || !second.data ? <div className="compare-missing" role="alert">
           <p>두 번째 개념이 없거나 공개되지 않았습니다.</p>
           <button className="secondary-button" type="button" onClick={() => void second.refetch()}>재시도</button>
           <button className="text-button" type="button" onClick={clearSecond}>다른 개념 선택</button>
-        </div> : <CompareColumn key={`right-${right}`} concept={second.data} side="right" />)}
+        </div> : <CompareColumn key={`right-${right}`} concept={second.data} side="right" />}
     </div>}
   </section>
 }
