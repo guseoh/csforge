@@ -39,4 +39,8 @@ elif args[:3]==['run','revisions','describe']: print('image@'+os.environ.get('BA
         mutations = [c for c in calls if c[:4] in (['gcloud','run','jobs','update'],['gcloud','run','jobs','execute'])]
         assert (result.returncode==0)==success, (name,result.stderr.decode()[-1000:])
         assert len(mutations)==(2 if success else 0), (name,mutations)
+        if success:
+            update = next(call for call in mutations if call[:4] == ['gcloud','run','jobs','update'])
+            assert '--update-env-vars=DB_USERNAME=csforge_content_sync' in update, update
+            assert '--update-secrets=DB_PASSWORD=csforge-content-sync-db-password:latest' in update, update
         print(name+': PASS')

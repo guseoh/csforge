@@ -1,4 +1,4 @@
--- Apply as the database owner after creating the dedicated non-owner login.
+-- Apply as the database owner after creating the dedicated non-login role.
 -- The job cannot mutate personal learning tables or alter the database schema.
 GRANT CONNECT ON DATABASE neondb TO csforge_content_sync;
 GRANT USAGE ON SCHEMA public TO csforge_content_sync;

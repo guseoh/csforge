@@ -19,6 +19,8 @@ if [[ "$SYNC_MODE" == QUESTION_APPLY ]]; then
   [[ "${QUESTION_SELECTED:-}" =~ ^[1-9][0-9]{0,2}$ ]]
 fi
 image="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/csforge/csforge:${SOURCE_SHA}"
+sync_db_username=csforge_content_sync
+sync_db_password_secret=csforge-content-sync-db-password
 digest=$(gcloud artifacts docker images describe "$image" --format='value(image_summary.digest)')
 [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
 if [[ "$SYNC_MODE" != AUDIT && "$SYNC_MODE" != QUESTION_PLAN ]]; then
@@ -47,8 +49,11 @@ PY
   done
   [[ "$frontend_ready" == true ]]
 fi
-# Job is provisioned separately with fixed DB secrets, least privilege and apply disabled by default.
-gcloud run jobs update "$SYNC_JOB" --project="$GCP_PROJECT_ID" --region="$GCP_REGION" --image="${image%:*}@${digest}" --quiet
+# Keep every Job execution on the dedicated least-privilege database role. The secret value
+# stays in Secret Manager and is never passed through this workflow or printed in logs.
+gcloud run jobs update "$SYNC_JOB" --project="$GCP_PROJECT_ID" --region="$GCP_REGION" \
+  --image="${image%:*}@${digest}" --update-env-vars="DB_USERNAME=$sync_db_username" \
+  --update-secrets="DB_PASSWORD=$sync_db_password_secret:latest" --quiet
 # Values are constrained; no credentials or canonical/user payloads are passed through shell text.
 if [[ "$SYNC_SCOPE" == *QUESTIONS ]]; then sync_questions_enabled=true; else sync_questions_enabled=false; fi
 gcloud run jobs execute "$SYNC_JOB" --project="$GCP_PROJECT_ID" --region="$GCP_REGION" --wait \
