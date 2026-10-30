@@ -14,7 +14,7 @@ import { parseVisualization } from '../lib/learning-visualization'
 const MarkdownPre: Components['pre'] = ({ node, children }) => {
   const code = node?.children.find((child) => child.type === 'element' && child.tagName === 'code')
   if (code?.type === 'element' && code.tagName === 'code') {
-    const classes = code.properties.className
+    const classes: unknown = code.properties.className
     const classNames: string[] = Array.isArray(classes)
       ? classes.filter((value): value is string => typeof value === 'string')
       : typeof classes === 'string' ? classes.split(/\s+/) : []
