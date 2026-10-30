@@ -45,5 +45,5 @@ spec:
                 - name: DB_PASSWORD
                   valueFrom:
                     secretKeyRef:
-                      name: csforge-content-sync-db-password
+                      name: sforge-content-sync-db-password
                       key: latest

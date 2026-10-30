@@ -20,7 +20,7 @@ if [[ "$SYNC_MODE" == QUESTION_APPLY ]]; then
 fi
 image="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/csforge/csforge:${SOURCE_SHA}"
 sync_db_username=csforge_content_sync
-sync_db_password_secret=csforge-content-sync-db-password
+sync_db_password_secret=sforge-content-sync-db-password
 digest=$(gcloud artifacts docker images describe "$image" --format='value(image_summary.digest)')
 [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
 if [[ "$SYNC_MODE" != AUDIT && "$SYNC_MODE" != QUESTION_PLAN ]]; then
