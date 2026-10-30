@@ -30,6 +30,7 @@ class ContentSyncJobIntegrationTest {
     @Autowired ApplicationContext context;
     @Autowired ContentSyncAuditService audit;
     @Autowired ContentSyncService sync;
+    @Autowired QuestionReconciliationService questionReconciliation;
     @Autowired com.guseoh.csforge.importcontent.domain.ContentSyncCheckpointRepository checkpoints;
 
     @Test
@@ -39,5 +40,6 @@ class ContentSyncJobIntegrationTest {
         assertTrue(report.sourceFiles() > 0);
         assertEquals(0, checkpoints.count());
         assertNotNull(sync);
+        assertNotNull(questionReconciliation);
     }
 }

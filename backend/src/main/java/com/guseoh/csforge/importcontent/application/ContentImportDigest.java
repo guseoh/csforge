@@ -44,8 +44,8 @@ public final class ContentImportDigest {
         });
         state.questions().values().stream().sorted(Comparator.comparing(Question::getContentKey)).forEach(q -> {
             value.append("Q|").append(q.getId()).append('|').append(q.getContentKey()).append('|').append(q.getPromptMarkdown()).append('|').append(q.getQuestionType()).append('|').append(q.getDifficulty()).append('|').append(q.getStatus()).append('|').append(q.getExplanationMarkdown()).append('\n');
-            q.getChoices().forEach(c -> value.append("QC|").append(c.getChoiceKey()).append('|').append(c.getContentMarkdown()).append('|').append(c.getRationaleMarkdown()).append('|').append(c.getDisplayOrder()).append('\n'));
-            q.getAnswers().forEach(a -> value.append("QA|").append(a.getAnswerKind()).append('|').append(a.getChoice() == null ? null : a.getChoice().getChoiceKey()).append('|').append(a.getAnswerText()).append('\n'));
+            q.getChoices().forEach(c -> value.append("QC|").append(c.getId()).append('|').append(c.getChoiceKey()).append('|').append(c.getContentMarkdown()).append('|').append(c.getRationaleMarkdown()).append('|').append(c.getDisplayOrder()).append('\n'));
+            q.getAnswers().forEach(a -> value.append("QA|").append(a.getId()).append('|').append(a.getAnswerKind()).append('|').append(a.getChoice() == null ? null : a.getChoice().getChoiceKey()).append('|').append(a.getAnswerText()).append('\n'));
             q.getConceptLinks().stream().map(link -> link.getConcept().getContentKey()).sorted().forEach(key -> value.append("QL|").append(key).append('\n'));
         });
         state.conceptReferences().values().stream().flatMap(java.util.Collection::stream).sorted(Comparator.comparing((ConceptReference link) -> link.getConcept().getContentKey()).thenComparing(link -> link.getReference().getUrl())).forEach(link -> value.append("CR|").append(link.getConcept().getContentKey()).append('|').append(link.getReference().getUrl()).append('|').append(link.getDisplayOrder()).append('|').append(link.getRelationNote()).append('\n'));

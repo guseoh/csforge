@@ -63,9 +63,16 @@ public class ContentSyncJob {
                 if (report.errors() > 0) throw new IllegalStateException("Audit validation errors");
                 return;
             }
+            if (mode.equals("QUESTION_PLAN")) {
+                if (scope != ContentSyncScope.JAVA_QUESTIONS) throw new IllegalArgumentException("Question scope required");
+                var plan = context.getBean(QuestionReconciliationService.class).planCandidates();
+                System.out.println("CONTENT_QUESTION_PLAN sourceSha=" + sha + " " + plan);
+                return;
+            }
             if (!Boolean.parseBoolean(env.getProperty("SYNC_APPLY_ENABLED", "false")))
                 throw new IllegalStateException("Automatic apply is disabled");
-            if (!mode.equals("INITIALIZE") && !mode.equals("APPLY")) throw new IllegalArgumentException("Unknown sync mode");
+            if (!mode.equals("INITIALIZE") && !mode.equals("APPLY") && !mode.equals("QUESTION_APPLY"))
+                throw new IllegalArgumentException("Unknown sync mode");
             String frontendSha = env.getRequiredProperty("SYNC_FRONTEND_SHA");
             String backendSha = env.getRequiredProperty("SYNC_BACKEND_SHA");
             if (!sha.equals(frontendSha) || !sha.equals(backendSha)) throw new IllegalStateException("Deployment SHA mismatch");
@@ -73,6 +80,20 @@ public class ContentSyncJob {
             java.time.Instant recovery = java.time.Instant.parse(env.getRequiredProperty("SYNC_RECOVERY_VERIFIED_AT"));
             long age = java.time.Duration.between(recovery, java.time.Instant.now()).getSeconds();
             if (age < 0 || age > 900) throw new IllegalStateException("Fresh recovery evidence required");
+            if (mode.equals("QUESTION_APPLY")) {
+                if (scope != ContentSyncScope.JAVA_QUESTIONS
+                        || !Boolean.parseBoolean(env.getProperty("SYNC_QUESTION_RECONCILE_ENABLED", "false")))
+                    throw new IllegalStateException("Question reconciliation disabled");
+                var plan = new QuestionCandidatePlan(env.getRequiredProperty("SYNC_QUESTION_SOURCE_DIGEST"),
+                        env.getRequiredProperty("SYNC_QUESTION_PREVIEW_DIGEST"),
+                        env.getRequiredProperty("SYNC_QUESTION_SELECTION_DIGEST"),
+                        Integer.parseInt(env.getRequiredProperty("SYNC_QUESTION_SELECTED")));
+                var result = context.getBean(QuestionReconciliationService.class).applyCandidates(plan, sha);
+                System.out.println("CONTENT_QUESTION_RECONCILED sourceSha=" + sha + " selectionDigest="
+                        + plan.selectionDigest() + " updated=" + result.updated()
+                        + " unchanged=" + result.unchanged() + " created=" + result.created());
+                return;
+            }
             if (scope == ContentSyncScope.JAVA_QUESTIONS
                     && !Boolean.parseBoolean(env.getProperty("SYNC_QUESTIONS_ENABLED", "false")))
                 throw new IllegalStateException("Question synchronization disabled");

@@ -70,27 +70,32 @@ class QuestionReconciliationIntegrationTest {
         assertThrows(IllegalStateException.class, () -> reconcile.preview(Set.of(keyC)));
         var p = reconcile.preview(Set.of(keyA));
         assertEquals(1, p.updated());
-        assertThrows(IllegalStateException.class, () -> reconcile.apply(Set.of(keyA), "stale", p.previewDigest()));
+        var plan = reconcile.planCandidates();
+        assertEquals(1, plan.selected());
+        assertEquals(p.previewDigest(), plan.previewDigest());
+        var staleSource = new QuestionCandidatePlan("stale", plan.previewDigest(), plan.selectionDigest(), plan.selected());
+        assertThrows(IllegalStateException.class, () -> reconcile.applyCandidates(staleSource, "a".repeat(40)));
         doAnswer(invocation -> { invocation.callRealMethod(); throw new IllegalStateException("simulated failure"); })
                 .when(apply).apply(any(), anyString());
-        assertThrows(IllegalStateException.class, () -> reconcile.apply(Set.of(keyA), p.sourceDigest(), p.previewDigest()));
+        assertThrows(IllegalStateException.class, () -> reconcile.applyCandidates(plan, "a".repeat(40)));
         assertEquals(before, jdbc.queryForList("select id, content_key, prompt_markdown, explanation_markdown from question order by id"));
         reset(apply);
-        assertEquals(1, reconcile.apply(Set.of(keyA), p.sourceDigest(), p.previewDigest()).updated());
+        assertEquals(1, reconcile.applyCandidates(plan, "a".repeat(40)).updated());
         assertEquals(history, jdbc.queryForList("select * from attempt order by id"));
         var after = jdbc.queryForList("select id, content_key, prompt_markdown, explanation_markdown from question order by id");
         assertEquals(before.get(1), after.get(1));
         assertEquals(before.get(2), after.get(2));
         assertEquals(0, jdbc.queryForObject("select count(*) from content_sync_checkpoint where scope = 'JAVA_QUESTIONS'", Integer.class));
+        assertEquals(1, jdbc.queryForObject("select count(*) from content_sync_run where scope = 'JAVA_QUESTIONS_PARTIAL'", Integer.class));
         var current = reconcile.preview(Set.of(keyA));
         assertEquals(1, current.unchanged());
         a.put("explanationMarkdown", a.get("explanationMarkdown").asText() + " 이후 수정");
         input.set(List.of(questionFile(a, b, c)));
-        var stale = reconcile.preview(Set.of(keyA));
+        var stalePlan = reconcile.planCandidates();
         long idA = jdbc.queryForObject("select id from question where content_key = ?", Long.class, keyA);
         jdbc.update("insert into attempt(quiz_session_id, question_id, grading_status, correct, answered_at, graded_at) values(?, ?, 'GRADED', false, current_timestamp, current_timestamp)", session, idA);
         var withNewAttempt = jdbc.queryForList("select * from attempt order by id");
-        assertThrows(IllegalStateException.class, () -> reconcile.apply(Set.of(keyA), stale.sourceDigest(), stale.previewDigest()));
+        assertThrows(IllegalStateException.class, () -> reconcile.applyCandidates(stalePlan, "b".repeat(40)));
         assertEquals(after, jdbc.queryForList("select id, content_key, prompt_markdown, explanation_markdown from question order by id"));
         assertEquals(withNewAttempt, jdbc.queryForList("select * from attempt order by id"));
     }

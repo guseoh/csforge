@@ -36,6 +36,8 @@ class QuestionImportSelectionTest {
                 List.of(file("os/example/questions.json", "[{\"contentKey\":\"java.a\"}]")), Set.of("java.a")));
         assertThrows(IllegalArgumentException.class, () -> selection.select(
                 List.of(file("java/example/questions.json", "[{\"contentKey\":3}]")), Set.of("java.a")));
+        assertThrows(IllegalArgumentException.class, () -> selection.select(
+                List.of(file("java/../example/questions.json", "[{\"contentKey\":\"java.a\"}]")), Set.of("java.a")));
     }
 
     private CanonicalContentFile file(String path, String value) {

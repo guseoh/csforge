@@ -1,7 +1,17 @@
 package com.guseoh.csforge.importcontent.sync;
 
 import com.guseoh.csforge.importcontent.application.*;
+import com.guseoh.csforge.importcontent.domain.ContentSyncRun;
+import com.guseoh.csforge.importcontent.domain.ContentSyncRunRepository;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.HashSet;
+import java.util.HexFormat;
+import java.util.List;
 import java.util.Set;
+import java.time.Clock;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -17,10 +27,38 @@ public class QuestionReconciliationService {
     private final ContentImportApplyService apply;
     private final ContentImportGuard guard;
     private final ContentSyncPolicy policy;
+    private final CanonicalBootstrapBatchPlanner batches;
+    private final ContentSyncRunRepository runs;
+    private final Clock clock;
+
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
+    public QuestionCandidatePlan planCandidates() {
+        var files = questionFiles();
+        return plan(files, candidates(files));
+    }
+
+    @Transactional
+    public ImportApplyResult applyCandidates(QuestionCandidatePlan expected, String sourceSha) {
+        if (sourceSha == null || !sourceSha.matches("[0-9a-f]{40}")) {
+            throw new IllegalArgumentException("Full source SHA required");
+        }
+        guard.acquire();
+        var files = questionFiles();
+        var keys = candidates(files);
+        var current = plan(files, keys);
+        if (!current.equals(expected)) throw new IllegalStateException("Question candidate plan is stale");
+        var result = apply(keys, current.sourceDigest(), current.previewDigest());
+        int changedFiles = (int) result.items().stream()
+                .filter(item -> item.classification() == ImportClassification.UPDATED)
+                .map(ImportItemPreview::fileName).distinct().count();
+        runs.save(ContentSyncRun.completed("JAVA_QUESTIONS_PARTIAL", sourceSha, current.sourceDigest(),
+                "QUESTION_RECONCILE", changedFiles, result.updated(), result.created(), Instant.now(clock)));
+        return result;
+    }
 
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public QuestionReconciliationPreview preview(Set<String> keys) {
-        var files = source.load().stream().filter(file -> ContentSyncScope.JAVA_QUESTIONS.includes(file.path())).toList();
+        var files = questionFiles();
         var command = selection.select(files, keys);
         var analysis = analyzer.analyze(command);
         validate(analysis, keys.size());
@@ -29,10 +67,9 @@ public class QuestionReconciliationService {
                 Math.toIntExact(analysis.count(ImportClassification.UNCHANGED)));
     }
 
-    @Transactional
-    public ImportApplyResult apply(Set<String> keys, String sourceDigest, String previewDigest) {
+    private ImportApplyResult apply(Set<String> keys, String sourceDigest, String previewDigest) {
         guard.acquire();
-        var files = source.load().stream().filter(file -> ContentSyncScope.JAVA_QUESTIONS.includes(file.path())).toList();
+        var files = questionFiles();
         if (!ContentSyncAuditDigest.calculate(files).equals(sourceDigest)) {
             throw new IllegalStateException("Question source changed after preview");
         }
@@ -57,5 +94,43 @@ public class QuestionReconciliationService {
             throw new IllegalStateException("Selected Question requires manual review");
         }
         policy.validate(analysis, ContentSyncScope.JAVA_QUESTIONS);
+    }
+
+    private List<CanonicalContentFile> questionFiles() {
+        return source.load().stream().filter(file -> ContentSyncScope.JAVA_QUESTIONS.includes(file.path())).toList();
+    }
+
+    private Set<String> candidates(List<CanonicalContentFile> files) {
+        Set<String> keys = new HashSet<>();
+        for (var batch : batches.plan(files).batches()) {
+            var analysis = analyzer.analyze(batch.command());
+            for (var item : analysis.previews()) {
+                if (policy.isSafeQuestionUpdate(analysis, item) && !keys.add(item.contentKey())) {
+                    throw new IllegalStateException("Duplicate candidate identity");
+                }
+            }
+        }
+        return Set.copyOf(keys);
+    }
+
+    private QuestionCandidatePlan plan(List<CanonicalContentFile> files, Set<String> keys) {
+        if (keys.isEmpty()) throw new IllegalStateException("No eligible Question changes");
+        var analysis = analyzer.analyze(selection.select(files, keys));
+        validate(analysis, keys.size());
+        return new QuestionCandidatePlan(ContentSyncAuditDigest.calculate(files), analysis.digest(),
+                selectionDigest(keys), keys.size());
+    }
+
+    private static String selectionDigest(Set<String> keys) {
+        try {
+            var digest = MessageDigest.getInstance("SHA-256");
+            keys.stream().sorted().forEach(key -> {
+                digest.update(key.getBytes(StandardCharsets.UTF_8));
+                digest.update((byte) 0);
+            });
+            return HexFormat.of().formatHex(digest.digest());
+        } catch (NoSuchAlgorithmException exception) {
+            throw new IllegalStateException("SHA-256 unavailable", exception);
+        }
     }
 }

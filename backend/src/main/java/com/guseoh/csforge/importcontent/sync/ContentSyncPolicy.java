@@ -34,12 +34,18 @@ public class ContentSyncPolicy {
                 if (item.diffs().stream().anyMatch(d -> !CONCEPT_FIELDS.contains(d.field())))
                     throw new IllegalStateException("Concept relationship/status change requires review");
             } else {
-                var question = analysis.state().questions().get(item.contentKey());
-                if (question == null || analysis.state().questionIdsWithAttempts().contains(question.getId()))
-                    throw new IllegalStateException("Question with attempts requires manual review: " + item.contentKey());
-                if (item.diffs().stream().anyMatch(d -> !QUESTION_FIELDS.contains(d.field())))
-                    throw new IllegalStateException("Question structure/answer change requires review");
+                if (!isSafeQuestionUpdate(analysis, item))
+                    throw new IllegalStateException("Question update requires manual review: " + item.contentKey());
             }
         }
+    }
+
+    public boolean isSafeQuestionUpdate(ImportAnalysis analysis, ImportItemPreview item) {
+        if (item.kind() != ImportItemKind.QUESTION || item.classification() != ImportClassification.UPDATED
+                || item.diffs().isEmpty() || item.diffs().stream().anyMatch(diff -> !QUESTION_FIELDS.contains(diff.field()))) {
+            return false;
+        }
+        var question = analysis.state().questions().get(item.contentKey());
+        return question != null && !analysis.state().questionIdsWithAttempts().contains(question.getId());
     }
 }
