@@ -40,6 +40,16 @@ class QuestionImportSelectionTest {
                 List.of(file("java/../example/questions.json", "[{\"contentKey\":\"java.a\"}]")), Set.of("java.a")));
     }
 
+    @Test void allQuestionScopeSelectsAcrossAreasWithoutIncludingNeighbors() {
+        var javaFile = file("java/types/questions.json", "[{\"contentKey\":\"java.a\"},{\"contentKey\":\"java.b\"}]");
+        var osFile = file("operating-systems/process/questions.json", "[{\"contentKey\":\"os.a\"},{\"contentKey\":\"os.b\"}]");
+        var command = selection.select(List.of(javaFile, osFile), Set.of("java.a", "os.b"), ContentSyncScope.ALL_QUESTIONS);
+        assertEquals(2, command.files().size());
+        assertEquals("java.a", json.readTree(command.files().get(0).content()).get(0).get("contentKey").asText());
+        assertEquals("os.b", json.readTree(command.files().get(1).content()).get(0).get("contentKey").asText());
+        assertThrows(IllegalArgumentException.class, () -> selection.select(List.of(javaFile), Set.of("java.a"), ContentSyncScope.ALL_CONCEPTS));
+    }
+
     private CanonicalContentFile file(String path, String value) {
         return new CanonicalContentFile(path, value.getBytes(StandardCharsets.UTF_8));
     }

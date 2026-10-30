@@ -20,6 +20,12 @@ public class QuestionImportSelection {
     private final ObjectMapper json;
 
     public ImportFilesCommand select(List<CanonicalContentFile> files, Set<String> keys) {
+        return select(files, keys, ContentSyncScope.JAVA_QUESTIONS);
+    }
+
+    public ImportFilesCommand select(List<CanonicalContentFile> files, Set<String> keys, ContentSyncScope scope) {
+        if (scope != ContentSyncScope.JAVA_QUESTIONS && scope != ContentSyncScope.ALL_QUESTIONS)
+            throw new IllegalArgumentException("Question scope required");
         if (keys == null || keys.isEmpty() || keys.size() > ImportBatchLimits.MAX_ITEMS_PER_BATCH
                 || keys.stream().anyMatch(key -> key == null || !key.matches("[a-z0-9][a-z0-9._-]{0,159}"))) {
             throw new IllegalArgumentException("Valid explicit Question keys are required");
@@ -29,7 +35,7 @@ public class QuestionImportSelection {
         Set<String> found = new HashSet<>();
         Set<String> paths = new HashSet<>();
         for (var file : files.stream().sorted(java.util.Comparator.comparing(CanonicalContentFile::path)).toList()) {
-            if (!ContentSyncScope.JAVA_QUESTIONS.includes(file.path()) || file.path().contains("\\")
+            if (!scope.includes(file.path()) || file.path().contains("\\")
                     || java.util.Arrays.stream(file.path().split("/", -1))
                     .anyMatch(part -> part.isEmpty() || part.equals(".") || part.equals(".."))
                     || !paths.add(file.path())) {

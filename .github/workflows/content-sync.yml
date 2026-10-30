@@ -93,3 +93,10 @@ jobs:
         if: env.SYNC_MODE != 'RECOVERY_CHECK'
         shell: bash
         run: bash infra/content-sync/execute.sh
+      - name: Reconcile safe Java Question changes
+        if: github.event_name == 'workflow_run' && vars.CSFORGE_QUESTION_AUTO_ENABLED == 'true'
+        shell: bash
+        env:
+          SYNC_MODE: QUESTION_AUTO
+          SYNC_SCOPE: JAVA_QUESTIONS
+        run: bash infra/content-sync/execute.sh
