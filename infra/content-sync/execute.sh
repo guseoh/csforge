@@ -2,13 +2,26 @@
 set -euo pipefail
 : "${SOURCE_SHA:?}" "${GCP_PROJECT_ID:?}" "${GCP_REGION:?}" "${SYNC_JOB:?}"
 [[ "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]
-[[ "$SYNC_MODE" =~ ^(AUDIT|INITIALIZE|APPLY)$ ]]
+[[ "$SYNC_MODE" =~ ^(AUDIT|INITIALIZE|APPLY|QUESTION_PLAN|QUESTION_APPLY)$ ]]
 [[ "$SYNC_SCOPE" =~ ^JAVA_(CONCEPTS|QUESTIONS)$ ]]
 [[ "${RECOVERY_VERIFIED_AT:-}" =~ ^[0-9TZ:.-]*$ ]]
+[[ "${QUESTION_SOURCE_DIGEST:-}" =~ ^([0-9a-f]{64})?$ ]]
+[[ "${QUESTION_PREVIEW_DIGEST:-}" =~ ^([0-9a-f]{64})?$ ]]
+[[ "${QUESTION_SELECTION_DIGEST:-}" =~ ^([0-9a-f]{64})?$ ]]
+[[ "${QUESTION_SELECTED:-}" =~ ^([1-9][0-9]{0,2})?$ ]]
+if [[ "$SYNC_MODE" == QUESTION_* ]]; then
+  [[ "$SYNC_SCOPE" == JAVA_QUESTIONS ]]
+fi
+if [[ "$SYNC_MODE" == QUESTION_APPLY ]]; then
+  [[ "${QUESTION_SOURCE_DIGEST:-}" =~ ^[0-9a-f]{64}$ ]]
+  [[ "${QUESTION_PREVIEW_DIGEST:-}" =~ ^[0-9a-f]{64}$ ]]
+  [[ "${QUESTION_SELECTION_DIGEST:-}" =~ ^[0-9a-f]{64}$ ]]
+  [[ "${QUESTION_SELECTED:-}" =~ ^[1-9][0-9]{0,2}$ ]]
+fi
 image="${GCP_REGION}-docker.pkg.dev/${GCP_PROJECT_ID}/csforge/csforge:${SOURCE_SHA}"
 digest=$(gcloud artifacts docker images describe "$image" --format='value(image_summary.digest)')
 [[ "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]
-if [[ "$SYNC_MODE" != AUDIT ]]; then
+if [[ "$SYNC_MODE" != AUDIT && "$SYNC_MODE" != QUESTION_PLAN ]]; then
   gcloud run services describe csforge --project="$GCP_PROJECT_ID" --region="$GCP_REGION" --format=json > /tmp/csforge-service.json
   revision=$(python3 - <<'PY'
 import json
@@ -38,4 +51,4 @@ fi
 gcloud run jobs update "$SYNC_JOB" --project="$GCP_PROJECT_ID" --region="$GCP_REGION" --image="${image%:*}@${digest}" --quiet
 # Values are constrained; no credentials or canonical/user payloads are passed through shell text.
 gcloud run jobs execute "$SYNC_JOB" --project="$GCP_PROJECT_ID" --region="$GCP_REGION" --wait \
-  --update-env-vars="SYNC_SOURCE_SHA=$SOURCE_SHA,SYNC_MODE=$SYNC_MODE,SYNC_SCOPE=$SYNC_SCOPE,SYNC_BACKEND_SHA=$SOURCE_SHA,SYNC_FRONTEND_SHA=$SOURCE_SHA,SYNC_RECOVERY_VERIFIED_AT=${RECOVERY_VERIFIED_AT:-}" --quiet
+  --update-env-vars="SYNC_SOURCE_SHA=$SOURCE_SHA,SYNC_MODE=$SYNC_MODE,SYNC_SCOPE=$SYNC_SCOPE,SYNC_BACKEND_SHA=$SOURCE_SHA,SYNC_FRONTEND_SHA=$SOURCE_SHA,SYNC_RECOVERY_VERIFIED_AT=${RECOVERY_VERIFIED_AT:-},SYNC_QUESTION_SOURCE_DIGEST=${QUESTION_SOURCE_DIGEST:-},SYNC_QUESTION_PREVIEW_DIGEST=${QUESTION_PREVIEW_DIGEST:-},SYNC_QUESTION_SELECTION_DIGEST=${QUESTION_SELECTION_DIGEST:-},SYNC_QUESTION_SELECTED=${QUESTION_SELECTED:-}" --quiet

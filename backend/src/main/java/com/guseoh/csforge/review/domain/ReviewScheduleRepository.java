@@ -14,6 +14,9 @@ import org.springframework.data.repository.query.Param;
  */
 public interface ReviewScheduleRepository extends JpaRepository<ReviewSchedule, Long> {
 
+    @Query("select schedule.questionId from ReviewSchedule schedule where schedule.questionId in :questionIds")
+    List<Long> findQuestionIdsWithSchedules(@Param("questionIds") java.util.Collection<Long> questionIds);
+
     Optional<ReviewSchedule> findByQuestionId(long questionId);
 
     List<ReviewSchedule> findByQuestionIdIn(List<Long> questionIds);

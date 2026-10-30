@@ -60,6 +60,13 @@ Recheck Neon history coverage at execution time. A historical snapshot is not a 
 - The provisioned Job successfully ran a read-only audit from the production image, reporting zero audit errors and Java Concept manifest `77e49f516091c3e73ad32455b7210d1aaa324700e4187253cf7dab7cceeabafd`. The executor trusts the immutable owner/repository ID OIDC subject for the protected environment.
 - Manual `RECOVERY_CHECK` verifies the protected Neon secret and history while the automatic switch is off. It does not invoke the Job or write the database. Initializing the Java Concept baseline requires exact zero drift; Question initialization remains blocked until its separate history review is complete.
 
+### Staged Java Question reconciliation
+
+- `QUESTION_PLAN` is a manually dispatched, read-only Job in `JAVA_QUESTIONS` scope. It selects only existing Questions whose differences are limited to prompt/explanation text and that have no Attempt, quiz membership, wrong note, review schedule, or review history. It records source, preview and selection digests plus the candidate count; it does not emit the Question keys or user answers.
+- `QUESTION_APPLY` is separately gated by `SYNC_QUESTION_RECONCILE_ENABLED` on the Job and is not triggered by a release. Supply the exact four values from a reviewed plan. The Job rechecks frontend/backend/source identity, fresh recovery evidence, the candidate digest and the preview while holding the import/quiz/review-scheduling lock. Any change to source, DB state, or candidate set blocks the transaction.
+- Apply reconstructs inputs containing only selected Questions, validates each against the existing history policy, commits all selected updates atomically, re-previews them, and records a partial run. It does not advance the `JAVA_QUESTIONS` checkpoint. Structural edits and Questions with Attempts remain blocked. Disable the separate Job flag after the reviewed reconciliation.
+- This is an incremental reconciliation tool, not automatic Question synchronization. A full Question baseline still requires zero drift or a separate reviewed historical-versioning design. Failed or stale runs require a new plan, not a production restore.
+
 ### Preserving personal data during recovery
 
 1. Keep synchronization disabled while investigating an unsuccessful execution. Read the execution logs and the last committed scoped checkpoint; failed transactions have no content or checkpoint changes.

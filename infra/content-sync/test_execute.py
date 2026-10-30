@@ -22,7 +22,14 @@ elif args[:3]==['run','revisions','describe']: print('image@'+os.environ.get('BA
     cases = [('invalid_mode',{'SYNC_MODE':'INVALID'},False), ('invalid_scope',{'SYNC_SCOPE':'OTHER'},False),
         ('invalid_sha',{'SOURCE_SHA':'invalid'},False),('invalid_digest',{'DIGEST':'invalid'},False),
         ('backend_mismatch',{'BACKEND':'sha256:'+'2'*64},False),('frontend_mismatch',{'FRONTEND':'b'*40},False),
-        ('audit',{'SYNC_MODE':'AUDIT'},True),('apply',{},True)]
+        ('audit',{'SYNC_MODE':'AUDIT'},True),('apply',{},True),
+        ('question_plan',{'SYNC_MODE':'QUESTION_PLAN','SYNC_SCOPE':'JAVA_QUESTIONS'},True),
+        ('question_wrong_scope',{'SYNC_MODE':'QUESTION_PLAN'},False),
+        ('question_missing_plan',{'SYNC_MODE':'QUESTION_APPLY','SYNC_SCOPE':'JAVA_QUESTIONS'},False),
+        ('question_injection',{'QUESTION_SOURCE_DIGEST':'x,SYNC_APPLY_ENABLED=true'},False),
+        ('question_apply',{'SYNC_MODE':'QUESTION_APPLY','SYNC_SCOPE':'JAVA_QUESTIONS',
+            'QUESTION_SOURCE_DIGEST':'a'*64,'QUESTION_PREVIEW_DIGEST':'b'*64,
+            'QUESTION_SELECTION_DIGEST':'c'*64,'QUESTION_SELECTED':'17'},True)]
     for name, overrides, success in cases:
         (root/'calls').write_text('')
         result = subprocess.run(['bash',str(runner)], env=dict(common,**overrides),capture_output=True,timeout=20)
