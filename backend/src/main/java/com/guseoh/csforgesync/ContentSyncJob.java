@@ -71,7 +71,7 @@ public class ContentSyncJob {
             }
             if (!Boolean.parseBoolean(env.getProperty("SYNC_APPLY_ENABLED", "false")))
                 throw new IllegalStateException("Automatic apply is disabled");
-            if (!mode.equals("INITIALIZE") && !mode.equals("APPLY") && !mode.equals("QUESTION_APPLY") && !mode.equals("QUESTION_AUTO"))
+            if (!mode.equals("INITIALIZE") && !mode.equals("APPLY") && !mode.equals("QUESTION_APPLY"))
                 throw new IllegalArgumentException("Unknown sync mode");
             String frontendSha = env.getRequiredProperty("SYNC_FRONTEND_SHA");
             String backendSha = env.getRequiredProperty("SYNC_BACKEND_SHA");
@@ -80,15 +80,6 @@ public class ContentSyncJob {
             java.time.Instant recovery = java.time.Instant.parse(env.getRequiredProperty("SYNC_RECOVERY_VERIFIED_AT"));
             long age = java.time.Duration.between(recovery, java.time.Instant.now()).getSeconds();
             if (age < 0 || age > 900) throw new IllegalStateException("Fresh recovery evidence required");
-            if (mode.equals("QUESTION_AUTO")) {
-                if (scope != ContentSyncScope.JAVA_QUESTIONS
-                        || !Boolean.parseBoolean(env.getProperty("SYNC_QUESTION_AUTO_ENABLED", "false")))
-                    throw new IllegalStateException("Automatic Question reconciliation disabled");
-                var result = context.getBean(QuestionReconciliationService.class).applyAutomaticCandidates(sha);
-                System.out.println("CONTENT_QUESTION_AUTO sourceSha=" + sha + " updated="
-                        + result.map(ImportApplyResult::updated).orElse(0));
-                return;
-            }
             if (mode.equals("QUESTION_APPLY")) {
                 if (scope != ContentSyncScope.JAVA_QUESTIONS
                         || !Boolean.parseBoolean(env.getProperty("SYNC_QUESTION_RECONCILE_ENABLED", "false")))
@@ -103,7 +94,7 @@ public class ContentSyncJob {
                         + " unchanged=" + result.unchanged() + " created=" + result.created());
                 return;
             }
-            if (scope == ContentSyncScope.JAVA_QUESTIONS
+            if ((scope == ContentSyncScope.JAVA_QUESTIONS || scope == ContentSyncScope.ALL_QUESTIONS)
                     && !Boolean.parseBoolean(env.getProperty("SYNC_QUESTIONS_ENABLED", "false")))
                 throw new IllegalStateException("Question synchronization disabled");
             String baseline = env.getProperty("SYNC_EXPECTED_BASELINE_SHA");

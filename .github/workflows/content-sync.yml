@@ -13,7 +13,7 @@ on:
         default: AUDIT
       scope:
         type: choice
-        options: [JAVA_CONCEPTS, JAVA_QUESTIONS]
+        options: [JAVA_CONCEPTS, JAVA_QUESTIONS, ALL_TOPICS, ALL_CONCEPTS]
         default: JAVA_CONCEPTS
       question_source_digest:
         type: string
@@ -93,10 +93,17 @@ jobs:
         if: env.SYNC_MODE != 'RECOVERY_CHECK'
         shell: bash
         run: bash infra/content-sync/execute.sh
-      - name: Reconcile safe Java Question changes
-        if: github.event_name == 'workflow_run' && vars.CSFORGE_QUESTION_AUTO_ENABLED == 'true'
+      - name: Synchronize all topics
+        if: github.event_name == 'workflow_run' && vars.CSFORGE_ALL_CONCEPT_SYNC_ENABLED == 'true'
         shell: bash
         env:
-          SYNC_MODE: QUESTION_AUTO
-          SYNC_SCOPE: JAVA_QUESTIONS
+          SYNC_MODE: APPLY
+          SYNC_SCOPE: ALL_TOPICS
+        run: bash infra/content-sync/execute.sh
+      - name: Synchronize all concepts
+        if: github.event_name == 'workflow_run' && vars.CSFORGE_ALL_CONCEPT_SYNC_ENABLED == 'true'
+        shell: bash
+        env:
+          SYNC_MODE: APPLY
+          SYNC_SCOPE: ALL_CONCEPTS
         run: bash infra/content-sync/execute.sh
