@@ -8,9 +8,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 /** Topic에 속한 canonical Concept 콘텐츠와 본문을 표현한다. */
@@ -25,11 +23,6 @@ public class Concept extends AuditedEntity {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "topic_id", nullable = false)
     private Topic topic;
-
-    // The shared-key join keeps canonical Concept loads from probing optional personal progress rows.
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", referencedColumnName = "concept_id", insertable = false, updatable = false)
-    private ConceptProgress progress;
 
     @Column(name = "content_key", nullable = false, length = 160, unique = true)
     private String contentKey;
