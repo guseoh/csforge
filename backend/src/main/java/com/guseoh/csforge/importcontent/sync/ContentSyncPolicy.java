@@ -9,6 +9,7 @@ import org.springframework.stereotype.Component;
 public class ContentSyncPolicy {
     private static final Set<String> CONCEPT_FIELDS = Set.of("title", "summary", "contentMarkdown", "references");
     private static final Set<String> QUESTION_FIELDS = Set.of("promptMarkdown", "explanationMarkdown");
+    private static final Set<String> TOPIC_FIELDS = Set.of("title", "description", "displayOrder");
 
     public void validate(ImportAnalysis analysis, ContentSyncScope scope) {
         if (analysis.hasErrors()) throw new IllegalStateException("Preview errors block synchronization");
@@ -26,13 +27,17 @@ public class ContentSyncPolicy {
         for (var item : analysis.previews()) {
             if (item.classification() == ImportClassification.SKIPPED || item.kind() == null)
                 throw new IllegalStateException("Skipped input requires review");
-            if (scope == ContentSyncScope.JAVA_CONCEPTS && item.kind() != ImportItemKind.CONCEPT
-                    || scope == ContentSyncScope.JAVA_QUESTIONS && item.kind() != ImportItemKind.QUESTION)
+            if ((scope == ContentSyncScope.JAVA_CONCEPTS || scope == ContentSyncScope.ALL_CONCEPTS) && item.kind() != ImportItemKind.CONCEPT
+                    || (scope == ContentSyncScope.JAVA_QUESTIONS || scope == ContentSyncScope.ALL_QUESTIONS) && item.kind() != ImportItemKind.QUESTION
+                    || scope == ContentSyncScope.ALL_TOPICS && item.kind() != ImportItemKind.TOPIC)
                 throw new IllegalStateException("Unexpected item kind");
             if (item.classification() != ImportClassification.UPDATED) continue;
             if (item.kind() == ImportItemKind.CONCEPT) {
                 if (item.diffs().stream().anyMatch(d -> !CONCEPT_FIELDS.contains(d.field())))
                     throw new IllegalStateException("Concept relationship/status change requires review");
+            } else if (item.kind() == ImportItemKind.TOPIC) {
+                if (item.diffs().stream().anyMatch(d -> !TOPIC_FIELDS.contains(d.field())))
+                    throw new IllegalStateException("Topic identity/status change requires review");
             } else {
                 if (!isSafeQuestionUpdate(analysis, item))
                     throw new IllegalStateException("Question update requires manual review: " + item.contentKey());

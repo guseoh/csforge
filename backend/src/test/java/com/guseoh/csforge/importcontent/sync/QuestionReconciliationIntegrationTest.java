@@ -83,13 +83,14 @@ class QuestionReconciliationIntegrationTest {
         assertThrows(IllegalStateException.class, () -> reconcile.applyCandidates(plan, "a".repeat(40)));
         assertEquals(before, jdbc.queryForList("select id, content_key, prompt_markdown, explanation_markdown from question order by id"));
         reset(apply);
-        assertEquals(1, reconcile.applyCandidates(plan, "a".repeat(40)).updated());
+        assertEquals(1, reconcile.applyAllAutomaticCandidates("a".repeat(40)));
+        assertEquals(0, reconcile.applyAllAutomaticCandidates("a".repeat(40)));
         assertEquals(history, jdbc.queryForList("select * from attempt order by id"));
         var after = jdbc.queryForList("select id, content_key, prompt_markdown, explanation_markdown from question order by id");
         assertEquals(before.get(1), after.get(1));
         assertEquals(before.get(2), after.get(2));
         assertEquals(0, jdbc.queryForObject("select count(*) from content_sync_checkpoint where scope = 'JAVA_QUESTIONS'", Integer.class));
-        assertEquals(1, jdbc.queryForObject("select count(*) from content_sync_run where scope = 'JAVA_QUESTIONS_PARTIAL'", Integer.class));
+        assertEquals(2, jdbc.queryForObject("select count(*) from content_sync_run where scope = 'ALL_QUESTIONS_PARTIAL'", Integer.class));
         var current = reconcile.preview(Set.of(keyA));
         assertEquals(1, current.unchanged());
         a.put("explanationMarkdown", a.get("explanationMarkdown").asText() + " 이후 수정");

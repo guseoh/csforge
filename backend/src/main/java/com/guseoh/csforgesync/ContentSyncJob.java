@@ -94,7 +94,7 @@ public class ContentSyncJob {
                         + " unchanged=" + result.unchanged() + " created=" + result.created());
                 return;
             }
-            if (scope == ContentSyncScope.JAVA_QUESTIONS
+            if ((scope == ContentSyncScope.JAVA_QUESTIONS || scope == ContentSyncScope.ALL_QUESTIONS)
                     && !Boolean.parseBoolean(env.getProperty("SYNC_QUESTIONS_ENABLED", "false")))
                 throw new IllegalStateException("Question synchronization disabled");
             String baseline = env.getProperty("SYNC_EXPECTED_BASELINE_SHA");

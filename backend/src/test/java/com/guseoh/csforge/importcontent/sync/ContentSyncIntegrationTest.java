@@ -76,6 +76,18 @@ class ContentSyncIntegrationTest {
         verifyConcurrentLease(changed);
         assertEquals(history, jdbc.queryForList("select * from concept_view_history order by id"));
         verifyQuestionHistoryPolicy();
+        verifyAllAreaBaselines();
+    }
+
+    private void verifyAllAreaBaselines() {
+        var topic = packaged.load().stream().filter(f -> f.path().equals("java/topics.json")).findFirst().orElseThrow();
+        input.set(List.of(topic));
+        assertEquals(0, sync.synchronize(ContentSyncScope.ALL_TOPICS, A, "", ContentSyncAuditDigest.calculate(input.get()), true).updated());
+        var original = packaged.load().stream().filter(f -> f.path().equals("java/language-types/pass-by-value.md")).findFirst().orElseThrow();
+        // 이전 검증에서 본문을 수정했으므로 drift가 있는 상태의 초기화는 거부돼야 한다.
+        input.set(List.of(original));
+        assertThrows(IllegalStateException.class, () -> sync.synchronize(ContentSyncScope.ALL_CONCEPTS, A, "", ContentSyncAuditDigest.calculate(input.get()), true));
+        assertEquals(0, jdbc.queryForObject("select count(*) from content_sync_checkpoint where scope = 'ALL_CONCEPTS'", Integer.class));
     }
 
     private void verifyQuestionHistoryPolicy() {
