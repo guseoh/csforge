@@ -6,7 +6,6 @@ import com.guseoh.csforge.importcontent.domain.ContentSyncRunRepository;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Set;
@@ -30,6 +29,7 @@ public class QuestionReconciliationService {
     private final CanonicalBootstrapBatchPlanner batches;
     private final ContentSyncRunRepository runs;
     private final Clock clock;
+    private final QuestionPersonalHistory personalHistory;
 
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public QuestionCandidatePlan planCandidates() {
@@ -94,6 +94,10 @@ public class QuestionReconciliationService {
             throw new IllegalStateException("Selected Question requires manual review");
         }
         policy.validate(analysis, ContentSyncScope.JAVA_QUESTIONS);
+        var ids = analysis.state().questions().values().stream().map(question -> question.getId()).toList();
+        if (!personalHistory.findQuestionIds(ids).isEmpty()) {
+            throw new IllegalStateException("Question with personal history requires manual review");
+        }
     }
 
     private List<CanonicalContentFile> questionFiles() {
@@ -101,16 +105,21 @@ public class QuestionReconciliationService {
     }
 
     private Set<String> candidates(List<CanonicalContentFile> files) {
-        Set<String> keys = new HashSet<>();
+        java.util.Map<String, Long> candidates = new java.util.HashMap<>();
         for (var batch : batches.plan(files).batches()) {
             var analysis = analyzer.analyze(batch.command());
             for (var item : analysis.previews()) {
-                if (policy.isSafeQuestionUpdate(analysis, item) && !keys.add(item.contentKey())) {
-                    throw new IllegalStateException("Duplicate candidate identity");
+                if (policy.isSafeQuestionUpdate(analysis, item)) {
+                    var question = analysis.state().questions().get(item.contentKey());
+                    if (candidates.putIfAbsent(item.contentKey(), question.getId()) != null) {
+                        throw new IllegalStateException("Duplicate candidate identity");
+                    }
                 }
             }
         }
-        return Set.copyOf(keys);
+        var protectedIds = personalHistory.findQuestionIds(candidates.values());
+        candidates.values().removeIf(protectedIds::contains);
+        return Set.copyOf(candidates.keySet());
     }
 
     private QuestionCandidatePlan plan(List<CanonicalContentFile> files, Set<String> keys) {

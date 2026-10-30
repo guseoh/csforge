@@ -39,13 +39,16 @@ class QuestionReconciliationIntegrationTest {
     @Autowired AtomicReference<List<CanonicalContentFile>> input;
     @Autowired JdbcTemplate jdbc;
     @Autowired ObjectMapper json;
+    @Autowired com.guseoh.csforge.review.application.ReviewCommandService review;
+    @Autowired ContentImportGuard guard;
+    @Autowired org.springframework.transaction.PlatformTransactionManager transactions;
 
     @TestConfiguration static class Source {
         @Bean AtomicReference<List<CanonicalContentFile>> reconcileInput() { return new AtomicReference<>(List.of()); }
         @Bean @Primary CanonicalContentSource testSource(AtomicReference<List<CanonicalContentFile>> value) { return value::get; }
     }
 
-    @Test void selectedTextUpdatesAreAtomicAndNeverIncludeAttemptedOrStructuralNeighbors() {
+    @Test void selectedTextUpdatesAreAtomicAndNeverIncludeAttemptedOrStructuralNeighbors() throws Exception {
         var files = packaged.load();
         seed(List.of(file(files, "java/topics.json")));
         seed(List.of(file(files, "java/language-types/primitive-reference-values.md")));
@@ -91,13 +94,39 @@ class QuestionReconciliationIntegrationTest {
         assertEquals(1, current.unchanged());
         a.put("explanationMarkdown", a.get("explanationMarkdown").asText() + " 이후 수정");
         input.set(List.of(questionFile(a, b, c)));
-        var stalePlan = reconcile.planCandidates();
+        var schedulePlan = reconcile.planCandidates();
         long idA = jdbc.queryForObject("select id from question where content_key = ?", Long.class, keyA);
+        verifyScheduleWaitsForImportLock(idA);
+        assertThrows(IllegalStateException.class, () -> reconcile.applyCandidates(schedulePlan, "b".repeat(40)));
+        assertEquals(1, jdbc.queryForObject("select count(*) from review_schedule where question_id = ?", Integer.class, idA));
+        assertEquals(after, jdbc.queryForList("select id, content_key, prompt_markdown, explanation_markdown from question order by id"));
+        jdbc.update("delete from review_schedule where question_id = ?", idA);
+        var attemptPlan = reconcile.planCandidates();
         jdbc.update("insert into attempt(quiz_session_id, question_id, grading_status, correct, answered_at, graded_at) values(?, ?, 'GRADED', false, current_timestamp, current_timestamp)", session, idA);
         var withNewAttempt = jdbc.queryForList("select * from attempt order by id");
-        assertThrows(IllegalStateException.class, () -> reconcile.applyCandidates(stalePlan, "b".repeat(40)));
+        assertThrows(IllegalStateException.class, () -> reconcile.applyCandidates(attemptPlan, "b".repeat(40)));
         assertEquals(after, jdbc.queryForList("select id, content_key, prompt_markdown, explanation_markdown from question order by id"));
         assertEquals(withNewAttempt, jdbc.queryForList("select * from attempt order by id"));
+    }
+
+    private void verifyScheduleWaitsForImportLock(long questionId) throws Exception {
+        var started = new java.util.concurrent.CountDownLatch(1);
+        try (var executor = java.util.concurrent.Executors.newSingleThreadExecutor()) {
+            var pending = new AtomicReference<java.util.concurrent.Future<?>>();
+            new org.springframework.transaction.support.TransactionTemplate(transactions).executeWithoutResult(status -> {
+                guard.acquire();
+                pending.set(executor.submit(() -> { started.countDown(); review.schedule(questionId); }));
+                try {
+                    assertTrue(started.await(5, java.util.concurrent.TimeUnit.SECONDS));
+                    assertThrows(java.util.concurrent.TimeoutException.class,
+                            () -> pending.get().get(200, java.util.concurrent.TimeUnit.MILLISECONDS));
+                } catch (InterruptedException exception) {
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException(exception);
+                }
+            });
+            pending.get().get(30, java.util.concurrent.TimeUnit.SECONDS);
+        }
     }
 
     private CanonicalContentFile questionFile(ObjectNode... values) {

@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.guseoh.csforge.question.domain.Question;
+import com.guseoh.csforge.importcontent.application.ContentImportGuard;
 import com.guseoh.csforge.question.domain.QuestionRepository;
 import com.guseoh.csforge.quiz.application.QuizCreatedResult;
 import com.guseoh.csforge.quiz.application.QuizCreationIdentity;
@@ -30,9 +31,11 @@ public class ReviewCommandService {
     private final QuestionRepository questionRepository;
     private final QuizSessionCreator sessionCreator;
     private final Clock clock;
+    private final ContentImportGuard contentImportGuard;
 
     @Transactional
     public ReviewScheduledView schedule(long questionId) {
+        contentImportGuard.acquire();
         Instant now = Instant.now(clock);
         ReviewSchedule schedule = scheduleRepository.findByQuestionId(questionId).orElseGet(() -> {
             Question question = questionRepository.findById(questionId)

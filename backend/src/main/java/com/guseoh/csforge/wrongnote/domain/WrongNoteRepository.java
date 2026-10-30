@@ -16,6 +16,9 @@ import jakarta.persistence.LockModeType;
  */
 public interface WrongNoteRepository extends JpaRepository<WrongNote, Long> {
 
+    @Query("select distinct note.question.id from WrongNote note where note.question.id in :questionIds")
+    List<Long> findQuestionIdsWithNotes(@Param("questionIds") java.util.Collection<Long> questionIds);
+
     List<WrongNote> findByQuestionIdIn(List<Long> questionIds);
 
     @EntityGraph(attributePaths = {"question", "lastWrongAttempt", "lastWrongAttempt.selectedChoice"})
