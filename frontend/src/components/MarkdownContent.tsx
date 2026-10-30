@@ -8,14 +8,23 @@ import { MarkdownCodeBlock } from './MarkdownCodeBlock'
 import { MarkdownImage } from './MarkdownImage'
 import { highlightSimpleCode } from './SyntaxHighlightedCode'
 import { LearningVisualization } from './visualization/LearningVisualization'
+import { parseVisualization } from '../lib/learning-visualization'
 
 // Keep this component identity stable so owner note/progress updates do not reset an interactive diagram.
 const MarkdownPre: Components['pre'] = ({ node, children }) => {
-  const code = node?.children[0]
-  if (code?.type === 'element' && code.tagName === 'code'
-    && Array.isArray(code.properties.className) && code.properties.className.includes('language-csforge-viz')) {
+  const code = node?.children.find((child) => child.type === 'element' && child.tagName === 'code')
+  if (code?.type === 'element' && code.tagName === 'code') {
+    const classes: unknown = code.properties.className
+    const classNames: string[] = Array.isArray(classes)
+      ? classes.filter((value): value is string => typeof value === 'string')
+      : typeof classes === 'string' ? classes.split(/\s+/) : []
+    const language = classNames.find((value) => value.startsWith('language-'))?.slice('language-'.length)
     const source = code.children.filter((child) => child.type === 'text').map((child) => child.value).join('')
-    return <LearningVisualization source={source} />
+    // Recover a valid canonical visualization even if an import has lost its fence language.
+    // Explicit json/java code blocks remain source code, not executable visualizations.
+    if (language === 'csforge-viz' || ((!language || language === 'text') && parseVisualization(source))) {
+      return <LearningVisualization source={source} />
+    }
   }
   return <MarkdownCodeBlock>{children}</MarkdownCodeBlock>
 }

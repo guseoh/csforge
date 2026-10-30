@@ -73,6 +73,37 @@ describe('MarkdownContent literal URL particles', () => {
 })
 
 
+describe('MarkdownContent canonical visualization recovery', () => {
+  const fence = String.fromCharCode(96).repeat(3)
+  const payload = JSON.stringify({
+    version: 1,
+    type: 'java-definite-assignment',
+    title: '두 분기의 대입과 합류 지점',
+    description: '두 분기에서 모두 대입되어 컴파일 가능합니다.',
+  })
+
+  it.each(['csforge-viz', 'text', ''])('renders a valid visualization in a %s code fence', (language) => {
+    const html = renderMarkdown(fence + language + '\n' + payload + '\n' + fence)
+    expect(html).toContain('learning-visualization')
+    expect(html).not.toContain('markdown-code-block')
+    expect(html).not.toContain('코드 복사')
+  })
+
+  it('keeps explicitly documented JSON source as code, not a visualization', () => {
+    const html = renderMarkdown(fence + 'json\n' + payload + '\n' + fence)
+    expect(html).toContain('markdown-code-block')
+    expect(html).not.toContain('learning-visualization')
+  })
+
+  it('does not silently render unknown or invalid visualization configuration', () => {
+    const html = renderMarkdown(fence + 'text\n' + JSON.stringify({
+      version: 2, type: 'java-definite-assignment', title: '오래된 데이터',
+      description: '지원되지 않는 형식',
+    }) + '\n' + fence)
+    expect(html).toContain('markdown-code-block')
+  })
+})
+
 describe('MarkdownContent shared learning media', () => {
   const fence = String.fromCharCode(96).repeat(3)
   it.each([

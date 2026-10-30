@@ -2,7 +2,10 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const sourceSha = process.env.VERCEL_GIT_COMMIT_SHA ?? 'UNKNOWN'
+
 export default defineConfig({
+  define: { __CSFORGE_CLIENT_SHA__: JSON.stringify(sourceSha) },
   server: {
     port: 5173,
     proxy: {
@@ -18,13 +21,15 @@ export default defineConfig({
       name: 'csforge-release-identity',
       generateBundle() {
         this.emitFile({ type: 'asset', fileName: 'build-info.json', source: JSON.stringify({
-          sourceSha: process.env.VERCEL_GIT_COMMIT_SHA ?? 'UNKNOWN',
+          sourceSha,
         }) })
       },
     },
     VitePWA({
       registerType: 'prompt',
       workbox: {
+        // Read the active release identity from the network, never from an old SW precache.
+        globIgnores: ['**/build-info.json'],
         skipWaiting: false,
         clientsClaim: false,
         navigateFallbackDenylist: [
