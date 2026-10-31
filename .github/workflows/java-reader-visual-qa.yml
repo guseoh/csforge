@@ -1,0 +1,58 @@
+name: Java G3 Reader Chromium QA
+
+on:
+  push:
+    branches: [refactor]
+    paths:
+      - 'frontend/**'
+      - 'content/java/**'
+      - 'docs/content-audit/issue-292/**'
+      - '.github/workflows/java-reader-visual-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  visual-qa:
+    if: github.ref == 'refs/heads/refactor'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Install frontend and isolated browser QA tooling
+        working-directory: frontend
+        run: |
+          npm ci
+          npm install --no-save --ignore-scripts playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Build exact refactor HEAD
+        working-directory: frontend
+        env:
+          VERCEL_GIT_COMMIT_SHA: ${{ github.sha }}
+        run: npm run build
+      - name: Run real Reader in isolated Chromium
+        working-directory: frontend
+        env:
+          G3_QA_SHA: ${{ github.sha }}
+        run: |
+          mkdir -p ../artifacts/java-g3-reader
+          (npm run preview -- --host 127.0.0.1 --port 4173 > ../artifacts/java-g3-reader/vite.log 2>&1) &
+          for i in $(seq 1 45); do
+            if curl --fail --silent http://127.0.0.1:4173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/java-reader-visual-qa.mjs
+      - name: Upload browser QA evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: java-g3-reader-qa-${{ github.sha }}
+          path: artifacts/java-g3-reader/
+          if-no-files-found: warn
+          retention-days: 14
