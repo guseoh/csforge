@@ -31,7 +31,8 @@ describe('Java G3 collaboration pattern semantics',()=>{
     const html=renderToStaticMarkup(<JavaObserverEditorial/>)
     expect(html).toContain('Listener A')
     expect(html).toContain('Listener B')
-    expect(html).toContain('자동')
+    expect(scenes[3].note).toContain('자동')
+    expect(html).toContain('명시적 등록 해제')
     expect(html).toContain('1 / 4')
   })
   it('keeps current Published pointer distinct from legal transitions',()=>{
