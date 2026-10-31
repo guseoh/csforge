@@ -30,6 +30,9 @@ describe('Java editorial collection, Buffer and Stream diagrams', () => {
     expect(javaApiScenes.buffer).toHaveLength(6)
     expect(javaApiScenes.buffer.every((scene) => scene.cells?.length === 8)).toBe(true)
     for (const scene of javaApiScenes.buffer) {
+      if (scene.position === undefined || scene.limit === undefined) {
+        throw new Error('Buffer scene must define both position and limit')
+      }
       expect(scene.position).toBeGreaterThanOrEqual(0)
       expect(scene.limit).toBeLessThanOrEqual(8)
       expect(scene.position).toBeLessThanOrEqual(scene.limit)
