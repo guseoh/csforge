@@ -15,6 +15,8 @@ import { JavaPecsEditorial, JavaListLayoutEditorial, JavaBufferEditorial, JavaSt
 import { JavaLostUpdateEditorial, JavaSafePublicationEditorial, JavaReferenceStrengthEditorial, JavaHeapPollutionEditorial } from './JavaStateEditorial'
 import { JavaRuntimeAreasEditorial, JavaJitProfileEditorial, JavaLoaderIdentityEditorial, JavaRetainedPathEditorial } from './JavaRuntimeStructureEditorial'
 import { JavaInvarianceEditorial } from './JavaGenericsEditorial'
+import { JavaHashContractEditorial, JavaComparatorEditorial, JavaDequeEndsEditorial, JavaIteratorRemoveEditorial, JavaLambdaCaptureEditorial, JavaStreamShapesEditorial } from './JavaContractEditorial'
+import { JavaParallelCostsEditorial, JavaClassfileBoundaryEditorial, JavaCollectorIntervalsEditorial, JavaInstantZonesEditorial, JavaDurationPeriodEditorial, JavaExceptionCauseEditorial } from './JavaBoundaryEditorial'
 import { JavaViewCopyEditorial, JavaMapViewsEditorial } from './JavaCollectionStructureEditorial'
 
 export function DiagramFallback({ description }: { description?: string }) {
@@ -65,6 +67,18 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
         case 'map-views': return <JavaMapViewsEditorial />
         case 'retained-path': return <JavaRetainedPathEditorial />
         case 'invariance': return <JavaInvarianceEditorial />
+        case 'hash-contract': return <JavaHashContractEditorial />
+        case 'comparator': return <JavaComparatorEditorial />
+        case 'deque': return <JavaDequeEndsEditorial />
+        case 'iterator': return <JavaIteratorRemoveEditorial />
+        case 'lambda-capture': return <JavaLambdaCaptureEditorial />
+        case 'stream-shapes': return <JavaStreamShapesEditorial />
+        case 'parallel-costs': return <JavaParallelCostsEditorial />
+        case 'jdk-classfile': return <JavaClassfileBoundaryEditorial />
+        case 'collector-tradeoffs': return <JavaCollectorIntervalsEditorial />
+        case 'instant-zones': return <JavaInstantZonesEditorial />
+        case 'duration-period': return <JavaDurationPeriodEditorial />
+        case 'exception-cause': return <JavaExceptionCauseEditorial />
         case 'cas-retry': return <JavaCasEditorial />
         case 'gc-roots': return <JavaGcReachabilityEditorial />
         case 'selector': return <JavaSelectorEditorial />
