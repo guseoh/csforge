@@ -1,95 +1,92 @@
 import { useState } from 'react'
 import type { VisualizationOf } from '../../lib/learning-visualization'
 import { defensiveCopyFrames, dispatchFrames, initializationFrames } from '../../lib/object-model-models'
-import { DiagramArrow, DiagramCanvas, DiagramControls, DiagramNode } from './DiagramPrimitives'
+import { EditorialSteps } from './JavaSemanticDiagrams'
+import './java-editorial.css'
 
 type Example = VisualizationOf<'java-object-model'>['example']
 
-function StaticObjectDiagram({ example }: { example: Example }) {
-  switch (example) {
-    case 'static-members': return <DiagramCanvas label="Member 클래스의 totalCount는 2로 공유되고 객체 a/b의 name은 각각 kim/lee입니다." width={640} height={360}>
-      <DiagramNode x={180} y={24} width={280} height={86} lines={['Member 클래스', 'static totalCount = 2']} />
-      <DiagramNode x={24} y={218} width={264} lines={['Member a', 'name = "kim"']} />
-      <DiagramNode x={352} y={218} width={264} lines={['Member b', 'name = "lee"']} />
-      <DiagramArrow x1={156} y1={218} x2={250} y2={110} dashed /><DiagramArrow x1={484} y1={218} x2={390} y2={110} dashed />
-      <text x={24} y={330}>점선: 같은 클래스 상태 공유 · 메모리 배치가 아닙니다.</text>
-    </DiagramCanvas>
-    case 'inheritance': return <DiagramCanvas label="CardPayment는 Payment의 하위 타입입니다. Report는 FileUtil의 기능에 협력할 수 있지만 상속의 근거가 되지는 않습니다." width={640} height={340}>
-      <DiagramNode x={24} y={38} width={224} lines={['CardPayment', '하위 타입']} /><DiagramNode x={392} y={38} width={224} lines={['Payment', '상위 계약']} />
-      <DiagramArrow x1={248} y1={72} x2={392} y2={72} /><text x={278} y={52}>extends</text>
-      <DiagramNode x={24} y={196} width={224} lines={['Report', '보고서 책임']} /><DiagramNode x={392} y={196} width={224} lines={['FileUtil', '파일 기능']} />
-      <DiagramArrow x1={248} y1={230} x2={392} y2={230} dashed /><text x={278} y={210}>기능 사용</text>
-      <text x={24} y={302}>실선: 하위→상위 타입 · 점선: 협력 호출, is-a를 만들지 않음</text>
-    </DiagramCanvas>
-    case 'composition': return <DiagramCanvas label="OrderService는 DiscountPolicy에 위임하고 FixedDiscountPolicy와 RateDiscountPolicy는 그 계약을 구현합니다." width={680} height={390}>
-      <DiagramNode x={24} y={32} width={256} lines={['OrderService', '협력 객체 참조 보유']} /><DiagramNode x={400} y={32} width={256} lines={['DiscountPolicy', 'discount(order) 계약']} />
-      <DiagramArrow x1={280} y1={66} x2={400} y2={66} dashed /><text x={310} y={46}>위임</text>
-      <DiagramNode x={24} y={234} width={256} lines={['FixedDiscountPolicy', '정액 할인 구현']} /><DiagramNode x={400} y={234} width={256} lines={['RateDiscountPolicy', '비율 할인 구현']} />
-      <DiagramArrow x1={196} y1={234} x2={460} y2={100} /><DiagramArrow x1={528} y1={234} x2={528} y2={100} />
-      <text x={276} y={142}>implements</text>
-      <text x={24} y={356}>실선: 구현→계약 타입 · 점선: 객체의 위임 호출</text>
-    </DiagramCanvas>
-    case 'casting': return <DiagramCanvas label="실제 Dog를 Dog로 좁히면 같은 객체를 얻고 실제 Cat을 Dog로 좁히면 ClassCastException입니다." width={680} height={340}>
-      <DiagramNode x={24} y={36} width={280} lines={['Animal animal', '실제 Dog 객체']} /><DiagramNode x={400} y={36} width={256} lines={['(Dog) animal 성공', '같은 Dog 객체']} />
-      <DiagramArrow x1={304} y1={70} x2={400} y2={70} /><text x={330} y={48}>검사</text>
-      <DiagramNode x={24} y={188} width={280} lines={['Animal other', '실제 Cat 객체']} /><DiagramNode x={400} y={188} width={256} lines={['(Dog) other 실패', 'ClassCastException']} />
-      <DiagramArrow x1={304} y1={222} x2={400} y2={222} /><text x={330} y={200}>검사</text>
-      <text x={24} y={306}>화살표: 타입 검사 결과 · 객체 생성/타입 변경이 아닙니다.</text>
-    </DiagramCanvas>
-    default: return null
-  }
+/** Compact class and instance relationships, not physical object layouts. */
+function StaticObject({ example }: { example: Example }) {
+  if (example === 'static-members') return <section className="java-ed-object" aria-label="클래스의 정적 멤버와 서로 다른 두 인스턴스">
+    <div className="java-ed-object-central"><span className="java-editorial-kicker">클래스의 공유 상태</span><strong>Member 클래스</strong><code>static totalCount = 2</code></div>
+    <div className="java-ed-object-pair" role="list">
+      <div role="listitem"><span className="java-editorial-kicker">인스턴스 a</span><strong>Member a</strong><code>name = "kim"</code></div>
+      <div role="listitem"><span className="java-editorial-kicker">인스턴스 b</span><strong>Member b</strong><code>name = "lee"</code></div>
+    </div>
+    <p className="java-editorial-qualification">totalCount는 인스턴스마다 복제되는 값이 아닙니다. 인스턴스 필드 name은 각 객체별로 별도이며, 위 배치는 메모리 주소가 아닙니다.</p>
+  </section>
+  if (example === 'inheritance') return <section className="java-ed-object" aria-label="is-a 상속과 별도의 객체 협력 비교">
+    <div className="java-ed-object-comparison" role="list">
+      <div role="listitem"><span className="java-editorial-kicker">상속 · is-a</span><strong>CardPayment <span aria-hidden="true">→</span> Payment</strong><span>하위 타입이 상위 계약을 확장 · <code>extends</code></span></div>
+      <div role="listitem"><span className="java-editorial-kicker">협력 · uses-a</span><strong>Report <span aria-hidden="true">→</span> FileUtil</strong><span>파일 기능을 호출 · 상속 관계 아님</span></div>
+    </div>
+    <p className="java-editorial-qualification">두 관계를 같은 상속 화살표로 해석하지 않습니다. 협력 호출은 타입의 하위 관계를 만들지 않습니다.</p>
+  </section>
+  if (example === 'composition') return <section className="java-ed-object" aria-label="OrderService와 DiscountPolicy 구현의 관계">
+    <div className="java-ed-object-central"><span className="java-editorial-kicker">협력 객체</span><strong>OrderService</strong><span><code>DiscountPolicy.discount(order)</code> 계약에 위임</span></div>
+    <div className="java-ed-object-pair" role="list">
+      <div role="listitem"><span className="java-editorial-kicker">같은 인터페이스의 구현 후보 A</span><strong>FixedDiscountPolicy</strong><span>정액 할인</span></div>
+      <div role="listitem"><span className="java-editorial-kicker">같은 인터페이스의 구현 후보 B</span><strong>RateDiscountPolicy</strong><span>비율 할인</span></div>
+    </div>
+    <p className="java-editorial-qualification">두 구현이 한 번의 discount 호출에서 모두 실행되는 뜻이 아닙니다. 실제 선택된 정책 객체를 통해 공통 계약을 호출합니다.</p>
+  </section>
+  if (example === 'casting') return <section className="java-ed-object" aria-label="실제 객체 타입에 따른 다운캐스팅 결과">
+    <div className="java-ed-object-comparison" role="list">
+      <div role="listitem"><span className="java-editorial-kicker">실제 객체 · Dog</span><strong><code>(Dog) animal</code> · 성공</strong><span>같은 Dog 객체 참조 · 새 객체를 생성하지 않음</span></div>
+      <div role="listitem"><span className="java-editorial-kicker">실제 객체 · Cat</span><strong><code>(Dog) other</code> · 실패</strong><span><code>ClassCastException</code> · 실제 객체 타입은 바뀌지 않음</span></div>
+    </div>
+    <p className="java-editorial-qualification">참조 변수의 선언 타입보다 실제 객체 타입이 중요합니다. 캐스팅은 객체 자체를 다른 타입으로 변환하는 연산이 아닙니다.</p>
+  </section>
+  return null
 }
 
-function InitializationDiagram({ index }: { index: number }) {
-  const f = initializationFrames[index]
-  return <DiagramCanvas label={`${f.location}. ${f.explanation}`} width={680} height={414}>
-    <DiagramNode x={24} y={24} width={280} lines={['Child()', 'this("kim")로 위임']} active={index === 1 || index === 7} />
-    <DiagramNode x={24} y={160} width={280} lines={['Child(String name)', 'super()로 상위 생성자 연결']} active={index === 2 || index >= 4 && index <= 6} />
-    <DiagramNode x={24} y={296} width={280} lines={['Parent()', '상위 초기화 경로']} active={index === 3} />
-    <DiagramArrow x1={164} y1={92} x2={164} y2={160} /><DiagramArrow x1={164} y1={228} x2={164} y2={296} />
-    <DiagramNode x={376} y={24} width={280} height={90} lines={['생성 중인 Child 객체 하나', '필드 name = ' + (f.name === 'null' ? 'null' : JSON.stringify(f.name))]} />
-    <DiagramNode x={376} y={160} width={280} height={90} lines={['현재 위치', f.location]} active />
-    <DiagramNode x={376} y={296} width={280} lines={[`필드 초기화 식: ${f.fields}회`, `초기화 블록: ${f.blocks}회`]} />
-    <text x={24} y={394}>화살표: 생성자 위임 경로 · 반환 후 원래 후반부를 계속합니다.</text>
-  </DiagramCanvas>
-}
-
-function DispatchDiagram({ index }: { index: number }) {
-  const f = dispatchFrames[index]
-  return <DiagramCanvas label={`${f.phase}. ${f.explanation}`} width={680} height={370}>
-    <DiagramNode x={24} y={32} width={280} lines={['선언 타입 Animal', 'sound() 호출 검사']} active={index === 0} />
-    <DiagramNode x={400} y={32} width={256} lines={['실제 객체 Dog', 'sound() 재정의']} active={index === 1} />
-    <DiagramArrow x1={304} y1={66} x2={400} y2={66} />
-    <DiagramNode x={200} y={204} width={280} height={90} lines={['Dog.sound() 실행', `결과: ${f.result}`]} active={index === 2} />
-    <DiagramArrow x1={528} y1={100} x2={390} y2={204} />
-    <text x={24} y={344}>화살표: 선택 순서 · vtable이나 JVM 내부 배치가 아닙니다.</text>
-  </DiagramCanvas>
-}
-
-function DefensiveCopyDiagram({ index }: { index: number }) {
-  const f = defensiveCopyFrames[index]
-  return <DiagramCanvas label={`복사 ${index + 1}단계. ${f.explanation}`} width={680} height={440}>
-    <DiagramNode x={24} y={26} width={250} height={90} lines={['original → L1', ...(f.shared ? ['shared → 같은 L1'] : []), f.expanded ? '원소 참조 [M, N]' : '원소 참조 [M]']} />
-    {f.copied && <DiagramNode x={406} y={26} width={250} height={90} lines={['copy → L2', '수정 불가능한 목록 [M]', f.rejected ? 'add 거부 · 상태 유지' : '원소 참조만 복사']} active={f.rejected} />}
-    <DiagramNode x={410} y={260} width={246} height={90} lines={['공유 원소 M', 'MutableMember', `name = "${f.member}"`]} active={index === 4} />
-    <DiagramArrow x1={274} y1={100} x2={410} y2={286} />
-    {f.copied && <DiagramArrow x1={532} y1={116} x2={532} y2={260} />}
-    {f.expanded && <><DiagramNode x={24} y={260} width={250} height={90} lines={['원본에만 추가된 N', 'name = "lee"']} /><DiagramArrow x1={149} y1={116} x2={149} y2={260} /></>}
-    <text x={24} y={404}>화살표: 원소 참조 · 목록 구조 분리와 원소 공유를 구별합니다.</text>
-    <text x={24} y={426}>L1/L2: 논리적 목록 구조 · 물리 배치/할당 횟수 아님</text>
-  </DiagramCanvas>
-}
-
+/** Follow existing canonical execution snapshots without treating constructor delegation as new objects. */
 export function ObjectModelDiagram({ data }: { data: VisualizationOf<'java-object-model'> }) {
   const [index, setIndex] = useState(0)
-  const frames = data.example === 'initialization' ? initializationFrames : data.example === 'dispatch' ? dispatchFrames : data.example === 'defensive-copy' ? defensiveCopyFrames : null
-  if (!frames) return <div className="java-desktop-fit"><StaticObjectDiagram example={data.example} /></div>
-  const f = frames[index]
-  return <div className="java-desktop-fit">
-    {data.example === 'initialization' ? <InitializationDiagram index={index} /> : data.example === 'dispatch' ? <DispatchDiagram index={index} /> : <DefensiveCopyDiagram index={index} />}
-    <p className="diagram-code"><code>{f.code}</code></p>
-    <p className="diagram-status" role="status" aria-live="polite">{f.explanation}</p>
-    <DiagramControls index={index} count={frames.length} onChange={setIndex} onReset={() => setIndex(0)} />
-    {data.example === 'initialization' && <details><summary>현재까지 누적 출력</summary><ol>{initializationFrames[index].output.map((line, i) => <li key={i}><code>{line}</code></li>)}</ol></details>}
-  </div>
+  const example = data.example
+  const frames = example === 'initialization' ? initializationFrames : example === 'dispatch' ? dispatchFrames : example === 'defensive-copy' ? defensiveCopyFrames : null
+  if (!frames) return <div className="java-desktop-fit"><StaticObject example={example} /></div>
+  const frame = frames[index]
+  return <section className="java-desktop-fit java-ed-object" aria-label={data.title}>
+    {example === 'initialization' && (() => {
+      const f=initializationFrames[index]
+      return <>
+        <span className="java-editorial-kicker">하나의 Child 객체 · 생성 중인 단계 {index + 1} / {initializationFrames.length}</span>
+        <div className="java-ed-object-central"><strong>{f.location}</strong><code>Child.name = {f.name}</code></div>
+        <div className="java-ed-object-pair" role="list">
+          <div role="listitem"><strong>필드 초기화 식</strong><span>{f.fields}회 실행</span></div>
+          <div role="listitem"><strong>인스턴스 초기화 블록</strong><span>{f.blocks}회 실행</span></div>
+        </div>
+        <p className="java-editorial-qualification">Child() → Child(String) → Parent()로 위임한 뒤 역순으로 돌아옵니다. 생성자는 같은 객체에서 실행되며 필드·블록 초기화를 위임할 때마다 반복하지 않습니다.</p>
+        <details className="java-ed-object-output"><summary>현재까지 출력 · {f.output.length}줄</summary><ol>{f.output.map((line,i)=><li key={i}><code>{line}</code></li>)}</ol></details>
+      </>
+    })()}
+    {example === 'dispatch' && (() => {
+      const f=dispatchFrames[index]
+      return <>
+        <span className="java-editorial-kicker">하나의 인스턴스 메서드 호출 · {index + 1} / {dispatchFrames.length}</span>
+        <div className="java-ed-object-comparison" role="list">
+          <div role="listitem"><span className="java-editorial-kicker">컴파일 타임</span><strong>Animal.sound()</strong><span>선언 타입으로 호출 가능한 메서드 검사</span></div>
+          <div role="listitem"><span className="java-editorial-kicker">런타임</span><strong>Dog.sound()</strong><span>{f.result} · 실제 수신 객체에 맞는 구현 선택</span></div>
+        </div>
+        <p className="java-editorial-qualification">이 도식은 인스턴스 메서드의 동적 디스패치를 설명합니다. 필드나 static 메서드 선택을 동일한 규칙으로 일반화하지 않습니다.</p>
+      </>
+    })()}
+    {example === 'defensive-copy' && (() => {
+      const f=defensiveCopyFrames[index]
+      return <>
+        <span className="java-editorial-kicker">논리적 목록 구조 · {index + 1} / {defensiveCopyFrames.length}</span>
+        <div className="java-ed-object-pair" role="list">
+          <div role="listitem"><strong>원본 L1 {f.shared && <small>· shared는 동일한 L1</small>}</strong><span>원소 참조 M{f.expanded ? ', N' : ''}</span></div>
+          <div role="listitem"><strong>{f.copied ? 'copy · 구조적으로 분리된 L2' : '복사본 생성 전'}</strong><span>{f.copied ? '원소 참조 M · 수정 불가 목록' : '—'}</span></div>
+        </div>
+        <div className="java-ed-object-central"><span className="java-editorial-kicker">양쪽 목록에 공유되는 가변 원소 M</span><strong><code>MutableMember.name = "{f.member}"</code></strong><span>{f.rejected ? 'copy.add 거절 · 구조와 원소 상태 유지' : '목록 구조를 복사해도 원소는 깊게 복사되지 않음'}</span></div>
+        <p className="java-editorial-qualification">L1·L2는 논리적 목록 구분입니다. List.copyOf가 반드시 새 객체를 할당한다는 일반 규칙이 아니며, 이 예제에서는 원본이 가변이므로 변경과 무관한 구조의 결과를 얻습니다.</p>
+      </>
+    })()}
+    <p className="java-ed-object-code"><code>{frame.code}</code></p>
+    <p className="java-ed-note" role="status" aria-live="polite">{frame.explanation}</p>
+    <EditorialSteps index={index} count={frames.length} setIndex={setIndex} />
+  </section>
 }

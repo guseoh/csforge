@@ -2,10 +2,12 @@ import { useState } from 'react'
 import type { VisualizationOf } from '../../lib/learning-visualization'
 import { valueReferenceFrames } from '../../lib/language-type-models'
 import { DiagramArrow, DiagramCanvas, DiagramControls, DiagramNode } from './DiagramPrimitives'
+import { JavaValueContractEditorial } from './JavaValueContractEditorial'
 
 export function LanguageValueDiagram({ data }: { data: VisualizationOf<'java-value-reference'> }) {
   const [index, setIndex] = useState(0)
   const frames = valueReferenceFrames(data.example)
+  if (data.example !== 'assignment-copy') return <JavaValueContractEditorial data={data} />
   const frame = frames[index]
   const objectY = (id: 'A' | 'B') => id === 'A' ? 60 : 218
   const primitive = frame.objects.length === 0
