@@ -28,7 +28,7 @@ describe('shared visualization contract', () => {
     const html = renderToStaticMarkup(<MarkdownContent>{`${fence}csforge-viz\n${source}\n${fence}`}</MarkdownContent>)
     expect(html).toContain('learning-visualization')
     // Java's editorial HTML diagrams and legacy SVGs use different, accessible media semantics.
-    const figure = html.match(/<figure class="learning-visualization[^"]*">([\s\S]*?)<\/figure>/)?.[1]
+    const figure = html.match(/<figure class="learning-visualization[^"]*"[^>]*>([\s\S]*?)<\/figure>/)?.[1]
     expect(figure).toBeDefined()
     expect(figure).toContain('<figcaption>')
     expect(figure).toMatch(/(?:role="img"|aria-label="[^"]+")/)
