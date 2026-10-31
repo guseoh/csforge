@@ -62,7 +62,7 @@ describe('Java G3 state diagrams', () => {
     const html = renderToStaticMarkup(<JavaHeapPollutionEditorial />)
     expect(html).toContain('List[]')
     expect(html).toContain('Object[]')
-    expect(html).toContain('별칭 도입 전')
+    expect(html).toContain('Object[] 별칭 도입 전')
     expect(html).toContain('1 / 4')
     expect(html).toContain('@SafeVarargs')
   })

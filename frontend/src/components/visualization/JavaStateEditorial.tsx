@@ -133,7 +133,7 @@ export function JavaHeapPollutionEditorial() {
     <div className="java-ed-heap-aliases">
       <div className="java-ed-heap-name"><strong><code>lists</code></strong><small>선언: List&lt;String&gt;... / 실제 배열: List[]</small></div>
       <div className={'java-ed-heap-name' + (alias ? '' : ' is-pending')}>
-        <strong><code>array</code></strong><small>{alias ? 'Object[]로 본 동일한 배열' : '별칭 도입 전'}</small>
+        <strong><code>array</code></strong><small>{alias ? 'Object[]로 본 동일한 배열' : 'Object[] 별칭 도입 전'}</small>
       </div>
       <div className="java-ed-heap-slot" role="group" aria-label="두 별칭이 공유하는 배열의 0번 슬롯">
         <small>하나의 배열 · [0]</small>
