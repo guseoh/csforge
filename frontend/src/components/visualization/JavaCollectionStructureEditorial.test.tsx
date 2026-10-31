@@ -34,7 +34,7 @@ describe('Java G3 collection structure diagrams', () => {
     expect(html).toContain('A=1, B=2')
     expect(html).toContain('B=2')
     expect(html).not.toContain('Map의 반복 순서를 고정합니다')
-    expect(html).toContain('스냅샷이 아닙니다')
+    expect(html).toContain('독립된 스냅샷이 아니며')
     expect(html).not.toContain('도식 단계 이동')
   })
 
