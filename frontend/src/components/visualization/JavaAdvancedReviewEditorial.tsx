@@ -99,3 +99,55 @@ export function JavaZoneDstEditorial() {
     <p className="java-editorial-qualification">atZone은 gap 길이만큼 시간을 앞으로 이동합니다. overlap의 이전·이후는 offset 숫자의 크기와 달리 시간축에서 발생한 순서입니다. Java 25의 2026년 시간대 예제입니다.</p>
   </section>
 }
+
+
+/** ScopedValue nesting shadows rather than mutates the enclosing dynamic binding. */
+export function JavaScopedBindingEditorial() {
+  const [index, setIndex] = useState(0)
+  const scenes = javaApiScenes['scoped-binding']
+  const inner = index === 1
+  return <section className="java-ed-coordination" aria-label="ScopedValue 바깥 범위와 안쪽 범위의 바인딩">
+    <h4 className="java-ed-scene-title">{scenes[index].title}</h4>
+    <div className="java-ed-scoped-outer">
+      <span className="java-editorial-kicker">바깥 동적 범위</span>
+      <strong><code>REQUEST_ID = outer</code></strong>
+      <div className={'java-ed-scoped-inner' + (inner ? ' is-current' : '')}>
+        <span className="java-editorial-kicker">안쪽 범위 {inner ? '· 활성' : '· 현재 비활성'}</span>
+        <strong>{inner ? <code>REQUEST_ID = inner</code> : '—'}</strong>
+      </div>
+    </div>
+    <div className="java-ed-advanced-rows">
+      <div><strong>현재 get() 값</strong><span>{inner ? 'inner' : 'outer'}</span></div>
+      <div><strong>바깥 값 변경</strong><span>없음 · 안쪽 재바인딩은 기존 값을 변이하지 않음</span></div>
+      {index === 2 && <div><strong>구조화된 child task</strong><span>같은 범위 안에서 연 StructuredTaskScope가 캡처한 바인딩을 fork 시 상속할 수 있음</span></div>}
+    </div>
+    <EditorialSteps index={index} count={scenes.length} setIndex={setIndex} />
+    <EditorialNote description={scenes[index].note} />
+    <p className="java-editorial-qualification">ScopedValue에는 set() 메서드가 없습니다. 값을 가리키는 객체는 자동으로 깊게 불변이 되지 않습니다. Java 25의 StructuredTaskScope는 preview이며 임의 Executor에는 이 상속 규칙을 적용할 수 없습니다.</p>
+  </section>
+}
+
+/** Handler delegation and the return/error paths remain explicitly distinct. */
+export function JavaDynamicProxyEditorial() {
+  const [index, setIndex] = useState(0)
+  const scenes = javaApiScenes['dynamic-proxy']
+  const states = [
+    ['Caller', '동적 Proxy', 'InvocationHandler 호출 전'],
+    ['Caller', 'Proxy 메서드', 'handler.invoke(proxy, Method, args)'],
+    ['Proxy', 'LoggingHandler', '별도 Target 메서드 실행'],
+    ['Target 정상 반환', 'Handler / Proxy', 'Caller 정상 결과 수신'],
+    ['Target 예외', 'Handler가 InvocationTargetException의 cause 재전파', 'Caller 실패 관찰'],
+  ] as const
+  return <section className="java-ed-coordination" aria-label="JDK 동적 프록시의 호출과 정상 예외 분기">
+    <h4 className="java-ed-scene-title">{scenes[index].title}</h4>
+    <span className="java-editorial-kicker">{index < 3 ? '이 예제의 호출 경로' : index === 3 ? '정상 반환 분기' : '별도의 예외 분기 · 정상 결과 이후가 아님'}</span>
+    <div className="java-ed-advanced-rows">
+      <div><strong>시작 / 결과</strong><span>{states[index][0]}</span></div>
+      <div><strong>프록시 경계</strong><span>{states[index][1]}</span></div>
+      <div><strong>전달 대상</strong><span>{states[index][2]}</span></div>
+    </div>
+    <EditorialSteps index={index} count={scenes.length} setIndex={setIndex} />
+    <EditorialNote description={scenes[index].note} />
+    <p className="java-editorial-qualification">InvocationHandler가 반드시 Target을 호출할 의무는 없습니다. 여기서는 별도 Target에 위임하며 내부 this 호출은 Proxy를 다시 지나지 않습니다. 메서드 throws 절에 없는 checked 예외를 넘기면 UndeclaredThrowableException으로 감쌀 수 있습니다.</p>
+  </section>
+}

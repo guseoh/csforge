@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { javaApiScenes } from '../../lib/java-api-models'
 import { LearningVisualization } from './LearningVisualization'
-import { JavaExecutorAdmissionEditorial, JavaThreadLocalReuseEditorial, JavaFailureAtomicityEditorial, JavaZoneDstEditorial } from './JavaAdvancedReviewEditorial'
+import { JavaExecutorAdmissionEditorial, JavaThreadLocalReuseEditorial, JavaFailureAtomicityEditorial, JavaZoneDstEditorial, JavaScopedBindingEditorial, JavaDynamicProxyEditorial } from './JavaAdvancedReviewEditorial'
 
 const source = (example: string) => JSON.stringify({ version: 1, type: 'java-api-contract', example, title: 'Java 구조', description: '상태 비교' })
 
@@ -36,6 +36,29 @@ describe('Java advanced G3 models and editorial branch rendering', () => {
     expect(html).toContain('2026-03-29 02:30')
     expect(html).toContain('유효 offset')
     expect(html).toContain('1 / 4')
+  })
+  it('preserves nested ScopedValue shadowing and structured-only inheritance', () => {
+    expect(javaApiScenes['scoped-binding']).toHaveLength(3)
+    const html = renderToStaticMarkup(<JavaScopedBindingEditorial />)
+    expect(html).toContain('REQUEST_ID = outer')
+    expect(html).toContain('StructuredTaskScope')
+    expect(html).toContain('1 / 3')
+  })
+  it('keeps JDK proxy return and checked-exception paths alternative', () => {
+    expect(javaApiScenes['dynamic-proxy']).toHaveLength(5)
+    expect(javaApiScenes['dynamic-proxy'][4].note).toContain('UndeclaredThrowableException')
+    const html = renderToStaticMarkup(<JavaDynamicProxyEditorial />)
+    expect(html).toContain('동적 Proxy')
+    expect(html).toContain('UndeclaredThrowableException')
+    expect(html).toContain('1 / 5')
+  })
+  it('routes ScopedValue and dynamic-proxy without the generic SVG canvas', () => {
+    for (const example of ['scoped-binding','dynamic-proxy']) {
+      const html = renderToStaticMarkup(<LearningVisualization source={source(example)} />)
+      expect(html, example).toContain('java-ed-advanced-rows')
+      expect(html, example).toContain('도식 단계 이동')
+      expect(html, example).not.toContain('diagram-canvas')
+    }
   })
   it('routes all four dedicated examples without the generic canvas', () => {
     for (const example of ['executor-admission','threadlocal-reuse','failure-atomicity','zone-dst']) {

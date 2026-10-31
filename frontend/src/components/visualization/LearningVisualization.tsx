@@ -18,7 +18,7 @@ import { JavaInvarianceEditorial } from './JavaGenericsEditorial'
 import { JavaHashContractEditorial, JavaComparatorEditorial, JavaDequeEndsEditorial, JavaIteratorRemoveEditorial, JavaLambdaCaptureEditorial, JavaStreamShapesEditorial } from './JavaContractEditorial'
 import { JavaParallelCostsEditorial, JavaClassfileBoundaryEditorial, JavaCollectorIntervalsEditorial, JavaInstantZonesEditorial, JavaDurationPeriodEditorial, JavaExceptionCauseEditorial } from './JavaBoundaryEditorial'
 import { JavaConditionAwaitEditorial, JavaBoundedQueueEditorial, JavaThreadLifecycleEditorial, JavaSuppressedExceptionsEditorial } from './JavaCoordinationEditorial'
-import { JavaExecutorAdmissionEditorial, JavaThreadLocalReuseEditorial, JavaFailureAtomicityEditorial, JavaZoneDstEditorial } from './JavaAdvancedReviewEditorial'
+import { JavaExecutorAdmissionEditorial, JavaThreadLocalReuseEditorial, JavaFailureAtomicityEditorial, JavaZoneDstEditorial, JavaScopedBindingEditorial, JavaDynamicProxyEditorial } from './JavaAdvancedReviewEditorial'
 import { JavaViewCopyEditorial, JavaMapViewsEditorial } from './JavaCollectionStructureEditorial'
 
 export function DiagramFallback({ description }: { description?: string }) {
@@ -89,6 +89,8 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
         case 'threadlocal-reuse': return <JavaThreadLocalReuseEditorial />
         case 'failure-atomicity': return <JavaFailureAtomicityEditorial />
         case 'zone-dst': return <JavaZoneDstEditorial />
+        case 'scoped-binding': return <JavaScopedBindingEditorial />
+        case 'dynamic-proxy': return <JavaDynamicProxyEditorial />
         case 'cas-retry': return <JavaCasEditorial />
         case 'gc-roots': return <JavaGcReachabilityEditorial />
         case 'selector': return <JavaSelectorEditorial />

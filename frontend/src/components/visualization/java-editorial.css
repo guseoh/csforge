@@ -659,3 +659,7 @@
 @media(max-width:530px) {
   .java-visualization .java-ed-advanced-rows > div { grid-template-columns:minmax(0,1fr); gap:4px; }
 }
+
+.java-visualization .java-ed-scoped-outer { display:grid; gap:7px; margin:14px 0; padding:12px 0; border-top:2px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-scoped-inner { margin:4px 0 0 20px; padding:11px 13px; border-left:1px solid var(--java-editorial-rule); display:grid; gap:5px; opacity:.65; }
+.java-visualization .java-ed-scoped-inner.is-current { border-left:2px solid var(--java-editorial-ink); opacity:1; }
