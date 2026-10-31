@@ -46,7 +46,7 @@ function itemResult() {
   return {
     missing:false, figureWidth:Math.round(box.width), figureRight:Math.round(box.right),
     docWidth:document.documentElement.scrollWidth, theme:document.documentElement.getAttribute('data-theme'),
-    content:!!figure.querySelector('section,svg'),fallback:!!figure.querySelector('.diagram-fallback'),
+    content:[...figure.children].some(child => child.tagName !== 'FIGCAPTION' && !child.classList.contains('diagram-fallback')),fallback:!!figure.querySelector('.diagram-fallback'),
     controls:!!figure.querySelector('nav.java-ed-steps'),overhanging:bounds,
   }
 }
