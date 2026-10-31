@@ -17,6 +17,7 @@ import { JavaRuntimeAreasEditorial, JavaJitProfileEditorial, JavaLoaderIdentityE
 import { JavaInvarianceEditorial } from './JavaGenericsEditorial'
 import { JavaHashContractEditorial, JavaComparatorEditorial, JavaDequeEndsEditorial, JavaIteratorRemoveEditorial, JavaLambdaCaptureEditorial, JavaStreamShapesEditorial } from './JavaContractEditorial'
 import { JavaParallelCostsEditorial, JavaClassfileBoundaryEditorial, JavaCollectorIntervalsEditorial, JavaInstantZonesEditorial, JavaDurationPeriodEditorial, JavaExceptionCauseEditorial } from './JavaBoundaryEditorial'
+import { JavaConditionAwaitEditorial, JavaBoundedQueueEditorial, JavaThreadLifecycleEditorial, JavaSuppressedExceptionsEditorial } from './JavaCoordinationEditorial'
 import { JavaViewCopyEditorial, JavaMapViewsEditorial } from './JavaCollectionStructureEditorial'
 
 export function DiagramFallback({ description }: { description?: string }) {
@@ -79,6 +80,10 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
         case 'instant-zones': return <JavaInstantZonesEditorial />
         case 'duration-period': return <JavaDurationPeriodEditorial />
         case 'exception-cause': return <JavaExceptionCauseEditorial />
+        case 'condition-await': return <JavaConditionAwaitEditorial />
+        case 'bounded-queue': return <JavaBoundedQueueEditorial />
+        case 'thread-lifecycle': return <JavaThreadLifecycleEditorial />
+        case 'resource-suppressed': return <JavaSuppressedExceptionsEditorial />
         case 'cas-retry': return <JavaCasEditorial />
         case 'gc-roots': return <JavaGcReachabilityEditorial />
         case 'selector': return <JavaSelectorEditorial />

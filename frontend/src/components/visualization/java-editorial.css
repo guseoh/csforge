@@ -626,3 +626,25 @@
   .java-visualization .java-ed-build-path > div { flex:1 1 95px; }
   .java-visualization .java-ed-cause-route { grid-template-columns:minmax(0,1fr); gap:6px; }
 }
+
+
+/* G3 coordination: keep actors and shared state stationary between scenes. */
+.java-visualization .java-ed-coordination { min-width:0; color:var(--java-editorial-ink); }
+.java-visualization .java-ed-coordination-owner,
+.java-visualization .java-ed-coordination-queue { display:grid; gap:6px; padding:12px 0; margin:12px 0 6px; border-block:1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-coordination-owner strong,
+.java-visualization .java-ed-coordination-queue strong { font-size:1.05rem; }
+.java-visualization .java-ed-coordination-actors { display:grid; gap:0; }
+.java-visualization .java-ed-coordination-actors > div { display:grid; grid-template-columns:minmax(110px,.65fr) minmax(0,1.7fr); gap:10px; padding:11px 0; border-bottom:1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-coordination-actors span { font-size:.87rem; color:var(--java-editorial-muted); }
+.java-visualization .java-ed-coordination-boundary { padding:10px 0; margin:10px 0; font-size:.88rem; line-height:1.65; }
+.java-visualization .java-ed-resources { display:grid; gap:9px; margin:14px 0; }
+.java-visualization .java-ed-resources > div { display:flex; align-items:center; flex-wrap:wrap; gap:12px; border-bottom:1px solid var(--java-editorial-rule); padding:9px 0; }
+.java-visualization .java-ed-resources > div span { color:var(--java-editorial-muted); }
+.java-visualization .java-ed-exception-tree { border-top:1px solid var(--java-editorial-rule); margin:12px 0; padding-top:8px; }
+.java-visualization .java-ed-exception-tree > div { display:grid; gap:5px; padding:10px 0; }
+.java-visualization .java-ed-exception-tree > div span { color:var(--java-editorial-muted); font-size:.83rem; }
+.java-visualization .java-ed-exception-child { padding-left:20px !important; border-left:1px solid var(--java-editorial-rule); margin-left:9px; }
+@media(max-width:530px) {
+  .java-visualization .java-ed-coordination-actors > div { grid-template-columns:minmax(0,1fr); gap:4px; }
+}
