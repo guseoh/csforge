@@ -48,34 +48,172 @@
 .java-editorial-hash-row strong { font-family: var(--font-mono, monospace); font-weight: 600; }
 .java-editorial-hash-result strong { font-size: 1.75rem; font-family: var(--font-mono, monospace); }
 .java-editorial-hash > .java-editorial-qualification { grid-column: 1 / -1; }
-.java-editorial-pass-figure { display: grid; grid-template-columns: minmax(130px, 1fr) minmax(65px, .65fr) minmax(160px, 1.25fr); gap: 4px; min-width: 0; border-block: 1px solid var(--java-editorial-rule); padding: 18px 6px; }
-.java-editorial-pass-labels { display: grid; align-content: start; grid-template-rows: 25px 73px 25px 73px; }
-.java-editorial-pass-objects { display: grid; align-content: start; grid-template-rows: 25px 73px 14px 73px; }
-.java-editorial-variable { display: flex; gap: 4px; flex-direction: column; align-items: start; padding-top: 5px; }
-.java-editorial-variable code, .java-editorial-object code { font-size: .95rem; white-space: normal; }
-.java-editorial-variable span { color: var(--java-editorial-muted); font-size: .8rem; }
-.java-editorial-variable.is-live span { color: var(--java-editorial-ink); }
-.java-editorial-pass-arrows { align-self: start; margin-top: 6px; width: 100%; }
-.java-editorial-pass-arrows svg { display: block; width: 100%; height: 182px; overflow: visible; }
-.java-editorial-pass-arrows path { fill: none; stroke: var(--java-editorial-rule); stroke-width: 1.5; vector-effect: non-scaling-stroke; }
-.java-editorial-object { display: flex; flex-direction: column; gap: 5px; padding: 10px 12px; border: 1px solid var(--java-editorial-rule); min-height: 70px; }
-.java-editorial-object strong { font-size: .92rem; font-weight: 600; }
-.java-editorial-object.is-absent { color: var(--java-editorial-muted); border-color: transparent; font-size: .81rem; }
-.java-editorial-object.is-unreferenced { border-style: dashed; }
-.java-editorial-pass-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 13px; margin: 13px 0; }
-.java-visualization .java-editorial-pass-controls button { min-height: 44px; border: none; border-bottom: 1px solid var(--java-editorial-rule); padding: 8px 7px; border-radius: 0; background: transparent; color: var(--java-editorial-ink); }
-.java-visualization .java-editorial-pass-controls button:disabled { opacity: .45; }
-.java-editorial-pass-controls span { min-width: 50px; text-align: center; font-family: var(--font-mono, monospace); font-size: .83rem; }
-.java-visualization .java-editorial-pass-controls button.java-editorial-reset { color: var(--java-editorial-muted); font-size: .81rem; }
-.java-editorial-pass-note { margin: 12px 0 0; min-height: 2.5em; line-height: 1.7; }
+
+/* Editorial pass-by-value: current statement first, variable references and object state second. */
+.learning-visualization.java-visualization[data-java-pass='true'] {
+  --diagram-surface: var(--color-page);
+  margin-block: 28px;
+  padding: 18px 0 20px;
+  background: transparent;
+  border-block: 1px solid var(--border-subtle);
+}
+.learning-visualization.java-visualization[data-java-pass='true'] figcaption > strong {
+  font-size: 1.02rem;
+  font-weight: 650;
+}
+.learning-visualization.java-visualization[data-java-pass='true'] figcaption p {
+  margin: 5px 0 18px;
+  color: var(--java-editorial-muted);
+  font-size: .87rem;
+  line-height: 1.65;
+}
+.java-ed-pass-current {
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--java-editorial-rule);
+}
+.java-ed-pass-current .java-editorial-kicker { margin-bottom: 6px; }
+.concept-reading-content .markdown-content .learning-visualization .java-ed-pass-current .java-ed-pass-statement,
+.learning-visualization .java-ed-pass-current .java-ed-pass-statement {
+  display: block;
+  margin: 0;
+  padding: 0;
+  min-width: 0;
+  max-width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--java-editorial-ink);
+  font-size: clamp(.88rem, 1.6vw, 1rem);
+  font-weight: 500;
+  line-height: 1.7;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.learning-visualization .java-ed-pass-current .java-ed-pass-statement code {
+  display: inline;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  font: inherit;
+  color: inherit;
+  white-space: inherit;
+}
+.java-ed-pass-diagram {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: clamp(15px, 4vw, 36px);
+  padding: 18px 0;
+  border-bottom: 1px solid var(--java-editorial-rule);
+}
+.java-ed-pass-diagram section { min-width: 0; }
+.java-ed-pass-diagram h4 {
+  margin: 0 0 12px;
+  font-size: .83rem;
+  font-weight: 650;
+  color: var(--java-editorial-muted);
+  letter-spacing: 0;
+}
+.java-ed-pass-relations,
+.java-ed-pass-objects { display: grid; gap: 8px; }
+.java-ed-pass-relation { min-height: 80px; }
+.java-ed-pass-link {
+  display: grid;
+  grid-template-columns: minmax(56px, 1fr) 30px 25px;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0 0;
+  color: var(--java-editorial-ink);
+}
+.java-ed-pass-link code {
+  justify-self: start;
+  font-weight: 600;
+}
+.java-ed-pass-link > span {
+  color: var(--diagram-line);
+  font-family: var(--font-sans);
+  font-size: 1.4rem;
+  line-height: 1.1;
+}
+.java-ed-pass-link strong {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 600;
+}
+.java-ed-pass-relation small { color: var(--java-editorial-muted); font-size: .77rem; }
+.java-ed-pass-relation.is-inactive .java-ed-pass-link { opacity: .58; }
+.java-ed-pass-object {
+  min-height: 80px;
+  padding: 9px 11px;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+  border: 1px solid var(--java-editorial-rule);
+  color: var(--java-editorial-ink);
+}
+.java-ed-pass-object > strong { font-size: .87rem; font-weight: 600; }
+.java-ed-pass-field { display: flex; flex-wrap: wrap; align-items: baseline; gap: 9px; }
+.java-ed-pass-field > span { font-size: .86rem; color: var(--java-editorial-muted); }
+.java-ed-pass-field > code { font-weight: 600; }
+.java-ed-pass-object.is-placeholder {
+  border-color: transparent;
+  padding-inline: 0;
+  color: var(--java-editorial-muted);
+  font-size: .84rem;
+}
+.java-ed-pass-object.is-placeholder small,
+.java-ed-pass-object.is-unreferenced small { color: var(--java-editorial-muted); font-size: .76rem; }
+.java-ed-pass-object.is-unreferenced { border-style: dashed; }
+.learning-visualization .java-ed-pass-diagram code {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  font-size: .94rem;
+}
+.java-editorial-pass-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin: 12px 0 8px;
+}
+.java-visualization .java-editorial-pass-controls button {
+  min-height: 42px;
+  padding: 8px 7px;
+  border: 0;
+  border-bottom: 1px solid var(--java-editorial-rule);
+  border-radius: 0;
+  color: var(--java-editorial-ink);
+  background: transparent;
+}
+.java-visualization .java-editorial-pass-controls button:disabled { opacity: .43; cursor: default; }
+.java-editorial-pass-controls span {
+  min-width: 55px;
+  text-align: center;
+  color: var(--java-editorial-muted);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  font-size: .83rem;
+}
+.java-visualization .java-editorial-pass-controls button.java-editorial-reset {
+  font-size: .81rem;
+  color: var(--java-editorial-muted);
+}
+.java-editorial-pass-note { margin: 8px 0 0; line-height: 1.7; font-size: .91rem; }
+.java-editorial-pass .java-editorial-qualification { margin-top: 10px; font-size: .77rem; }
 @media (max-width: 580px) {
   .java-editorial-hash { grid-template-columns: 1fr; gap: 7px; padding-top: 10px; }
   .java-editorial-hash-direction { transform: rotate(90deg); line-height: 20px; }
   .java-editorial-hash > .java-editorial-qualification { grid-column: 1; }
-  .java-editorial-pass-figure { grid-template-columns: minmax(0, 1fr) 46px minmax(0, 1.16fr); gap: 2px; padding-inline: 0; }
-  .java-editorial-pass-arrows path { stroke-width: 1.8; }
-  .java-editorial-object { padding: 9px 7px; }
-  .java-editorial-variable code, .java-editorial-object code { font-size: .82rem; }
+  .java-ed-pass-diagram { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  .java-ed-pass-relation { min-height: 0; padding-bottom: 4px; }
+  .java-ed-pass-link { max-width: 230px; }
+  .java-ed-pass-relations, .java-ed-pass-objects { gap: 10px; }
+  .java-ed-pass-object { min-height: 67px; }
 }
 
 /* G3 Batch 2 — semantic diagrams use typography, meaningful rules and structural boundaries. */
