@@ -8,7 +8,7 @@ export function JavaHashContractEditorial() {
     <h4 className="java-ed-scene-title">{scene.title}</h4>
     <div className="java-ed-contract-pair">
       <div><strong><code>a.equals(b) == true</code></strong><span>반드시 같은 해시</span><code>a.hashCode() == b.hashCode()</code></div>
-      <div><strong><code>a.hashCode() == b.hashCode()</code></strong><span>동등성은 보장되지 않음</span><code>a.equals(b) == false</code><small>충돌이 발생할 수 있음</small></div>
+      <div><strong><code>a.hashCode() == b.hashCode()</code></strong><span>동등성은 보장되지 않음</span><code>a.equals(b) == false (가능)</code><small>충돌의 예시 · 같은 해시만으로 동등 여부를 결정할 수 없음</small></div>
     </div>
     <p className="java-ed-note">{scene.note}</p>
     <p className="java-editorial-qualification">해시 값은 유일한 객체 식별자도 메모리 주소도 아닙니다. 해시 기반 Map은 해시로 후보를 줄인 뒤 키 동등성을 확인합니다.</p>
@@ -56,7 +56,7 @@ export function JavaIteratorRemoveEditorial() {
   return <section className="java-ed-contract" aria-label="Iterator remove 호출의 유효 상태">
     <h4 className="java-ed-scene-title">{scene.title}</h4>
     <ol className="java-ed-contract-order">
-      <li><strong>next() 이전</strong><span><code>remove()</code> → <code>IllegalStateException</code></span></li>
+      <li><strong>next() 이전</strong><span>remove를 지원하는 반복자라면 <code>IllegalStateException</code></span></li>
       <li><strong>next() 성공 후</strong><span>지원하는 반복자라면 직전 반환 원소를 한 번 제거 가능</span></li>
       <li><strong>remove() 이후</strong><span>다시 <code>next()</code>하지 않으면 연속 remove 불가</span></li>
     </ol>
