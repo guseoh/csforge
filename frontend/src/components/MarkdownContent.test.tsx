@@ -89,6 +89,23 @@ describe('MarkdownContent canonical visualization recovery', () => {
     expect(html).not.toContain('코드 복사')
   })
 
+  it.each(['csforge-viz', 'text', ''])('renders the canonical Java pass-by-value payload in a %s fence', (language) => {
+    // #344 regression: the old PWA client displayed this valid canonical JSON as a text code block.
+    const passByValue = JSON.stringify({
+      version: 1,
+      title: '참조 값 복사와 매개변수 재대입',
+      description: 'member는 객체 A의 참조 값을 유지합니다. value에는 그 값이 복사되고, 새 객체 B로 재대입해도 member.name은 kim입니다.',
+      type: 'java-pass-by-value',
+      initialName: 'kim',
+      replacementName: 'park',
+    }, null, 2)
+    const html = renderMarkdown(fence + language + '\n' + passByValue + '\n' + fence)
+    expect(html).toContain('learning-visualization')
+    expect(html).toContain('java-editorial-pass')
+    expect(html).toContain('member')
+    expect(html).not.toContain('markdown-code-block')
+    expect(html).not.toContain('코드 복사')
+  })
   it('keeps explicitly documented JSON source as code, not a visualization', () => {
     const html = renderMarkdown(fence + 'json\n' + payload + '\n' + fence)
     expect(html).toContain('markdown-code-block')
