@@ -1,7 +1,7 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { javaApiScenes } from '../../lib/java-api-models'
-import { JavaClassInitializationEditorial, JavaProcessMemoryEditorial, JavaVirtualCarrierEditorial } from './JavaRuntimeEditorial'
+import { JavaBytecodeStackEditorial, JavaClassInitializationEditorial, JavaProcessMemoryEditorial, JavaVirtualCarrierEditorial } from './JavaRuntimeEditorial'
 import { LearningVisualization } from './LearningVisualization'
 
 const source = (example: string) => JSON.stringify({
@@ -10,6 +10,25 @@ const source = (example: string) => JSON.stringify({
 })
 
 describe('Java editorial runtime diagrams', () => {
+  it('reads the bytecode frame as five abstract snapshots with a separate operand stack', () => {
+    const scenes = javaApiScenes['bytecode-stack']
+    expect(scenes).toHaveLength(5)
+    expect(scenes[0].title).toContain('add(3, 4)')
+    expect(scenes[1].title).toContain('iload_1')
+    expect(scenes[2].title).toContain('iload_2')
+    expect(scenes[3].title).toContain('iadd')
+    expect(scenes[4].title).toContain('ireturn')
+    const html = renderToStaticMarkup(<JavaBytecodeStackEditorial />)
+    expect(html).toContain('java-ed-bytecode')
+    expect(html).toContain('지역 변수 배열')
+    expect(html).toContain('피연산자 스택')
+    expect(html).toContain('slot 0')
+    expect(html).toContain('slot 2')
+    expect(html).toContain('비어 있음')
+    expect(html).toContain('1 / 5')
+    expect(html).toContain('도식 단계 이동')
+  })
+
   it('preserves class loading, preparation and initialization without declaring resolution an always-later phase', () => {
     const html = renderToStaticMarkup(<JavaClassInitializationEditorial />)
     expect(html).toContain('로딩')
@@ -46,7 +65,7 @@ describe('Java editorial runtime diagrams', () => {
   })
 
   it('routes only three named Java examples to these renderer variants', () => {
-    for (const example of ['class-initialization', 'process-memory', 'virtual-carrier']) {
+    for (const example of ['bytecode-stack', 'class-initialization', 'process-memory', 'virtual-carrier']) {
       const html = renderToStaticMarkup(<LearningVisualization source={source(example)} />)
       expect(html).toContain('java-visualization')
       expect(html).toContain('java-ed-runtime')

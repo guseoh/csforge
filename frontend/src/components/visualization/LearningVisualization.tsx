@@ -10,7 +10,7 @@ import { ObjectModelDiagram } from './ObjectModelDiagram'
 import { JavaApiDiagram } from './JavaApiDiagram'
 import { JavaHashLookupDiagram, JavaPassByValueEditorial } from './JavaEditorialDiagrams'
 import { JavaHappensBeforeEditorial, JavaCasEditorial, JavaGcReachabilityEditorial, JavaSelectorEditorial } from './JavaSemanticDiagrams'
-import { JavaClassInitializationEditorial, JavaProcessMemoryEditorial, JavaVirtualCarrierEditorial } from './JavaRuntimeEditorial'
+import { JavaBytecodeStackEditorial, JavaClassInitializationEditorial, JavaProcessMemoryEditorial, JavaVirtualCarrierEditorial } from './JavaRuntimeEditorial'
 import { JavaPecsEditorial, JavaListLayoutEditorial, JavaBufferEditorial, JavaStreamLazinessEditorial } from './JavaCollectionEditorial'
 
 export function DiagramFallback({ description }: { description?: string }) {
@@ -52,6 +52,7 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
         case 'cas-retry': return <JavaCasEditorial />
         case 'gc-roots': return <JavaGcReachabilityEditorial />
         case 'selector': return <JavaSelectorEditorial />
+        case 'bytecode-stack': return <JavaBytecodeStackEditorial />
         case 'class-initialization': return <JavaClassInitializationEditorial />
         case 'process-memory': return <JavaProcessMemoryEditorial />
         case 'virtual-carrier': return <JavaVirtualCarrierEditorial />

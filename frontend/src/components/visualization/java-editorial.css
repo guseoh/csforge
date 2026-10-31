@@ -345,3 +345,73 @@
   .java-ed-bidirectional { min-width: 28px; }
   .java-ed-stream-values { gap: 7px; }
 }
+
+/* Java G3: a compact JVMS local-variable array next to its operand stack. */
+.java-ed-bytecode-operation { display: grid; gap: 4px; margin-bottom: 15px; }
+.java-ed-bytecode-operation > code {
+  display: block;
+  width: fit-content;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: var(--java-editorial-ink);
+  font-size: 1.04rem;
+  font-weight: 600;
+}
+.java-ed-bytecode-layout {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: clamp(16px, 4vw, 32px);
+}
+.java-ed-bytecode-locals, .java-ed-bytecode-stack {
+  display: grid;
+  grid-template-rows: min-content 1fr;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+}
+.java-ed-bytecode-locals ol, .java-ed-bytecode-stack ol {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border-top: 1px solid var(--java-editorial-rule);
+}
+.java-ed-bytecode-locals li, .java-ed-bytecode-stack li {
+  min-height: 39px;
+  display: grid;
+  grid-template-columns: minmax(52px, .6fr) minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  padding: 7px 4px;
+  border-bottom: 1px solid var(--java-editorial-rule);
+}
+.java-ed-bytecode-locals li small, .java-ed-bytecode-stack li small {
+  color: var(--java-editorial-muted);
+  font-size: .78rem;
+}
+.java-ed-bytecode-locals li strong, .java-ed-bytecode-stack li strong {
+  font-family: var(--font-mono, monospace);
+  font-size: .94rem;
+  font-weight: 600;
+}
+.java-ed-bytecode-stack li.is-top { border-left: 2px solid var(--java-editorial-ink); padding-left: 8px; }
+.java-ed-bytecode-done {
+  margin: 0;
+  min-height: 40px;
+  padding-top: 8px;
+  border-top: 1px solid var(--java-editorial-rule);
+  color: var(--java-editorial-muted);
+  font-size: .86rem;
+}
+.java-ed-bytecode-result {
+  min-height: 32px;
+  margin-top: 14px;
+  color: var(--java-editorial-muted);
+  font-size: .88rem;
+}
+.java-ed-bytecode-result code { font-size: .9rem; }
+.java-ed-bytecode-result strong { color: var(--java-editorial-ink); }
+@media (max-width: 440px) {
+  .java-ed-bytecode-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+}

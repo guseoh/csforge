@@ -58,6 +58,52 @@ export function JavaProcessMemoryEditorial() {
   </section>
 }
 
+/** A JVM abstract frame: local slots stay put while the operand stack changes at each instruction. */
+export function JavaBytecodeStackEditorial() {
+  const [index, setIndex] = useState(0)
+  const scenes = javaApiScenes['bytecode-stack']
+  const scene = scenes[index]
+  const opcodes = ['호출 시작', 'iload_1', 'iload_2', 'iadd', 'ireturn'] as const
+  const stackStates: readonly (readonly number[])[] = [[], [3], [3, 4], [7], []]
+  const activeFrame = index < 4
+  const stack = stackStates[index]
+
+  return <section className="java-ed-runtime java-ed-bytecode" aria-label="JVM 프레임과 피연산자 스택 5단계">
+    <h4 className="java-ed-scene-title">{scene.title}</h4>
+    <div className="java-ed-bytecode-operation" aria-live="polite">
+      <span className="java-editorial-kicker">명령 · {index + 1} / 5</span>
+      <code>{opcodes[index]}</code>
+    </div>
+    <div className="java-ed-bytecode-layout">
+      <div className="java-ed-bytecode-locals">
+        <span className="java-editorial-kicker">지역 변수 배열</span>
+        {activeFrame ? <ol aria-label="인스턴스 메서드의 지역 변수 슬롯">
+          <li><small>slot 0</small><strong>this</strong></li>
+          <li><small>slot 1</small><strong>a = 3</strong></li>
+          <li><small>slot 2</small><strong>b = 4</strong></li>
+        </ol> : <p className="java-ed-bytecode-done">호출 프레임 종료</p>}
+      </div>
+      <div className="java-ed-bytecode-stack">
+        <span className="java-editorial-kicker">피연산자 스택</span>
+        {activeFrame && stack.length > 0 ? <ol aria-label="맨 위부터 피연산자 값">
+          {[...stack].reverse().map((value, position) =>
+            <li key={position} className={position === 0 ? 'is-top' : ''}>
+              <small>{position === 0 ? 'TOP' : ' '}</small><strong>{value}</strong>
+            </li>)}
+        </ol> : <p className="java-ed-bytecode-done">{activeFrame ? '비어 있음' : '프레임과 함께 종료'}</p>}
+      </div>
+    </div>
+    <div className="java-ed-bytecode-result" aria-live="polite">
+      {index === 3 ? <span><code>iadd</code> · 3과 4를 pop한 뒤 7을 push</span>
+        : index === 4 ? <span><code>ireturn</code> · 호출자에 <strong>7</strong> 반환</span>
+          : <span>{index === 0 ? '피연산자 없음' : `현재 TOP: ${stack.at(-1)}`}</span>}
+    </div>
+    <EditorialSteps index={index} count={scenes.length} setIndex={setIndex} />
+    <EditorialNote description={scene.note} />
+    <p className="java-editorial-qualification">JVM 명세의 추상 프레임입니다. 실제 CPU 레지스터나 물리 메모리 배치를 나타내지 않습니다.</p>
+  </section>
+}
+
 /** One snapshot never mounts two virtual threads simultaneously onto one carrier. */
 export function JavaVirtualCarrierEditorial() {
   const [index, setIndex] = useState(0)
