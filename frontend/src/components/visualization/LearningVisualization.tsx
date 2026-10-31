@@ -6,6 +6,7 @@ import { HeapDiagram } from './InteractiveDiagram'
 import { LanguageValueDiagram } from './LanguageValueDiagram'
 import { ArrayStoreDiagram } from './ArrayStoreDiagram'
 import { DefiniteAssignmentDiagram } from './DefiniteAssignmentDiagram'
+import { JavaLegacyFlowEditorial } from './JavaLegacyFlowEditorial'
 import { ObjectModelDiagram } from './ObjectModelDiagram'
 import { JavaApiDiagram } from './JavaApiDiagram'
 import { JavaHashLookupDiagram, JavaPassByValueEditorial } from './JavaEditorialDiagrams'
@@ -46,7 +47,7 @@ export function StaticDiagram({ data }: { data: VisualizationOf<'static-flow'> }
 }
 
 const renderers = {
-  'static-flow': (data: VisualizationOf<'static-flow'>) => <StaticDiagram data={data} />,
+  'static-flow': (data: VisualizationOf<'static-flow'>) => data.labels.length === 3 && ['같은 builder에 append 누적', 'InputStream: bytes', 'write A · B · C'].includes(data.labels[0]) ? <JavaLegacyFlowEditorial data={data} /> : <StaticDiagram data={data} />,
   'java-pass-by-value': (data: VisualizationOf<'java-pass-by-value'>) => <JavaPassByValueEditorial data={data} />,
   'min-heap': (data: VisualizationOf<'min-heap'>) => <HeapDiagram data={data} />,
   'tcp-handshake': (data: VisualizationOf<'tcp-handshake'>) => <TcpHandshakeDiagram data={data} />,
@@ -144,7 +145,7 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
 export function LearningVisualization({ source }: { source: string }) {
   const data = parseVisualization(source)
   if (!data) return <DiagramFallback />
-  return <figure className={`learning-visualization${data.type.startsWith('java-') ? ' java-visualization' : ''}`} data-java-pass={data.type === 'java-pass-by-value' ? 'true' : undefined}>
+  return <figure className={`learning-visualization${(data.type.startsWith('java-') || data.type === 'static-flow') ? ' java-visualization' : ''}`} data-java-pass={data.type === 'java-pass-by-value' ? 'true' : undefined}>
     <figcaption><strong>{data.title}</strong><p>{data.description}</p></figcaption>
     <DiagramErrorBoundary key={source} description={data.description}><RegisteredDiagram key={source} data={data} /></DiagramErrorBoundary>
   </figure>

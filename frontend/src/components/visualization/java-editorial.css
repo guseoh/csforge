@@ -763,3 +763,37 @@
  .java-visualization .java-ed-schedule-line { grid-template-columns:minmax(50px,.9fr) repeat(3,minmax(0,1fr)); }
  .java-visualization .java-ed-monitor-threads > div { grid-template-columns:minmax(0,1fr); gap:5px; }
 }
+
+
+/* G3 Java classic paths: read the state/contract directly, not five nested SVG boxes. */
+.java-visualization .java-ed-legacy { color:var(--java-editorial-ink); min-width:0; }
+.java-visualization .java-ed-legacy code { max-width:100%; font-size:.88rem; white-space:normal; overflow-wrap:anywhere; }
+.java-visualization .java-ed-legacy .java-editorial-kicker { font-size:.75rem; }
+.java-visualization .java-ed-legacy-initial,
+.java-visualization .java-ed-legacy-current { display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 18px; border-block:1px solid var(--java-editorial-rule); padding:13px 0; }
+.java-visualization .java-ed-legacy-initial > span:last-child { color:var(--java-editorial-muted); font-size:.84rem; }
+.java-visualization .java-ed-legacy-condition { display:flex; align-items:baseline; flex-wrap:wrap; gap:10px 18px; padding:15px 0 9px; }
+.java-visualization .java-ed-legacy-condition > span { color:var(--java-editorial-muted); font-size:.84rem; }
+.java-visualization .java-ed-legacy-branches { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(12px,2.5vw,30px); margin:4px 0 16px; }
+.java-visualization .java-ed-legacy-branches > div { display:grid; align-content:start; gap:10px; padding:15px 0; border-top:2px solid var(--java-editorial-rule); border-bottom:1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-legacy-branches strong { color:var(--java-editorial-muted); font-size:.82rem; font-weight:550; }
+.java-visualization .java-ed-legacy-outcome { display:flex; flex-wrap:wrap; align-items:baseline; gap:7px 17px; border-block:1px solid var(--java-editorial-rule); padding:13px 0; }
+.java-visualization .java-ed-legacy-outcome strong { font-size:1rem; }
+.java-visualization .java-ed-legacy-outcome > span:last-child { font-size:.84rem; color:var(--java-editorial-muted); }
+.java-visualization .java-ed-legacy .java-editorial-qualification { margin:14px 0 0; color:var(--java-editorial-muted); font-size:.84rem; line-height:1.7; }
+.java-visualization .java-ed-legacy-array-relations { display:grid; grid-template-columns:minmax(0,.95fr) minmax(0,1.2fr); gap:clamp(14px,3vw,32px); margin:17px 0; }
+.java-visualization .java-ed-legacy-array-names,
+.java-visualization .java-ed-legacy-array-instance { min-width:0; display:grid; align-content:start; gap:10px; border-top:1px solid var(--java-editorial-rule); padding-top:13px; }
+.java-visualization .java-ed-legacy-array-names > div { display:flex; flex-wrap:wrap; align-items:baseline; gap:5px 12px; }
+.java-visualization .java-ed-legacy-array-names > div > span,
+.java-visualization .java-ed-legacy-array-instance > span:not(.java-editorial-kicker) { font-size:.82rem; line-height:1.6; color:var(--java-editorial-muted); }
+.java-visualization .java-ed-legacy-array-cells { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-top:4px; }
+.java-visualization .java-ed-legacy-array-cells > div { border-block:1px solid var(--java-editorial-rule); display:grid; gap:4px; padding:9px 0; }
+.java-visualization .java-ed-legacy-array-cells > div > span { color:var(--java-editorial-muted); font-size:.79rem; }
+.java-visualization .java-ed-legacy-array-cells .is-attempted { border-top-width:2px; }
+.java-visualization .java-ed-legacy-check { display:grid; gap:6px; padding:13px 0; margin:10px 0; border-block:1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-legacy-check > span:last-child { color:var(--java-editorial-muted); font-size:.85rem; line-height:1.7; }
+.java-visualization .java-ed-static-flow .java-ed-legacy-flow { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:clamp(12px,2vw,28px); margin:18px 0; }
+.java-visualization .java-ed-static-flow .java-ed-legacy-flow > div { display:grid; align-content:start; gap:9px; min-width:0; border-top:2px solid var(--java-editorial-rule); padding:13px 0; }
+.java-visualization .java-ed-static-flow .java-ed-legacy-flow strong { font-size:.9rem; line-height:1.6; font-weight:600; overflow-wrap:anywhere; }
+.java-visualization .java-ed-static-flow .java-ed-legacy-flow code { color:var(--java-editorial-muted); }
