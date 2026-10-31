@@ -147,8 +147,8 @@ export function JavaVolatileHandoffEditorial() {
       <div className={`java-ed-volatile-thread${observed ? '' : ' is-pending'}`}>
         <span className="java-editorial-kicker">Reader 스레드</span>
         <ol>
-          <li><code>ready == true</code></li>
-          <li><code>data == 42</code></li>
+          <li>{observed ? <code>ready == true</code> : <span>ready 읽기 전</span>}</li>
+          <li>{observed ? <code>data == 42</code> : <span>data 읽기 전</span>}</li>
         </ol>
         <small>{observed ? 'program order' : '아직 관찰 전'}</small>
       </div>

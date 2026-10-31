@@ -24,6 +24,8 @@ describe('Java-only semantic editorial diagrams', () => {
     expect(html).toContain('Writer 스레드')
     expect(html).toContain('Reader 스레드')
     expect(html).toContain('스레드 사이의 관찰은 아직 표시하지 않음')
+    expect(html).toContain('ready 읽기 전')
+    expect(html).not.toContain('ready == true')
     expect(html).toContain('count++')
     expect(html).toContain('1 / 2')
     expect(javaApiScenes['volatile-handoff']).toHaveLength(2)
