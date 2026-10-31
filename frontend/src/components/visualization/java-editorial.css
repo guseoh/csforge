@@ -648,3 +648,14 @@
 @media(max-width:530px) {
   .java-visualization .java-ed-coordination-actors > div { grid-template-columns:minmax(0,1fr); gap:4px; }
 }
+
+/* G3 conditional Java models: stable labels across scenes, no fixed-width SVG. */
+.java-visualization .java-ed-advanced-rows { display:grid; margin:14px 0; }
+.java-visualization .java-ed-advanced-rows > div { display:grid; grid-template-columns:minmax(106px,.75fr) minmax(0,2fr); gap:12px; padding:12px 0; border-bottom:1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-advanced-rows > div:first-child { border-top:1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-advanced-rows span { color:var(--java-editorial-muted); font-size:.87rem; line-height:1.6; overflow-wrap:anywhere; }
+.java-visualization .java-ed-advanced-rows code { white-space:normal; overflow-wrap:anywhere; }
+.java-visualization .java-ed-advanced-remark { color:var(--java-editorial-muted); font-size:.85rem; line-height:1.65; }
+@media(max-width:530px) {
+  .java-visualization .java-ed-advanced-rows > div { grid-template-columns:minmax(0,1fr); gap:4px; }
+}
