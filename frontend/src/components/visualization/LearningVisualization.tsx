@@ -1,13 +1,17 @@
 import { Component, type ReactNode } from 'react'
 import { parseVisualization, type Visualization, type VisualizationOf } from '../../lib/learning-visualization'
 import { DiagramArrow, DiagramCanvas, DiagramNode } from './DiagramPrimitives'
-import { PassByValueDiagram, TcpHandshakeDiagram } from './StepDiagram'
+import { TcpHandshakeDiagram } from './StepDiagram'
 import { HeapDiagram } from './InteractiveDiagram'
 import { LanguageValueDiagram } from './LanguageValueDiagram'
 import { ArrayStoreDiagram } from './ArrayStoreDiagram'
 import { DefiniteAssignmentDiagram } from './DefiniteAssignmentDiagram'
 import { ObjectModelDiagram } from './ObjectModelDiagram'
 import { JavaApiDiagram } from './JavaApiDiagram'
+import { JavaHashLookupDiagram, JavaPassByValueEditorial } from './JavaEditorialDiagrams'
+import { JavaHappensBeforeEditorial, JavaCasEditorial, JavaGcReachabilityEditorial, JavaSelectorEditorial } from './JavaSemanticDiagrams'
+import { JavaClassInitializationEditorial, JavaProcessMemoryEditorial, JavaVirtualCarrierEditorial } from './JavaRuntimeEditorial'
+import { JavaPecsEditorial, JavaListLayoutEditorial, JavaBufferEditorial, JavaStreamLazinessEditorial } from './JavaCollectionEditorial'
 
 export function DiagramFallback({ description }: { description?: string }) {
   return <div className="diagram-fallback" role="note"><p>학습 도식을 표시할 수 없습니다. 본문 설명을 계속 읽어주세요.</p>{description && <p>{description}</p>}</div>
@@ -30,7 +34,7 @@ export function StaticDiagram({ data }: { data: VisualizationOf<'static-flow'> }
 
 const renderers = {
   'static-flow': (data: VisualizationOf<'static-flow'>) => <StaticDiagram data={data} />,
-  'java-pass-by-value': (data: VisualizationOf<'java-pass-by-value'>) => <PassByValueDiagram data={data} />,
+  'java-pass-by-value': (data: VisualizationOf<'java-pass-by-value'>) => <JavaPassByValueEditorial data={data} />,
   'min-heap': (data: VisualizationOf<'min-heap'>) => <HeapDiagram data={data} />,
   'tcp-handshake': (data: VisualizationOf<'tcp-handshake'>) => <TcpHandshakeDiagram data={data} />,
   'java-value-reference': (data: VisualizationOf<'java-value-reference'>) => <LanguageValueDiagram data={data} />,
@@ -41,7 +45,23 @@ const renderers = {
 
 function RegisteredDiagram({ data }: { data: Visualization }) {
   switch (data.type) {
-    case 'java-api-contract': return <JavaApiDiagram example={data.example} />
+    case 'java-api-contract': {
+      switch (data.example) {
+        case 'hash-lookup': return <JavaHashLookupDiagram />
+        case 'happens-before': return <JavaHappensBeforeEditorial />
+        case 'cas-retry': return <JavaCasEditorial />
+        case 'gc-roots': return <JavaGcReachabilityEditorial />
+        case 'selector': return <JavaSelectorEditorial />
+        case 'class-initialization': return <JavaClassInitializationEditorial />
+        case 'process-memory': return <JavaProcessMemoryEditorial />
+        case 'virtual-carrier': return <JavaVirtualCarrierEditorial />
+        case 'pecs': return <JavaPecsEditorial />
+        case 'list-layout': return <JavaListLayoutEditorial />
+        case 'buffer': return <JavaBufferEditorial />
+        case 'stream-laziness': return <JavaStreamLazinessEditorial />
+        default: return <JavaApiDiagram example={data.example} />
+      }
+    }
     case 'static-flow': return renderers[data.type](data)
     case 'java-pass-by-value': return renderers[data.type](data)
     case 'min-heap': return renderers[data.type](data)
@@ -56,7 +76,7 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
 export function LearningVisualization({ source }: { source: string }) {
   const data = parseVisualization(source)
   if (!data) return <DiagramFallback />
-  return <figure className="learning-visualization">
+  return <figure className={`learning-visualization${data.type.startsWith('java-') ? ' java-visualization' : ''}`}>
     <figcaption><strong>{data.title}</strong><p>{data.description}</p></figcaption>
     <DiagramErrorBoundary key={source} description={data.description}><RegisteredDiagram key={source} data={data} /></DiagramErrorBoundary>
   </figure>
