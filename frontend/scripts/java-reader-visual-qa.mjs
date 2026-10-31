@@ -106,20 +106,56 @@ async function inspect(page, item, mode) {
       }
     }
     if (mode==='guest') {
-      const steps=figure.locator('nav.java-ed-steps')
+      await page.setViewportSize({width:1440,height:940})
+      // Visit every actual intermediate state, including the three legacy control families.
+      const steps=figure.locator('nav.java-ed-steps, .diagram-controls[role="group"], .java-editorial-pass-controls').first()
       if (await steps.count()) {
-        const before=await steps.locator('span[aria-live]').first().textContent()
-        const next=steps.getByRole('button',{name:/다음/})
-        if (await next.isEnabled()) {
-          await next.focus()
-          await page.keyboard.press('Enter')
-          const after=await steps.locator('span[aria-live]').first().textContent()
-          if (before===after) failures.push({mode,key:item.contentKey,failed:['KEYBOARD_STEP_NOT_ADVANCED']})
+        const counter=steps.locator('span').filter({hasText:/^\s*0*\d+\s*\/\s*0*\d+\s*$/}).first()
+        const initial=(await counter.textContent())?.trim()||''
+        const found=initial.match(/^0*(\d+)\s*\/\s*0*(\d+)$/)
+        if (!found) failures.push({mode,key:item.contentKey,failed:['STEP_COUNTER_MISSING'],initial})
+        else {
+          const count=Number(found[2])
+          const next=steps.getByRole('button',{name:/다음/})
           const prev=steps.getByRole('button',{name:/이전/})
-          if (await prev.isEnabled()) await prev.click()
-          const restored=await steps.locator('span[aria-live]').first().textContent()
-          if (before!==restored) failures.push({mode,key:item.contentKey,failed:['PREVIOUS_STEP_NOT_RESTORED']})
+          for(let n=2;n<=count;n++){
+            await next.focus()
+            await page.keyboard.press('Enter')
+            const value=(await counter.textContent())?.trim()||''
+            if(Number(value.match(/^0*(\d+)/)?.[1])!==n)
+              failures.push({mode,key:item.contentKey,failed:['STEP_NOT_ADVANCED'],expected:n,value})
+            const state=await page.evaluate(itemResult)
+            if(state.missing||state.fallback||!state.content||state.docWidth>1443||state.figureRight>1443)
+              failures.push({mode,key:item.contentKey,failed:['INTERMEDIATE_STATE_LAYOUT'],index:n,state})
+          }
+          for(let n=count-1;n>=1;n--){
+            await prev.click()
+            const value=(await counter.textContent())?.trim()||''
+            if(Number(value.match(/^0*(\d+)/)?.[1])!==n)
+              failures.push({mode,key:item.contentKey,failed:['STEP_NOT_RESTORED'],expected:n,value})
+          }
         }
+      }
+      if(item.visualizationType==='min-heap') {
+        const insert=figure.getByRole('textbox',{name:'힙에 삽입할 정수'})
+        await insert.fill('-4')
+        await figure.getByRole('button',{name:'삽입 (offer)'}).click()
+        const steps=figure.locator('.diagram-controls[role="group"]')
+        const counter=steps.locator('span').first()
+        const total=Number((await counter.textContent())?.match(/\/\s*(\d+)/)?.[1]||'0')
+        for(let n=2;n<=total;n++) await steps.getByRole('button',{name:'다음 단계'}).click()
+        const values=await figure.locator('.diagram-array li strong').allTextContents()
+        const list=values.map(Number)
+        for(let i=1;i<list.length;i++)
+          if(list[Math.floor((i-1)/2)]>list[i])
+            failures.push({mode,key:item.contentKey,failed:['HEAP_INVARIANT_AFTER_OFFER'],index:i,list})
+        await figure.getByRole('button',{name:'최솟값 꺼내기 (poll)'}).click()
+        const pollTotal=Number((await counter.textContent())?.match(/\/\s*(\d+)/)?.[1]||'0')
+        for(let n=2;n<=pollTotal;n++) await steps.getByRole('button',{name:'다음 단계'}).click()
+        const pollValues=(await figure.locator('.diagram-array li strong').allTextContents()).map(Number)
+        for(let i=1;i<pollValues.length;i++)
+          if(pollValues[Math.floor((i-1)/2)]>pollValues[i])
+            failures.push({mode,key:item.contentKey,failed:['HEAP_INVARIANT_AFTER_POLL'],index:i,list:pollValues})
       }
     }
   } catch(err) { jsErr({mode,key:item.contentKey},err) }

@@ -42,8 +42,9 @@ export function JavaProcessMemoryEditorial() {
   const measure = nodes.find((node) => node.id === 'measure')
   return <section className="java-ed-runtime" aria-label="JVM 프로세스 메모리 소비처와 측정 관점">
     <h4 className="java-ed-scene-title">{scene.title}</h4>
-    <div className="java-ed-memory-list" role="list" aria-label="프로세스 메모리 소비처">
-      {categories.map((node) => <div key={node.id} role="listitem">
+    <span className="java-editorial-kicker">메모리 소비처 · 서로 겹칠 수 있는 분류이며 비율·크기를 표시하지 않음</span>
+    <div className="java-ed-memory-compare" role="list" aria-label="HotSpot 프로세스 메모리의 서로 다른 소비처">
+      {categories.map(node=><div key={node.id} role="listitem">
         <strong>{node.lines[0]}</strong>
         <span>{node.lines.slice(1).join(' · ')}</span>
       </div>)}
