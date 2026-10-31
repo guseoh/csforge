@@ -39,13 +39,15 @@ describe('Concept comparison', () => {
   it('provides empty selection without rendering columns', () => {
     const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><ConceptComparePage /></AccessContext.Provider>)
     expect(html).toContain('첫 번째 개념 검색')
+    expect(html).toContain('compare-placeholder')
     expect(html).not.toContain('compare-column-header')
   })
   it('keeps the first article while selecting the second', () => {
     mocks.search.left = 17
     mocks.left.data = concept
     const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><ConceptComparePage /></AccessContext.Provider>)
-    expect(html).toContain('두 번째 개념을 선택하면')
+    expect(html).toContain('두 번째 개념을 선택하세요')
+    expect(html).toContain('compare-placeholder')
     expect(html).toContain('값 전달')
   })
   it('rejects the same pair instead of implying a comparison', () => {
@@ -53,7 +55,7 @@ describe('Concept comparison', () => {
     mocks.left.data = concept
     const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><ConceptComparePage /></AccessContext.Provider>)
     expect(html).toContain('같은 개념끼리는 비교할 수 없습니다')
-    expect(html).not.toContain('compare-grid')
+    expect(html).not.toContain('compare-column-header')
   })
   it('shows independent articles and actions', () => {
     mocks.search = { left: 17, right: 19 }
@@ -63,7 +65,21 @@ describe('Concept comparison', () => {
     expect(html).toContain('값 전달 읽기 영역')
     expect(html).toContain('참조 공유 읽기 영역')
     expect(html.match(/관련 문제 풀기/g)).toHaveLength(2)
+    expect(html.match(/compare-column-body/g)).toHaveLength(2)
+    expect(html).toContain('변경할 개념 선택')
   })
+  it('keeps two visible selection slots and replacement controls when both concepts are chosen', () => {
+    mocks.search = { left: 17, right: 19 }
+    mocks.left.data = concept
+    mocks.right.data = { ...concept, id: 19, title: '참조 공유' }
+    const html = renderToStaticMarkup(<AccessContext.Provider value={{ authenticated: true, requestLogin: vi.fn() }}><ConceptComparePage /></AccessContext.Provider>)
+    expect(html).toContain('첫 번째 개념')
+    expect(html).toContain('두 번째 개념')
+    expect(html).toContain('좌우 바꾸기')
+    expect(html).toContain('두 번째 개념 제거')
+    expect(html).not.toContain('compare-column-scroll')
+  })
+
   it('keeps one side readable when the other is missing', () => {
     mocks.search = { left: 17, right: 999 }
     mocks.left.data = concept
