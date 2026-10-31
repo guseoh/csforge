@@ -13,6 +13,8 @@ import { JavaHappensBeforeEditorial, JavaCasEditorial, JavaGcReachabilityEditori
 import { JavaBytecodeStackEditorial, JavaClassInitializationEditorial, JavaProcessMemoryEditorial, JavaVirtualCarrierEditorial } from './JavaRuntimeEditorial'
 import { JavaPecsEditorial, JavaListLayoutEditorial, JavaBufferEditorial, JavaStreamLazinessEditorial } from './JavaCollectionEditorial'
 import { JavaLostUpdateEditorial, JavaSafePublicationEditorial, JavaReferenceStrengthEditorial, JavaHeapPollutionEditorial } from './JavaStateEditorial'
+import { JavaRuntimeAreasEditorial, JavaJitProfileEditorial, JavaLoaderIdentityEditorial } from './JavaRuntimeStructureEditorial'
+import { JavaViewCopyEditorial, JavaMapViewsEditorial } from './JavaCollectionStructureEditorial'
 
 export function DiagramFallback({ description }: { description?: string }) {
   return <div className="diagram-fallback" role="note"><p>학습 도식을 표시할 수 없습니다. 본문 설명을 계속 읽어주세요.</p>{description && <p>{description}</p>}</div>
@@ -55,6 +57,11 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
         case 'safe-publication': return <JavaSafePublicationEditorial />
         case 'reference-strength': return <JavaReferenceStrengthEditorial />
         case 'heap-pollution': return <JavaHeapPollutionEditorial />
+        case 'runtime-areas': return <JavaRuntimeAreasEditorial />
+        case 'jit-profile': return <JavaJitProfileEditorial />
+        case 'loader-identity': return <JavaLoaderIdentityEditorial />
+        case 'view-copy': return <JavaViewCopyEditorial />
+        case 'map-views': return <JavaMapViewsEditorial />
         case 'cas-retry': return <JavaCasEditorial />
         case 'gc-roots': return <JavaGcReachabilityEditorial />
         case 'selector': return <JavaSelectorEditorial />
