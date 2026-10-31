@@ -9,7 +9,7 @@ describe('fixed date and deque diagrams', () => {
     for (const file of ['time-numeric/instant-local-zoned-time', 'time-numeric/zoneid-dst', 'time-numeric/duration-period', 'coding-tests/arraydeque-stack-queue']) {
       const source = readFileSync(new URL(`../../../content/java/${file}.md`, import.meta.url), 'utf8')
       const html = renderToStaticMarkup(<MarkdownContent>{source.split(/\r?\n---\r?\n/)[1]}</MarkdownContent>)
-      const editorial = ['time-numeric/instant-local-zoned-time', 'time-numeric/duration-period', 'time-numeric/zoneid-dst'].includes(file)
+      const editorial = ['time-numeric/instant-local-zoned-time', 'time-numeric/duration-period', 'time-numeric/zoneid-dst', 'coding-tests/arraydeque-stack-queue'].includes(file)
       expect(html, file).toContain(editorial ? (file.includes('zoneid-dst') ? 'java-ed-coordination' : 'java-ed-contract') : 'diagram-canvas')
       expect(html, file).not.toContain('diagram-fallback')
       expect(html.includes('도식 단계 조작') || html.includes('도식 단계 이동'), file).toBe(file.includes('zoneid-dst'))
