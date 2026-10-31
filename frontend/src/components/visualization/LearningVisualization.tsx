@@ -127,7 +127,7 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
         case 'list-layout': return <JavaListLayoutEditorial />
         case 'buffer': return <JavaBufferEditorial />
         case 'stream-laziness': return <JavaStreamLazinessEditorial />
-        default: return <JavaApiDiagram example={data.example} />
+        default: return <DiagramFallback description="알 수 없는 Java 도식 유형입니다." />
       }
     }
     case 'static-flow': return renderers[data.type](data)
