@@ -19,6 +19,8 @@ import { JavaHashContractEditorial, JavaComparatorEditorial, JavaDequeEndsEditor
 import { JavaParallelCostsEditorial, JavaClassfileBoundaryEditorial, JavaCollectorIntervalsEditorial, JavaInstantZonesEditorial, JavaDurationPeriodEditorial, JavaExceptionCauseEditorial } from './JavaBoundaryEditorial'
 import { JavaConditionAwaitEditorial, JavaBoundedQueueEditorial, JavaThreadLifecycleEditorial, JavaSuppressedExceptionsEditorial } from './JavaCoordinationEditorial'
 import { JavaExecutorAdmissionEditorial, JavaThreadLocalReuseEditorial, JavaFailureAtomicityEditorial, JavaZoneDstEditorial, JavaScopedBindingEditorial, JavaDynamicProxyEditorial } from './JavaAdvancedReviewEditorial'
+import { JavaDecoratorEditorial, JavaProxyBoundaryEditorial, JavaObserverEditorial, JavaStatePatternEditorial } from './JavaPatternEditorial'
+import { JavaLatchGateEditorial, JavaSemaphoreEditorial, JavaFutureCompletionEditorial, JavaDeadlockProgressEditorial } from './JavaCoordinationRelationsEditorial'
 import { JavaViewCopyEditorial, JavaMapViewsEditorial } from './JavaCollectionStructureEditorial'
 
 export function DiagramFallback({ description }: { description?: string }) {
@@ -91,6 +93,14 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
         case 'zone-dst': return <JavaZoneDstEditorial />
         case 'scoped-binding': return <JavaScopedBindingEditorial />
         case 'dynamic-proxy': return <JavaDynamicProxyEditorial />
+        case 'decorator': return <JavaDecoratorEditorial />
+        case 'proxy': return <JavaProxyBoundaryEditorial />
+        case 'observer': return <JavaObserverEditorial />
+        case 'state': return <JavaStatePatternEditorial />
+        case 'latch-gate': return <JavaLatchGateEditorial />
+        case 'semaphore-permits': return <JavaSemaphoreEditorial />
+        case 'future-completion': return <JavaFutureCompletionEditorial />
+        case 'deadlock-progress': return <JavaDeadlockProgressEditorial />
         case 'cas-retry': return <JavaCasEditorial />
         case 'gc-roots': return <JavaGcReachabilityEditorial />
         case 'selector': return <JavaSelectorEditorial />
