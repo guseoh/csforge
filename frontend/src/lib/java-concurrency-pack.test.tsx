@@ -10,9 +10,10 @@ describe('fixed concurrency executions', () => {
   it.each(files)('renders %s with controls for state traces', (file) => {
     const source = readFileSync(new URL(`../../../content/java/concurrency/${file}.md`, import.meta.url), 'utf8')
     const html = renderToStaticMarkup(<MarkdownContent>{source.split(/\r?\n---\r?\n/)[1]}</MarkdownContent>)
-    expect(html, file).toContain('diagram-canvas')
+    expect(html, file).toContain('learning-visualization')
+    expect(html, file).toMatch(/(?:role="img"|aria-label="[^"]+")/)
     expect(html, file).not.toContain('diagram-fallback')
-    expect(html.includes('도식 단계 조작'), file).toBe(file !== 'concurrency-vs-parallelism')
+    expect(/aria-label="(?:도식 단계 조작|도식 단계 이동)"/.test(html), file).toBe(file !== 'concurrency-vs-parallelism')
   })
 
   it('never mounts two virtual threads on one carrier in a snapshot', () => {

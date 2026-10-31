@@ -12,7 +12,7 @@ const markdownCases = JSON.parse(readFileSync(new URL('../../../contracts/visual
 describe('shared visualization contract', () => {
   it.each(markdownCases)('recognizes CommonMark fences: $name', ({ source, visualizations }) => {
     const html = renderToStaticMarkup(<MarkdownContent>{source}</MarkdownContent>)
-    const rendered = (html.match(/class="learning-visualization"/g)?.length ?? 0)
+    const rendered = (html.match(/class="learning-visualization(?: java-visualization)?"/g)?.length ?? 0)
       + (html.match(/class="diagram-fallback"/g)?.length ?? 0)
     expect(rendered).toBe(visualizations)
   })
@@ -27,8 +27,12 @@ describe('shared visualization contract', () => {
   it.each(cases.filter((item) => item.valid))('renders $name through Markdown with a readable caption', ({ source }) => {
     const html = renderToStaticMarkup(<MarkdownContent>{`${fence}csforge-viz\n${source}\n${fence}`}</MarkdownContent>)
     expect(html).toContain('learning-visualization')
-    expect(html).toContain('role="img"')
-    expect(html).toContain('가로 스크롤 가능')
+    // Java's editorial HTML diagrams and legacy SVGs use different, accessible media semantics.
+    const figure = html.match(/<figure class="learning-visualization[^"]*">([\s\S]*?)<\/figure>/)?.[1]
+    expect(figure).toBeDefined()
+    expect(figure).toContain('<figcaption>')
+    expect(figure).toMatch(/(?:role="img"|aria-label="[^"]+")/)
+    if (figure?.includes('diagram-canvas')) expect(figure).toContain('가로 스크롤 가능')
     expect(html).not.toContain('코드 복사')
     expect(html).not.toContain('csforge-viz')
   })
