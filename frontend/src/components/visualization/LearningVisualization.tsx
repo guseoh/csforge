@@ -12,6 +12,7 @@ import { JavaHashLookupDiagram, JavaPassByValueEditorial } from './JavaEditorial
 import { JavaHappensBeforeEditorial, JavaCasEditorial, JavaGcReachabilityEditorial, JavaSelectorEditorial, JavaVolatileHandoffEditorial } from './JavaSemanticDiagrams'
 import { JavaBytecodeStackEditorial, JavaClassInitializationEditorial, JavaProcessMemoryEditorial, JavaVirtualCarrierEditorial } from './JavaRuntimeEditorial'
 import { JavaPecsEditorial, JavaListLayoutEditorial, JavaBufferEditorial, JavaStreamLazinessEditorial } from './JavaCollectionEditorial'
+import { JavaLostUpdateEditorial, JavaSafePublicationEditorial, JavaReferenceStrengthEditorial, JavaHeapPollutionEditorial } from './JavaStateEditorial'
 
 export function DiagramFallback({ description }: { description?: string }) {
   return <div className="diagram-fallback" role="note"><p>학습 도식을 표시할 수 없습니다. 본문 설명을 계속 읽어주세요.</p>{description && <p>{description}</p>}</div>
@@ -50,6 +51,10 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
         case 'hash-lookup': return <JavaHashLookupDiagram />
         case 'happens-before': return <JavaHappensBeforeEditorial />
         case 'volatile-handoff': return <JavaVolatileHandoffEditorial />
+        case 'lost-update': return <JavaLostUpdateEditorial />
+        case 'safe-publication': return <JavaSafePublicationEditorial />
+        case 'reference-strength': return <JavaReferenceStrengthEditorial />
+        case 'heap-pollution': return <JavaHeapPollutionEditorial />
         case 'cas-retry': return <JavaCasEditorial />
         case 'gc-roots': return <JavaGcReachabilityEditorial />
         case 'selector': return <JavaSelectorEditorial />

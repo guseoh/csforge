@@ -428,3 +428,42 @@
 .java-visualization .java-ed-volatile-edge strong { font-weight: 600; color: var(--java-editorial-ink); }
 .java-visualization .java-ed-volatile-edge.is-established { border-left-color: var(--java-editorial-ink); }
 @media (max-width: 530px) { .java-visualization .java-ed-volatile-lanes { grid-template-columns: minmax(0, 1fr); gap: 16px; } }
+
+/* Java G3 state-focused diagrams: quiet rules rather than an all-purpose graph canvas. */
+.java-visualization .java-ed-state { min-width: 0; color: var(--java-editorial-ink); }
+.java-visualization .java-ed-shared-cell { margin: 13px 0 14px; padding: 12px 0; border-block: 1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-shared-cell strong { display: block; margin-top: 7px; font-size: 1.18rem; }
+.java-visualization .java-ed-state-actors { display: grid; gap: 0; }
+.java-visualization .java-ed-state-actors > div { display: grid; grid-template-columns: minmax(85px, .65fr) minmax(0, 2fr); gap: 10px; padding: 12px 2px; border-bottom: 1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-state-actors span { color: var(--java-editorial-muted); overflow-wrap: anywhere; }
+.java-visualization .java-ed-state-event { margin: 14px 0 8px; font-size: .9rem; line-height: 1.65; }
+.java-visualization .java-ed-publication-heading { display: grid; gap: 5px; margin: 12px 0; padding-block: 12px; border-block: 1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-publication-heading span { color: var(--java-editorial-muted); font-size: .84rem; }
+.java-visualization .java-ed-publication-steps { list-style: none; margin: 0; padding: 0; }
+.java-visualization .java-ed-publication-steps li { display: grid; grid-template-columns: 27px minmax(76px, .65fr) minmax(0, 2fr); gap: 10px; align-items: baseline; padding: 12px 0; border-bottom: 1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-publication-steps small, .java-visualization .java-ed-publication-steps span { color: var(--java-editorial-muted); }
+.java-visualization .java-ed-references { display: grid; }
+.java-visualization .java-ed-reference-row { display: grid; grid-template-columns: minmax(84px, .75fr) minmax(0, 2.2fr); column-gap: 14px; row-gap: 6px; padding: 13px 0; border-bottom: 1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-reference-row > strong { font-size: .87rem; }
+.java-visualization .java-ed-reference-route { display: flex; align-items: baseline; gap: 8px; min-width: 0; flex-wrap: wrap; }
+.java-visualization .java-ed-reference-route code { overflow-wrap: anywhere; }
+.java-visualization .java-ed-reference-route span { color: var(--java-editorial-muted); }
+.java-visualization .java-ed-reference-row > small { grid-column: 2; font-size: .82rem; color: var(--java-editorial-muted); line-height: 1.6; }
+.java-visualization .java-ed-ref-queue { margin: 15px 0; padding: 13px 0; border-block: 1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-ref-queue > div { display: flex; flex-wrap: wrap; gap: 10px; align-items: baseline; padding: 10px 0; }
+.java-visualization .java-ed-ref-queue p { color: var(--java-editorial-muted); font-size: .84rem; line-height: 1.65; margin: 0; }
+.java-visualization .java-ed-state-code { display: grid; gap: 6px; margin: 10px 0 15px; border-bottom: 1px solid var(--java-editorial-rule); padding-bottom: 14px; }
+.java-visualization .java-ed-state-code code { white-space: normal; overflow-wrap: anywhere; font-size: 1rem; }
+.java-visualization .java-ed-heap-aliases { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 16px; }
+.java-visualization .java-ed-heap-name { border-top: 1px solid var(--java-editorial-rule); padding: 12px 0; min-width: 0; }
+.java-visualization .java-ed-heap-name small { display: block; margin-top: 7px; color: var(--java-editorial-muted); line-height: 1.5; }
+.java-visualization .java-ed-heap-name.is-pending { opacity: .52; }
+.java-visualization .java-ed-heap-slot { grid-column: 1 / -1; border-block: 1px solid var(--java-editorial-rule); display: grid; gap: 8px; padding: 13px 0; }
+.java-visualization .java-ed-heap-slot small, .java-visualization .java-ed-heap-slot span { color: var(--java-editorial-muted); font-size: .84rem; }
+.java-visualization .java-ed-heap-slot strong { font-size: 1rem; overflow-wrap: anywhere; }
+@media (max-width: 530px) {
+  .java-visualization .java-ed-publication-steps li { grid-template-columns: 24px minmax(0, 1fr); }
+  .java-visualization .java-ed-publication-steps li span { grid-column: 2; }
+  .java-visualization .java-ed-reference-row { grid-template-columns: minmax(0, 1fr); }
+  .java-visualization .java-ed-reference-row > small { grid-column: 1; }
+}
