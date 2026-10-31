@@ -22,12 +22,12 @@ export function JavaValueContractEditorial({ data }: { data: VisualizationOf<'ja
       <div role="listitem">
         <span className="java-editorial-kicker">대표 String 객체 A · 풀에서 찾은 동등한 리터럴</span>
         <strong><code>"java"</code></strong>
-        <span><code>literal → A</code> · <code>pooled → A</code></span>
+        <span><code>String literal → A</code> · <code>String pooled → A</code></span>
       </div>
       <div role="listitem">
         <span className="java-editorial-kicker">별도 String 객체 B · 생성한 참조</span>
         <strong><code>new String("java")</code></strong>
-        <span><code>created → B</code> · A와 내용은 같음</span>
+        <span><code>String created → B</code> · A와 내용은 같음</span>
       </div>
     </div>
     <p className="java-ed-object-code"><code>{frame.code}</code></p>
