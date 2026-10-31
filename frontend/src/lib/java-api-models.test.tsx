@@ -25,7 +25,9 @@ describe('four Java Topic batch', () => {
       expect(html).toContain('<strong>')
       // Java editorial stepped diagrams use "도식 단계 이동"; the legacy SVG controls use "도식 단계 조작".
       const stepControls = html.match(/aria-label="(?:도식 단계 조작|도식 단계 이동|참조 값 복사 단계 조작)"/g) ?? []
-      expect(stepControls.length, c.sourcePath).toBe(c.targetTier === 'V2' || c.targetTier === 'V3' ? 1 : 0)
+      // G3 approved HashMap lookup as a static editorial drawing, replacing its historical V2 tier.
+      const isStaticHashLookup = c.sourcePath.endsWith('/hashmap-hashing-collision.md')
+      expect(stepControls.length, c.sourcePath).toBe(!isStaticHashLookup && (c.targetTier === 'V2' || c.targetTier === 'V3') ? 1 : 0)
     }
   })
   it('keeps buffer capacity and accessible bounds across forward and reverse snapshots', () => {

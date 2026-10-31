@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest'
-import { applyPwaUpdate, shouldShowAppUpdatePrompt } from './pwa-update'
+import { activateWaitingWorker, applyPwaUpdate, shouldShowAppUpdatePrompt } from './pwa-update'
 import type { AppUpdateSafetySnapshot } from './app-update-safety'
 
 const safeState: AppUpdateSafetySnapshot = {
@@ -62,5 +62,45 @@ describe('PWA update flow', () => {
 
     expect(result).toEqual({ status: 'save-failed' })
     expect(activateUpdate).not.toHaveBeenCalled()
+  })
+})
+
+describe('waiting service worker activation', () => {
+  function workerFixture() {
+    const listeners = new Set<EventListenerOrEventListenerObject>()
+    const worker = {
+      state: 'installed' as ServiceWorkerState,
+      addEventListener: (_: string, handler: EventListenerOrEventListenerObject) => { listeners.add(handler) },
+      removeEventListener: (_: string, handler: EventListenerOrEventListenerObject) => { listeners.delete(handler) },
+      transition(state: ServiceWorkerState) {
+        worker.state = state
+        for (const handler of listeners) {
+          if (typeof handler === 'function') handler(new Event('statechange'))
+          else handler.handleEvent(new Event('statechange'))
+        }
+      },
+      get listenerCount() { return listeners.size },
+    }
+    return worker
+  }
+
+  it('finishes after the waiting SW activates without requiring controllerchange', async () => {
+    const sw = workerFixture()
+    const send = vi.fn(async () => { sw.transition('activating'); sw.transition('activated') })
+    await expect(activateWaitingWorker(sw, send, 200)).resolves.toBeUndefined()
+    expect(send).toHaveBeenCalledOnce()
+    expect(sw.listenerCount).toBe(0)
+  })
+
+  it('returns an error if the SW becomes redundant', async () => {
+    const sw = workerFixture()
+    await expect(activateWaitingWorker(sw, async () => { sw.transition('redundant') }, 200)).rejects.toThrow(/redundant/)
+    expect(sw.listenerCount).toBe(0)
+  })
+
+  it('does not hang forever when the worker fails to activate', async () => {
+    const sw = workerFixture()
+    await expect(activateWaitingWorker(sw, async () => {}, 5)).rejects.toThrow(/timed out/)
+    expect(sw.listenerCount).toBe(0)
   })
 })
