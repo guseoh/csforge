@@ -58,7 +58,7 @@ describe('Java G3 runtime structure diagrams', () => {
     expect(html).toContain('Payload byte[]')
     expect(html).toContain('강한 참조 유지')
     expect(html).toContain('1 / 2')
-    expect(html).toContain('즉시 제거하지')
+    expect(scenes[1].note).toContain('즉시 수거를 보장하지')
     const routed = renderToStaticMarkup(<LearningVisualization source={source('retained-path')} />)
     expect(routed).toContain('java-ed-retained')
     expect(routed).not.toContain('diagram-canvas')
