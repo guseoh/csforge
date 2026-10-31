@@ -27,7 +27,7 @@ const byId = new Map(concepts.map(item => [item.id, {
   progress: {learningStatus:'UNSEEN',bookmarked:false,firstViewedAt:null,lastViewedAt:null,completedAt:null},
   personalNote: null, references:[], previous:null, next:null, relatedConcepts:[],
 }]))
-const widths = [320,390,768,1024,1440]
+const widths = [960,1024,1280,1440,1920]
 const themes = ['light','dark']
 const rows = [], failures = [], errors = [], screenshotList = []
 const info = { sha: process.env.G3_QA_SHA || 'UNKNOWN', methodology: 'Real production Vite build and Chromium, real Guest and Owner Reader components, canonical Markdown, isolated mocked HTTP. No Production DB reads or writes.', diagrams: concepts.length, themes, widths, browserVisualAccepted: 0 }
@@ -48,6 +48,9 @@ function itemResult() {
     docWidth:document.documentElement.scrollWidth, theme:document.documentElement.getAttribute('data-theme'),
     content:[...figure.children].some(child => child.tagName !== 'FIGCAPTION' && !child.classList.contains('diagram-fallback')),fallback:!!figure.querySelector('.diagram-fallback'),
     controls:!!figure.querySelector('nav.java-ed-steps'),overhanging:bounds,
+    desktopLegacy:!!figure.querySelector('.java-desktop-fit'),
+    internalScroll:figure.querySelector('.java-desktop-fit .diagram-scroll')
+      ? Math.max(0, figure.querySelector('.java-desktop-fit .diagram-scroll').scrollWidth - figure.querySelector('.java-desktop-fit .diagram-scroll').clientWidth) : 0,
   }
 }
 async function makeContext(mode) {
@@ -91,10 +94,11 @@ async function inspect(page, item, mode) {
         if (data.docWidth>width+3) failed.push('PAGE_OVERFLOW')
         if (data.figureRight>width+3 || data.figureWidth<100) failed.push('FIGURE_WIDTH')
         if (data.overhanging?.length) failed.push('CHILD_OVERFLOW')
+        if (data.desktopLegacy && data.internalScroll > 2) failed.push('DESKTOP_SVG_INTERNAL_SCROLL')
         const row = {mode,key:item.contentKey,sourcePath:item.sourcePath,theme,width,failed,data}
         rows.push(row)
         if (failed.length) failures.push(row)
-        if ((mode==='guest' || item.id%10===0) && (width===390||width===1440)) {
+        if ((mode==='guest' || item.id%10===0) && (width===960||width===1440)) {
           const filename=mode+'-'+item.id+'-'+theme+'-'+width+'.png'
           await figure.screenshot({path:resolve(shots,filename),animations:'disabled',timeout:14000})
           screenshotList.push({mode,key:item.contentKey,theme,width,filename})
