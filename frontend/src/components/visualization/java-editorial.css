@@ -797,3 +797,26 @@
 .java-visualization .java-ed-static-flow .java-ed-legacy-flow > div { display:grid; align-content:start; gap:9px; min-width:0; border-top:2px solid var(--java-editorial-rule); padding:13px 0; }
 .java-visualization .java-ed-static-flow .java-ed-legacy-flow strong { font-size:.9rem; line-height:1.6; font-weight:600; overflow-wrap:anywhere; }
 .java-visualization .java-ed-static-flow .java-ed-legacy-flow code { color:var(--java-editorial-muted); }
+
+
+/* G3 old-flow editorial: remove inherited inline-code pills inside these five illustrations only. */
+.concept-reading-content .markdown-content .learning-visualization.java-visualization .java-ed-legacy code,
+.learning-visualization.java-visualization .java-ed-legacy code {
+  display: inline;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  font-family: var(--font-mono, monospace);
+  font-weight: 500;
+  font-size: .86rem;
+  line-height: inherit;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+.learning-visualization.java-visualization .java-ed-static-flow .java-ed-legacy-flow code {
+  color: var(--java-editorial-muted);
+}
