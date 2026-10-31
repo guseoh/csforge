@@ -7,7 +7,7 @@ import {
   getAppUpdateSafetySnapshot,
   subscribeToAppUpdateSafety,
 } from '../lib/app-update-safety'
-import { applyPwaUpdate, shouldShowAppUpdatePrompt } from '../lib/pwa-update'
+import { activateWaitingWorker, applyPwaUpdate, shouldShowAppUpdatePrompt } from '../lib/pwa-update'
 import { isReleaseMismatch } from '../lib/release-identity'
 
 const updateCheckIntervalMs = 30 * 60 * 1000
@@ -89,6 +89,17 @@ export function AppUpdatePrompt() {
         ? '콘텐츠 반영이 끝난 뒤 업데이트할 수 있습니다.'
         : null
 
+  // The generated SW intentionally uses clientsClaim=false, so an activated update will
+  // not trigger the Workbox "controlling" event that normally reloads this tab.
+  // Wait for the waiting worker to activate, then reload ONLY the accepting tab.
+  const activateReadyUpdate = async () => {
+    const registration = registrationRef.current ?? await navigator.serviceWorker?.getRegistration()
+    const waiting = registration?.waiting
+    if (!waiting) throw new Error('No waiting service worker to activate')
+    await activateWaitingWorker(waiting, () => updateServiceWorker(true))
+    window.location.reload()
+  }
+
   const applyUpdate = async () => {
     if (applying) return
     setApplyError(null)
@@ -97,13 +108,13 @@ export function AppUpdatePrompt() {
       const result = await applyPwaUpdate({
         getSafety: getAppUpdateSafetySnapshot,
         flushQuizSaves: flushPendingQuizSaves,
-        activateUpdate: updateServiceWorker,
+        activateUpdate: activateReadyUpdate,
       })
       if (result.status === 'blocked') setApplyError(messageForBlocker(result.blocker))
       if (result.status === 'save-failed') setApplyError('저장하지 못한 답안이 있습니다. 먼저 다시 저장해 주세요.')
-      if (result.status === 'activation-failed') setApplyError('업데이트를 적용하지 못했습니다. 네트워크를 확인한 뒤 다시 시도하세요.')
+      if (result.status === 'activation-failed') setApplyError('자동 업데이트를 완료하지 못했습니다. 현재 작업을 저장한 뒤 새 탭에서 다시 열거나 새로고침해 주세요.')
     } catch {
-      setApplyError('업데이트를 적용하지 못했습니다. 네트워크를 확인한 뒤 다시 시도하세요.')
+      setApplyError('업데이트 적용 중 오류가 발생했습니다. 현재 작업을 저장하고 다시 시도해 주세요.')
     } finally {
       setApplying(false)
     }

@@ -1,15 +1,20 @@
-import { DiagramArrow, DiagramCanvas, DiagramNode } from './DiagramPrimitives'
-
+/** Show why a read is allowed on every path, not which branch executes. */
 export function DefiniteAssignmentDiagram() {
-  return <DiagramCanvas label="score 조건의 두 분기에서 result를 대입한 뒤 합류하므로 println에서 읽을 수 있습니다." width={600} height={410}>
-    <DiagramNode x={168} y={20} width={264} lines={['int result;', 'score >= 60 ?']} />
-    <DiagramArrow x1={216} y1={88} x2={144} y2={174} />
-    <DiagramArrow x1={384} y1={88} x2={456} y2={174} />
-    <text x={154} y={124}>참</text><text x={428} y={124}>거짓</text>
-    <DiagramNode x={34} y={174} width={220} lines={['result = 1;', '대입됨']} />
-    <DiagramNode x={346} y={174} width={220} lines={['result = 0;', '대입됨']} />
-    <DiagramArrow x1={144} y1={242} x2={244} y2={310} />
-    <DiagramArrow x1={456} y1={242} x2={356} y2={310} />
-    <DiagramNode x={168} y={310} width={264} height={82} lines={['println(result)', '합류하는 두 경로 모두 대입됨', '컴파일 가능']} />
-  </DiagramCanvas>
+  return <section className="java-ed-legacy java-ed-definite" aria-label="두 분기에서 result를 확정 할당">
+    <div className="java-ed-legacy-initial">
+      <span className="java-editorial-kicker">분기 이전 · 지역 변수</span><code>int result;</code><span>아직 대입되지 않음</span>
+    </div>
+    <div className="java-ed-legacy-condition">
+      <strong><code>score &gt;= 60</code></strong><span>참·거짓 두 경로로 분기</span>
+    </div>
+    <div className="java-ed-legacy-branches" role="group" aria-label="두 분기의 대입">
+      <div><span className="java-editorial-kicker">참 · if</span><code>result = 1;</code><strong>대입 완료</strong></div>
+      <div><span className="java-editorial-kicker">거짓 · else</span><code>result = 0;</code><strong>대입 완료</strong></div>
+    </div>
+    <div className="java-ed-legacy-outcome" role="note">
+      <span className="java-editorial-kicker">합류 · 도달하는 모든 경로에서 대입됨</span>
+      <strong>확정 할당 성립</strong><code>System.out.println(result);</code><span>컴파일 가능</span>
+    </div>
+    <p className="java-editorial-qualification">두 분기를 모두 실행한다는 뜻이 아닙니다. Java 컴파일러는 실행 결과를 예측하는 대신 읽기 전에 모든 도달 경로에서 대입됐는지 판단합니다.</p>
+  </section>
 }

@@ -37,7 +37,7 @@ describe('functional and streams content', () => {
       expect(parseVisualization(declaration![1]), file).not.toBeNull()
       const html = renderToStaticMarkup(<MarkdownContent>{source.split(/\r?\n---\r?\n/)[1]}</MarkdownContent>)
       expect(html).not.toContain('diagram-fallback')
-      expect(html.includes('도식 단계 조작')).toBe(file.includes('pipeline-laziness'))
+      expect(/aria-label="(?:도식 단계 조작|도식 단계 이동)"/.test(html)).toBe(file.includes('pipeline-laziness'))
     }
     expect(javaApiScenes['stream-laziness']).toHaveLength(4)
     expect(javaApiScenes['stream-laziness'][3].lanes[1][1]).toContain('true')

@@ -83,13 +83,13 @@ function DefensiveCopyDiagram({ index }: { index: number }) {
 export function ObjectModelDiagram({ data }: { data: VisualizationOf<'java-object-model'> }) {
   const [index, setIndex] = useState(0)
   const frames = data.example === 'initialization' ? initializationFrames : data.example === 'dispatch' ? dispatchFrames : data.example === 'defensive-copy' ? defensiveCopyFrames : null
-  if (!frames) return <StaticObjectDiagram example={data.example} />
+  if (!frames) return <div className="java-desktop-fit"><StaticObjectDiagram example={data.example} /></div>
   const f = frames[index]
-  return <>
+  return <div className="java-desktop-fit">
     {data.example === 'initialization' ? <InitializationDiagram index={index} /> : data.example === 'dispatch' ? <DispatchDiagram index={index} /> : <DefensiveCopyDiagram index={index} />}
     <p className="diagram-code"><code>{f.code}</code></p>
     <p className="diagram-status" role="status" aria-live="polite">{f.explanation}</p>
     <DiagramControls index={index} count={frames.length} onChange={setIndex} onReset={() => setIndex(0)} />
     {data.example === 'initialization' && <details><summary>현재까지 누적 출력</summary><ol>{initializationFrames[index].output.map((line, i) => <li key={i}><code>{line}</code></li>)}</ol></details>}
-  </>
+  </div>
 }

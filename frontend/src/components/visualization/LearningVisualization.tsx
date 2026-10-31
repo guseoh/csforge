@@ -1,13 +1,31 @@
 import { Component, type ReactNode } from 'react'
 import { parseVisualization, type Visualization, type VisualizationOf } from '../../lib/learning-visualization'
 import { DiagramArrow, DiagramCanvas, DiagramNode } from './DiagramPrimitives'
-import { PassByValueDiagram, TcpHandshakeDiagram } from './StepDiagram'
+import { TcpHandshakeDiagram } from './StepDiagram'
 import { HeapDiagram } from './InteractiveDiagram'
 import { LanguageValueDiagram } from './LanguageValueDiagram'
 import { ArrayStoreDiagram } from './ArrayStoreDiagram'
 import { DefiniteAssignmentDiagram } from './DefiniteAssignmentDiagram'
+import { JavaLegacyFlowEditorial } from './JavaLegacyFlowEditorial'
 import { ObjectModelDiagram } from './ObjectModelDiagram'
 import { JavaApiDiagram } from './JavaApiDiagram'
+import { JavaHashLookupDiagram, JavaPassByValueEditorial } from './JavaEditorialDiagrams'
+import { JavaHappensBeforeEditorial, JavaCasEditorial, JavaGcReachabilityEditorial, JavaSelectorEditorial, JavaVolatileHandoffEditorial } from './JavaSemanticDiagrams'
+import { JavaBytecodeStackEditorial, JavaClassInitializationEditorial, JavaProcessMemoryEditorial, JavaVirtualCarrierEditorial } from './JavaRuntimeEditorial'
+import { JavaPecsEditorial, JavaListLayoutEditorial, JavaBufferEditorial, JavaStreamLazinessEditorial } from './JavaCollectionEditorial'
+import { JavaLostUpdateEditorial, JavaSafePublicationEditorial, JavaReferenceStrengthEditorial, JavaHeapPollutionEditorial } from './JavaStateEditorial'
+import { JavaRuntimeAreasEditorial, JavaJitProfileEditorial, JavaLoaderIdentityEditorial, JavaRetainedPathEditorial } from './JavaRuntimeStructureEditorial'
+import { JavaInvarianceEditorial } from './JavaGenericsEditorial'
+import { JavaHashContractEditorial, JavaComparatorEditorial, JavaDequeEndsEditorial, JavaIteratorRemoveEditorial, JavaLambdaCaptureEditorial, JavaStreamShapesEditorial } from './JavaContractEditorial'
+import { JavaParallelCostsEditorial, JavaClassfileBoundaryEditorial, JavaCollectorIntervalsEditorial, JavaInstantZonesEditorial, JavaDurationPeriodEditorial, JavaExceptionCauseEditorial } from './JavaBoundaryEditorial'
+import { JavaConditionAwaitEditorial, JavaBoundedQueueEditorial, JavaThreadLifecycleEditorial, JavaSuppressedExceptionsEditorial } from './JavaCoordinationEditorial'
+import { JavaExecutorAdmissionEditorial, JavaThreadLocalReuseEditorial, JavaFailureAtomicityEditorial, JavaZoneDstEditorial, JavaScopedBindingEditorial, JavaDynamicProxyEditorial } from './JavaAdvancedReviewEditorial'
+import { JavaDecoratorEditorial, JavaProxyBoundaryEditorial, JavaObserverEditorial, JavaStatePatternEditorial } from './JavaPatternEditorial'
+import { JavaLatchGateEditorial, JavaSemaphoreEditorial, JavaFutureCompletionEditorial, JavaDeadlockProgressEditorial } from './JavaCoordinationRelationsEditorial'
+import { JavaConcurrencyParallelismEditorial, JavaMonitorOwnershipEditorial } from './JavaConcurrencyContrastEditorial'
+import { JavaDependencyInjectionEditorial, JavaStrategyPolicyEditorial, JavaAdapterContractEditorial } from './JavaCollaborationBoundaryEditorial'
+import { JavaThrowableClassificationEditorial, JavaExceptionBoundaryEditorial, JavaResourceOwnershipEditorial, JavaProcessingReflectionEditorial, JavaModuleBoundaryEditorial, JavaBinaryEvolutionEditorial, JavaSerializationBoundaryEditorial } from './JavaLanguageBoundaryEditorial'
+import { JavaViewCopyEditorial, JavaMapViewsEditorial } from './JavaCollectionStructureEditorial'
 
 export function DiagramFallback({ description }: { description?: string }) {
   return <div className="diagram-fallback" role="note"><p>학습 도식을 표시할 수 없습니다. 본문 설명을 계속 읽어주세요.</p>{description && <p>{description}</p>}</div>
@@ -29,8 +47,8 @@ export function StaticDiagram({ data }: { data: VisualizationOf<'static-flow'> }
 }
 
 const renderers = {
-  'static-flow': (data: VisualizationOf<'static-flow'>) => <StaticDiagram data={data} />,
-  'java-pass-by-value': (data: VisualizationOf<'java-pass-by-value'>) => <PassByValueDiagram data={data} />,
+  'static-flow': (data: VisualizationOf<'static-flow'>) => data.labels.length === 3 && ['같은 builder에 append 누적', 'InputStream: bytes', 'write A · B · C'].includes(data.labels[0]) ? <JavaLegacyFlowEditorial data={data} /> : <StaticDiagram data={data} />,
+  'java-pass-by-value': (data: VisualizationOf<'java-pass-by-value'>) => <JavaPassByValueEditorial data={data} />,
   'min-heap': (data: VisualizationOf<'min-heap'>) => <HeapDiagram data={data} />,
   'tcp-handshake': (data: VisualizationOf<'tcp-handshake'>) => <TcpHandshakeDiagram data={data} />,
   'java-value-reference': (data: VisualizationOf<'java-value-reference'>) => <LanguageValueDiagram data={data} />,
@@ -41,7 +59,78 @@ const renderers = {
 
 function RegisteredDiagram({ data }: { data: Visualization }) {
   switch (data.type) {
-    case 'java-api-contract': return <JavaApiDiagram example={data.example} />
+    case 'java-api-contract': {
+      switch (data.example) {
+        case 'hash-lookup': return <JavaHashLookupDiagram />
+        case 'happens-before': return <JavaHappensBeforeEditorial />
+        case 'volatile-handoff': return <JavaVolatileHandoffEditorial />
+        case 'lost-update': return <JavaLostUpdateEditorial />
+        case 'safe-publication': return <JavaSafePublicationEditorial />
+        case 'reference-strength': return <JavaReferenceStrengthEditorial />
+        case 'heap-pollution': return <JavaHeapPollutionEditorial />
+        case 'runtime-areas': return <JavaRuntimeAreasEditorial />
+        case 'jit-profile': return <JavaJitProfileEditorial />
+        case 'loader-identity': return <JavaLoaderIdentityEditorial />
+        case 'view-copy': return <JavaViewCopyEditorial />
+        case 'map-views': return <JavaMapViewsEditorial />
+        case 'retained-path': return <JavaRetainedPathEditorial />
+        case 'invariance': return <JavaInvarianceEditorial />
+        case 'hash-contract': return <JavaHashContractEditorial />
+        case 'comparator': return <JavaComparatorEditorial />
+        case 'deque': return <JavaDequeEndsEditorial />
+        case 'iterator': return <JavaIteratorRemoveEditorial />
+        case 'lambda-capture': return <JavaLambdaCaptureEditorial />
+        case 'stream-shapes': return <JavaStreamShapesEditorial />
+        case 'parallel-costs': return <JavaParallelCostsEditorial />
+        case 'jdk-classfile': return <JavaClassfileBoundaryEditorial />
+        case 'collector-tradeoffs': return <JavaCollectorIntervalsEditorial />
+        case 'instant-zones': return <JavaInstantZonesEditorial />
+        case 'duration-period': return <JavaDurationPeriodEditorial />
+        case 'exception-cause': return <JavaExceptionCauseEditorial />
+        case 'condition-await': return <JavaConditionAwaitEditorial />
+        case 'bounded-queue': return <JavaBoundedQueueEditorial />
+        case 'thread-lifecycle': return <JavaThreadLifecycleEditorial />
+        case 'resource-suppressed': return <JavaSuppressedExceptionsEditorial />
+        case 'executor-admission': return <JavaExecutorAdmissionEditorial />
+        case 'threadlocal-reuse': return <JavaThreadLocalReuseEditorial />
+        case 'failure-atomicity': return <JavaFailureAtomicityEditorial />
+        case 'zone-dst': return <JavaZoneDstEditorial />
+        case 'scoped-binding': return <JavaScopedBindingEditorial />
+        case 'dynamic-proxy': return <JavaDynamicProxyEditorial />
+        case 'decorator': return <JavaDecoratorEditorial />
+        case 'proxy': return <JavaProxyBoundaryEditorial />
+        case 'observer': return <JavaObserverEditorial />
+        case 'state': return <JavaStatePatternEditorial />
+        case 'latch-gate': return <JavaLatchGateEditorial />
+        case 'semaphore-permits': return <JavaSemaphoreEditorial />
+        case 'future-completion': return <JavaFutureCompletionEditorial />
+        case 'deadlock-progress': return <JavaDeadlockProgressEditorial />
+        case 'concurrency-parallelism': return <JavaConcurrencyParallelismEditorial />
+        case 'monitor': return <JavaMonitorOwnershipEditorial />
+        case 'dependency-injection': return <JavaDependencyInjectionEditorial />
+        case 'strategy': return <JavaStrategyPolicyEditorial />
+        case 'adapter': return <JavaAdapterContractEditorial />
+        case 'throwable-tree': return <JavaThrowableClassificationEditorial />
+        case 'exception-boundary': return <JavaExceptionBoundaryEditorial />
+        case 'resource-ownership': return <JavaResourceOwnershipEditorial />
+        case 'processing-reflection': return <JavaProcessingReflectionEditorial />
+        case 'module-boundary': return <JavaModuleBoundaryEditorial />
+        case 'binary-evolution': return <JavaBinaryEvolutionEditorial />
+        case 'serialization-boundary': return <JavaSerializationBoundaryEditorial />
+        case 'cas-retry': return <JavaCasEditorial />
+        case 'gc-roots': return <JavaGcReachabilityEditorial />
+        case 'selector': return <JavaSelectorEditorial />
+        case 'bytecode-stack': return <JavaBytecodeStackEditorial />
+        case 'class-initialization': return <JavaClassInitializationEditorial />
+        case 'process-memory': return <JavaProcessMemoryEditorial />
+        case 'virtual-carrier': return <JavaVirtualCarrierEditorial />
+        case 'pecs': return <JavaPecsEditorial />
+        case 'list-layout': return <JavaListLayoutEditorial />
+        case 'buffer': return <JavaBufferEditorial />
+        case 'stream-laziness': return <JavaStreamLazinessEditorial />
+        default: return <DiagramFallback description="알 수 없는 Java 도식 유형입니다." />
+      }
+    }
     case 'static-flow': return renderers[data.type](data)
     case 'java-pass-by-value': return renderers[data.type](data)
     case 'min-heap': return renderers[data.type](data)
@@ -56,7 +145,7 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
 export function LearningVisualization({ source }: { source: string }) {
   const data = parseVisualization(source)
   if (!data) return <DiagramFallback />
-  return <figure className="learning-visualization">
+  return <figure className={`learning-visualization${(data.type.startsWith('java-') || data.type === 'static-flow') ? ' java-visualization' : ''}`} data-java-pass={data.type === 'java-pass-by-value' ? 'true' : undefined}>
     <figcaption><strong>{data.title}</strong><p>{data.description}</p></figcaption>
     <DiagramErrorBoundary key={source} description={data.description}><RegisteredDiagram key={source} data={data} /></DiagramErrorBoundary>
   </figure>

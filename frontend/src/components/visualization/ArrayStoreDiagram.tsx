@@ -1,31 +1,44 @@
 import { useState } from 'react'
 import { arrayStoreFrames } from '../../lib/language-type-models'
-import { DiagramArrow, DiagramCanvas, DiagramControls, DiagramNode } from './DiagramPrimitives'
+import { EditorialNote, EditorialSteps } from './JavaSemanticDiagrams'
 
+/** A covariant alias cannot alter the array object's runtime element type. */
 export function ArrayStoreDiagram() {
   const [index, setIndex] = useState(0)
   const frames = arrayStoreFrames()
   const frame = frames[index]
-  return <>
-    <DiagramCanvas label={`배열 저장 검사 ${index + 1}단계. ${frame.explanation}`} width={680} height={420}>
-      <text x={24} y={26}>변수의 선언 타입</text><text x={430} y={26}>같은 실제 배열 객체</text>
-      <DiagramNode x={24} y={52} width={244} lines={['String[] names', '참조 A']} />
-      <DiagramArrow x1={268} y1={86} x2={414} y2={86} />
-      {frame.alias && <>
-        <DiagramNode x={24} y={154} width={244} lines={['Object[] values', '참조 A']} />
-        <DiagramArrow x1={268} y1={188} x2={414} y2={108} />
-      </>}
-      <DiagramNode x={414} y={52} width={242} height={80} lines={['A: String[]', '길이 2 · 타입 유지']} />
-      {frame.elements.map((value, i) => <g key={i}>
-        <DiagramNode x={414 + i * 122} y={164} width={112} lines={[`[${i}]`, value === null ? 'null' : `"${value}"`]} active={i === 0 && frame.phase === 'accepted'} />
-      </g>)}
-      <DiagramNode x={24} y={278} width={632} height={82} lines={frame.phase === 'checking' || frame.phase === 'rejected'
-        ? ['Integer는 Object[] 선언에서 허용 → 실제 String[] 저장 검사', frame.phase === 'rejected' ? 'ArrayStoreException · [1] 변경 없음 · [0]은 kim 유지' : 'String으로 대입할 수 있는가? → 아니오']
-        : ['참조형 배열의 원소는 String 또는 null', '선언 타입이 넓어져도 실제 배열 타입은 바뀌지 않습니다.']} active={frame.phase === 'rejected'} />
-      <text x={24} y={397}>화살표: 같은 배열을 가리키는 참조 · 실패한 저장은 반영되지 않습니다.</text>
-    </DiagramCanvas>
-    <p className="diagram-code"><code>{frame.code}</code></p>
-    <p className="diagram-status" role="status" aria-live="polite">{frame.explanation}</p>
-    <DiagramControls index={index} count={frames.length} onChange={setIndex} onReset={() => setIndex(0)} />
-  </>
+  const attempted = frame.phase === 'checking' || frame.phase === 'rejected'
+  return <section className="java-ed-legacy java-ed-array" aria-label="String 배열의 별칭과 실행 시점 저장 검사">
+    <div className="java-ed-legacy-current"><span className="java-editorial-kicker">현재 실행 · {index + 1} / {frames.length}</span><code>{frame.code}</code></div>
+    <div className="java-ed-legacy-array-relations">
+      <div className="java-ed-legacy-array-names" aria-label="변수의 선언 타입">
+        <span className="java-editorial-kicker">변수 · 선언 타입</span>
+        <div><code>String[] names</code><span>→ 배열 A</span></div>
+        {frame.alias && <div><code>Object[] values</code><span>→ 같은 배열 A</span></div>}
+      </div>
+      <div className="java-ed-legacy-array-instance" aria-label="실제 String 배열 객체">
+        <span className="java-editorial-kicker">실제 객체 · A</span>
+        <strong><code>String[2]</code></strong><span>원소 타입 String · 길이 2</span>
+        <div className="java-ed-legacy-array-cells" role="group" aria-label="배열 원소">
+          {frame.elements.map((value, position) =>
+            <div key={position} className={position === 1 && attempted ? 'is-attempted' : undefined}>
+              <span>[{position}]</span><code>{value === null ? 'null' : '"' + value + '"'}</code>
+            </div>)}
+        </div>
+      </div>
+    </div>
+    <div className="java-ed-legacy-check" role="status" aria-live="polite">
+      <span className="java-editorial-kicker">{attempted ? '실행 시점의 배열 저장 검사' : '현재 배열 상태'}</span>
+      <strong>{frame.phase === 'checking' ? 'Integer → String[] · 저장 검사 중'
+        : frame.phase === 'rejected' ? 'ArrayStoreException · 저장 거절'
+        : frame.phase === 'accepted' ? 'String 저장 성공'
+        : '실제 배열의 원소 타입은 계속 String'}</strong>
+      <span>{frame.phase === 'checking' ? '[1]에는 아직 아무 값도 저장되지 않았습니다.'
+        : frame.phase === 'rejected' ? '[1]은 null, 앞서 저장한 [0]의 "kim"은 유지됩니다.'
+        : '별칭을 만들어도 실제 배열 객체는 바뀌지 않습니다.'}</span>
+    </div>
+    <EditorialSteps index={index} count={frames.length} setIndex={setIndex} />
+    <EditorialNote description={frame.explanation} />
+    <p className="java-editorial-qualification"><code>Object[]</code>를 통한 Integer 저장은 컴파일되지만 실제 <code>String[]</code>에 대한 실행 시점 검사에서 거절됩니다. 실패한 저장은 앞서 성공한 저장을 되돌리지 않습니다.</p>
+  </section>
 }

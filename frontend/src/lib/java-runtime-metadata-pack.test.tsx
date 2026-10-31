@@ -12,7 +12,8 @@ describe('JVM and metadata relations', () => {
   it.each([...runtime.map((name) => `jvm-runtime/${name}`), ...metadata.map((name) => `metadata-compatibility/${name}`)])('renders %s', (file) => {
     const source = readFileSync(new URL(`../../../content/java/${file}.md`, import.meta.url), 'utf8')
     const html = renderToStaticMarkup(<MarkdownContent>{source.split(/\r?\n---\r?\n/)[1]}</MarkdownContent>)
-    expect(html, file).toContain('diagram-canvas')
+    expect(html, file).toContain('learning-visualization')
+    expect(html, file).toMatch(/(?:role="img"|aria-label="[^"]+")/)
     expect(html, file).not.toContain('diagram-fallback')
   })
 

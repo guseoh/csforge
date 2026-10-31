@@ -90,3 +90,18 @@
 @media (prefers-reduced-motion: reduce) {
   .learning-visualization *, .learning-visualization { animation: none; transition: none; scroll-behavior: auto; }
 }
+
+/* G3 desktop Reader: preserve SVG text proportions without forcing an internal pan.
+   Scope to Java value/reference and object-model diagrams; do not change mobile layouts. */
+@media (min-width: 900px) {
+  .learning-visualization .java-desktop-fit .diagram-scroll {
+    overflow-x: hidden;
+  }
+  .learning-visualization .java-desktop-fit .diagram-canvas {
+    max-width: 100%;
+    height: auto;
+  }
+  .learning-visualization .java-desktop-fit .diagram-pan-hint {
+    display: none;
+  }
+}

@@ -1,0 +1,1427 @@
+{
+  "schemaVersion": 1,
+  "issue": 292,
+  "pr": 293,
+  "reviewRef": "d71872e770e61c2a6fa7f7eb9cf6569ee1902007",
+  "method": "Read 85 current Java canonical diagram declarations; map each to the exact registered renderer and compare high-risk source models. Actual screenshot QA is still pending.",
+  "stats": {
+    "javaConcepts": 145,
+    "viz": 85,
+    "nonViz": 60,
+    "javaApiContract": 68,
+    "explicitJavaRoutes": 68,
+    "specializedTypeRenderers": 17,
+    "remainingGenericJavaApi": 0,
+    "visualAccepted": 0,
+    "mediaDupes": 2
+  },
+  "conceptDiagrams": [
+    {
+      "sourcePath": "content/java/language-types/primitive-reference-values.md",
+      "contentKey": "java.core.language-types.primitive-reference-values",
+      "topic": "J-language-types",
+      "visualizationType": "java-value-reference",
+      "example": "assignment-copy",
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/language-types/variables-scope-definite-assignment.md",
+      "contentKey": "java.core.language-types.variables-scope-definite-assignment",
+      "topic": "J-language-types",
+      "visualizationType": "java-definite-assignment",
+      "example": null,
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/language-types/pass-by-value.md",
+      "contentKey": "java.core.language-types.pass-by-value",
+      "topic": "J-language-types",
+      "visualizationType": "java-pass-by-value",
+      "example": null,
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_VALUE_EDITORIAL",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/language-types/arrays-covariance-runtime-check.md",
+      "contentKey": "java.core.language-types.arrays-covariance-runtime-check",
+      "topic": "J-language-types",
+      "visualizationType": "java-array-store",
+      "example": null,
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/language-types/final-reference-and-immutability.md",
+      "contentKey": "java.core.language-types.final-reference-and-immutability",
+      "topic": "J-language-types",
+      "visualizationType": "java-value-reference",
+      "example": "final-list",
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/language-types/string-pool-interning.md",
+      "contentKey": "java.core.language-types.string-pool-interning",
+      "topic": "J-language-types",
+      "visualizationType": "java-value-reference",
+      "example": "string-intern",
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/language-types/stringbuilder-mutable-text.md",
+      "contentKey": "java.core.language-types.stringbuilder-mutable-text",
+      "topic": "J-language-types",
+      "visualizationType": "static-flow",
+      "example": null,
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/object-model/static-vs-instance-members.md",
+      "contentKey": "java.core.object-model.static-vs-instance-members",
+      "topic": "J-object-model",
+      "visualizationType": "java-object-model",
+      "example": "static-members",
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/object-model/initialization-order-constructor-chaining.md",
+      "contentKey": "java.core.object-model.initialization-order-constructor-chaining",
+      "topic": "J-object-model",
+      "visualizationType": "java-object-model",
+      "example": "initialization",
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/object-model/inheritance-is-a.md",
+      "contentKey": "java.core.object-model.inheritance-is-a",
+      "topic": "J-object-model",
+      "visualizationType": "java-object-model",
+      "example": "inheritance",
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/object-model/composition-collaboration.md",
+      "contentKey": "java.core.object-model.composition-collaboration",
+      "topic": "J-object-model",
+      "visualizationType": "java-object-model",
+      "example": "composition",
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/object-model/polymorphism-dynamic-dispatch.md",
+      "contentKey": "java.core.object-model.polymorphism-dynamic-dispatch",
+      "topic": "J-object-model",
+      "visualizationType": "java-object-model",
+      "example": "dispatch",
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/object-model/reference-casting-instanceof.md",
+      "contentKey": "java.core.object-model.reference-casting-instanceof",
+      "topic": "J-object-model",
+      "visualizationType": "java-object-model",
+      "example": "casting",
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/object-model/immutability-defensive-copy.md",
+      "contentKey": "java.core.object-model.immutability-defensive-copy",
+      "topic": "J-object-model",
+      "visualizationType": "java-object-model",
+      "example": "defensive-copy",
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/api-design/dependency-injection-construction.md",
+      "contentKey": "java.core.api-design.dependency-injection-construction",
+      "topic": "J-api-design",
+      "visualizationType": "java-api-contract",
+      "example": "dependency-injection",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/object-contracts/hashcode-contract.md",
+      "contentKey": "java.core.object-contracts.hashcode-contract",
+      "topic": "J-object-contracts",
+      "visualizationType": "java-api-contract",
+      "example": "hash-contract",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/object-contracts/comparator-custom-order.md",
+      "contentKey": "java.core.object-contracts.comparator-custom-order",
+      "topic": "J-object-contracts",
+      "visualizationType": "java-api-contract",
+      "example": "comparator",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/design-patterns/strategy-pattern.md",
+      "contentKey": "java.core.design-patterns.strategy-pattern",
+      "topic": "J-design-patterns",
+      "visualizationType": "java-api-contract",
+      "example": "strategy",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": "LEGACY_SVG_AND_CSFORGE_VIZ_COEXIST__COMPARE_BEFORE_REMOVAL",
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/design-patterns/adapter-pattern.md",
+      "contentKey": "java.core.design-patterns.adapter-pattern",
+      "topic": "J-design-patterns",
+      "visualizationType": "java-api-contract",
+      "example": "adapter",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/design-patterns/decorator-pattern.md",
+      "contentKey": "java.core.design-patterns.decorator-pattern",
+      "topic": "J-design-patterns",
+      "visualizationType": "java-api-contract",
+      "example": "decorator",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/design-patterns/proxy-pattern.md",
+      "contentKey": "java.core.design-patterns.proxy-pattern",
+      "topic": "J-design-patterns",
+      "visualizationType": "java-api-contract",
+      "example": "proxy",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/design-patterns/observer-pattern.md",
+      "contentKey": "java.core.design-patterns.observer-pattern",
+      "topic": "J-design-patterns",
+      "visualizationType": "java-api-contract",
+      "example": "observer",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/design-patterns/state-pattern.md",
+      "contentKey": "java.core.design-patterns.state-pattern",
+      "topic": "J-design-patterns",
+      "visualizationType": "java-api-contract",
+      "example": "state",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/collections/list-set-map-contracts.md",
+      "contentKey": "java.core.collections.list-set-map-contracts",
+      "topic": "J-collections",
+      "visualizationType": "java-api-contract",
+      "example": "map-views",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/collections/arraylist-linkedlist-tradeoff.md",
+      "contentKey": "java.core.collections.arraylist-linkedlist-tradeoff",
+      "topic": "J-collections",
+      "visualizationType": "java-api-contract",
+      "example": "list-layout",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/collections/hashmap-hashing-collision.md",
+      "contentKey": "java.core.collections.hashmap-hashing-collision",
+      "topic": "J-collections",
+      "visualizationType": "java-api-contract",
+      "example": "hash-lookup",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/collections/queue-deque-arraydeque.md",
+      "contentKey": "java.core.collections.queue-deque-arraydeque",
+      "topic": "J-collections",
+      "visualizationType": "java-api-contract",
+      "example": "deque",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/collections/priorityqueue.md",
+      "contentKey": "java.core.collections.priorityqueue",
+      "topic": "J-collections",
+      "visualizationType": "min-heap",
+      "example": null,
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_INTERACTIVE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V3"
+    },
+    {
+      "sourcePath": "content/java/collections/iterable-iterator-foreach-modification.md",
+      "contentKey": "java.core.collections.iterable-iterator-foreach-modification",
+      "topic": "J-collections",
+      "visualizationType": "java-api-contract",
+      "example": "iterator",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/collections/immutable-unmodifiable-collections.md",
+      "contentKey": "java.core.collections.immutable-unmodifiable-collections",
+      "topic": "J-collections",
+      "visualizationType": "java-api-contract",
+      "example": "view-copy",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/generics/generic-invariance.md",
+      "contentKey": "java.core.generics.generic-invariance",
+      "topic": "J-generics",
+      "visualizationType": "java-api-contract",
+      "example": "invariance",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/generics/wildcards-pecs.md",
+      "contentKey": "java.core.generics.wildcards-pecs",
+      "topic": "J-generics",
+      "visualizationType": "java-api-contract",
+      "example": "pecs",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/generics/generic-varargs-heap-pollution.md",
+      "contentKey": "java.core.generics.generic-varargs-heap-pollution",
+      "topic": "J-generics",
+      "visualizationType": "java-api-contract",
+      "example": "heap-pollution",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/exceptions-resources/throwable-checked-unchecked-error.md",
+      "contentKey": "java.core.exceptions-resources.throwable-checked-unchecked-error",
+      "topic": "J-exceptions-resources",
+      "visualizationType": "java-api-contract",
+      "example": "throwable-tree",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/exceptions-resources/exception-propagation-catch-boundary.md",
+      "contentKey": "java.core.exceptions-resources.exception-propagation-catch-boundary",
+      "topic": "J-exceptions-resources",
+      "visualizationType": "java-api-contract",
+      "example": "exception-boundary",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/exceptions-resources/exception-translation-cause.md",
+      "contentKey": "java.core.exceptions-resources.exception-translation-cause",
+      "topic": "J-exceptions-resources",
+      "visualizationType": "java-api-contract",
+      "example": "exception-cause",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/exceptions-resources/failure-atomicity.md",
+      "contentKey": "java.core.exceptions-resources.failure-atomicity",
+      "topic": "J-exceptions-resources",
+      "visualizationType": "java-api-contract",
+      "example": "failure-atomicity",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/exceptions-resources/try-with-resources-suppressed.md",
+      "contentKey": "java.core.exceptions-resources.try-with-resources-suppressed",
+      "topic": "J-exceptions-resources",
+      "visualizationType": "java-api-contract",
+      "example": "resource-suppressed",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/exceptions-resources/autocloseable-resource-ownership.md",
+      "contentKey": "java.core.exceptions-resources.autocloseable-resource-ownership",
+      "topic": "J-exceptions-resources",
+      "visualizationType": "java-api-contract",
+      "example": "resource-ownership",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/functional/lambda-capture-effectively-final.md",
+      "contentKey": "java.core.functional.lambda-capture-effectively-final",
+      "topic": "J-functional",
+      "visualizationType": "java-api-contract",
+      "example": "lambda-capture",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/streams/stream-pipeline-laziness.md",
+      "contentKey": "java.core.streams.stream-pipeline-laziness",
+      "topic": "J-streams",
+      "visualizationType": "java-api-contract",
+      "example": "stream-laziness",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": "LEGACY_SVG_AND_CSFORGE_VIZ_COEXIST__COMPARE_BEFORE_REMOVAL",
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/streams/stream-map-filter-flatmap.md",
+      "contentKey": "java.core.streams.stream-map-filter-flatmap",
+      "topic": "J-streams",
+      "visualizationType": "java-api-contract",
+      "example": "stream-shapes",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/streams/parallel-stream-tradeoffs.md",
+      "contentKey": "java.core.streams.parallel-stream-tradeoffs",
+      "topic": "J-streams",
+      "visualizationType": "java-api-contract",
+      "example": "parallel-costs",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/time-numeric/instant-local-zoned-time.md",
+      "contentKey": "java.core.time-numeric.instant-local-zoned-time",
+      "topic": "J-time-numeric",
+      "visualizationType": "java-api-contract",
+      "example": "instant-zones",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/time-numeric/zoneid-dst.md",
+      "contentKey": "java.core.time-numeric.zoneid-dst",
+      "topic": "J-time-numeric",
+      "visualizationType": "java-api-contract",
+      "example": "zone-dst",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/time-numeric/duration-period.md",
+      "contentKey": "java.core.time-numeric.duration-period",
+      "topic": "J-time-numeric",
+      "visualizationType": "java-api-contract",
+      "example": "duration-period",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/io-nio/byte-character-stream-charset.md",
+      "contentKey": "java.core.io-nio.byte-character-stream-charset",
+      "topic": "J-io-nio",
+      "visualizationType": "static-flow",
+      "example": null,
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/io-nio/buffered-io.md",
+      "contentKey": "java.core.io-nio.buffered-io",
+      "topic": "J-io-nio",
+      "visualizationType": "static-flow",
+      "example": null,
+      "sourceAndRoutingVerified": true,
+      "rendering": "EXISTING_SPECIALIZED_TYPE",
+      "codeReviewStatus": "EXISTING_RENDERER_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/io-nio/nio-channel-buffer.md",
+      "contentKey": "java.core.io-nio.nio-channel-buffer",
+      "topic": "J-io-nio",
+      "visualizationType": "java-api-contract",
+      "example": "buffer",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/io-nio/blocking-nonblocking-selector.md",
+      "contentKey": "java.core.io-nio.blocking-nonblocking-selector",
+      "topic": "J-io-nio",
+      "visualizationType": "java-api-contract",
+      "example": "selector",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/coding-tests/arraydeque-stack-queue.md",
+      "contentKey": "java.core.coding-tests.arraydeque-stack-queue",
+      "topic": "J-coding-tests",
+      "visualizationType": "java-api-contract",
+      "example": "deque",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/concurrency/concurrency-vs-parallelism.md",
+      "contentKey": "java.core.concurrency.concurrency-vs-parallelism",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "concurrency-parallelism",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/concurrency/thread-lifecycle-interruption.md",
+      "contentKey": "java.core.concurrency.thread-lifecycle-interruption",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "thread-lifecycle",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/platform-virtual-thread.md",
+      "contentKey": "java.core.concurrency.platform-virtual-thread",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "virtual-carrier",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/shared-mutable-state-race.md",
+      "contentKey": "java.core.concurrency.shared-mutable-state-race",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "lost-update",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/synchronized-monitor.md",
+      "contentKey": "java.core.concurrency.synchronized-monitor",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "monitor",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/jmm-happens-before-visibility.md",
+      "contentKey": "java.core.concurrency.jmm-happens-before-visibility",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "happens-before",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/safe-publication-final-fields.md",
+      "contentKey": "java.core.concurrency.safe-publication-final-fields",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "safe-publication",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/volatile.md",
+      "contentKey": "java.core.concurrency.volatile",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "volatile-handoff",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/atomic-cas.md",
+      "contentKey": "java.core.concurrency.atomic-cas",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "cas-retry",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/locks-reentrantlock-condition.md",
+      "contentKey": "java.core.concurrency.locks-reentrantlock-condition",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "condition-await",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/executor-task-thread-pools.md",
+      "contentKey": "java.core.concurrency.executor-task-thread-pools",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "executor-admission",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/blockingqueue-producer-consumer.md",
+      "contentKey": "java.core.concurrency.blockingqueue-producer-consumer",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "bounded-queue",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/countdownlatch-coordination.md",
+      "contentKey": "java.core.concurrency.countdownlatch-coordination",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "latch-gate",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/semaphore-permits.md",
+      "contentKey": "java.core.concurrency.semaphore-permits",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "semaphore-permits",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/threadlocal-context.md",
+      "contentKey": "java.core.concurrency.threadlocal-context",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "threadlocal-reuse",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/scoped-value-context.md",
+      "contentKey": "java.core.concurrency.scoped-value-context",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "scoped-binding",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/future-completablefuture.md",
+      "contentKey": "java.core.concurrency.future-completablefuture",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "future-completion",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/concurrency/deadlock-starvation-livelock.md",
+      "contentKey": "java.core.concurrency.deadlock-starvation-livelock",
+      "topic": "J-concurrency",
+      "visualizationType": "java-api-contract",
+      "example": "deadlock-progress",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/jdk-jvm-classfile.md",
+      "contentKey": "java.core.jvm-runtime.jdk-jvm-classfile",
+      "topic": "J-jvm-runtime",
+      "visualizationType": "java-api-contract",
+      "example": "jdk-classfile",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/bytecode-javap.md",
+      "contentKey": "java.core.jvm-runtime.bytecode-javap",
+      "topic": "J-jvm-runtime",
+      "visualizationType": "java-api-contract",
+      "example": "bytecode-stack",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/class-loading-linking-initialization.md",
+      "contentKey": "java.core.jvm-runtime.class-loading-linking-initialization",
+      "topic": "J-jvm-runtime",
+      "visualizationType": "java-api-contract",
+      "example": "class-initialization",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/classloader-delegation-type-identity.md",
+      "contentKey": "java.core.jvm-runtime.classloader-delegation-type-identity",
+      "topic": "J-jvm-runtime",
+      "visualizationType": "java-api-contract",
+      "example": "loader-identity",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/jvm-runtime-data-areas-frames.md",
+      "contentKey": "java.core.jvm-runtime.jvm-runtime-data-areas-frames",
+      "topic": "J-jvm-runtime",
+      "visualizationType": "java-api-contract",
+      "example": "runtime-areas",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/gc-reachability-roots.md",
+      "contentKey": "java.core.jvm-runtime.gc-reachability-roots",
+      "topic": "J-jvm-runtime",
+      "visualizationType": "java-api-contract",
+      "example": "gc-roots",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/reference-strengths.md",
+      "contentKey": "java.core.jvm-runtime.reference-strengths",
+      "topic": "J-jvm-runtime",
+      "visualizationType": "java-api-contract",
+      "example": "reference-strength",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/gc-fundamentals-collectors.md",
+      "contentKey": "java.core.jvm-runtime.gc-fundamentals-collectors",
+      "topic": "J-jvm-runtime",
+      "visualizationType": "java-api-contract",
+      "example": "collector-tradeoffs",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/java-memory-leaks.md",
+      "contentKey": "java.core.jvm-runtime.java-memory-leaks",
+      "topic": "J-jvm-runtime",
+      "visualizationType": "java-api-contract",
+      "example": "retained-path",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/heap-metaspace-native-thread-memory.md",
+      "contentKey": "java.core.jvm-runtime.heap-metaspace-native-thread-memory",
+      "topic": "J-jvm-runtime",
+      "visualizationType": "java-api-contract",
+      "example": "process-memory",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/jit-hotspot-warmup.md",
+      "contentKey": "java.core.jvm-runtime.jit-hotspot-warmup",
+      "topic": "J-jvm-runtime",
+      "visualizationType": "java-api-contract",
+      "example": "jit-profile",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/metadata-compatibility/dynamic-proxy-invocationhandler.md",
+      "contentKey": "java.core.metadata-compatibility.dynamic-proxy-invocationhandler",
+      "topic": "J-metadata-compatibility",
+      "visualizationType": "java-api-contract",
+      "example": "dynamic-proxy",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V2"
+    },
+    {
+      "sourcePath": "content/java/metadata-compatibility/annotation-processing-vs-reflection.md",
+      "contentKey": "java.core.metadata-compatibility.annotation-processing-vs-reflection",
+      "topic": "J-metadata-compatibility",
+      "visualizationType": "java-api-contract",
+      "example": "processing-reflection",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/metadata-compatibility/serialization-contract-risk.md",
+      "contentKey": "java.core.metadata-compatibility.serialization-contract-risk",
+      "topic": "J-metadata-compatibility",
+      "visualizationType": "java-api-contract",
+      "example": "serialization-boundary",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/metadata-compatibility/jpms-classpath-modulepath.md",
+      "contentKey": "java.core.metadata-compatibility.jpms-classpath-modulepath",
+      "topic": "J-metadata-compatibility",
+      "visualizationType": "java-api-contract",
+      "example": "module-boundary",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    },
+    {
+      "sourcePath": "content/java/metadata-compatibility/binary-compatibility-api-evolution.md",
+      "contentKey": "java.core.metadata-compatibility.binary-compatibility-api-evolution",
+      "topic": "J-metadata-compatibility",
+      "visualizationType": "java-api-contract",
+      "example": "binary-evolution",
+      "sourceAndRoutingVerified": true,
+      "rendering": "G3_EXPLICIT_JAVA_EXAMPLE",
+      "codeReviewStatus": "G3_CODE_IMPLEMENTED_PENDING_VISUAL_ACCEPTANCE",
+      "browserVisualVerdict": "NOT_YET_VERIFIED",
+      "mediaDuplicateReview": null,
+      "originalAuditTier": "V1"
+    }
+  ],
+  "conceptsWithoutDiagrams": [
+    {
+      "sourcePath": "content/java/language-types/numeric-conversion-overflow.md",
+      "contentKey": "java.core.language-types.numeric-conversion-overflow",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/language-types/boxing-unboxing-wrapper.md",
+      "contentKey": "java.core.language-types.boxing-unboxing-wrapper",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/language-types/string-immutability-equality.md",
+      "contentKey": "java.core.language-types.string-immutability-equality",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/object-model/class-object-constructor.md",
+      "contentKey": "java.core.object-model.class-object-constructor",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/object-model/encapsulation-invariants.md",
+      "contentKey": "java.core.object-model.encapsulation-invariants",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/object-model/abstraction-responsibility.md",
+      "contentKey": "java.core.object-model.abstraction-responsibility",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/object-model/overload-vs-override.md",
+      "contentKey": "java.core.object-model.overload-vs-override",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/object-model/interface-vs-abstract-class.md",
+      "contentKey": "java.core.object-model.interface-vs-abstract-class",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/api-design/static-factory-method.md",
+      "contentKey": "java.core.api-design.static-factory-method",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/api-design/builder-pattern-construction.md",
+      "contentKey": "java.core.api-design.builder-pattern-construction",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/api-design/minimize-accessibility-api-surface.md",
+      "contentKey": "java.core.api-design.minimize-accessibility-api-surface",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/api-design/method-contract-parameter-validation.md",
+      "contentKey": "java.core.api-design.method-contract-parameter-validation",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/object-contracts/equals-contract.md",
+      "contentKey": "java.core.object-contracts.equals-contract",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/object-contracts/tostring-diagnostics.md",
+      "contentKey": "java.core.object-contracts.tostring-diagnostics",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/object-contracts/comparable-natural-order.md",
+      "contentKey": "java.core.object-contracts.comparable-natural-order",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/enum-modeling/enum-closed-values-behavior.md",
+      "contentKey": "java.core.enum-modeling.enum-closed-values-behavior",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/enum-modeling/enum-ordinal-name-persistence.md",
+      "contentKey": "java.core.enum-modeling.enum-ordinal-name-persistence",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/enum-modeling/enumset.md",
+      "contentKey": "java.core.enum-modeling.enumset",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/enum-modeling/enummap.md",
+      "contentKey": "java.core.enum-modeling.enummap",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/design-patterns/template-method-pattern.md",
+      "contentKey": "java.core.design-patterns.template-method-pattern",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/design-patterns/factory-pattern.md",
+      "contentKey": "java.core.design-patterns.factory-pattern",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/collections/hashset-set-semantics.md",
+      "contentKey": "java.core.collections.hashset-set-semantics",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/collections/sorted-collections-tree.md",
+      "contentKey": "java.core.collections.sorted-collections-tree",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/generics/generic-types-methods.md",
+      "contentKey": "java.core.generics.generic-types-methods",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/generics/raw-types-unchecked.md",
+      "contentKey": "java.core.generics.raw-types-unchecked",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/generics/type-erasure-reifiable-types.md",
+      "contentKey": "java.core.generics.type-erasure-reifiable-types",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/exceptions-resources/standard-exceptions-contract.md",
+      "contentKey": "java.core.exceptions-resources.standard-exceptions-contract",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/exceptions-resources/exception-as-control-flow.md",
+      "contentKey": "java.core.exceptions-resources.exception-as-control-flow",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/functional/functional-interface.md",
+      "contentKey": "java.core.functional.functional-interface",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/functional/behavior-parameterization.md",
+      "contentKey": "java.core.functional.behavior-parameterization",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/functional/lambda-target-typing.md",
+      "contentKey": "java.core.functional.lambda-target-typing",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/functional/method-reference-functional-composition.md",
+      "contentKey": "java.core.functional.method-reference-functional-composition",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/streams/stream-reduce.md",
+      "contentKey": "java.core.streams.stream-reduce",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/streams/collectors-grouping-partitioning.md",
+      "contentKey": "java.core.streams.collectors-grouping-partitioning",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/streams/tomap-duplicate-keys.md",
+      "contentKey": "java.core.streams.tomap-duplicate-keys",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/streams/stream-side-effects-noninterference.md",
+      "contentKey": "java.core.streams.stream-side-effects-noninterference",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/modern-language/optional-return-boundary.md",
+      "contentKey": "java.core.modern-language.optional-return-boundary",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/modern-language/record-data-modeling.md",
+      "contentKey": "java.core.modern-language.record-data-modeling",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/modern-language/sealed-types-closed-hierarchy.md",
+      "contentKey": "java.core.modern-language.sealed-types-closed-hierarchy",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/modern-language/local-variable-type-inference-var.md",
+      "contentKey": "java.core.modern-language.local-variable-type-inference-var",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/modern-language/switch-expressions.md",
+      "contentKey": "java.core.modern-language.switch-expressions",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/modern-language/pattern-matching.md",
+      "contentKey": "java.core.modern-language.pattern-matching",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/modern-language/text-blocks.md",
+      "contentKey": "java.core.modern-language.text-blocks",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/modern-language/default-static-interface-methods.md",
+      "contentKey": "java.core.modern-language.default-static-interface-methods",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/time-numeric/clock-testable-time.md",
+      "contentKey": "java.core.time-numeric.clock-testable-time",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/time-numeric/datetimeformatter-parsing-formatting.md",
+      "contentKey": "java.core.time-numeric.datetimeformatter-parsing-formatting",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/time-numeric/floating-point-precision.md",
+      "contentKey": "java.core.time-numeric.floating-point-precision",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/time-numeric/bigdecimal-money-rounding.md",
+      "contentKey": "java.core.time-numeric.bigdecimal-money-rounding",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/io-nio/input-output-reader-writer.md",
+      "contentKey": "java.core.io-nio.input-output-reader-writer",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/io-nio/path-files-api.md",
+      "contentKey": "java.core.io-nio.path-files-api",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/coding-tests/fast-input-bufferedreader-tokenizer.md",
+      "contentKey": "java.core.coding-tests.fast-input-bufferedreader-tokenizer",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/coding-tests/buffered-output-stringbuilder.md",
+      "contentKey": "java.core.coding-tests.buffered-output-stringbuilder",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/coding-tests/sorting-arrays-collections.md",
+      "contentKey": "java.core.coding-tests.sorting-arrays-collections",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/coding-tests/comparator-for-coding-tests.md",
+      "contentKey": "java.core.coding-tests.comparator-for-coding-tests",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/coding-tests/priorityqueue-coding-tests.md",
+      "contentKey": "java.core.coding-tests.priorityqueue-coding-tests",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/coding-tests/hashmap-hashset-counting.md",
+      "contentKey": "java.core.coding-tests.hashmap-hashset-counting",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/concurrency/concurrent-collections.md",
+      "contentKey": "java.core.concurrency.concurrent-collections",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/jvm-runtime/runtime-diagnostics-jcmd-jstack-jfr.md",
+      "contentKey": "java.core.jvm-runtime.runtime-diagnostics-jcmd-jstack-jfr",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/metadata-compatibility/reflection-class-api.md",
+      "contentKey": "java.core.metadata-compatibility.reflection-class-api",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    },
+    {
+      "sourcePath": "content/java/metadata-compatibility/annotations-retention-target.md",
+      "contentKey": "java.core.metadata-compatibility.annotations-retention-target",
+      "status": "NO_VISUAL_DECLARATION__NONE_REASSESSMENT_PENDING"
+    }
+  ]
+}
