@@ -2,7 +2,7 @@ import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
 import { javaApiScenes } from '../../lib/java-api-models'
 import { LearningVisualization } from './LearningVisualization'
-import { JavaJitProfileEditorial, JavaLoaderIdentityEditorial, JavaRuntimeAreasEditorial } from './JavaRuntimeStructureEditorial'
+import { JavaJitProfileEditorial, JavaLoaderIdentityEditorial, JavaRuntimeAreasEditorial, JavaRetainedPathEditorial } from './JavaRuntimeStructureEditorial'
 
 const source = (example: string) => JSON.stringify({
   version: 1, type: 'java-api-contract', example,
@@ -44,6 +44,24 @@ describe('Java G3 runtime structure diagrams', () => {
     expect(html).toContain('defining loader L2')
     expect(html).toContain('binary name + defining loader')
     expect(html).toContain('initiating loader')
+  })
+
+  it('keeps Session and Payload present after owner unlink without claiming immediate collection', () => {
+    const scenes = javaApiScenes['retained-path']
+    expect(scenes).toHaveLength(2)
+    expect(scenes[0].graph?.edges.some((edge) => edge.from === 'owner' && edge.to === 'session')).toBe(true)
+    expect(scenes[1].graph?.edges.some((edge) => edge.from === 'owner' && edge.to === 'session')).toBe(false)
+    expect(scenes[1].graph?.edges.some((edge) => edge.from === 'session' && edge.to === 'payload')).toBe(true)
+    const html = renderToStaticMarkup(<JavaRetainedPathEditorial />)
+    expect(html).toContain('장수 owner')
+    expect(html).toContain('종료된 Session')
+    expect(html).toContain('Payload byte[]')
+    expect(html).toContain('강한 참조 유지')
+    expect(html).toContain('1 / 2')
+    expect(html).toContain('즉시 제거하지')
+    const routed = renderToStaticMarkup(<LearningVisualization source={source('retained-path')} />)
+    expect(routed).toContain('java-ed-retained')
+    expect(routed).not.toContain('diagram-canvas')
   })
 
   it('routes the three runtime example keys to static Java editorial diagrams', () => {

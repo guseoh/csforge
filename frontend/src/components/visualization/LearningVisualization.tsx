@@ -13,7 +13,8 @@ import { JavaHappensBeforeEditorial, JavaCasEditorial, JavaGcReachabilityEditori
 import { JavaBytecodeStackEditorial, JavaClassInitializationEditorial, JavaProcessMemoryEditorial, JavaVirtualCarrierEditorial } from './JavaRuntimeEditorial'
 import { JavaPecsEditorial, JavaListLayoutEditorial, JavaBufferEditorial, JavaStreamLazinessEditorial } from './JavaCollectionEditorial'
 import { JavaLostUpdateEditorial, JavaSafePublicationEditorial, JavaReferenceStrengthEditorial, JavaHeapPollutionEditorial } from './JavaStateEditorial'
-import { JavaRuntimeAreasEditorial, JavaJitProfileEditorial, JavaLoaderIdentityEditorial } from './JavaRuntimeStructureEditorial'
+import { JavaRuntimeAreasEditorial, JavaJitProfileEditorial, JavaLoaderIdentityEditorial, JavaRetainedPathEditorial } from './JavaRuntimeStructureEditorial'
+import { JavaInvarianceEditorial } from './JavaGenericsEditorial'
 import { JavaViewCopyEditorial, JavaMapViewsEditorial } from './JavaCollectionStructureEditorial'
 
 export function DiagramFallback({ description }: { description?: string }) {
@@ -62,6 +63,8 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
         case 'loader-identity': return <JavaLoaderIdentityEditorial />
         case 'view-copy': return <JavaViewCopyEditorial />
         case 'map-views': return <JavaMapViewsEditorial />
+        case 'retained-path': return <JavaRetainedPathEditorial />
+        case 'invariance': return <JavaInvarianceEditorial />
         case 'cas-retry': return <JavaCasEditorial />
         case 'gc-roots': return <JavaGcReachabilityEditorial />
         case 'selector': return <JavaSelectorEditorial />

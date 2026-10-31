@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { javaApiScenes } from '../../lib/java-api-models'
+import { EditorialSteps, EditorialNote } from './JavaSemanticDiagrams'
 import './java-editorial.css'
 
 /** JVM-spec logical storage separates each thread's frames from shared runtime areas. */
@@ -96,5 +98,37 @@ export function JavaLoaderIdentityEditorial() {
     </div>
     <p className="java-ed-note">{scene.note}</p>
     <p className="java-editorial-qualification">위임을 시작한 initiating loader와 실제로 클래스를 정의한 defining loader는 다를 수 있습니다. 모든 사용자 정의 로더가 부모 우선으로 동작하는 것도 아닙니다.</p>
+  </section>
+}
+
+
+/** Preserve object positions across the two snapshots; unlinking does not immediately collect them. */
+export function JavaRetainedPathEditorial() {
+  const [index, setIndex] = useState(0)
+  const scenes = javaApiScenes['retained-path']
+  const linked = index === 0
+  return <section className="java-ed-runtime java-ed-retained" aria-label="장수 owner의 객체 유지 경로와 등록 해제">
+    <h4 className="java-ed-scene-title">{scenes[index].title}</h4>
+    <div className="java-ed-retained-graph" role="group" aria-label={linked ? 'root에서 owner를 거쳐 Session과 Payload까지 도달 가능' : 'owner와 Session 간 연결 해제, 다른 root가 없다면 Session과 Payload는 도달 불가'}>
+      <div className="java-ed-retained-root"><span className="java-editorial-kicker">도달 가능</span><strong>GC root</strong></div>
+      <span className="java-ed-retained-arrow" aria-hidden="true">→</span>
+      <div className="java-ed-retained-owner"><strong>장수 owner / registry</strong><small>애플리케이션에서 계속 사용</small></div>
+      <div className="java-ed-retained-path" aria-label={linked ? 'owner가 Session을 강하게 참조' : 'owner에서 Session으로 이어지는 강한 참조 제거'}>
+        <span aria-hidden="true">{linked ? '→' : '×'}</span>
+        <small>{linked ? '강한 참조 유지' : '등록 해제 · 경로 끊김'}</small>
+      </div>
+      <div className={'java-ed-retained-island' + (linked ? '' : ' is-unreachable')} role="group" aria-label="Session에서 Payload로의 객체 내부 강한 참조는 유지">
+        <div><strong>종료된 Session</strong><small>{linked ? '업무 종료 후에도 보유 중' : '다른 root 경로가 없다고 가정'}</small></div>
+        <span className="java-ed-retained-arrow" aria-hidden="true">→</span>
+        <div><strong>Payload byte[]</strong><small>{linked ? '도달 가능' : '회수 가능 후보 · 아직 수거 전'}</small></div>
+      </div>
+    </div>
+    <p className="java-ed-state-event" role="status" aria-live="polite">
+      {linked ? '불필요한 객체를 root에서 계속 도달할 수 있으므로 GC가 유지합니다.'
+        : 'owner의 등록을 해제해도 객체를 즉시 제거하지 않습니다. 다른 root 경로가 없다면 회수 가능해집니다.'}
+    </p>
+    <EditorialSteps index={index} count={scenes.length} setIndex={setIndex} />
+    <EditorialNote description={scenes[index].note} />
+    <p className="java-editorial-qualification">객체의 참조 관계를 그린 논리적 도식이며 GC 수집 시각이나 메모리 사용량을 표현하지 않습니다. 다른 root의 강한 참조가 있다면 여전히 도달 가능합니다.</p>
   </section>
 }

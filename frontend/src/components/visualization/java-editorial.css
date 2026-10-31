@@ -530,3 +530,38 @@
   .java-visualization .java-ed-map-projections > div { grid-template-columns:minmax(90px,1fr) minmax(0,1fr); align-items:baseline; }
   .java-visualization .java-ed-map-projections > div > span { grid-column:2; }
 }
+
+
+/* G3 review: stable retained path, compiler rejection and correct before/after view snapshots. */
+.java-visualization .java-ed-retained-graph { display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin:14px 0; }
+.java-visualization .java-ed-retained-root,
+.java-visualization .java-ed-retained-owner { min-width:0; flex:0 1 auto; display:grid; gap:5px; border-top:1px solid var(--java-editorial-rule); padding:12px 3px; }
+.java-visualization .java-ed-retained-owner small,
+.java-visualization .java-ed-retained-island small { color:var(--java-editorial-muted); font-size:.8rem; }
+.java-visualization .java-ed-retained-arrow { color:var(--java-editorial-muted); font-size:1.15rem; }
+.java-visualization .java-ed-retained-path { display:grid; justify-items:center; gap:4px; color:var(--java-editorial-muted); }
+.java-visualization .java-ed-retained-path > span { font-size:1.3rem; }
+.java-visualization .java-ed-retained-path small { font-size:.78rem; }
+.java-visualization .java-ed-retained-island { display:flex; align-items:center; flex-wrap:wrap; gap:10px; border-top:1px solid var(--java-editorial-rule); padding:12px 3px; }
+.java-visualization .java-ed-retained-island > div { display:grid; gap:5px; }
+.java-visualization .java-ed-retained-island.is-unreachable { border:1px dashed var(--java-editorial-rule); padding:12px; }
+.java-visualization .java-ed-invariance-types { display:grid; grid-template-columns:minmax(0,1fr) minmax(96px,.85fr) minmax(0,1fr); align-items:center; gap:10px; border-block:1px solid var(--java-editorial-rule); margin:12px 0; padding:15px 0; }
+.java-visualization .java-ed-invariance-types code { font-size:.98rem; overflow-wrap:anywhere; white-space:normal; }
+.java-visualization .java-ed-invariance-types span { text-align:center; color:var(--java-editorial-muted); font-size:.83rem; }
+.java-visualization .java-ed-invariance-hypothesis { margin:14px 0; }
+.java-visualization .java-ed-invariance-hypothesis ol { list-style:none; padding:0; margin:10px 0 0; }
+.java-visualization .java-ed-invariance-hypothesis li { display:grid; grid-template-columns:minmax(105px,.85fr) minmax(0,2fr); align-items:baseline; gap:10px; padding:10px 0; border-bottom:1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-invariance-hypothesis li span { color:var(--java-editorial-muted); font-size:.87rem; }
+.java-visualization .java-ed-map-before-after { display:grid; gap:8px; }
+.java-visualization .java-ed-map-before-after > span { display:grid; gap:4px; }
+.java-visualization .java-ed-map-before-after small { color:var(--java-editorial-muted); font-size:.76rem; }
+.java-visualization .java-ed-map-before-after code { font-size:.85rem; overflow-wrap:anywhere; white-space:normal; }
+@media (max-width:530px) {
+  .java-visualization .java-ed-retained-graph { display:grid; grid-template-columns:minmax(0,1fr); gap:4px; }
+  .java-visualization .java-ed-retained-path { justify-items:start; grid-template-columns:24px minmax(0,1fr); align-items:center; }
+  .java-visualization .java-ed-invariance-types { grid-template-columns:minmax(0,1fr); text-align:left; }
+  .java-visualization .java-ed-invariance-types span { text-align:left; }
+  .java-visualization .java-ed-invariance-hypothesis li { grid-template-columns:minmax(0,1fr); gap:5px; }
+  .java-visualization .java-ed-map-projections > div { display:grid; grid-template-columns:minmax(0,1fr); }
+  .java-visualization .java-ed-map-before-after { grid-template-columns:repeat(2,minmax(0,1fr)); }
+}
