@@ -11,7 +11,7 @@ describe('fixed Java collaboration diagrams', () => {
       const source = readFileSync(new URL(`../../../content/java/${file}.md`, import.meta.url), 'utf8')
       const body = source.split(/\r?\n---\r?\n/)[1]
       const html = renderToStaticMarkup(<MarkdownContent>{body}</MarkdownContent>)
-      expect(html, file).toContain(['decorator','proxy','observer','state'].some(name=>file.includes(`/${name}-pattern`))?'java-ed-pattern':'diagram-canvas')
+      expect(html, file).toContain(['strategy','adapter','decorator','proxy','observer','state'].some(name=>file.includes(`/${name}-pattern`)) || file.startsWith('api-design/dependency-injection-')?'java-ed-pattern':'diagram-canvas')
       expect(html, file).not.toContain('diagram-fallback')
       expect(html.includes('도식 단계 조작') || html.includes('도식 단계 이동'), file).toBe(file.includes('observer'))
     }

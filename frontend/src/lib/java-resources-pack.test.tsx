@@ -10,8 +10,8 @@ describe('exception and resource diagrams', () => {
     for (const file of files) {
       const source = readFileSync(new URL(`../../../content/java/exceptions-resources/${file}.md`, import.meta.url), 'utf8')
       const html = renderToStaticMarkup(<MarkdownContent>{source.split(/\r?\n---\r?\n/)[1]}</MarkdownContent>)
-      const editorial = ['exception-translation-cause', 'try-with-resources-suppressed', 'failure-atomicity'].includes(file)
-      expect(html, file).toContain(editorial ? (file === 'exception-translation-cause' ? 'java-ed-contract' : 'java-ed-coordination') : 'diagram-canvas')
+      const editorial = ['exception-translation-cause', 'try-with-resources-suppressed', 'failure-atomicity', 'throwable-checked-unchecked-error', 'exception-propagation-catch-boundary', 'autocloseable-resource-ownership'].includes(file)
+      expect(html, file).toContain(editorial ? (file === 'exception-translation-cause' ? 'java-ed-contract' : ['failure-atomicity','try-with-resources-suppressed'].includes(file) ? 'java-ed-coordination' : 'java-ed-boundary') : 'diagram-canvas')
       expect(html, file).not.toContain('diagram-fallback')
       expect(html.includes('도식 단계 조작') || html.includes('도식 단계 이동'), file)
         .toBe(['failure-atomicity', 'try-with-resources-suppressed'].includes(file))
