@@ -741,3 +741,25 @@
  .java-visualization .java-ed-boundary-ownership,
  .java-visualization .java-ed-boundary-compare { grid-template-columns:minmax(0,1fr); gap:6px; }
 }
+
+
+/* G3 Java concurrency: actual conceptual timelines and stable lock ownership. */
+.java-visualization .java-ed-concurrency-contrast,
+.java-visualization .java-ed-monitor { min-width:0; max-width:100%; color:var(--java-editorial-ink); }
+.java-visualization .java-ed-schedule { display:grid; gap:7px; margin:15px 0; }
+.java-visualization .java-ed-schedule-head { display:flex; flex-wrap:wrap; gap:6px 15px; align-items:baseline; padding:12px 0 2px; border-top:1px solid var(--java-editorial-rule); }
+.java-visualization .java-ed-schedule-head small { color:var(--java-editorial-muted); font-size:.81rem; }
+.java-visualization .java-ed-schedule-line { display:grid; grid-template-columns:minmax(70px,1.2fr) repeat(3,minmax(0,1fr)); gap:5px; align-items:stretch; }
+.java-visualization .java-ed-schedule-line > span { color:var(--java-editorial-muted); padding:10px 3px; font-size:.81rem; }
+.java-visualization .java-ed-schedule-line > strong { border-block:1px solid var(--java-editorial-rule); text-align:center; padding:10px 2px; font-size:.85rem; font-variant-numeric:tabular-nums; }
+.java-visualization .java-ed-schedule-line > strong:nth-child(3) { background:var(--java-editorial-quiet); }
+.java-visualization .java-ed-monitor-owner { display:flex; flex-wrap:wrap; gap:9px 18px; align-items:baseline; border-block:1px solid var(--java-editorial-rule); padding:14px 0; margin:14px 0; }
+.java-visualization .java-ed-monitor-owner small { color:var(--java-editorial-muted); font-size:.83rem; }
+.java-visualization .java-ed-monitor-threads { display:grid; gap:0; margin:10px 0; }
+.java-visualization .java-ed-monitor-threads > div { display:grid; grid-template-columns:minmax(105px,.8fr) minmax(0,2fr); gap:12px; border-bottom:1px solid var(--java-editorial-rule); padding:12px 0; }
+.java-visualization .java-ed-monitor-threads span { color:var(--java-editorial-muted); font-size:.86rem; line-height:1.6; }
+.java-visualization .java-ed-monitor-hb { color:var(--java-editorial-muted); font-size:.87rem; line-height:1.6; margin:13px 0; }
+@media(max-width:530px) {
+ .java-visualization .java-ed-schedule-line { grid-template-columns:minmax(50px,.9fr) repeat(3,minmax(0,1fr)); }
+ .java-visualization .java-ed-monitor-threads > div { grid-template-columns:minmax(0,1fr); gap:5px; }
+}

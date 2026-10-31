@@ -21,6 +21,7 @@ import { JavaConditionAwaitEditorial, JavaBoundedQueueEditorial, JavaThreadLifec
 import { JavaExecutorAdmissionEditorial, JavaThreadLocalReuseEditorial, JavaFailureAtomicityEditorial, JavaZoneDstEditorial, JavaScopedBindingEditorial, JavaDynamicProxyEditorial } from './JavaAdvancedReviewEditorial'
 import { JavaDecoratorEditorial, JavaProxyBoundaryEditorial, JavaObserverEditorial, JavaStatePatternEditorial } from './JavaPatternEditorial'
 import { JavaLatchGateEditorial, JavaSemaphoreEditorial, JavaFutureCompletionEditorial, JavaDeadlockProgressEditorial } from './JavaCoordinationRelationsEditorial'
+import { JavaConcurrencyParallelismEditorial, JavaMonitorOwnershipEditorial } from './JavaConcurrencyContrastEditorial'
 import { JavaDependencyInjectionEditorial, JavaStrategyPolicyEditorial, JavaAdapterContractEditorial } from './JavaCollaborationBoundaryEditorial'
 import { JavaThrowableClassificationEditorial, JavaExceptionBoundaryEditorial, JavaResourceOwnershipEditorial, JavaProcessingReflectionEditorial, JavaModuleBoundaryEditorial, JavaBinaryEvolutionEditorial, JavaSerializationBoundaryEditorial } from './JavaLanguageBoundaryEditorial'
 import { JavaViewCopyEditorial, JavaMapViewsEditorial } from './JavaCollectionStructureEditorial'
@@ -103,6 +104,8 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
         case 'semaphore-permits': return <JavaSemaphoreEditorial />
         case 'future-completion': return <JavaFutureCompletionEditorial />
         case 'deadlock-progress': return <JavaDeadlockProgressEditorial />
+        case 'concurrency-parallelism': return <JavaConcurrencyParallelismEditorial />
+        case 'monitor': return <JavaMonitorOwnershipEditorial />
         case 'dependency-injection': return <JavaDependencyInjectionEditorial />
         case 'strategy': return <JavaStrategyPolicyEditorial />
         case 'adapter': return <JavaAdapterContractEditorial />
