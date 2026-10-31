@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server'
 import { describe, expect, it } from 'vitest'
-import { JavaCasEditorial, JavaGcReachabilityEditorial, JavaHappensBeforeEditorial, JavaSelectorEditorial } from './JavaSemanticDiagrams'
+import { JavaCasEditorial, JavaGcReachabilityEditorial, JavaHappensBeforeEditorial, JavaSelectorEditorial, JavaVolatileHandoffEditorial } from './JavaSemanticDiagrams'
 import { LearningVisualization } from './LearningVisualization'
 import { javaApiScenes } from '../../lib/java-api-models'
 
@@ -17,6 +17,21 @@ describe('Java-only semantic editorial diagrams', () => {
     expect(html).toContain('program order')
     expect(html).toContain('스레드 간 동기화 간선은 아직 제시되지 않음')
     expect(html).not.toContain('CPU cache flush 과정이 발생')
+  })
+
+  it('connects writer and reader with an explicit volatile synchronizes-with handoff', () => {
+    const html = renderToStaticMarkup(<JavaVolatileHandoffEditorial />)
+    expect(html).toContain('Writer 스레드')
+    expect(html).toContain('Reader 스레드')
+    expect(html).toContain('스레드 사이의 관찰은 아직 표시하지 않음')
+    expect(html).toContain('count++')
+    expect(html).toContain('1 / 2')
+    expect(javaApiScenes['volatile-handoff']).toHaveLength(2)
+
+    const routed = renderToStaticMarkup(<LearningVisualization source={source('volatile-handoff')} />)
+    expect(routed).toContain('java-ed-volatile')
+    expect(routed).toContain('도식 단계 이동')
+    expect(routed).not.toContain('diagram-canvas')
   })
 
   it('keeps CAS comparison attempts separate from overall progress guarantees', () => {

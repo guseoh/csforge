@@ -9,7 +9,7 @@ import { DefiniteAssignmentDiagram } from './DefiniteAssignmentDiagram'
 import { ObjectModelDiagram } from './ObjectModelDiagram'
 import { JavaApiDiagram } from './JavaApiDiagram'
 import { JavaHashLookupDiagram, JavaPassByValueEditorial } from './JavaEditorialDiagrams'
-import { JavaHappensBeforeEditorial, JavaCasEditorial, JavaGcReachabilityEditorial, JavaSelectorEditorial } from './JavaSemanticDiagrams'
+import { JavaHappensBeforeEditorial, JavaCasEditorial, JavaGcReachabilityEditorial, JavaSelectorEditorial, JavaVolatileHandoffEditorial } from './JavaSemanticDiagrams'
 import { JavaBytecodeStackEditorial, JavaClassInitializationEditorial, JavaProcessMemoryEditorial, JavaVirtualCarrierEditorial } from './JavaRuntimeEditorial'
 import { JavaPecsEditorial, JavaListLayoutEditorial, JavaBufferEditorial, JavaStreamLazinessEditorial } from './JavaCollectionEditorial'
 
@@ -49,6 +49,7 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
       switch (data.example) {
         case 'hash-lookup': return <JavaHashLookupDiagram />
         case 'happens-before': return <JavaHappensBeforeEditorial />
+        case 'volatile-handoff': return <JavaVolatileHandoffEditorial />
         case 'cas-retry': return <JavaCasEditorial />
         case 'gc-roots': return <JavaGcReachabilityEditorial />
         case 'selector': return <JavaSelectorEditorial />

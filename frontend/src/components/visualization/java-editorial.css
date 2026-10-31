@@ -415,3 +415,16 @@
 @media (max-width: 440px) {
   .java-ed-bytecode-layout { grid-template-columns: minmax(0, 1fr); gap: 16px; }
 }
+
+/* Volatile handoff: retain program-order lanes and only reveal the cross-thread edge on observation. */
+.java-visualization .java-ed-volatile-lanes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(14px, 3vw, 28px); }
+.java-visualization .java-ed-volatile-thread { min-width: 0; border-top: 1px solid var(--java-editorial-rule); padding-top: 10px; }
+.java-visualization .java-ed-volatile-thread ol { list-style: none; margin: 8px 0; padding: 0; }
+.java-visualization .java-ed-volatile-thread li { padding: 11px 3px; border-bottom: 1px solid var(--java-editorial-rule); overflow-wrap: anywhere; }
+.java-visualization .java-ed-volatile-thread code { font-size: .9rem; white-space: normal; }
+.java-visualization .java-ed-volatile-thread small { display: block; margin-top: 8px; color: var(--java-editorial-muted); }
+.java-visualization .java-ed-volatile-thread.is-pending { opacity: .6; }
+.java-visualization .java-ed-volatile-edge { display: grid; gap: 3px; border-left: 2px solid var(--java-editorial-rule); margin: 14px 0; padding: 7px 12px; color: var(--java-editorial-muted); font-size: .85rem; }
+.java-visualization .java-ed-volatile-edge strong { font-weight: 600; color: var(--java-editorial-ink); }
+.java-visualization .java-ed-volatile-edge.is-established { border-left-color: var(--java-editorial-ink); }
+@media (max-width: 530px) { .java-visualization .java-ed-volatile-lanes { grid-template-columns: minmax(0, 1fr); gap: 16px; } }

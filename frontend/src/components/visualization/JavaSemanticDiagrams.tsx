@@ -127,3 +127,38 @@ export function JavaSelectorEditorial() {
     <p className="java-editorial-qualification">교육용 전통적 selectedKeys 처리 예제입니다. 준비 상태는 완전한 메시지 수신이나 성공적인 읽기 바이트 수를 보장하지 않습니다.</p>
   </section>
 }
+
+/** Makes the volatile release/acquire handoff visible without treating it as an atomic increment. */
+export function JavaVolatileHandoffEditorial() {
+  const [index, setIndex] = useState(0)
+  const scenes = javaApiScenes['volatile-handoff']
+  const observed = index === 1
+  return <section className="java-ed-semantic java-ed-volatile" aria-label="volatile 공개와 읽기의 happens-before 관계">
+    <h4 className="java-ed-scene-title">{scenes[index].title}</h4>
+    <div className="java-ed-volatile-lanes" role="group" aria-label="두 스레드의 논리적 동작 순서">
+      <div className="java-ed-volatile-thread">
+        <span className="java-editorial-kicker">Writer 스레드</span>
+        <ol>
+          <li><code>data = 42</code></li>
+          <li><code>volatile ready = true</code></li>
+        </ol>
+        <small>program order</small>
+      </div>
+      <div className={`java-ed-volatile-thread${observed ? '' : ' is-pending'}`}>
+        <span className="java-editorial-kicker">Reader 스레드</span>
+        <ol>
+          <li><code>ready == true</code></li>
+          <li><code>data == 42</code></li>
+        </ol>
+        <small>{observed ? 'program order' : '아직 관찰 전'}</small>
+      </div>
+    </div>
+    <div className={`java-ed-volatile-edge${observed ? ' is-established' : ''}`} role="status" aria-live="polite">
+      <span>{observed ? 'volatile 쓰기 → 후속 volatile 읽기' : '스레드 사이의 관찰은 아직 표시하지 않음'}</span>
+      <strong>{observed ? 'synchronizes-with → happens-before' : 'Writer의 program order'}</strong>
+    </div>
+    <EditorialSteps index={index} count={scenes.length} setIndex={setIndex} />
+    <EditorialNote description={scenes[index].note} />
+    <p className="java-editorial-qualification">동기화 순서상 뒤따르는 같은 volatile 필드의 읽기와 연결하는 JMM 관계입니다. 물리적 캐시 flush를 뜻하지 않으며 <code>count++</code>는 원자화하지 않습니다.</p>
+  </section>
+}
