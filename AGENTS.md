@@ -304,3 +304,16 @@ For every task:
 12. Do not commit, push, open a PR, or modify unrelated files unless the task explicitly asks for it.
 
 Prefer one complete vertical change over repeated tiny edits that create avoidable churn.
+
+## 12. LLM Wiki — full-mode 작업 기록 (2026-11-03)
+
+공통 저장소는 [guseoh/cs Wiki](https://github.com/guseoh/cs/tree/main/Wiki)입니다. 본 프로젝트는 중앙 [캡처 정책](https://github.com/guseoh/cs/blob/main/Wiki/capture-policy.md)의 `full` 모드를 적용합니다. `content/`, 설계 문서, 테스트, PR과 코드가 정본이며 Wiki는 AI에게 필요한 결정과 이력을 검색하기 위한 별도 계층입니다.
+
+- **기본 동작:** 매 완료 작업에서 기록 대상을 자동 검토합니다. Java/Spring 구현, 콘텐츠 수정, 도식화, UI·CSS의 작은 변경, 버그·테스트 실패, 리팩터링, 동기화 검증, 배포 CI 등 실질적인 작업을 짧은 Journal로 남기도록 합니다. 매번 사용자에게 기록 요청을 요구하지 않지만 무변경 탐색이나 잡담은 대화 전문으로 저장하지 않습니다.
+- **의사결정 구분:** 학습 모델·콘텐츠 정책·도식 의미·API·DB·동기화 안전성·아키텍처 관련 확인된 선택과 기각 대안은 별도 Decision으로 기록합니다. 제안은 `proposed`, 확정은 `accepted`로 표시합니다. 결정 확정과 코드 병합·Production 동기화 성공은 절대 혼동하지 않습니다.
+- **중복 억제:** 중앙 GitHub Actions는 공개 병합 PR을 Journal 이벤트로 수집합니다. AI 세션 요약은 해당 PR/commit을 연결하고 동일 사실을 반복 기록하지 않습니다.
+- **증거와 개인정보:** 테스트 성공, QA 범위, 인증 Reader 확인, 운영 콘텐츠 DB 반영, 개인 학습 이력 보존은 실제 확인된 범위만 기술합니다. 질문 풀이/진도 등 개인 사용자 데이터, 인증 정보, 비공개 대화는 공개 Wiki에 저장하지 않습니다.
+- **저장 경계:** 해당 세션의 접근 권한과 현재 작업의 승인 범위가 허용하면 중앙 Wiki에 작은 검토 PR을 만듭니다. 불가능하면 미반영 기록안을 출력합니다. 기존 제11절의 코드 변경·commit·PR 승인 규칙을 우회하지 않으며, Wiki 기록이 프로젝트의 병합이나 배포를 자동 승인하지 않습니다.
+- **검색:** 작업에 선행 결정이 필요하면 `Wiki/index.md` → `Wiki/projects/csforge.md` → 관련 Decision을 먼저 참고하되, 최신 소스와 실제 검증 기록을 기준으로 다시 확인합니다.
+
+세부 형식은 중앙 [Wiki/AGENTS.md](https://github.com/guseoh/cs/blob/main/Wiki/AGENTS.md) 및 [handoff 계약](https://github.com/guseoh/cs/blob/main/Wiki/handoff.md)을 따릅니다. 지침서만으로 AI 채팅을 실시간 감시하거나 로컬 Vault에 접근할 수 있는 것은 아닙니다.
