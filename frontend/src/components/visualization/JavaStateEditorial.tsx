@@ -95,13 +95,14 @@ export function JavaReferenceStrengthEditorial() {
   const scene = javaApiScenes['reference-strength'][0]
   return <section className="java-ed-state" aria-label="Java 참조 강도와 ReferenceQueue 관계">
     <h4 className="java-ed-scene-title">{scene.title}</h4>
-    <div className="java-ed-references" role="list" aria-label="서로 다른 네 종류의 참조">
-      {referenceKinds.map((item) => <div className="java-ed-reference-row" role="listitem" key={item.kind}>
-        <strong>{item.kind}</strong>
-        <div className="java-ed-reference-route">
-          <code>{item.reference}</code><span aria-hidden="true">⇢</span><span>{item.target}</span>
-        </div>
-        <small>{item.effect}</small>
+    <div className="java-ed-reference-compare" role="table" aria-label="강한 소프트 약한 팬텀 참조의 수명과 접근 차이">
+      <div role="row" className="java-ed-reference-compare-header">
+        <span role="columnheader">종류</span><span role="columnheader">참조 → 대상</span><span role="columnheader">핵심 계약</span>
+      </div>
+      {referenceKinds.map(item=><div role="row" key={item.kind}>
+        <strong role="cell">{item.kind}</strong>
+        <span role="cell"><code>{item.reference}</code><span aria-hidden="true"> → </span>{item.target}</span>
+        <span role="cell">{item.effect}</span>
       </div>)}
     </div>
     <div className="java-ed-ref-queue" role="group" aria-label="PhantomReference 객체의 큐 등록">
