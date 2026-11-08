@@ -17,9 +17,11 @@ references:
     recommendation: "TCP 연결, 바이트 스트림, 시퀀스·ACK와 연결 상태의 기본 규칙을 확인한다."
     displayOrder: 1
   - url: "https://www.rfc-editor.org/rfc/rfc9112"
-    title: "RFC 9112: HTTP/1.1 Message Framing"
+    title: "HTTP/1.1"
     referenceType: OFFICIAL
     language: en
+    depth: section
+    recommendation: "HTTP/1.1 메시지 구문, 프레이밍과 연결 재사용 규칙을 확인한다."
     displayOrder: 2
     relationNote: "§8에서 Content-Length에 못 미치는 불완전 응답과 close-delimited 응답의 완전성 판단을 확인한다."
 ---
