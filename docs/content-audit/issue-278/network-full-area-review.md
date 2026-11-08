@@ -56,6 +56,8 @@ Network의 Concept Markdown **127개**와 Question JSON **383개**(15개 Topic �
 - **동시 수정의 원자성:** `http-status.409-412.q3`는 `If-Match` 강한 비교와 **조건 검사·상태 변경의 원자성**을 구분하고, RFC 9110 §13.1.1에 규정된 **이미 동일한 변경이 적용된 요청의 예외적 2xx 가능성**과 엄격한 412 API 계약의 차이를 설명한다.
 - **HTTP 415/422 의미:** `http-status.415-422.q2`는 `application/xml` 불지원(415)과 정상 JSON의 도메인 의미 위반(422)을 구체적인 입력으로 비교하고, 단순 JSON 파싱 실패(400 등)를 별도로 구분한다.
 
+교정한 Question이 기존 Concept 설명을 초과하지 않도록 `get-head.md`에 HEAD의 `Content-Length` 해석, `409-412.md`에 강한 ETag와 원자성·규격상 특례, `http2-multiplexing.md`에 스트림/연결 윈도와 `DATA` 처리 조건을 함께 보강했다. 이 Concept 변경은 연결된 stable `contentKey`·level·공개 순서를 유지한다.
+
 주제별 문제 난도·중복 비교와 RFC 대비 검사는 **정합성에 영향을 주는 발견 건만 소수 교정**하는 접근이다. 전체 254개 모범답안 각각의 기술 주장을 모두 개별 RFC 문단에 대조했다는 결론으로 비약하지 않는다.
 
 ## 기술적 검토의 구분
@@ -69,7 +71,7 @@ Network의 Concept Markdown **127개**와 Question JSON **383개**(15개 Topic �
 
 ## 검증과 미완료 항목
 
-- `NetworkContentAuditContractTest`: 127 Concept 및 383 Question 키·문항 형식·Concept 연결·선택지·정답 매칭의 구조적 회귀 방지와 ECDHE 스칼라 곱셈을 검사한다. **이 테스트가 문항 모범답안의 기술적 정합성을 자동 증명하는 것은 아니다.**
+- `NetworkContentAuditContractTest`: 127 Concept 및 383 Question 키·문항 형식·Concept 연결·선택지·정답 매칭, 중복 Question 문장, **Concept Reference URL의 존재·HTTPS·URI 호스트 문법**을 구조적으로 확인하고 ECDHE 스칼라 곱셈·RFC 9846 KeyShare 재사용 금지를 회귀 검사한다. HTTPS URL의 **실제 접속 가능성·문서 내용·관련 주장에 대한 적합성은 이 테스트만으로 검증할 수 없다.** **이 테스트가 문항 모범답안의 기술적 정합성을 자동 증명하는 것은 아니다.**
 - 기존 `NetworkDiagramFullPackIntegrationTest`: 53개 도식 변경의 격리 PostgreSQL Apply/재import, 이력 보존과 Concept HTTP 조회는 이미 성공한 검증이다. 학습 콘텐츠의 모든 모범답안 검수와는 다른 경계다.
 - **남음:** 127 Concept의 모든 Reference URL 현재 접근성·해당 주장과의 일대일 대조; 254개 서술·시나리오 모범답안 가운데 기초 어휘/중복 검사와 고위험 사례 표준 대조만 이행한 상태이므로 **각 항목의 최종 독립 기술 검증·난도 최종 승인**; SHORT_ANSWER 분포 개선 여부 판단; 실제 Production 콘텐츠 동기화.
 - **정책:** 이 체크포인트만으로 Issue #278 또는 PR #298을 완료·병합 처리하지 않는다. 운영 DB 쓰기·배포·자동 병합 금지.
