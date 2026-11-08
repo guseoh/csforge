@@ -39,7 +39,7 @@ function NetworkAreaPreview() {
             <h3>{i+1}-{j+1}. {spec.title}</h3>
             <LearningVisualization source={JSON.stringify({
               version:1,type:'network-area',example:id,title:spec.title,
-              description:spec.lead,
+              description:'학습 목적에 맞는 개념 관계를 고정 예제로 보여줍니다.',
             })}/>
           </section>
         })}

@@ -41,7 +41,9 @@ function TextBox({ x, y, width, height, head, detail, selected=false }: {
     <rect className={selected ? 'network-area__rect network-area__rect--selected' : 'network-area__rect'}
       x={x} y={y} width={width} height={height} />
     <Copy value={head} x={x+width/2} y={y+23} color="text" size="body" limit={Math.floor(width/13)} />
-    {detail && <Copy value={detail} x={x+width/2} y={y+45} color="muted" size="small" limit={Math.floor(width/12)} />}
+    {detail && <Copy value={detail} x={x+width/2}
+      y={y+(height>=110 && wrap(head,Math.floor(width/13)).length>1 ? 70 : 45)}
+      color="muted" size="small" limit={Math.floor(width/12)} />}
   </g>
 }
 
@@ -118,14 +120,14 @@ function draw(spec: AreaDiagram, marker: string) {
       </g>}
     }
     case 'sequence': {
-      const height=130+spec.messages.length*84
+      const height=145+spec.messages.length*108
       return {height, content:<g>
         <Copy value={spec.parties[0]} x={152} y={37} color="text" size="heading"/>
         <Copy value={spec.parties[1]} x={748} y={37} color="text" size="heading"/>
         <line className="network-area__lifeline" x1={152} x2={152} y1={66} y2={height-22}/>
         <line className="network-area__lifeline" x1={748} x2={748} y1={66} y2={height-22}/>
         {spec.messages.map((msg,i)=>{
-          const y=119+i*84,from=msg.from==='left'?165:735,to=msg.from==='left'?735:165
+          const y=121+i*108,from=msg.from==='left'?165:735,to=msg.from==='left'?735:165
           return <g key={i}>
             <Copy value={msg.text} x={450} y={y-23} color="text" size="body" limit={52}/>
             <line className="network-area__arrow" x1={from} x2={to} y1={y} y2={y}

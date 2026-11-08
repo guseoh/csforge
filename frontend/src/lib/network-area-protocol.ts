@@ -54,7 +54,7 @@ pki: {
 'tls-handshake': {
  layout:'sequence',title:'TLS 1.3 서버 인증 핸드셰이크',lead:'키 합의, 서버 인증서 검증, Finished 확인 후 보호된 HTTP 데이터를 전달합니다.',
  parties:['클라이언트','서버'],
- messages:[{from:'left',text:'ClientHello',detail:'버전·암호군·key_share 제안'},{from:'right',text:'ServerHello',detail:'선택값·key_share 응답'},{from:'right',text:'암호화된 서버 handshake flight',detail:'EncryptedExtensions · Certificate · CertificateVerify · Finished'},{from:'left',text:'Finished',detail:'핸드셰이크 transcript·키 상태 확인'},{from:'left',text:'보호된 애플리케이션 데이터',detail:'TLS 레코드로 HTTP 등 상위 데이터 전달'}],
+ messages:[{from:'left',text:'ClientHello',detail:'버전·암호군·key_share 제안'},{from:'right',text:'ServerHello',detail:'선택값·key_share 응답'},{from:'right',text:'암호화된 서버 handshake flight',detail:'EncryptedExtensions · Certificate · CertificateVerify · Finished'},{from:'left',text:'클라이언트 Finished',detail:'핸드셰이크 transcript·키 상태 확인'},{from:'left',text:'보호된 애플리케이션 데이터',detail:'TLS 레코드로 HTTP 등 상위 데이터 전달'}],
  note:'0-RTT 재개와 클라이언트 인증은 제외한 일반적인 TLS 1.3 흐름입니다. CertificateVerify와 Finished는 다른 검증입니다.'
 },
 'tls-termination': {

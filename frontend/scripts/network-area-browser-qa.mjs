@@ -42,6 +42,10 @@ try {
           pageOverflow:document.documentElement.scrollWidth-window.innerWidth,
           clipped:labels.filter(label=>label.left < -2 || label.right > rect.width+2 ||
             label.top < -3 || label.bottom > rect.height+3),
+          overlaps:labels.flatMap((a,i)=>labels.slice(i+1).filter(b=>
+            Math.min(a.right,b.right)-Math.max(a.left,b.left)>4 &&
+            Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top)>4
+          ).map(b=>[a.text,b.text])),
           figureBackground:getComputedStyle(element.closest('figure')).backgroundColor,
         }
       })
@@ -49,6 +53,7 @@ try {
       assert.ok(bounds.pageOverflow<=2,'page overflow: '+id)
       assert.equal(bounds.figureBackground,theme==='dark'?'rgb(24, 24, 24)':'rgb(255, 255, 255)')
       assert.equal(bounds.clipped.length,0,'text clipped: '+id+' '+JSON.stringify(bounds.clipped.slice(0,3)))
+      assert.equal(bounds.overlaps.length,0,'text overlaps: '+id+' '+JSON.stringify(bounds.overlaps.slice(0,3)))
       await figure.screenshot({path:resolve(dir,id+'-'+theme+'-'+width+'.png'),animations:'disabled'})
       checks.push({id,layout,theme,width,result:'PASS'})
     }
