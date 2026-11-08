@@ -76,7 +76,8 @@ export function TcpSlidingWindowStudyVisual() {
       <div className="study-visual__explanation" data-tcp-explanation>
         <p className="study-visual__key">ACK 1200은 다음에 기대하는 바이트가 1200이라는 뜻입니다.</p>
         <p>1000~1199 B는 누적 확인, 1200~1399 B는 전송 후 확인 대기, 1400~1599 B는 새로 전송 가능합니다.</p>
-        <p className="study-visual__note">각 칸 100 B · 수신 윈도우(rwnd) 400 B 유지 · 혼잡 윈도우(cwnd) ≥ 400 B · 손실·재전송 없음. 점선 = 송신 윈도우, 빗금 = 누적 확인된 바이트.</p>
+        <p className="study-visual__note">각 칸 100 B · 수신 윈도우(rwnd) 400 B 유지 · 혼잡 윈도우(cwnd) ≥ 400 B · 손실·재전송 없음.</p>
+        <p className="study-visual__note">그림 표시: 점선은 송신 윈도우의 범위, 빗금은 누적 확인된 바이트입니다.</p>
       </div>
     </div>
   </details>
