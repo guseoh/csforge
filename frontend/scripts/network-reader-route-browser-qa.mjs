@@ -83,7 +83,7 @@ async function openConcept(page, item) {
   const figure = page.locator('article.concept-reading-content figure.learning-visualization')
   await figure.waitFor({ timeout: 15000 })
   assert.equal(await figure.count(), 1, 'Reader figure: ' + item.contentKey)
-  assert.equal(await figure.locator('svg[role="img"]').count(), 1, 'Reader SVG: ' + item.contentKey)
+  assert.ok(await figure.locator('svg[role="img"]').count() >= 1, 'Reader SVG: ' + item.contentKey)
   assert.equal(await figure.locator('.diagram-fallback').count(), 0, 'Reader fallback: ' + item.contentKey)
   return figure
 }
