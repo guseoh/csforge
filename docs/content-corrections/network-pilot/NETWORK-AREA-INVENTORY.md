@@ -76,7 +76,7 @@
 
 각 묶음은 RFC/공식 문서 검증 → 작성 → Java/JS 콘텐츠 계약 테스트 → Chromium 라이트/다크 데스크톱 QA → 전체 Concept/Question 검수 → 격리 Import 검증의 단계를 따른다. 운영 데이터·개인 이력은 테스트용으로 사용하지 않는다. Issue #278의 Network 전체 리뷰 계약과 연결한다.
 
-현재 PR #298은 대표 5개 시각화의 **구현 완료, 전체 Network 도식 영역 미완료** 범위로 유지한다.
+PR #298은 53개 DIAGRAM 지정 Concept의 도식 구현을 모두 포함한다. 자동화된 렌더링 검증 결과와 실제 Reader·격리 Import 검증 결과는 최신 PR HEAD를 기준으로 별도 판정하며, 병합·Production 쓰기는 자동으로 진행하지 않는다.
 
 ## 49개 일괄 구현 검증 경계
 

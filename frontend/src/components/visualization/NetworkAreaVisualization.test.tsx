@@ -26,6 +26,8 @@ describe('Network & HTTP 49 authored diagram contracts', () => {
     const html=renderToStaticMarkup(<LearningVisualization source={payload(example)}/>)
     const spec=networkAreaSpecs[example]
     expect(html).toContain('data-network-area="'+example+'"')
+    expect(html).toContain('learning-visualization--network-area')
+    expect(html).not.toContain('개념 구조와 상태 확인')
     expect(html).toContain('data-network-layout="'+spec.layout+'"')
     expect(html).toContain('role="img"')
     expect(html).toContain('<title')

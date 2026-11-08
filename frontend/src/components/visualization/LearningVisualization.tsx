@@ -149,8 +149,9 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
 export function LearningVisualization({ source }: { source: string }) {
   const data = parseVisualization(source)
   if (!data) return <DiagramFallback />
-  return <figure className={`learning-visualization${(data.type.startsWith('java-') || data.type === 'static-flow') ? ' java-visualization' : ''}`} data-java-pass={data.type === 'java-pass-by-value' ? 'true' : undefined}>
-    <figcaption><strong>{data.title}</strong><p>{data.description}</p></figcaption>
+  const hasEmbeddedExplanation = data.type === 'network-area'
+  return <figure className={`learning-visualization${(data.type.startsWith('java-') || data.type === 'static-flow') ? ' java-visualization' : ''}${hasEmbeddedExplanation ? ' learning-visualization--network-area' : ''}`} data-java-pass={data.type === 'java-pass-by-value' ? 'true' : undefined}>
+    <figcaption><strong>{data.title}</strong>{!hasEmbeddedExplanation && <p>{data.description}</p>}</figcaption>
     <DiagramErrorBoundary key={source} description={data.description}><RegisteredDiagram key={source} data={data} /></DiagramErrorBoundary>
   </figure>
 }
