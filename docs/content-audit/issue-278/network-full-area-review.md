@@ -37,7 +37,7 @@ Network의 Concept Markdown **127개**와 Question JSON **383개**(15개 Topic �
 3. **시나리오 정보 부족(중간):** `safe-method.q3`에 링크 프리뷰의 위험한 GET을, `flow-control.q3`에 수신 윈도 0 vs 혼잡 윈도 여유를, `key-agreement.q3`에 중간자의 독립 ECDHE 연결 두 개를 명시해 단순 정의 반복에서 인과관계 검증 문제로 다듬었다.
 4. **선택지 해설 빈약(낮음):** `expires.q1`, `304.q1`, `x-forwarded.q1`의 선택지 해설이 정답 문구만 반복하거나 너무 짧았으므로 RFC 캐시 우선순위, 304 본문 부재, 전달 헤더의 책임을 각각 구체적으로 썼다.
 
-수정된 **14개 고유 Question의 contentKey, QuestionType, difficulty, 정답 키와 Concept 연결**은 유지했다(첫 배치 7개 + 두 번째 배치 3개 + 세 번째 배치 4개). Canonical Markdown/JSON 소스 외의 개인 데이터나 운영 DB는 수정하지 않았다.
+수정된 **15개 고유 Question의 contentKey, QuestionType, difficulty, 정답 키와 Concept 연결**은 유지했다(첫 배치 7개 + 두 번째 배치 3개 + 세 번째 배치 4개 + 중복 검토 추가 1개). Canonical Markdown/JSON 소스 외의 개인 데이터나 운영 DB는 수정하지 않았다.
 
 ### 2026-11-08 추가 심화 감사 배치
 
@@ -57,6 +57,8 @@ Network의 Concept Markdown **127개**와 Question JSON **383개**(15개 Topic �
 - **HTTP 415/422 의미:** `http-status.415-422.q2`는 `application/xml` 불지원(415)과 정상 JSON의 도메인 의미 위반(422)을 구체적인 입력으로 비교하고, 단순 JSON 파싱 실패(400 등)를 별도로 구분한다.
 
 교정한 Question이 기존 Concept 설명을 초과하지 않도록 `get-head.md`에 HEAD의 `Content-Length` 해석, `409-412.md`에 강한 ETag와 원자성·규격상 특례, `http2-multiplexing.md`에 스트림/연결 윈도와 `DATA` 처리 조건을 함께 보강했다. 이 Concept 변경은 연결된 stable `contentKey`·level·공개 순서를 유지한다.
+
+- **캐시 문항 중복 해소:** `http-cache.cache-control.q3`는 `Authorization`이 있는 응답의 **명시적 공유 캐시 허용(`public`)** 위험을 평가하도록 유지하고, `http-cache.private-shared-cache.q3`는 **쿠키 기반 로그인·`Set-Cookie`·CDN cache-everything** 조합에서 개인 응답이 공유 저장되는 실패를 묻도록 변경했다. [RFC 9111 §7.3](https://www.rfc-editor.org/rfc/rfc9111.html#section-7.3)은 `Set-Cookie`가 존재한다는 사실만으로 응답이 캐시 금지되는 것은 아니라고 명시한다. 이로써 두 HARD 문항은 원인·학습 목표가 다르며, 원본 Concept도 이 구분을 이미 설명한다.
 
 주제별 문제 난도·중복 비교와 RFC 대비 검사는 **정합성에 영향을 주는 발견 건만 소수 교정**하는 접근이다. 전체 254개 모범답안 각각의 기술 주장을 모두 개별 RFC 문단에 대조했다는 결론으로 비약하지 않는다.
 
