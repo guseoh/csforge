@@ -53,10 +53,8 @@ function TcpWindowSnapshot({ ackReceived }: { ackReceived: boolean }) {
   </svg>
 }
 
-export function TcpSlidingWindowStudyVisual() {
-  return <details className="study-visual" open data-study-visual="tcp-sliding-window">
-    <summary className="study-visual__summary"><span>데모</span><span className="study-visual__chevron" aria-hidden="true" /></summary>
-    <div className="study-visual__content">
+export function TcpSlidingWindowStudyVisual({ embedded = false }: { embedded?: boolean } = {}) {
+  const contents = <div className="study-visual__content">
       <p className="study-visual__instruction">100B씩 전송한 데이터를 누적 ACK 수신 전후로 비교합니다.</p>
       <div className="study-visual__tcp-sequence">
         <section className="study-visual__panel">
@@ -80,5 +78,9 @@ export function TcpSlidingWindowStudyVisual() {
         <p className="study-visual__note">그림 표시: 점선은 송신 윈도우의 범위, 빗금은 누적 확인된 바이트입니다.</p>
       </div>
     </div>
+  if (embedded) return <div className="study-visual study-visual--embedded" data-study-visual="tcp-sliding-window">{contents}</div>
+  return <details className="study-visual" open data-study-visual="tcp-sliding-window">
+    <summary className="study-visual__summary"><span>데모</span><span className="study-visual__chevron" aria-hidden="true" /></summary>
+    {contents}
   </details>
 }

@@ -22,7 +22,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "SameSite 등 최신 쿠키 동작을 다루지만 2026-10-17 현재 발행 전의 변경 가능한 초안이다."
+    recommendation: "SameSite 등 최신 쿠키 동작을 다루는 변경 가능한 Internet-Draft이다. 2026-11-08에 발행 상태를 확인했으며, 읽을 때 새 정식 RFC 발행 여부를 다시 점검한다."
     displayOrder: 2
     relationNote: "6265bis 초안의 5.2 same-site/cross-site, 5.6.7 SameSite, 5.8 반환 모델을 확인한다. 정식 RFC가 아닌 작업 문서임을 구분한다."
 ---
@@ -36,12 +36,14 @@ references:
 
 `Secure`는 HTTPS 같은 보안 전송을 사용하는 요청에만 쿠키를 보내도록 제한한다. `HttpOnly`는 스크립트 인터페이스를 통한 쿠키 접근을 제한한다. `SameSite`는 동일 사이트 요청인지 교차 사이트 요청인지에 따라 쿠키 전송 조건을 제한한다. 각 속성의 보호 대상은 서로 다르므로 하나가 나머지 역할을 대신하지 않는다.
 
-```text
-저장된 쿠키
-   ↓ Domain과 Path 확인
-   ↓ Secure 조건 확인
-   ↓ SameSite 사이트 문맥 확인
-조건을 만족하는 요청에 Cookie 필드로 포함
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "쿠키의 전송 범위와 SameSite",
+  "description": "프로토콜 상태·요청 경계와 이전·이후 결과를 고정 예제로 확인합니다.",
+  "example": "cookie-scope"
+}
 ```
 
 일반적인 쿠키 범위에는 포트가 포함되지 않는다. 같은 호스트에서 443과 8443 포트를 쓴다는 이유만으로 쿠키가 서로 다른 보안 경계로 분리되지는 않는다.

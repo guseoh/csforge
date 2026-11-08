@@ -27,11 +27,14 @@ references:
 
 URL에 `api.example.com` 같은 호스트 이름이 들어 있다면 실제 IP 패킷을 보내기 전에 **어느 IP 주소로 연결할지** 알아야 한다. DNS는 이 호스트 이름을 A·AAAA 레코드 같은 IP 주소 후보로 해석한다.
 
-```text
-api.example.com
-      ↓ DNS
-203.0.113.10
-2001:db8::10
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "DNS 조회에서 라우팅까지",
+  "description": "메시지 전달의 계층과 프로토콜 의미를 고정 예제로 비교합니다.",
+  "example": "dns-to-route"
+}
 ```
 
 DNS가 여러 주소를 반환하면 클라이언트와 운영체제는 주소 패밀리, 연결 정책, 실제 연결 성공 여부 등을 고려해 사용할 목적지를 선택할 수 있다. 따라서 `DNS 응답 하나 = 항상 실제 연결 주소 하나`라고 단순화하면 안 된다.

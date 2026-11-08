@@ -19,12 +19,14 @@ references:
 
 PUT은 요청 콘텐츠에 담긴 표현(representation)이 나타내는 상태로 **대상 자원의 현재 상태를 생성하거나 대체해 달라**고 요청하는 메서드다. POST가 대상 자원에 처리 방법을 맡기는 것과 달리, PUT에서는 클라이언트가 어느 대상 URI에 어떤 상태를 적용하려는지 알고 있다는 점이 중요하다.
 
-```text
-변경 전: /profiles/42의 표현 상태 = {"nickname":"old"}
-                     │
-                     └─ PUT /profiles/42 {"nickname":"new"}
-변경 후: /profiles/42의 표현 상태 = {"nickname":"new"}
-반복   : 같은 PUT ───────────────→ 원하는 대상 상태는 그대로
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "PUT과 전체 표현 교체",
+  "description": "메시지 전달의 계층과 프로토콜 의미를 고정 예제로 비교합니다.",
+  "example": "put"
+}
 ```
 
 이 전후 관계는 대상 자원의 원하는 상태를 대체한다는 의미를 보여 준다. 서버가 관리하는 내부 필드나 저장 방식을 요청 JSON 그대로 덮어쓴다는 뜻은 아니다.

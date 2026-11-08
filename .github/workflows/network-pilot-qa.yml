@@ -1,0 +1,80 @@
+name: Network Pilot Pack Reader QA
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/src/components/visualization/NetworkCoreVisualization*'
+      - 'frontend/src/components/visualization/network-core-editorial.css'
+      - 'frontend/src/lib/network-core-model.ts'
+      - 'frontend/src/lib/network-area-*.ts'
+      - 'frontend/src/components/visualization/NetworkAreaVisualization*'
+      - 'frontend/src/components/visualization/network-area-editorial.css'
+      - 'frontend/src/network-area-preview.tsx'
+      - 'frontend/network-area-preview.html'
+      - 'frontend/scripts/network-area-browser-qa.mjs'
+      - 'frontend/scripts/network-reader-route-browser-qa.mjs'
+      - 'frontend/src/lib/learning-visualization.ts'
+      - 'frontend/src/components/visualization/LearningVisualization.tsx'
+      - 'frontend/src/components/visualization/TcpSlidingWindowStudyVisual.tsx'
+      - 'frontend/src/components/visualization/study-visual-pilots.css'
+      - 'frontend/src/network-pilot-preview.tsx'
+      - 'frontend/network-pilot-preview.html'
+      - 'frontend/scripts/network-pilot-browser-qa.mjs'
+      - 'content/network-http/**'
+      - 'backend/src/main/java/com/guseoh/csforge/importcontent/validation/LearningVisualizationValidator.java'
+      - '.github/workflows/network-pilot-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  visual-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - name: Install frontend and Chromium
+        working-directory: frontend
+        run: |
+          npm ci
+          npm install --no-save --ignore-scripts playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Typecheck, tests and build
+        working-directory: frontend
+        run: |
+          npm run lint
+          npm run test
+          npm run build
+      - name: Capture five figures and all interactive states
+        working-directory: frontend
+        run: |
+          mkdir -p ../artifacts/network-pilot-pack
+          (npm run dev -- --host 127.0.0.1 --port 5173 > ../artifacts/network-pilot-pack/vite.log 2>&1) &
+          for i in $(seq 1 35); do
+            if curl --fail --silent http://127.0.0.1:5173/network-pilot-preview.html > /dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/network-pilot-browser-qa.mjs
+          node scripts/network-area-browser-qa.mjs
+          node scripts/network-reader-route-browser-qa.mjs
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: network-pilot-pack-qa
+          path: |
+            artifacts/network-pilot-pack/
+            artifacts/network-area-audit/
+            artifacts/network-reader-route-audit/
+          retention-days: 14
+          if-no-files-found: warn

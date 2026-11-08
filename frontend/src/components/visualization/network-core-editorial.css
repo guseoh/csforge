@@ -1,0 +1,35 @@
+/* Network Pilot Pack: quiet textbook figures using the Reader's monochrome tokens. */
+.network-core-editorial { color: var(--diagram-text); min-width: 0; max-width: 100%; }
+.network-core-editorial__intro { color: var(--diagram-muted); margin: 6px 0 16px; font-size: 16px; line-height: 1.55; }
+.network-core-editorial__svg { display:block; width: 100%; max-width: 840px; height: auto; background: transparent; overflow: visible; }
+.network-core-editorial__scroll { max-width: 100%; overflow-x: auto; }
+.network-core-editorial__scroll .network-core-editorial__svg { min-width: 650px; }
+.network-core-editorial__section-label { font-size: 16px; font-weight: 600; fill: var(--diagram-text); }
+.network-core-editorial__text { font-size: 16px; font-weight: 500; fill: var(--diagram-text); }
+.network-core-editorial__minor { font-size: 13px; fill: var(--diagram-muted); }
+.network-core-editorial__key { font-size: 18px; font-weight: 650; fill: var(--diagram-text); }
+.network-core-editorial__party { font-size: 17px; font-weight: 600; fill: var(--diagram-text); }
+.network-core-editorial__state { font-size: 15px; font-family: ui-monospace, Consolas, monospace; fill: var(--diagram-text); }
+.network-core-editorial__node { fill: var(--diagram-surface); stroke: var(--diagram-line); stroke-width: 1.4; }
+.network-core-editorial__segment { fill: var(--diagram-node); stroke: var(--diagram-line); stroke-width: 1.4; }
+.network-core-editorial__line { stroke: var(--diagram-line); fill: none; stroke-width: 1.5; }
+.network-core-editorial__line--active { stroke: var(--diagram-text); stroke-width: 2.6; }
+.network-core-editorial__line--dashed, .network-core-editorial__lifeline { stroke-dasharray: 5 5; }
+.network-core-editorial__lifeline { stroke: var(--diagram-line); stroke-width: 1.4; }
+.network-core-editorial__tip { fill: var(--diagram-line); }
+.network-core-editorial__return { stroke: var(--diagram-line); stroke-dasharray: 4 5; fill: none; stroke-width: 1.2; }
+.network-core-editorial__return-tip { fill: var(--diagram-line); }
+.network-core-editorial__message { font: 500 15px/1.2 ui-monospace, Consolas, monospace; fill: var(--diagram-text); }
+.network-core-editorial__code-pair { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 20px; margin: 16px 0; }
+.network-core-editorial__code-pair pre { font: 13px/1.5 ui-monospace,Consolas,monospace; background: var(--diagram-node); color: var(--diagram-text); padding: 12px; margin: 0; overflow-x: auto; }
+.network-core-editorial__code-pair code { font: inherit; color: inherit; background: none; }
+.network-core-editorial__note { margin-top: 14px; color: var(--diagram-muted); font-size: 14px; line-height: 1.55; }
+.network-core-editorial__reading { margin: 12px 0; min-height: 80px; display: grid; gap: 6px; }
+.network-core-editorial__reading p { margin: 0; font-size: 16px; line-height: 1.55; }
+.network-core-editorial__reading strong { font-size: 17px; }
+.network-core-editorial .diagram-controls button { border-radius: 0; }
+.learning-visualization .network-core-editorial__svg text { font-family: var(--font-sans, system-ui, sans-serif); }
+.learning-visualization .network-core-editorial__svg .network-core-editorial__state,
+.learning-visualization .network-core-editorial__svg .network-core-editorial__message { font-family: ui-monospace,Consolas,monospace; }
+@media (max-width: 720px) { .network-core-editorial__code-pair { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .network-core-editorial, .network-core-editorial * { transition: none; animation: none; } }

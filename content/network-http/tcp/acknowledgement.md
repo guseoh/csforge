@@ -21,6 +21,16 @@ references:
 
 TCP의 ACK 번호(acknowledgment number)는 수신 측이 **다음에 받기를 기대하는 시퀀스 번호**를 나타낸다. 일반적인 누적 ACK에서는 이 값보다 앞선 연속된 바이트 범위를 수신했다는 뜻이다.
 
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "확인 응답(ACK)",
+  "description": "개념의 기술적 관계와 상태를 검증된 고정 예제로 보여줍니다.",
+  "example": "acknowledgement"
+}
+```
+
 예를 들어 시퀀스 번호 1000부터 1499까지 연속된 500바이트를 받았다면 다음 기대 위치는 1500이다.
 
 ```text

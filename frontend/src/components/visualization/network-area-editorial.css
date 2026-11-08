@@ -1,0 +1,34 @@
+/* Editorial layouts for verified, immutable Network teaching examples. */
+.learning-visualization.learning-visualization--network-area { padding-inline: 18px; }
+.network-area { color:var(--diagram-text); font:400 16px/1.55 var(--font-sans,system-ui,sans-serif); max-width:100%;min-width:0; }
+.network-area__lead {font-size:16px;color:var(--diagram-muted);margin:4px 0 18px;}
+.network-area__scroll {max-width:100%;overflow-x:auto;scrollbar-width:thin; }
+.network-area__scroll:focus-visible {outline:2px solid var(--diagram-text);outline-offset:2px;}
+.network-area__svg {display:block;width:100%;max-width:900px;min-width:675px;height:auto;overflow:visible;background:transparent;margin:0 auto;}
+.learning-visualization .network-area__svg text {font-family:var(--font-sans,system-ui,sans-serif);}
+.network-area__text {fill:var(--diagram-text);}
+.network-area__muted,.network-area__label {fill:var(--diagram-muted);}
+.network-area__body {font-size:16px;font-weight:500;}
+.network-area__small {font-size:14px;font-weight:400;}
+.network-area__heading {font-size:18px;font-weight:600;}
+.network-area__rect {fill:var(--diagram-surface);stroke:var(--diagram-line);stroke-width:1.25;}
+.network-area__rect--selected {stroke:var(--diagram-text);stroke-width:1.8;}
+.network-area__arrow {fill:none;stroke:var(--diagram-line);stroke-width:1.6;}
+.network-area__tip {fill:var(--diagram-line);}
+.network-area__separator {stroke:var(--diagram-line);stroke-width:1;stroke-dasharray:5 5;}
+.network-area__dot {fill:var(--diagram-text);}
+.network-area__header {fill:var(--diagram-node);stroke:var(--diagram-line);stroke-width:1.25;}
+.network-area__cell {fill:var(--diagram-surface);stroke:var(--diagram-line);stroke-width:1;}
+.network-area__cell--selected {fill:var(--diagram-node);stroke:var(--diagram-text);stroke-width:1.7;}
+.network-area__lifeline {stroke:var(--diagram-line);stroke-width:1.25;stroke-dasharray:5 5;}
+.network-area__note {margin:12px 0 0;font-size:14px;color:var(--diagram-muted);line-height:1.6;}
+@media (prefers-reduced-motion: reduce) {.network-area * {animation:none;transition:none;}}
+
+/* Give desktop Reader diagrams the full central reading track, not a clipped text measure. */
+@media (min-width: 1200px) {
+  .concept-reading-content .learning-visualization.learning-visualization--network-area {
+    width: calc(100% + 76px);
+    max-width: none;
+    margin-inline: -38px;
+  }
+}

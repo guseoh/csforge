@@ -21,12 +21,14 @@ references:
 
 GET 또는 HEAD에서 ETag가 일치하면 서버는 표현 콘텐츠를 다시 보내지 않고 `304 Not Modified`를 반환할 수 있다. 일치하지 않으면 현재 표현을 일반적인 `200 OK` 응답으로 반환한다.
 
-```text
-If-None-Match: "v7"
-        ↓
-현재 ETag == "v7" ?
-   예 → 304, 저장된 표현 재사용
-   아니오 → 200 + 현재 표현
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "If-None-Match 조건부 요청",
+  "description": "프로토콜 상태·요청 경계와 이전·이후 결과를 고정 예제로 확인합니다.",
+  "example": "if-none-match"
+}
 ```
 
 ### GET/HEAD와 상태 변경 메서드는 조건 실패 결과가 다르다

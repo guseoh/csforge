@@ -633,5 +633,305 @@
     "name": "java-api binary-evolution",
     "valid": true,
     "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"binary-evolution\", \"title\": \"소스 재컴파일과 기존 바이너리 링크\", \"description\": \"새 소스 컴파일과 기존 class를 새 library에 연결하는 검사는 다릅니다. 링크 성공도 의미 호환성을 보장하지 않습니다.\"}"
+  },
+  {
+    "name": "network-core-http-over-tcp",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"http-over-tcp\"}"
+  },
+  {
+    "name": "network-core-dns-iterative",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"dns-iterative\"}"
+  },
+  {
+    "name": "network-core-tcp-teardown",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"tcp-teardown\"}"
+  },
+  {
+    "name": "network-core-tcp-sliding-window",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"tcp-sliding-window\"}"
+  },
+  {
+    "name": "network-core-unknown",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"execute-http\"}"
+  },
+  {
+    "name": "network-core-extra-node",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"dns-iterative\",\"svg\":\"<svg onload=alert(1) />\"}"
+  },
+  {
+    "name": "network-core-script",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"tcp-teardown\",\"script\":\"alert(1)\"}"
+  },
+  {
+    "name": "network-core-missing",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"도식\",\"description\":\"설명\",\"type\":\"network-core\"}"
+  },
+  {
+    "name": "network-area-url-components",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"url-components\"}"
+  },
+  {
+    "name": "network-area-dns-to-route",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"dns-to-route\"}"
+  },
+  {
+    "name": "network-area-tls-before-http",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"tls-before-http\"}"
+  },
+  {
+    "name": "network-area-http-request-delivery",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"http-request-delivery\"}"
+  },
+  {
+    "name": "network-area-proxy-gateway-path",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"proxy-gateway-path\"}"
+  },
+  {
+    "name": "network-area-header-body",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"header-body\"}"
+  },
+  {
+    "name": "network-area-content-negotiation",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"content-negotiation\"}"
+  },
+  {
+    "name": "network-area-put",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"put\"}"
+  },
+  {
+    "name": "network-area-protocol-idempotency-boundary",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"protocol-idempotency-boundary\"}"
+  },
+  {
+    "name": "network-area-redirect-status",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"redirect-status\"}"
+  },
+  {
+    "name": "network-area-429",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"429\"}"
+  },
+  {
+    "name": "network-area-500-502-503-504",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"500-502-503-504\"}"
+  },
+  {
+    "name": "network-area-http11-persistent",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"http11-persistent\"}"
+  },
+  {
+    "name": "network-area-http11-pipelining",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"http11-pipelining\"}"
+  },
+  {
+    "name": "network-area-http2-stream",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"http2-stream\"}"
+  },
+  {
+    "name": "network-area-quic",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"quic\"}"
+  },
+  {
+    "name": "network-area-transport-head-of-line",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"transport-head-of-line\"}"
+  },
+  {
+    "name": "network-area-if-none-match",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"if-none-match\"}"
+  },
+  {
+    "name": "network-area-304",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"304\"}"
+  },
+  {
+    "name": "network-area-intermediary-cache",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"intermediary-cache\"}"
+  },
+  {
+    "name": "network-area-cookie-scope",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"cookie-scope\"}"
+  },
+  {
+    "name": "network-area-proxy",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"proxy\"}"
+  },
+  {
+    "name": "network-area-reverse-proxy",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"reverse-proxy\"}"
+  },
+  {
+    "name": "network-area-trusted-proxy-boundary",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"trusted-proxy-boundary\"}"
+  },
+  {
+    "name": "network-area-cdn-http-intermediary",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"cdn-http-intermediary\"}"
+  },
+  {
+    "name": "network-area-link-network-transport-application",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"link-network-transport-application\"}"
+  },
+  {
+    "name": "network-area-encapsulation",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"encapsulation\"}"
+  },
+  {
+    "name": "network-area-decapsulation",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"decapsulation\"}"
+  },
+  {
+    "name": "network-area-switch-forwarding",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"switch-forwarding\"}"
+  },
+  {
+    "name": "network-area-broadcast-domain",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"broadcast-domain\"}"
+  },
+  {
+    "name": "network-area-arp",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"arp\"}"
+  },
+  {
+    "name": "network-area-default-gateway",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"default-gateway\"}"
+  },
+  {
+    "name": "network-area-prefix-subnet",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"prefix-subnet\"}"
+  },
+  {
+    "name": "network-area-routing-table",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"routing-table\"}"
+  },
+  {
+    "name": "network-area-router-forwarding",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"router-forwarding\"}"
+  },
+  {
+    "name": "network-area-connection-tuple",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"connection-tuple\"}"
+  },
+  {
+    "name": "network-area-nat",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"nat\"}"
+  },
+  {
+    "name": "network-area-nat-mapping",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"nat-mapping\"}"
+  },
+  {
+    "name": "network-area-domain-hierarchy",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"domain-hierarchy\"}"
+  },
+  {
+    "name": "network-area-cname",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"cname\"}"
+  },
+  {
+    "name": "network-area-dns-failure",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"dns-failure\"}"
+  },
+  {
+    "name": "network-area-acknowledgement",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"acknowledgement\"}"
+  },
+  {
+    "name": "network-area-congestion-control",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"congestion-control\"}"
+  },
+  {
+    "name": "network-area-tcp-head-of-line",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"tcp-head-of-line\"}"
+  },
+  {
+    "name": "network-area-delivery-order-guarantee",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"delivery-order-guarantee\"}"
+  },
+  {
+    "name": "network-area-application-reliability",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"application-reliability\"}"
+  },
+  {
+    "name": "network-area-pki",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"pki\"}"
+  },
+  {
+    "name": "network-area-tls-handshake",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"tls-handshake\"}"
+  },
+  {
+    "name": "network-area-tls-termination",
+    "valid": true,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"네트워크 개념 구조\",\"description\":\"시각화로 상태 및 전달 책임을 설명합니다.\",\"example\":\"tls-termination\"}"
+  },
+  {
+    "name": "network-area-unrecognized",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"도식\",\"description\":\"설명\",\"example\":\"arbitrary-script\"}"
+  },
+  {
+    "name": "network-area-extra-svg",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"도식\",\"description\":\"설명\",\"example\":\"arp\",\"svg\":\"<svg onload='bad'/>\"}"
+  },
+  {
+    "name": "network-area-no-example",
+    "valid": false,
+    "source": "{\"version\":1,\"type\":\"network-area\",\"title\":\"도식\",\"description\":\"설명\"}"
   }
 ]

@@ -28,6 +28,16 @@ references:
 
 HTTPS로 HTTP 데이터를 보호하려면 클라이언트와 서버가 먼저 **어떤 TLS 조건으로 통신할지 합의하고, 서로 같은 키 재료를 만들며, 필요한 상대 인증을 끝내야 한다.** 이 준비 과정이 TLS 핸드셰이크다.
 
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "TLS 핸드셰이크",
+  "description": "개념의 기술적 관계와 상태를 검증된 고정 예제로 보여줍니다.",
+  "example": "tls-handshake"
+}
+```
+
 TLS 1.3의 일반적인 인증서 기반 흐름을 단순화하면 다음과 같다.
 
 ```text

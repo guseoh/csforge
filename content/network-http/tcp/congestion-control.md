@@ -23,18 +23,14 @@ TCP 혼잡 제어(congestion control)는 **송신 측이 네트워크 경로에 
 
 송신 측은 혼잡 윈도(congestion window, `cwnd`) 같은 상태를 유지하고 ACK 진행과 손실 신호 등을 바탕으로 얼마나 많은 데이터를 네트워크에 내보낼지 조절한다.
 
-```text
-ACK가 안정적으로 진행
-      ↓
-더 전송할 여지가 있다고 판단
-      ↓
-cwnd 증가 가능
-
-손실·혼잡 신호
-      ↓
-전송량이 과할 가능성
-      ↓
-cwnd 감소
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "TCP 혼잡 제어",
+  "description": "개념의 기술적 관계와 상태를 검증된 고정 예제로 보여줍니다.",
+  "example": "congestion-control"
+}
 ```
 
 ### `rwnd`와 `cwnd`는 같은 윈도가 아니다
