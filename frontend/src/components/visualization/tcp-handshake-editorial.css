@@ -101,3 +101,10 @@
 @media (prefers-reduced-motion: reduce) {
   .tcp-handshake-editorial, .tcp-handshake-editorial * { animation: none; transition: none; }
 }
+
+/* Keep yet-to-be-sent protocol stages visible but clearly distinct from real messages. */
+.learning-visualization .tcp-handshake-editorial__upcoming {
+  fill: var(--diagram-muted);
+  font-size: 14px;
+  opacity: .62;
+}

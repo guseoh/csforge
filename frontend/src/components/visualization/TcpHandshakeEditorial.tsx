@@ -34,7 +34,7 @@ export function TcpHandshakeDiagram({ data }: { data: VisualizationOf<'tcp-hands
       클라이언트와 서버의 상태는 메시지의 전송 시점과 수신 시점에 따라 달라집니다.
     </p>
     <div className="tcp-handshake-editorial__scroll" role="region" tabIndex={0} aria-label="TCP 메시지 교환 시퀀스 도식, 좁은 화면에서 가로 스크롤 가능">
-      <svg className="tcp-handshake-editorial__canvas" viewBox="0 0 800 455" role="img" aria-labelledby={`${titleId} ${descriptionId}`}>
+      <svg className="tcp-handshake-editorial__canvas" viewBox="0 0 800 406" role="img" aria-labelledby={`${titleId} ${descriptionId}`}>
         <title id={titleId}>TCP 3방향 핸드셰이크 {step + 1} / {frames.length}단계</title>
         <desc id={descriptionId}>
           {phaseNames[step]}. 클라이언트 {frame.client}, 서버 {frame.server}.
@@ -47,11 +47,11 @@ export function TcpHandshakeDiagram({ data }: { data: VisualizationOf<'tcp-hands
         <text className="tcp-handshake-editorial__state" x="134" y="64" textAnchor="middle" data-tcp-party="client">{frame.client}</text>
         <text className="tcp-handshake-editorial__state" x="666" y="64" textAnchor="middle" data-tcp-party="server">{frame.server}</text>
         <line className="tcp-handshake-editorial__rule" x1="35" y1="83" x2="765" y2="83" />
-        <line className="tcp-handshake-editorial__lifeline" x1="134" y1="105" x2="134" y2="418" />
-        <line className="tcp-handshake-editorial__lifeline" x1="666" y1="105" x2="666" y2="418" />
+        <line className="tcp-handshake-editorial__lifeline" x1="134" y1="105" x2="134" y2="360" />
+        <line className="tcp-handshake-editorial__lifeline" x1="666" y1="105" x2="666" y2="360" />
 
         {messages.map((message, i) => {
-          const y = 159 + i * 101
+          const y = 154 + i * 85
           const isSent = i < frame.sent
           const inFlight = frame.active === i
           const fromLeft = message.from === 'client'
@@ -64,6 +64,9 @@ export function TcpHandshakeDiagram({ data }: { data: VisualizationOf<'tcp-hands
             data-tcp-message={i}
             data-tcp-phase={!isSent ? 'future' : inFlight ? 'in-flight' : 'received'}
           >
+            {!isSent && <text className="tcp-handshake-editorial__upcoming" x="400" y={y - 3} textAnchor="middle">
+              {i + 1}. {i === 0 ? 'SYN' : i === 1 ? 'SYN+ACK' : 'ACK'} · 전송 예정
+            </text>}
             {isSent && <>
               <text className="tcp-handshake-editorial__message-name" x="400" y={y - 19} textAnchor="middle">
                 {i + 1}. {message.text}
@@ -75,8 +78,8 @@ export function TcpHandshakeDiagram({ data }: { data: VisualizationOf<'tcp-hands
             </>}
           </g>
         })}
-        <text className="tcp-handshake-editorial__axis" x="30" y="443">시간 ↓</text>
-        <text className="tcp-handshake-editorial__axis" x="770" y="443" textAnchor="end">실선: 이미 교환된 메시지 · 굵은 선: 전송 중</text>
+        <text className="tcp-handshake-editorial__axis" x="30" y="388">시간 ↓</text>
+        <text className="tcp-handshake-editorial__axis" x="770" y="388" textAnchor="end">실선: 이미 교환된 메시지 · 굵은 선: 전송 중</text>
       </svg>
     </div>
     <div className="tcp-handshake-editorial__reading" role="status" aria-live="polite" aria-atomic="true">
