@@ -14,6 +14,8 @@ try {
   for (const width of [1280, 1440]) {
     for (const theme of ['dark', 'light']) {
       const page = await browser.newPage({ viewport: { width, height: 900 }, deviceScaleFactor: 1 })
+      // Verify explicit preview theme even if OS preference requests the opposite.
+      await page.emulateMedia({ colorScheme: theme === 'light' ? 'dark' : 'light' })
       page.on('pageerror', err => errors.push(err.message))
       await page.goto('http://127.0.0.1:5173/study-visual-pilots-preview.html', { waitUntil: 'networkidle' })
       if (theme === 'light') await page.getByRole('button', { name: '라이트로 보기' }).click()

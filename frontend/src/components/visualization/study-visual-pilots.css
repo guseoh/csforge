@@ -120,7 +120,7 @@
 }
 
 /* Explicit preview choice wins over OS color-scheme when comparing screenshots. */
-:root body [data-heap-theme='dark'] .study-visual {
+:root body [data-heap-theme='dark'] .study-visual:not([data-force-light]) {
   --sv-surface: #101010;
   --sv-ink: #f4f4f4;
   --sv-muted: #b5aaa0;
@@ -128,7 +128,7 @@
   --sv-subtle: #151515;
   --sv-sent: #252525;
 }
-:root body [data-heap-theme='light'] .study-visual {
+:root body [data-heap-theme='light'] .study-visual:not([data-force-light]) {
   --sv-surface: #fff;
   --sv-ink: #202020;
   --sv-muted: #57534e;
