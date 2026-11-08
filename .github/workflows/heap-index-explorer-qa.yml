@@ -9,6 +9,13 @@ on:
       - 'frontend/src/heap-index-explorer-preview*'
       - 'frontend/heap-index-explorer-preview.html'
       - 'frontend/scripts/heap-index-explorer-browser-qa.mjs'
+      - 'frontend/src/components/visualization/JavaPassByValueStudyVisual.tsx'
+      - 'frontend/src/components/visualization/TcpSlidingWindowStudyVisual.tsx'
+      - 'frontend/src/components/visualization/StudyVisualPilots.test.tsx'
+      - 'frontend/src/components/visualization/study-visual-pilots.css'
+      - 'frontend/src/study-visual-pilots-preview*'
+      - 'frontend/study-visual-pilots-preview.html'
+      - 'frontend/scripts/study-visual-pilots-browser-qa.mjs'
       - '.github/workflows/heap-index-explorer-qa.yml'
   workflow_dispatch:
 
@@ -52,6 +59,7 @@ jobs:
             sleep 1
           done
           node scripts/heap-index-explorer-browser-qa.mjs
+          node scripts/study-visual-pilots-browser-qa.mjs
       - name: Upload screenshots and QA results
         if: always()
         uses: actions/upload-artifact@v4
