@@ -25,8 +25,8 @@ try {
       assert.equal(await tcp.locator('svg').count(), 2, 'TCP must have exactly two snapshots')
       assert.equal(await java.locator('button').count(), 0, 'Java is static by design')
       assert.equal(await tcp.locator('button').count(), 0, 'TCP is static by design')
-      assert.equal(await java.getByText('객체 A').count(), 2)
-      assert.equal(await java.getByText('객체 B').count(), 1)
+      assert.equal(await java.locator('svg text.study-visual__svg-label').filter({ hasText: /^객체 A$/ }).count(), 2)
+      assert.equal(await java.locator('svg text.study-visual__svg-label').filter({ hasText: /^객체 B$/ }).count(), 1)
 
       assert.equal(await tcp.locator('[data-tcp-byte]').count(), 12)
       assert.equal(await tcp.locator('[data-tcp-state="확인됨"]').count(), 2)
