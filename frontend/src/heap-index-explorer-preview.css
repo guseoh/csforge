@@ -1,0 +1,7 @@
+html, body, #root { margin: 0; min-height: 100%; }
+.heap-explorer-preview { min-height: 100vh; box-sizing: border-box; background: #101010; color: #eee; padding: 20px 28px 48px; font-family: system-ui, sans-serif; }
+.heap-explorer-preview[data-heap-theme='light'] { background: #fff; color: #222; }
+.heap-explorer-preview__content { max-width: 900px; margin: 0 auto; }
+.heap-explorer-preview__toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; max-width: 900px; margin: 0 auto 16px; font-size: 12px; color: #aaa; }
+.heap-explorer-preview[data-heap-theme='light'] .heap-explorer-preview__toolbar { color: #555; }
+.heap-explorer-preview__toolbar button { background: transparent; color: inherit; border: 1px solid currentColor; border-radius: 0; padding: 5px 8px; cursor: pointer; }
