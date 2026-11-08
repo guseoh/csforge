@@ -21,10 +21,14 @@ references:
 
 예를 들어 `/docs/1`이라는 같은 리소스를 JSON과 HTML로 모두 제공한다고 하자.
 
-```text
-/docs/1
-  ├─ application/json
-  └─ text/html
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "콘텐츠 협상",
+  "description": "메시지 전달의 계층과 프로토콜 의미를 고정 예제로 비교합니다.",
+  "example": "content-negotiation"
+}
 ```
 
 클라이언트가 `Accept: application/json`을 보내면 서버는 제공 가능한 JSON 표현을 선택할 수 있다. 클라이언트의 선호가 서버가 제공 가능한 표현과 맞지 않으면 다른 계약에 따라 응답하거나 `406 Not Acceptable`을 반환할 수 있다.

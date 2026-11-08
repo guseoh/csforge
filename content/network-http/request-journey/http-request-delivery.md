@@ -21,12 +21,14 @@ references:
 
 실제 서비스 경로에는 정방향 프록시, CDN, 리버스 프록시, 로드 밸런서, API 게이트웨이 같은 HTTP 중개자가 들어갈 수 있다.
 
-```text
-클라이언트
-    ↓ HTTP 연결 A
-CDN / 리버스 프록시 / 게이트웨이
-    ↓ HTTP 연결 B
-원본 서버
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "HTTP 요청의 전달 경로",
+  "description": "메시지 전달의 계층과 프로토콜 의미를 고정 예제로 비교합니다.",
+  "example": "http-request-delivery"
+}
 ```
 
 사용자 관점에서는 하나의 요청처럼 보이지만 네트워크와 HTTP 관점에서는 여러 홉의 요청·응답 교환으로 나뉠 수 있다.

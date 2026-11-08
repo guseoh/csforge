@@ -6,6 +6,12 @@ on:
       - 'frontend/src/components/visualization/NetworkCoreVisualization*'
       - 'frontend/src/components/visualization/network-core-editorial.css'
       - 'frontend/src/lib/network-core-model.ts'
+      - 'frontend/src/lib/network-area-*.ts'
+      - 'frontend/src/components/visualization/NetworkAreaVisualization*'
+      - 'frontend/src/components/visualization/network-area-editorial.css'
+      - 'frontend/src/network-area-preview.tsx'
+      - 'frontend/network-area-preview.html'
+      - 'frontend/scripts/network-area-browser-qa.mjs'
       - 'frontend/src/lib/learning-visualization.ts'
       - 'frontend/src/components/visualization/LearningVisualization.tsx'
       - 'frontend/src/components/visualization/TcpSlidingWindowStudyVisual.tsx'
@@ -24,7 +30,7 @@ permissions:
 jobs:
   visual-qa:
     runs-on: ubuntu-latest
-    timeout-minutes: 24
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -58,11 +64,14 @@ jobs:
             sleep 1
           done
           node scripts/network-pilot-browser-qa.mjs
+          node scripts/network-area-browser-qa.mjs
       - name: Upload screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: network-pilot-pack-qa
-          path: artifacts/network-pilot-pack/
+          path: |
+            artifacts/network-pilot-pack/
+            artifacts/network-area-audit/
           retention-days: 14
           if-no-files-found: warn

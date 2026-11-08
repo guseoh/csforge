@@ -21,11 +21,14 @@ DNS 이름 공간(namespace)은 점(`.`)으로 구분된 **레이블(label)을 �
 
 예를 들어 `www.example.com.`은 다음처럼 볼 수 있다.
 
-```text
-루트(.)
- └─ com
-     └─ example
-         └─ www
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "도메인 계층 구조",
+  "description": "개념의 기술적 관계와 상태를 검증된 고정 예제로 보여줍니다.",
+  "example": "domain-hierarchy"
+}
 ```
 
 ### 하나의 DNS 서버가 전체 이름 공간을 관리하지 않는다

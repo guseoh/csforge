@@ -21,6 +21,16 @@ references:
 
 TCP 연결은 한쪽 포트 번호만으로 식별되지 않는다. TCP 프로토콜이 이미 정해져 있다고 보면 **로컬 IP·로컬 포트·원격 IP·원격 포트의 4-tuple**로 연결의 양 끝을 구분할 수 있다. 전송 프로토콜까지 포함해 일반적인 네트워크 흐름을 표현할 때는 5-tuple이라고 부르기도 한다.
 
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "연결 식별 튜플",
+  "description": "개념의 상태·구조와 책임 경계를 교재형 도식으로 구분하여 보여줍니다.",
+  "example": "connection-tuple"
+}
+```
+
 ```text
 프로토콜 = TCP
 클라이언트 = 192.0.2.10:53124

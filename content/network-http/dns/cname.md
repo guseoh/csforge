@@ -19,6 +19,16 @@ references:
 
 CNAME 레코드는 하나의 DNS 이름을 **다른 정식 이름(canonical name)의 별칭(alias)**으로 연결한다. CNAME 자체가 IPv4·IPv6 주소를 담는 것이 아니라, 리졸버가 가리키는 이름을 다시 해석해 최종 A·AAAA 레코드 등을 찾게 만든다.
 
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "CNAME 레코드",
+  "description": "개념의 기술적 관계와 상태를 검증된 고정 예제로 보여줍니다.",
+  "example": "cname"
+}
+```
+
 ```text
 service.example. CNAME edge.example.
 edge.example.    A     192.0.2.20

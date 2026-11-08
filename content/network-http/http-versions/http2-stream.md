@@ -28,11 +28,14 @@ references:
 
 HTTP/2는 하나의 연결 안에서 여러 논리적 요청·응답 교환을 스트림(stream)으로 구분한다. 각 스트림에는 고유한 스트림 식별자(stream identifier)가 있으며 `HEADERS`, `DATA` 같은 프레임이 어느 스트림에 속하는지 이 식별자로 알 수 있다.
 
-```text
-하나의 HTTP/2 연결
-  ├─ 스트림 1: HEADERS / DATA ...
-  ├─ 스트림 3: HEADERS / DATA ...
-  └─ 스트림 5: HEADERS / DATA ...
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "HTTP/2 스트림",
+  "description": "프로토콜 상태·요청 경계와 이전·이후 결과를 고정 예제로 확인합니다.",
+  "example": "http2-stream"
+}
 ```
 
 하나의 HTTP 메시지가 반드시 프레임 하나에 들어가는 것은 아니다. 헤더 블록과 콘텐츠가 여러 프레임으로 나뉠 수 있고, 스트림 수명 주기가 요청·응답의 시작·진행·종료를 관리한다.

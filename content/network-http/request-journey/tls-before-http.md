@@ -38,14 +38,14 @@ references:
 
 HTTP/1.1이나 HTTP/2를 TCP 위에서 사용할 때의 대표적인 흐름은 다음과 같다.
 
-```text
-DNS 조회·라우팅
-      ↓
-TCP 연결 수립
-      ↓
-TLS 핸드셰이크
-      ↓
-보호된 HTTP 요청·응답
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "HTTP 전 TLS 연결",
+  "description": "메시지 전달의 계층과 프로토콜 의미를 고정 예제로 비교합니다.",
+  "example": "tls-before-http"
+}
 ```
 
 TCP 연결이 성립했다고 HTTP 요청을 바로 평문으로 보내는 것은 아니다. HTTPS에서는 그 위에서 TLS 핸드셰이크를 수행해 서버 인증과 키 합의를 끝내고, 이후 HTTP 바이트를 TLS가 보호하는 애플리케이션 데이터로 전달한다.
