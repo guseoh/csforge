@@ -2,6 +2,7 @@ import { Component, type ReactNode } from 'react'
 import { parseVisualization, type Visualization, type VisualizationOf } from '../../lib/learning-visualization'
 import { DiagramArrow, DiagramCanvas, DiagramNode } from './DiagramPrimitives'
 import { TcpHandshakeDiagram } from './StepDiagram'
+import { NetworkCoreVisualization } from './NetworkCoreVisualization'
 import { HeapDiagram } from './InteractiveDiagram'
 import { LanguageValueDiagram } from './LanguageValueDiagram'
 import { ArrayStoreDiagram } from './ArrayStoreDiagram'
@@ -135,6 +136,7 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
     case 'java-pass-by-value': return renderers[data.type](data)
     case 'min-heap': return renderers[data.type](data)
     case 'tcp-handshake': return renderers[data.type](data)
+    case 'network-core': return <NetworkCoreVisualization data={data} />
     case 'java-value-reference': return renderers[data.type](data)
     case 'java-array-store': return renderers[data.type]()
     case 'java-definite-assignment': return renderers[data.type]()

@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import { javaApiExamples } from './java-api-models'
+import { networkCoreExamples } from './network-core-model'
 
 export const MAX_VISUALIZATION_LENGTH = 12_000
 export const MAX_HEAP_SIZE = 15
@@ -16,6 +17,7 @@ export const visualizationSchema = z.discriminatedUnion('type', [
   z.object({ ...common, type: z.literal('java-pass-by-value'), initialName: memberName, replacementName: memberName }).strict(),
   z.object({ ...common, type: z.literal('min-heap'), initialValues: z.array(integer).max(MAX_HEAP_SIZE) }).strict(),
   z.object({ ...common, type: z.literal('tcp-handshake'), clientIsn: sequenceNumber, serverIsn: sequenceNumber }).strict(),
+  z.object({ ...common, type: z.literal('network-core'), example: z.enum(networkCoreExamples) }).strict(),
   z.object({ ...common, type: z.literal('java-value-reference'), example: z.enum(['assignment-copy', 'final-list', 'string-intern']) }).strict(),
   z.object({ ...common, type: z.literal('java-array-store') }).strict(),
   z.object({ ...common, type: z.literal('java-definite-assignment') }).strict(),

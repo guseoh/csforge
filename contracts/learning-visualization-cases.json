@@ -633,5 +633,45 @@
     "name": "java-api binary-evolution",
     "valid": true,
     "source": "{\"version\": 1, \"type\": \"java-api-contract\", \"example\": \"binary-evolution\", \"title\": \"소스 재컴파일과 기존 바이너리 링크\", \"description\": \"새 소스 컴파일과 기존 class를 새 library에 연결하는 검사는 다릅니다. 링크 성공도 의미 호환성을 보장하지 않습니다.\"}"
+  },
+  {
+    "name": "network-core-http-over-tcp",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"http-over-tcp\"}"
+  },
+  {
+    "name": "network-core-dns-iterative",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"dns-iterative\"}"
+  },
+  {
+    "name": "network-core-tcp-teardown",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"tcp-teardown\"}"
+  },
+  {
+    "name": "network-core-tcp-sliding-window",
+    "valid": true,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"tcp-sliding-window\"}"
+  },
+  {
+    "name": "network-core-unknown",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"execute-http\"}"
+  },
+  {
+    "name": "network-core-extra-node",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"dns-iterative\",\"svg\":\"<svg onload=alert(1) />\"}"
+  },
+  {
+    "name": "network-core-script",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"네트워크 학습 도식\",\"description\":\"TCP와 DNS의 계층 및 상태 관계를 확인합니다.\",\"type\":\"network-core\",\"example\":\"tcp-teardown\",\"script\":\"alert(1)\"}"
+  },
+  {
+    "name": "network-core-missing",
+    "valid": false,
+    "source": "{\"version\":1,\"title\":\"도식\",\"description\":\"설명\",\"type\":\"network-core\"}"
   }
 ]

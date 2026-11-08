@@ -26,6 +26,7 @@ Markdown의 예약 fenced code 언어 `csforge-viz`에 JSON 객체 하나를 넣
 | `static-flow` | V1 정적 SVG | `labels` | 일반 텍스트 2~6개, 각 1~40자. 순차 흐름 표현 |
 | `java-pass-by-value` | V2 단계형 | `initialName`, `replacementName` | 한글·영문·숫자·공백·`_ . -` 중 1~12자, 공백만은 거부 |
 | `tcp-handshake` | V2 단계형 | `clientIsn`, `serverIsn` | 각각 0~4294967295 정수 |
+| `network-core` | V1 정적·V2 단계형 | `example` | `http-over-tcp`, `dns-iterative`, `tcp-teardown`, `tcp-sliding-window` 중 하나. 모든 수치·메시지·좌표는 소스 내부에서 고정 |
 | `min-heap` | V3 조작형 | `initialValues` | 최대 15개, -99~99 정수. 입력 순서대로 offer하여 초기 힙 구성 |
 | `java-value-reference` | V2 또는 V1 | `example` | `assignment-copy`는 본문의 원시 복사·참조 공유·재대입 9단계. `final-list`, `string-intern`은 각각 고정 관계를 보여 주는 V1 |
 | `java-array-store` | V2 단계형 | 없음 | 본문의 String[2] 생성→Object[] 별칭→String 저장→Integer 검사→저장 거부 5단계 |
