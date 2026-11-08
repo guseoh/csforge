@@ -1,0 +1,5 @@
+.study-pilots__intro { font-size: 15px; margin: 0 0 18px; color: inherit; opacity: .85; }
+.study-pilots__nav { display: flex; flex-wrap: wrap; gap: 10px 20px; margin: 0 0 30px; font-size: 13px; }
+.study-pilots__nav a { color: inherit; text-underline-offset: 4px; }
+.study-pilots__section { margin-bottom: 48px; scroll-margin-top: 16px; }
+.study-pilots__section h2 { margin: 0 0 15px; font: 500 19px/1.5 system-ui,sans-serif; }

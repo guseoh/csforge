@@ -1,0 +1,70 @@
+name: Heap Index Explorer browser QA
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/src/lib/heap-index-explorer-model.ts'
+      - 'frontend/src/components/visualization/HeapIndexExplorer*'
+      - 'frontend/src/components/visualization/heap-index-explorer.css'
+      - 'frontend/src/heap-index-explorer-preview*'
+      - 'frontend/heap-index-explorer-preview.html'
+      - 'frontend/scripts/heap-index-explorer-browser-qa.mjs'
+      - 'frontend/src/components/visualization/JavaPassByValueStudyVisual.tsx'
+      - 'frontend/src/components/visualization/TcpSlidingWindowStudyVisual.tsx'
+      - 'frontend/src/components/visualization/StudyVisualPilots.test.tsx'
+      - 'frontend/src/components/visualization/study-visual-pilots.css'
+      - 'frontend/src/study-visual-pilots-preview*'
+      - 'frontend/study-visual-pilots-preview.html'
+      - 'frontend/scripts/study-visual-pilots-browser-qa.mjs'
+      - '.github/workflows/heap-index-explorer-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  heap-explorer-qa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+      - name: Install frontend and browser tooling
+        working-directory: frontend
+        run: |
+          npm ci
+          npm install --no-save --ignore-scripts playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Typecheck, unit tests and build
+        working-directory: frontend
+        run: |
+          npm run lint
+          npm test -- --run
+          npm run build
+      - name: Chromium interaction and theme capture
+        working-directory: frontend
+        run: |
+          mkdir -p ../artifacts/heap-index-explorer
+          (npm run dev -- --host 127.0.0.1 --port 5173 > ../artifacts/heap-index-explorer/vite.log 2>&1) &
+          for i in $(seq 1 35); do
+            if curl --fail --silent http://127.0.0.1:5173/heap-index-explorer-preview.html > /dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/heap-index-explorer-browser-qa.mjs
+          node scripts/study-visual-pilots-browser-qa.mjs
+      - name: Upload screenshots and QA results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: heap-index-explorer-qa-${{ github.sha }}
+          path: artifacts/heap-index-explorer/
+          if-no-files-found: warn
+          retention-days: 14
