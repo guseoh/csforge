@@ -104,6 +104,9 @@ try {
             bg: getComputedStyle(element).backgroundColor,
             pageOverflow: document.documentElement.scrollWidth - window.innerWidth,
             right: bounds.right, width: bounds.width,
+            diagramPan: element.querySelector('.network-area__scroll')
+              ? Math.max(0, element.querySelector('.network-area__scroll').scrollWidth
+                - element.querySelector('.network-area__scroll').clientWidth) : 0,
           }
         })
         assert.equal(measure.theme, theme, item.contentKey)
@@ -111,6 +114,8 @@ try {
         assert.ok(measure.pageOverflow <= 2, 'Reader page overflow: ' + item.contentKey)
         assert.ok(measure.width > 400 && measure.right <= width + 2,
           'Reader figure sizing: ' + item.contentKey)
+        assert.ok(measure.diagramPan <= 2,
+          'Desktop Network diagram requires internal horizontal scroll: ' + item.contentKey)
         checks.push({ contentKey: item.contentKey, mode: 'guest', theme, width, result: 'PASS' })
         if (i % 13 === 0) {
           const file = 'reader-' + item.id + '-' + theme + '-' + width + '.png'

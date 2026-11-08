@@ -23,3 +23,12 @@
 .network-area__lifeline {stroke:var(--diagram-line);stroke-width:1.25;stroke-dasharray:5 5;}
 .network-area__note {margin:12px 0 0;font-size:14px;color:var(--diagram-muted);line-height:1.6;}
 @media (prefers-reduced-motion: reduce) {.network-area * {animation:none;transition:none;}}
+
+/* Give desktop Reader diagrams the full central reading track, not a clipped text measure. */
+@media (min-width: 1200px) {
+  .concept-reading-content .learning-visualization.learning-visualization--network-area {
+    width: calc(100% + 76px);
+    max-width: none;
+    margin-inline: -38px;
+  }
+}
