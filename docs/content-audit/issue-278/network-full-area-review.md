@@ -69,6 +69,15 @@ Network의 Concept Markdown **127개**와 Question JSON **383개**(15개 Topic �
 
 검토 근거(공식 1차 자료): [RFC 9110 HTTP Semantics](https://www.rfc-editor.org/rfc/rfc9110), [RFC 9111 HTTP Caching](https://www.rfc-editor.org/rfc/rfc9111), [RFC 9112 HTTP/1.1](https://www.rfc-editor.org/rfc/rfc9112), [RFC 8446 TLS 1.3](https://www.rfc-editor.org/rfc/rfc8446), [RFC 9846 TLS 1.3](https://www.rfc-editor.org/rfc/rfc9846).
 
+
+## 추가 확인 — shared Reference 회귀 및 HTTP/2 프레임 예외
+
+- 이전 [Repository Validation #42490320835](https://github.com/guseoh/csforge/actions/runs/42490320835)에서 53 Diagram 회귀 테스트뿐 아니라 여러 전체 canonical bootstrap 테스트가 실패했다. **근본 원인**은 TCP 종료 Concept에 추가한 RFC 9112의 `title/depth/recommendation`이 동일 URL을 참조하던 다른 HTTP Concept의 공통 메타데이터와 달라, 전역 Reference 레코드를 번갈아 수정하며 두 번째 Import가 `UNCHANGED`로 수렴하지 않은 것이다. 기존 공통 메타데이터로 정렬하고 Concept별 `displayOrder/relationNote`만 달리 적용한 [수정 커밋](https://github.com/guseoh/csforge/commit/ef1acef60618de25e499b24b5c636d67aac13252)에서 [전체 CI #42491023202](https://github.com/guseoh/csforge/actions/runs/42491023202) 및 Reader/TCP/Heap QA가 **PASS**였다.
+- 회귀 원인을 더 빨리 식별하도록 `NetworkContentAuditContractTest`에 **동일 URL을 쓰는 Network Concept 간 공통 Reference 메타데이터(title/referenceType/language/depth/recommendation)의 일치 검증**을 추가했다. `displayOrder`와 `relationNote`는 Concept별로 다를 수 있다. 실제 외부 URL 연결 검증이 아니라 import 정규화 계약이다.
+- [RFC 9113 §6.9.1](https://www.rfc-editor.org/rfc/rfc9113.html#section-6.9.1) 재대조에서 흐름 제어 윈도가 0인 경우에도 **길이가 0이며 `END_STREAM`을 지정한 DATA**는 전송할 수 있는 **MAY 예외**를 확인했다. `http2-multiplexing` Concept와 관련 시나리오에서 단순히 `DATA는 모두 금지`라고 일반화하지 않도록 교정하고 좁은 회귀 검사를 추가했다. **양의 길이의 DATA는 스트림 및 연결 두 윈도 모두의 허용량을 지켜야 한다.**
+- 15개 Topic의 **서술 127개와 시나리오 127개 모델 답안 모두를 다시 읽고**, Protocol vs Domain, connection vs completion, cache vs authorization, rwnd/cwnd, HTTP flow window vs TCP HOL, sender vs receiver 규칙을 우선 비교했다. 이는 **전체 항목을 독립적인 RFC 조항에 일대일 매핑한 보증이 아니며**, 원본 임의 Reference 링크의 살아있는 상태와 claim relevance 전수 검증도 별도로 남아 있다.
+- [Issue #277의 과거 Network manifest](https://github.com/guseoh/csforge/blob/main/docs/content-audit/issue-277/network-http.json)에는 **127 Concept → 165 Reference 연결 → 56개 고유 URL**이 기록돼 있다. 2026-11-08 이 배치에서 직접 조회한 RFC URL 16개 중 **13개가 해당 RFC 문서로 정상 열렸고**, 3개(`RFC 3596`, `RFC 4861`, `RFC 5789`)는 RFC Editor가 **HTTP 429 rate limit**를 반환했다. 이는 **404 또는 링크 오류가 아니라 조회 미검증**이며, 나머지 고유 URL 전부의 실시간 접근 확인을 수행했다는 의미도 아니다.
+
 ## 검증과 미완료 항목
 
 - `NetworkContentAuditContractTest`: 127 Concept 및 383 Question 키·문항 형식·Concept 연결·선택지·정답 매칭, 중복 Question 문장, **Concept Reference URL의 존재·HTTPS·URI 호스트 문법**을 구조적으로 확인하고 ECDHE 스칼라 곱셈·RFC 9846 KeyShare 재사용 금지를 회귀 검사한다. HTTPS URL의 **실제 접속 가능성·문서 내용·관련 주장에 대한 적합성은 이 테스트만으로 검증할 수 없다.** **이 테스트가 문항 모범답안의 기술적 정합성을 자동 증명하는 것은 아니다.**

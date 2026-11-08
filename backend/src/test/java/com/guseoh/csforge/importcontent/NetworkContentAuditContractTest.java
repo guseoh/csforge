@@ -170,6 +170,24 @@ class NetworkContentAuditContractTest {
     }
 
     @Test
+    void http2WindowExplanationRetainsZeroLengthEndStreamException() throws Exception {
+        String concept = Files.readString(CONTENT.resolve("http-versions/http2-multiplexing.md"));
+        assertTrue(concept.contains("길이 0이고 `END_STREAM`이 설정된 DATA 프레임"));
+        JsonNode pack = mapper.readTree(Files.readString(CONTENT.resolve("http-versions/questions.json")));
+        JsonNode scenario = null;
+        for (JsonNode question : pack) {
+            if ("network-http.core.http-versions.http2-multiplexing.q3"
+                    .equals(question.path("contentKey").asText())) {
+                scenario = question;
+                break;
+            }
+        }
+        assertTrue(scenario != null, "HTTP/2 flow-control scenario is missing");
+        assertTrue(scenario.path("modelAnswer").asText()
+                .contains("길이가 0이며 END_STREAM이 설정된 DATA 프레임"));
+    }
+
+    @Test
     void ecdheTeachingExampleUsesScalarMultiplication() throws Exception {
         String source = Files.readString(CONTENT.resolve("tls/key-agreement.md"));
         assertTrue(source.contains("A = a·G"));
