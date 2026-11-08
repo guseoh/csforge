@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.net.URI;
+import java.util.Locale;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -46,11 +48,24 @@ class NetworkContentAuditContractTest {
             assertTrue(source.startsWith("---\n"), path.toString());
             assertTrue(source.contains("\n---\n"), path.toString());
             assertTrue(source.contains("references:\n"), path.toString());
+            String frontmatter = source.substring(0, source.indexOf("\n---\n"));
+            List<String> urls = frontmatter.lines()
+                    .map(String::strip)
+                    .filter(line -> line.startsWith("- url:"))
+                    .map(line -> line.substring("- url:".length()).trim().replace("\"", ""))
+                    .toList();
+            assertFalse(urls.isEmpty(), () -> "Missing Concept Reference URL: " + key);
+            for (String url : urls) {
+                assertTrue(url.startsWith("https://"), () -> "Insecure Reference URL: " + key);
+                URI uri = URI.create(url);
+                assertFalse(uri.getHost() == null || uri.getHost().isBlank(), () -> "Invalid Reference host: " + key);
+            }
             if (source.contains("```csforge-viz")) visualizations++;
         }
         assertEquals(54, visualizations, "53 curriculum diagrams plus one TEXT pilot");
 
         Set<String> questionKeys = new HashSet<>();
+        Set<String> normalizedQuestions = new HashSet<>();
         int questionCount = 0;
         int multipleChoice = 0, descriptive = 0, scenario = 0;
         for (Path path : questionFiles) {
@@ -61,6 +76,9 @@ class NetworkContentAuditContractTest {
                 String key = q.path("contentKey").asText();
                 assertTrue(questionKeys.add(key), () -> "Duplicate Question: " + key);
                 assertFalse(q.path("promptMarkdown").asText().isBlank(), key);
+                String prompt = q.path("promptMarkdown").asText().replaceAll("\\s+", " ")
+                        .trim().toLowerCase(Locale.ROOT);
+                assertTrue(normalizedQuestions.add(prompt), () -> "Duplicate Question prompt: " + key);
                 assertFalse(q.path("explanationMarkdown").asText().isBlank(), key);
                 assertEquals("PUBLISHED", q.path("status").asText(), key);
                 assertEquals(1, q.path("conceptKeys").size(), key);
