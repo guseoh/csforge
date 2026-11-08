@@ -29,6 +29,15 @@ try {
       assert.equal(await tcp.locator('button').count(), 0, 'TCP is static by design')
       assert.equal(await java.locator('svg text.study-visual__svg-label').filter({ hasText: /^객체 A$/ }).count(), 2)
       assert.equal(await java.locator('svg text.study-visual__svg-label').filter({ hasText: /^객체 B$/ }).count(), 1)
+      assert.match(await java.locator('.study-visual__java-code').innerText(), /void replace\(Member param\)/)
+      assert.match(await java.locator('.study-visual__java-code').innerText(), /param = new Member\("park"\)/)
+      const objectA = await java.locator('svg rect[data-java-object="A"]').evaluateAll(nodes =>
+        nodes.map(node => ({ x: node.getAttribute('x'), y: node.getAttribute('y'), width: node.getAttribute('width'), height: node.getAttribute('height') }))
+      )
+      assert.deepEqual(objectA, [
+        { x: '278', y: '70', width: '132', height: '72' },
+        { x: '278', y: '70', width: '132', height: '72' },
+      ], 'object A must not move between snapshots')
 
       assert.equal(await tcp.locator('[data-tcp-byte]').count(), 12)
       assert.equal(await tcp.locator('[data-tcp-state="확인됨"]').count(), 2)

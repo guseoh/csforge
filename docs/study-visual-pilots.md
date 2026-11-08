@@ -37,3 +37,7 @@ This separate HTML preview displays all three pilot visuals with a light/dark to
 - Chromium QA is expected at 1280×900 and 1440×900 for dark and light, checking both pilot instances, no page overflow, and producing independent PNG artifacts for visual review.
 - **No canonical Markdown Import changes**, no new `csforge-viz` type, no production route, no DB changes or rollout.
 - Browser screenshots need human visual acceptance before these patterns are adopted as a standard for other content.
+
+## Reviewed Java adjustment (2026-11-08)
+
+After the three pilot screenshots were inspected, the Java view was revised to keep **object A at identical coordinates in both frames**, showing that only `param` changes its reference target. The illustration now displays both the caller and a concrete `replace(Member param)` implementation so the assignments can be traced back to real code. Unit and Chromium assertions check the fixed object coordinates, method excerpt and reference semantics. The example remains a static semantic visualization, not JVM heap/stack implementation evidence.

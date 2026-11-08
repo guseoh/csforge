@@ -25,22 +25,17 @@ function ReferenceSnapshot({ reassigned }: { reassigned: boolean }) {
       <rect x="20" y="171" width="116" height="48" className="study-visual__svg-box" />
       <text x="78" y="200" textAnchor="middle" className="study-visual__svg-identifier">param</text>
     </g>
-    {reassigned ? <>
-      <rect x="278" y="43" width="132" height="72" className="study-visual__svg-object" />
-      <text x="344" y="72" textAnchor="middle" className="study-visual__svg-label">객체 A</text>
-      <text x="344" y="97" textAnchor="middle" className="study-visual__svg-muted">name = "kim"</text>
-      <rect x="278" y="159" width="132" height="72" className="study-visual__svg-object study-visual__svg-object--related" />
-      <text x="344" y="188" textAnchor="middle" className="study-visual__svg-label">객체 B</text>
-      <text x="344" y="213" textAnchor="middle" className="study-visual__svg-muted">name = "park"</text>
-      <path d="M136 71 H276" className="study-visual__svg-arrow" markerEnd={`url(#${arrow})`} />
-      <path d="M136 195 H276" className="study-visual__svg-arrow" markerEnd={`url(#${arrow})`} />
-    </> : <>
-      <rect x="278" y="96" width="132" height="72" className="study-visual__svg-object" />
-      <text x="344" y="125" textAnchor="middle" className="study-visual__svg-label">객체 A</text>
-      <text x="344" y="150" textAnchor="middle" className="study-visual__svg-muted">name = "kim"</text>
-      <path d="M136 71 L276 117" className="study-visual__svg-arrow" markerEnd={`url(#${arrow})`} />
-      <path d="M136 195 L276 147" className="study-visual__svg-arrow" markerEnd={`url(#${arrow})`} />
+    {/* Keep the identity of object A at exactly the same local SVG coordinates in both panels. */}
+    <rect data-java-object="A" x="278" y="70" width="132" height="72" className="study-visual__svg-object" />
+    <text x="344" y="99" textAnchor="middle" className="study-visual__svg-label">객체 A</text>
+    <text x="344" y="124" textAnchor="middle" className="study-visual__svg-muted">name = "kim"</text>
+    {reassigned && <>
+      <rect data-java-object="B" x="278" y="168" width="132" height="72" className="study-visual__svg-object study-visual__svg-object--related" />
+      <text x="344" y="197" textAnchor="middle" className="study-visual__svg-label">객체 B</text>
+      <text x="344" y="222" textAnchor="middle" className="study-visual__svg-muted">name = "park"</text>
     </>}
+    <path d="M136 71 L276 103" className="study-visual__svg-arrow" markerEnd={`url(#${arrow})`} />
+    <path d={reassigned ? 'M136 195 L276 204' : 'M136 195 L276 128'} className="study-visual__svg-arrow" markerEnd={`url(#${arrow})`} />
   </svg>
 }
 
@@ -50,7 +45,10 @@ export function JavaPassByValueStudyVisual() {
     <summary className="study-visual__summary"><span>데모</span><span className="study-visual__chevron" aria-hidden="true" /></summary>
     <div className="study-visual__content">
       <p className="study-visual__instruction">두 시점을 비교하면 참조값의 복사와 매개변수 재할당을 구분할 수 있습니다.</p>
-      <p className="study-visual__snippet"><code>Member member = new Member("kim");</code> <code>replace(member);</code></p>
+      <div className="study-visual__java-code" aria-label="호출 코드와 메서드 구현">
+        <pre aria-label="호출부"><code>{'Member member = new Member("kim");\nreplace(member);'}</code></pre>
+        <pre aria-label="메서드 본문"><code>{'void replace(Member param) {\n  param = new Member("park");\n}'}</code></pre>
+      </div>
       <div className="study-visual__two-panels">
         <section className="study-visual__panel">
           <h3>① 메서드 진입 직후</h3>
