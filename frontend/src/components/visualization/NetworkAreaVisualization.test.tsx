@@ -74,6 +74,8 @@ describe('Network & HTTP 49 authored diagram contracts', () => {
   })
 
   it('preserves key technical distinctions in high-risk examples',()=>{
+    const arpMarkdown=readFileSync(resolve(root,'content/network-http/local-delivery/arp.md'),'utf8')
+    expect(arpMarkdown).toContain(networkAreaSpecs.arp.messages[0].text.replace('ARP Request · ',''))
     expect(networkAreaSpecs.acknowledgement.note).toContain('ACK')
     expect(networkAreaSpecs['tls-handshake'].note).toContain('0-RTT')
     expect(networkAreaSpecs['redirect-status'].note).toContain('307')

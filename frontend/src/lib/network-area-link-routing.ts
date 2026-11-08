@@ -31,7 +31,7 @@ decapsulation: {
 arp: {
  layout:'sequence',title:'ARP로 다음 홉 MAC 결정',lead:'라우팅이 다음 홉 IP를 먼저 고르고 ARP는 해당 IPv4 주소의 로컬 MAC을 찾습니다.',
  parties:['송신 호스트','다음 홉 장비'],
- messages:[{from:'left',text:'ARP Request · Who has 192.0.2.1?',detail:'로컬 링크 브로드캐스트'},{from:'right',text:'ARP Reply · aa:bb:cc:dd:ee:ff',detail:'IPv4 → MAC 매핑 응답'},{from:'left',text:'다음 홉 MAC으로 프레임 전송',detail:'IP 최종 목적지는 원격 서버'}],
+ messages:[{from:'left',text:'ARP Request · Who has 192.0.2.10?',detail:'로컬 링크 브로드캐스트'},{from:'right',text:'ARP Reply · aa:bb:cc:dd:ee:ff',detail:'IPv4 → MAC 매핑 응답'},{from:'left',text:'다음 홉 MAC으로 프레임 전송',detail:'IP 최종 목적지는 원격 서버'}],
  note:'ARP는 경로 선택이나 서버 신원 인증을 수행하지 않습니다.'
 },
 'default-gateway': {
