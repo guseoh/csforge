@@ -22,7 +22,7 @@ references:
     referenceType: OFFICIAL
     language: en
     depth: section
-    recommendation: "SameSite 등 최신 쿠키 동작을 다루지만 2026-10-17 현재 발행 전의 변경 가능한 초안이다."
+    recommendation: "SameSite 등 최신 쿠키 동작을 다루는 변경 가능한 Internet-Draft이다. 2026-11-08에 발행 상태를 확인했으며, 읽을 때 새 정식 RFC 발행 여부를 다시 점검한다."
     displayOrder: 2
     relationNote: "RFC 6265bis 초안의 4.2 Cookie 헤더와 5.7 저장·5.8 반환 동작을 비교한다."
 ---

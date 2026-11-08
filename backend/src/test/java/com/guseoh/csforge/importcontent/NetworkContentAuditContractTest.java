@@ -112,5 +112,7 @@ class NetworkContentAuditContractTest {
         assertTrue(source.contains("b·A = b·(a·G)"));
         assertFalse(source.contains("클라이언트: a + B로 계산"));
         assertFalse(source.contains("서버:       b + A로 계산"));
+        assertTrue(source.contains("서로 다른 TLS 연결에 같은 키 공유 정보(KeyShare)를 재사용해서는 안 된다고(MUST NOT)"));
+        assertTrue(source.contains("수신 측은 상대가 과거 방식대로 재사용하는 상황 자체는 허용해야 한다(MUST permit)"));
     }
 }
