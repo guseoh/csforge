@@ -9,6 +9,8 @@ import java.nio.file.Path;
 import java.net.URI;
 import java.util.Locale;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -119,6 +121,52 @@ class NetworkContentAuditContractTest {
         assertEquals(129, multipleChoice);
         assertEquals(127, descriptive);
         assertEquals(127, scenario);
+    }
+
+    @Test
+    void sharedNetworkReferenceMetadataIsConsistentAcrossConcepts() throws Exception {
+        Map<String, Map<String, String>> sharedMetadata = new HashMap<>();
+        Map<String, Path> firstSource = new HashMap<>();
+        try (Stream<Path> entries = Files.walk(CONTENT)) {
+            for (Path path : entries.filter(file -> Files.isRegularFile(file)
+                    && file.toString().endsWith(".md")).toList()) {
+                String source = Files.readString(path);
+                String frontmatter = source.substring(0, source.indexOf("\n---\n"));
+                String url = null;
+                Map<String, String> metadata = null;
+
+                for (String line : frontmatter.split("\n")) {
+                    String field = line.strip();
+                    if (line.startsWith("  - url: ")) {
+                        if (url != null) assertSharedReference(sharedMetadata, firstSource, url, metadata, path);
+                        url = field.substring("- url: ".length()).replace("\"", "");
+                        metadata = new HashMap<>();
+                    } else if (url != null && line.startsWith("    ")) {
+                        int delimiter = field.indexOf(':');
+                        if (delimiter > 0) {
+                            String name = field.substring(0, delimiter);
+                            if (Set.of("title", "referenceType", "language", "depth", "recommendation").contains(name)) {
+                                metadata.put(name, field.substring(delimiter + 1).trim());
+                            }
+                        }
+                    }
+                }
+                if (url != null) assertSharedReference(sharedMetadata, firstSource, url, metadata, path);
+            }
+        }
+        assertFalse(sharedMetadata.isEmpty());
+    }
+
+    private static void assertSharedReference(Map<String, Map<String, String>> sharedMetadata,
+            Map<String, Path> firstSource, String url, Map<String, String> metadata, Path path) {
+        Map<String, String> previous = sharedMetadata.putIfAbsent(url, Map.copyOf(metadata));
+        if (previous == null) {
+            firstSource.put(url, path);
+        } else {
+            assertEquals(previous, metadata, () -> "Conflicting globally shared Reference metadata for " + url
+                    + " between " + firstSource.get(url) + " and " + path
+                    + "; keep displayOrder/relationNote concept-local");
+        }
     }
 
     @Test
