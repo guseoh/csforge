@@ -37,7 +37,7 @@ Network의 Concept Markdown **127개**와 Question JSON **383개**(15개 Topic �
 3. **시나리오 정보 부족(중간):** `safe-method.q3`에 링크 프리뷰의 위험한 GET을, `flow-control.q3`에 수신 윈도 0 vs 혼잡 윈도 여유를, `key-agreement.q3`에 중간자의 독립 ECDHE 연결 두 개를 명시해 단순 정의 반복에서 인과관계 검증 문제로 다듬었다.
 4. **선택지 해설 빈약(낮음):** `expires.q1`, `304.q1`, `x-forwarded.q1`의 선택지 해설이 정답 문구만 반복하거나 너무 짧았으므로 RFC 캐시 우선순위, 304 본문 부재, 전달 헤더의 책임을 각각 구체적으로 썼다.
 
-수정된 **10개 고유 Question의 contentKey, QuestionType, difficulty, 정답 키와 Concept 연결**은 유지했다(첫 배치 7개 + 추가 3개). Canonical Markdown/JSON 소스 외의 개인 데이터나 운영 DB는 수정하지 않았다.
+수정된 **14개 고유 Question의 contentKey, QuestionType, difficulty, 정답 키와 Concept 연결**은 유지했다(첫 배치 7개 + 두 번째 배치 3개 + 세 번째 배치 4개). Canonical Markdown/JSON 소스 외의 개인 데이터나 운영 DB는 수정하지 않았다.
 
 ### 2026-11-08 추가 심화 감사 배치
 
@@ -47,6 +47,16 @@ Network의 Concept Markdown **127개**와 Question JSON **383개**(15개 Topic �
 - **Cookie Reference 현재성:** 2026-11-08에 [6265bis 초안](https://httpwg.org/http-extensions/draft-ietf-httpbis-rfc6265bis.html)의 인터넷 초안 상태(2026-11-02 갱신, 2027-05-06 만료)를 확인했다. `cookie`, `set-cookie`, `cookie-scope`의 `2026-10-17 현재`라는 오래된 확인 문구를 없애고, 읽는 시점에 재확인할 초안이라는 성격을 명시했다. 확정 표준이 아닌 문서를 새 RFC로 오인하지 않는다.
 - **URL 실제 조회 범위:** RFC 9110·9111·9112·9113·9846, IETF 6265bis 초안 및 Cisco LAN Switching 안내 문서는 실제 페이지를 열어 근거를 확인했다. 구형 DNS/NAT 관련 주요 RFC도 일부 직접 확인했지만 다량 페이지 접근 중 RFC Editor가 HTTP 429를 반환한 사례가 있으므로 **원래의 56개 URL 목록 및 최신 127 Concept 전부에 대해 접근성 검증이 끝났다는 의미가 아니다**.
 
+
+
+### 254개 모범답안 학습 목표·난도 재점검에서 추가한 네 가지 교정
+
+- **DNS 별칭 전개:** `dns.cname.q2`의 매우 짧은 답안에 `www.example.com → api.example.com → A·AAAA`를 예시로 추가해 CNAME 자체가 IP 주소를 가진 것처럼 오인할 여지를 없앴다. 이것은 CNAME을 조회하는 재귀 리졸버의 실제 후속 동작을 설명한다.
+- **HEAD HTTP 응답 프레이밍:** `http-methods.get-head.q3`는 실제 응답 콘텐츠가 **없어야 한다**는 조건과 `Content-Length`가 반드시 **0이어야 한다**는 잘못된 주장을 명확히 구분한다. [RFC 9110 §8.6·§9.3.2](https://www.rfc-editor.org/rfc/rfc9110.html)에서 HEAD의 `Content-Length`는 대응 GET의 예상 바이트 수일 수 있음을 확인했다.
+- **동시 수정의 원자성:** `http-status.409-412.q3`는 `If-Match` 강한 비교와 **조건 검사·상태 변경의 원자성**을 구분하고, RFC 9110 §13.1.1에 규정된 **이미 동일한 변경이 적용된 요청의 예외적 2xx 가능성**과 엄격한 412 API 계약의 차이를 설명한다.
+- **HTTP 415/422 의미:** `http-status.415-422.q2`는 `application/xml` 불지원(415)과 정상 JSON의 도메인 의미 위반(422)을 구체적인 입력으로 비교하고, 단순 JSON 파싱 실패(400 등)를 별도로 구분한다.
+
+주제별 문제 난도·중복 비교와 RFC 대비 검사는 **정합성에 영향을 주는 발견 건만 소수 교정**하는 접근이다. 전체 254개 모범답안 각각의 기술 주장을 모두 개별 RFC 문단에 대조했다는 결론으로 비약하지 않는다.
 
 ## 기술적 검토의 구분
 
