@@ -51,15 +51,15 @@ export function JavaMapViewsEditorial() {
       <code>keys.remove("A")</code>
       <strong>기반 Map → B ↦ 2</strong>
     </div>
-    <span className="java-ed-map-shared-label">같은 기반 Map을 바라보는 세 뷰 · 변경 전과 후</span>
-    <div className="java-ed-map-projections" role="list">
-      {projections.map((view) => <div role="listitem" key={view.name}>
-        <strong><code>{view.name}</code></strong>
-        <small>{view.kind}</small>
-        <div className="java-ed-map-before-after">
-          <span><small>제거 전</small><code>{view.before}</code></span>
-          <span><small>제거 후</small><code>{view.after}</code></span>
-        </div>
+    <span className="java-ed-map-shared-label">같은 기반 Map에 연결된 세 뷰 · 독립 스냅샷이 아님</span>
+    <div className="java-ed-map-compare" role="table" aria-label="Map 뷰 세 가지의 제거 전과 후">
+      <div role="row" className="java-ed-map-compare-header">
+        <span role="columnheader">뷰</span><span role="columnheader">제거 전</span><span role="columnheader">제거 후</span>
+      </div>
+      {projections.map(view=><div role="row" key={view.name}>
+        <strong role="cell"><code>{view.name}</code><small>{view.kind}</small></strong>
+        <span role="cell"><code>{view.before}</code></span>
+        <span role="cell"><code>{view.after}</code></span>
       </div>)}
     </div>
     <p className="java-ed-note">{scene.note}</p>

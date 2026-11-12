@@ -74,6 +74,6 @@ describe('actual J-object-model Pack', () => {
     expect(html).not.toContain('csforge-viz')
     expect(body).not.toMatch(/^```text\r?\n|[┌┐└┘├┤┬┴│─]/m)
     expect(html).not.toMatch(/<p>[^<]*\*\*/)
-    expect((html.match(/도식 단계 조작/g) ?? []).length).toBe(c.targetTier === 'V2' ? 1 : 0)
+    expect((html.match(/도식 단계 조작|도식 단계 이동/g) ?? []).length).toBe(c.targetTier === 'V2' ? 1 : 0)
   })
 })
