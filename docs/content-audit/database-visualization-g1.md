@@ -77,7 +77,10 @@
 ## 검증 상태 및 남은 과제
 
 - 정적 검사: 17개 SVG의 title/desc/viewBox·금지 요소·텍스트 위치 기초 검사, 17개 canonical MD의 이미지 경로·frontmatter·코드 펜스 확인
-- 정적 SVG의 XML/보안 검사, 실제 Reader 다크/라이트 및 900px/1280px 시각 확인, Import Preview/Apply/재import, 전체 CI는 실행 결과를 확인하기 전까지 미검증
+- 자동 정적 QA: SVG 17개 모두 기본 태그 균형, 고유 ID, 접근성 title/desc, viewBox, 금지 태그·외부 리소스, 텍스트/도형의 화면 범위 추정 검사를 통과했습니다. 전체 XML 스키마 검증과 실제 렌더링을 대체하지는 않습니다.
+- 17개 변경 Markdown의 이미지 연결·frontmatter·코드 펜스를 확인했습니다. refactor 기준 변경은 35개 Database 전용 파일로 제한됩니다.
+- commit `f9d5b477cd18d3a584f2440fbf64568c9d9c0e52`의 Vercel 미리보기는 READY입니다. 이는 콘텐츠 Import 및 자동 테스트 통과를 뜻하지 않습니다.
+- Reader 라이트/다크·900px/1280px 실화면 QA, Import Preview/Apply/동일 파일 재import, Repository Validation은 미실행으로 유지합니다.
 - 외부 SVG의 `prefers-color-scheme`은 OS 테마를 기준으로 하므로 Reader의 앱 내부 테마와 다른 경우 팔레트가 일치하지 않을 수 있음
 - KEEP 21개 Concept는 원본을 유지했고, REBUILD/REWORK/POLISH/ADD로 분류된 나머지 17개에 SVG를 반영했습니다.
 
