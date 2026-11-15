@@ -76,7 +76,7 @@
 
 ## 검증 상태 및 남은 과제
 
-- 생성 단계: 11개 SVG가 title/desc/viewBox를 포함하는지 검사; 17개 canonical MD의 첫 text 도식만 대체
+- 생성 단계: 17개 SVG가 title/desc/viewBox를 포함하는지 검사; 17개 canonical MD의 첫 text 도식만 대체
 - 정적 SVG의 XML/보안 검사, 실제 Reader 다크/라이트 및 900px/1280px 시각 확인, Import Preview/Apply/재import, 전체 CI는 실행 결과를 확인하기 전까지 미검증
 - 외부 SVG의 `prefers-color-scheme`은 OS 테마를 기준으로 하므로 Reader의 앱 내부 테마와 다른 경우 팔레트가 일치하지 않을 수 있음
 - G1 미적용 `POLISH`/추가 `ADD` 항목은 후속 QA에서 순차 검토하며 구현 완료로 취급하지 않음
