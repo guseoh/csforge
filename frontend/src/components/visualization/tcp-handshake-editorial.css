@@ -1,0 +1,110 @@
+/* Network Pilot N-01 — scoped textbook TCP sequence, no new visualization schema. */
+.tcp-handshake-editorial {
+  color: var(--diagram-text);
+  font-size: 16px;
+  line-height: 1.55;
+}
+.tcp-handshake-editorial__intro {
+  color: var(--diagram-muted);
+  margin: 8px 0 18px;
+  font-size: 16px;
+}
+.tcp-handshake-editorial__scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  scrollbar-width: thin;
+  scrollbar-color: var(--diagram-line) transparent;
+}
+.tcp-handshake-editorial__canvas {
+  width: 100%;
+  min-width: 620px;
+  max-width: 800px;
+  height: auto;
+  display: block;
+  margin-inline: auto;
+  background: transparent;
+}
+.learning-visualization .tcp-handshake-editorial__party {
+  font-size: 18px;
+  font-weight: 600;
+  fill: var(--diagram-text);
+}
+.learning-visualization .tcp-handshake-editorial__state {
+  font: 500 15px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+  fill: var(--diagram-text);
+}
+.tcp-handshake-editorial__rule {
+  stroke: var(--diagram-line);
+  stroke-width: 1;
+  opacity: .65;
+}
+.tcp-handshake-editorial__lifeline {
+  stroke: var(--diagram-line);
+  stroke-dasharray: 4 6;
+  stroke-width: 1.4;
+  opacity: .8;
+}
+.tcp-handshake-editorial__arrow-line {
+  stroke: var(--diagram-line);
+  stroke-width: 1.5;
+}
+.tcp-handshake-editorial__arrow-tip {
+  fill: var(--diagram-line);
+}
+.tcp-handshake-editorial__message--active .tcp-handshake-editorial__arrow-line {
+  stroke: var(--diagram-text);
+  stroke-width: 2.6;
+}
+.tcp-handshake-editorial__message--active .tcp-handshake-editorial__arrow-tip {
+  fill: var(--diagram-text);
+}
+.learning-visualization .tcp-handshake-editorial__message-name {
+  fill: var(--diagram-text);
+  font: 500 16px/1 ui-monospace, SFMono-Regular, Consolas, monospace;
+}
+.learning-visualization .tcp-handshake-editorial__inflight {
+  fill: var(--diagram-muted);
+  font-size: 13px;
+}
+.learning-visualization .tcp-handshake-editorial__axis {
+  fill: var(--diagram-muted);
+  font-size: 12px;
+}
+.tcp-handshake-editorial__reading {
+  margin-top: 18px;
+  min-height: 84px;
+  display: grid;
+  align-content: start;
+  gap: 7px;
+}
+.tcp-handshake-editorial__reading p {
+  margin: 0;
+  line-height: 1.55;
+  font-size: 16px;
+}
+.tcp-handshake-editorial__reading .tcp-handshake-editorial__reading-title {
+  font-size: 17px;
+  font-weight: 650;
+}
+.tcp-handshake-editorial__controls .diagram-controls {
+  margin: 12px 0 14px;
+}
+.tcp-handshake-editorial__controls .diagram-controls button {
+  border-radius: 0;
+}
+.tcp-handshake-editorial__note {
+  color: var(--diagram-muted);
+  font-size: 14px;
+  margin: 10px 0 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tcp-handshake-editorial, .tcp-handshake-editorial * { animation: none; transition: none; }
+}
+
+/* Keep yet-to-be-sent protocol stages visible but clearly distinct from real messages. */
+.learning-visualization .tcp-handshake-editorial__upcoming {
+  fill: var(--diagram-muted);
+  font-size: 14px;
+  opacity: .62;
+}

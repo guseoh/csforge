@@ -2,6 +2,8 @@ import { Component, type ReactNode } from 'react'
 import { parseVisualization, type Visualization, type VisualizationOf } from '../../lib/learning-visualization'
 import { DiagramArrow, DiagramCanvas, DiagramNode } from './DiagramPrimitives'
 import { TcpHandshakeDiagram } from './StepDiagram'
+import { NetworkCoreVisualization } from './NetworkCoreVisualization'
+import { NetworkAreaVisualization } from './NetworkAreaVisualization'
 import { HeapDiagram } from './InteractiveDiagram'
 import { LanguageValueDiagram } from './LanguageValueDiagram'
 import { ArrayStoreDiagram } from './ArrayStoreDiagram'
@@ -135,6 +137,8 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
     case 'java-pass-by-value': return renderers[data.type](data)
     case 'min-heap': return renderers[data.type](data)
     case 'tcp-handshake': return renderers[data.type](data)
+    case 'network-core': return <NetworkCoreVisualization data={data} />
+    case 'network-area': return <NetworkAreaVisualization data={data} />
     case 'java-value-reference': return renderers[data.type](data)
     case 'java-array-store': return renderers[data.type]()
     case 'java-definite-assignment': return renderers[data.type]()
@@ -145,8 +149,9 @@ function RegisteredDiagram({ data }: { data: Visualization }) {
 export function LearningVisualization({ source }: { source: string }) {
   const data = parseVisualization(source)
   if (!data) return <DiagramFallback />
-  return <figure className={`learning-visualization${(data.type.startsWith('java-') || data.type === 'static-flow') ? ' java-visualization' : ''}`} data-java-pass={data.type === 'java-pass-by-value' ? 'true' : undefined}>
-    <figcaption><strong>{data.title}</strong><p>{data.description}</p></figcaption>
+  const hasEmbeddedExplanation = data.type === 'network-area'
+  return <figure className={`learning-visualization${(data.type.startsWith('java-') || data.type === 'static-flow') ? ' java-visualization' : ''}${hasEmbeddedExplanation ? ' learning-visualization--network-area' : ''}`} data-java-pass={data.type === 'java-pass-by-value' ? 'true' : undefined}>
+    <figcaption><strong>{data.title}</strong>{!hasEmbeddedExplanation && <p>{data.description}</p>}</figcaption>
     <DiagramErrorBoundary key={source} description={data.description}><RegisteredDiagram key={source} data={data} /></DiagramErrorBoundary>
   </figure>
 }

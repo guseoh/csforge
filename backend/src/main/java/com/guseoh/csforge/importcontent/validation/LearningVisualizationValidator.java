@@ -32,6 +32,21 @@ public class LearningVisualizationValidator {
             "runtime-areas", "gc-roots", "reference-strength", "collector-tradeoffs", "retained-path",
             "process-memory", "jit-profile", "dynamic-proxy", "processing-reflection", "serialization-boundary",
             "module-boundary", "binary-evolution");
+    private static final Set<String> NETWORK_AREA_EXAMPLES = Set.of(
+            "url-components", "dns-to-route", "tls-before-http", "http-request-delivery",
+            "proxy-gateway-path", "header-body", "content-negotiation", "put",
+            "protocol-idempotency-boundary", "redirect-status", "429", "500-502-503-504",
+            "http11-persistent", "http11-pipelining", "http2-stream", "quic",
+            "transport-head-of-line", "if-none-match", "304", "intermediary-cache",
+            "cookie-scope", "proxy", "reverse-proxy", "trusted-proxy-boundary",
+            "cdn-http-intermediary", "link-network-transport-application", "encapsulation", "decapsulation",
+            "switch-forwarding", "broadcast-domain", "arp", "default-gateway",
+            "prefix-subnet", "routing-table", "router-forwarding", "connection-tuple",
+            "nat", "nat-mapping", "domain-hierarchy", "cname",
+            "dns-failure", "acknowledgement", "congestion-control", "tcp-head-of-line",
+            "delivery-order-guarantee", "application-reliability", "pki", "tls-handshake",
+            "tls-termination");
+
     private final ObjectMapper objectMapper;
 
     public boolean isValid(String source) {
@@ -55,6 +70,11 @@ public class LearningVisualizationValidator {
                 case "tcp-handshake" -> exactKeys(data, "clientIsn", "serverIsn")
                         && integer(data.get("clientIsn"), 0, 4_294_967_295L)
                         && integer(data.get("serverIsn"), 0, 4_294_967_295L);
+                case "network-core" -> exactKeys(data, "example")
+                        && Set.of("http-over-tcp", "dns-iterative", "tcp-teardown", "tcp-sliding-window")
+                        .contains(data.get("example"));
+                case "network-area" -> exactKeys(data, "example")
+                        && NETWORK_AREA_EXAMPLES.contains(data.get("example"));
                 case "java-value-reference" -> exactKeys(data, "example")
                         && Set.of("assignment-copy", "final-list", "string-intern").contains(data.get("example"));
                 case "java-array-store", "java-definite-assignment" -> exactKeys(data);

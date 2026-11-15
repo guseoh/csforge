@@ -49,12 +49,14 @@ references:
 - 시간 초과·도달 불가: 정해진 시간 안에 사용할 수 있는 DNS 응답을 받지 못했다.
 - DNSSEC 검증 실패처럼 응답을 신뢰할 수 없어 최종 답을 만들지 못하는 경우도 있다.
 
-```text
-DNS 조회 실패
-  ├─ NXDOMAIN / NODATA
-  │    → 이름·레코드 존재 여부에 대한 부정 응답
-  └─ SERVFAIL / 시간 초과 / 검증 실패 ...
-       → 이름 해석 과정 자체의 실패
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "DNS 조회 실패",
+  "description": "개념의 기술적 관계와 상태를 검증된 고정 예제로 보여줍니다.",
+  "example": "dns-failure"
+}
 ```
 
 ### 재시도는 실패 종류와 전체 시간 예산을 함께 봐야 한다

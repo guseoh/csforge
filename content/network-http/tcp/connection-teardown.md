@@ -21,14 +21,14 @@ references:
 
 TCP 연결은 양방향 바이트 스트림이므로 **A→B 전송 종료와 B→A 전송 종료를 따로 처리할 수 있다.** 한쪽이 더 보낼 바이트가 없으면 FIN을 보내 자신의 송신 방향 끝을 알리고 상대는 ACK로 이를 확인한다.
 
-```text
-A ── FIN ──> B   A → B 방향의 바이트 스트림 종료
-A <─ ACK ─── B
-
-B → A 방향은 아직 데이터 전송 가능
-
-A <─ FIN ─── B   B → A 방향도 종료
-A ── ACK ──> B
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-core",
+  "title": "TCP 양방향 종료와 TIME_WAIT",
+  "description": "클라이언트가 먼저 FIN을 보내는 정상 종료 사례입니다. 각 FIN·ACK의 송신과 수신, half-close와 TIME_WAIT를 분리해 보여줍니다.",
+  "example": "tcp-teardown"
+}
 ```
 
 이처럼 한 방향의 송신만 끝나고 반대 방향은 열려 있는 상태를 한쪽 방향 종료(half-close)라고 한다.
