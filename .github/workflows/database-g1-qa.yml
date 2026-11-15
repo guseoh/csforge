@@ -63,3 +63,18 @@ jobs:
           npm run lint
           npm test
           npm run build
+
+  full-backend-validation:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - name: Complete backend tests and backend build
+        working-directory: backend
+        run: |
+          chmod +x gradlew
+          ./gradlew build --no-daemon --stacktrace
