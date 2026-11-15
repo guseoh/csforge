@@ -101,3 +101,20 @@
 - 이 화면은 Import 권한이나 비밀 키를 사용하지 않으며 Production DB에 쓰지 않습니다. 정적 SVG 자체의 접근성과 API 본문 출처를 분리하여 진단합니다.
 - 원인 구조: `frontend/vercel.ts`는 `/api/` 요청을 `CSFORGE_BACKEND_ORIGIN`의 백엔드로 전달합니다. `.github/workflows/content-sync.yml`은 `main`에서 Repository Validation 성공 후의 동기화만 허용합니다.
 - 현재 사용 가능한 Neon 연결에서 CSForge 프로젝트가 조회되지 않았으므로 안전한 격리 DB의 Preview/Apply/UNCHANGED 검증과 실제 Reader 재연결은 **미완료**입니다. 정적 진단 화면을 정식 Reader E2E 검증으로 간주하지 않습니다.
+
+
+## 격리 QA 최종 결과 (2026-11-15)
+
+이 절은 위의 초기 `미실행/미검증` 상태 이후에 수행한 **독립 검증 결과**이며, 브랜치 Preview와 운영 DB의 일치를 의미하지 않습니다.
+
+- QA 커밋: [`ac4056d2`](https://github.com/guseoh/csforge/commit/ac4056d2ecdc1034ccd7f81f0a147d1664b9fc89).
+- [Database 전용 GitHub Actions #43705932453](https://github.com/guseoh/csforge/actions/runs/43705932453) — 세 Job 모두 **SUCCESS**.
+- Database 전용 `DatabaseG1FullPackIntegrationTest`를 추가했습니다. Testcontainers의 **PostgreSQL 16.4** 격리 DB에서 전체 canonical bootstrap 후 17개 Concept의 **합성된 도식 이전 버전**을 적용하고, G1 본문을 재수입하여 **17 UPDATED**, 나머지 Database Item `UNCHANGED`, 동일 전체 Database 소스의 두 번째 수입 **전부 UNCHANGED**를 검증했습니다.
+- 해당 변경 전후 Database Concept·Question ID, 전체 Reference ID 및 관계, 개인 이력 9종(`concept_progress`, `concept_view_history`, `personal_note`, `quiz_session`, `quiz_question`, `attempt`, `wrong_note`, `review_schedule`, `review_history`) 내용 보존을 검증했습니다.
+- 변경 대상 17개 각각을 실제 Spring **`GET /api/public/concepts/{id}` HTTP 200**으로 조회해 `contentKey`와 `contentMarkdown`의 SVG URI를 확인했습니다. 이 통합 테스트는 격리 DB를 사용하는 로컬 백엔드에서 실행되었으며, Vercel Preview의 연결된 DB에서 실행한 것이 아닙니다.
+- frontend 전용 Job: 17 SVG의 XML 및 canonical 경로 1:1 연결 **PASS**, JDK 25 환경에서 TypeScript lint와 **102개 테스트 파일·823개 테스트 PASS**, Vite build **PASS**.
+- full backend Job: 기존 전체 Gradle `build` (백엔드 전체 테스트 포함) **SUCCESS**.
+- 초기 frontend CI 실패는 테스트에 필요한 JDK 25 설정 누락이 원인이었고, 임시 QA workflow에서 수정하여 재검증을 통과했습니다. 제품 프런트엔드 코드 변경은 없었습니다.
+- 검증용 `.github/workflows/database-g1-qa.yml`은 GitHub Actions 실행 후 **최종 PR 변경 범위에서 제거**합니다. PASS 실행 기록은 남지만 해당 workflow가 최종 Git 트리에 남아 있는 것은 아닙니다.
+- **독립적인 남은 경계:** Vercel Preview에는 `CSFORGE_BACKEND_ORIGIN` 공통 Preview 백엔드 설정이 있고, canonical 콘텐츠 동기화는 검증된 `main` 기준으로만 활성화됩니다. 따라서 G1 브랜치의 새 Markdown이 Vercel의 `/concepts/122`에 나타나는지 확인할 **전용 Preview DB/백엔드**는 아직 없습니다. 사용자 시각 확인은 접수했지만, Production·Preview DB 버전 일치와 실제 Reader 다크/라이트·900/1280px 전수 자동화는 별도 미검증입니다.
+- 연결된 Neon Plugin 계정에서는 CSForge 프로젝트를 찾지 못했습니다. 격리 Import와 Reader HTTP QA는 Testcontainers로 대체해 검증했지만, **전용 Vercel Preview API 연결 자체**를 개통하려면 접근 가능한 격리 백엔드/DB가 필요합니다. 승인 없는 운영 DB 쓰기·PR 병합은 하지 않았습니다.
