@@ -169,6 +169,16 @@
 5. 해당 브랜치의 frontend test/lint/build, 콘텐츠 import Preview, 격리 PostgreSQL Apply→2회차 UNCHANGED, 학습 이력 보존 검증을 수행한 뒤에만 전체 G2 QA 통과를 선언합니다. 실제 실행하지 못했다면 명시적으로 미검증입니다.
 6. 최종 PR의 base는 `refactor`, 브랜치 `viz/network-g2`; 자동 병합 금지. **현재 이 감사만으로 G2 완료·배포 승인하지 않습니다.**
 
+
+## 6. G2 구현·검증 기록 (2026-11-15)
+
+- **구현:** `content/network-http/tcp/sequence-number.md`에 기존 ASCII 2개를 대체하는 Network 전용 이미지 참조를 추가했고, `frontend/public/learning/network-http/tcp-sequence-number.svg`를 신규 작성했습니다. `contentKey`, 기존 RFC reference, Topic, Level, Question은 그대로입니다.
+- **의미 모델:** 1000~1499 500B 수신 + 1500~1999 500B 누락 + 2000~2499 500B 선도착 → 누적 ACK 1500. 누락된 범위 수신 후 1000~2499 연속 → 누적 ACK 2500. SYN/FIN과 SACK 제외. RFC 9293과 대조했습니다.
+- **정적 검사 PASS:** SVG XML parse, 양수 `viewBox`, `title`/`desc`, 외부 리소스/스크립트 없음, 3개 바이트 범위와 2개 ACK 수치 확인. CairoSVG로 900px·1280px 폭의 PNG 생성 및 글자 표시 확인. **실제 앱 테마/Reader QA는 미완료**입니다.
+- **미수정:** #517 버튼은 `refactor`에서 Network 전용 `TcpHandshakeEditorial.tsx`/CSS가 부재하여 이 브랜치에서 공통 컴포넌트 `StepDiagram.tsx`/공통 스타일을 변경하지 않았습니다.
+- **미검증:** 기존 G1 53개에 대한 전체 렌더링·의미 QA, Vitest/lint/build, 실제 importer Preview/Apply/UNCHANGED 및 데이터 이력 보존. G1 부재 때문에 PASS로 판정하지 않았습니다.
+- **범위 확인:** `refactor` 대비 변경 경로는 위 2개 Network 파일과 이 Network 전용 감사 문서뿐입니다. 다른 영역, 공통 컴포넌트, 백엔드/계약은 수정하지 않았습니다.
+
 ## 주요 기술 근거
 
 - [RFC 9293 §3.4 Sequence Numbers](https://www.rfc-editor.org/rfc/rfc9293.html#section-3.4) — TCP는 바이트 시퀀스, 누적 ACK는 다음 예상 바이트.
