@@ -6,4 +6,14 @@
 </style></defs><rect class="bg" width="1020" height="480"/>
 <text class="label" x="48" y="49" font-size="25" text-anchor="start">fork 이후 부모와 자식</text>
 <rect class="panel" x="60" y="116" width="270" height="90"/><text class="label" x="76" y="146" font-size="18" text-anchor="start">부모 프로세스</text><text class="muted" x="76" y="172" font-size="15" text-anchor="start">PID A · 독립 주소 공간</text><rect class="panel" x="690" y="116" width="270" height="90"/><text class="label" x="706" y="146" font-size="18" text-anchor="start">자식 프로세스</text><text class="muted" x="706" y="172" font-size="15" text-anchor="start">PID B · 독립 주소 공간</text><rect class="panel" x="60" y="280" width="270" height="82"/><text class="label" x="76" y="310" font-size="18" text-anchor="start">부모의 fd 3</text><text class="muted" x="76" y="336" font-size="15" text-anchor="start">설명 상태를 참조</text><rect class="panel" x="690" y="280" width="270" height="82"/><text class="label" x="706" y="310" font-size="18" text-anchor="start">자식의 fd 3</text><text class="muted" x="706" y="336" font-size="15" text-anchor="start">동일 설명 상태 참조</text><rect class="panel" x="393" y="278" width="234" height="94"/><text class="label" x="409" y="308" font-size="18" text-anchor="start">열린 파일 설명</text><text class="muted" x="409" y="334" font-size="15" text-anchor="start">공유 파일 오프셋</text><path class="arrow" d="M330 323H393"/><path class="arrow" d="M690 323H627"/><text class="muted" x="510" y="245" font-size="17" text-anchor="middle">공유 가능</text><path class="dash" d="M330 162H475V198H690"/><text class="label" x="510" y="132" font-size="18" text-anchor="middle">fork()</text><text class="muted" x="48" y="424" font-size="15" text-anchor="start">메모리 내용은 처음 같아 보여도 독립된 주소 공간이며, 구현은 COW로 복사를 지연할 수 있습니다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+
+.bg{fill:#f9fafb}.panel{fill:#edf0f4;stroke:#596075;stroke-width:1.5}.outlined{fill:none;stroke:#405067;stroke-width:1.6}.soft{fill:#e1e6eb;stroke:#596075;stroke-width:1.5}.label{fill:#202632;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:600}.muted{fill:#405067;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:400}.arrow{fill:none;stroke:#354155;stroke-width:2.2;marker-end:url(#end)}.plain{fill:none;stroke:#596075;stroke-width:1.8}.dash{fill:none;stroke:#596075;stroke-width:1.6;stroke-dasharray:7 6}.sep{stroke:#777;stroke-width:1}
+
+[fill="#dedede"]{fill:#354155}
+[stroke="#dedede"]{stroke:#354155}
+}
+]]></style>
 </svg>

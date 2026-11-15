@@ -6,4 +6,14 @@
 </style></defs><rect class="bg" width="1020" height="480"/>
 <text class="label" x="48" y="49" font-size="25" text-anchor="start">프로세스의 가상 주소 공간</text>
 <text class="muted" x="70" y="103" font-size="17" text-anchor="start">낮은 가상 주소</text><text class="muted" x="70" y="405" font-size="17" text-anchor="start">높은 가상 주소</text><path class="arrow" d="M217 114V395"/><rect class="panel" x="300" y="87" width="565" height="58"/><text class="label" x="316" y="117" font-size="18" text-anchor="start">코드·읽기 전용 데이터</text><text class="muted" x="316" y="143" font-size="15" text-anchor="start">실행 파일·라이브러리</text><rect class="panel" x="300" y="154" width="565" height="58"/><text class="label" x="316" y="184" font-size="18" text-anchor="start">데이터·BSS</text><text class="muted" x="316" y="210" font-size="15" text-anchor="start">전역·정적 상태</text><rect class="panel" x="300" y="221" width="565" height="58"/><text class="label" x="316" y="251" font-size="18" text-anchor="start">힙 등 동적 영역</text><text class="muted" x="316" y="277" font-size="15" text-anchor="start">실행 중 할당·해제</text><rect class="panel" x="300" y="288" width="565" height="58"/><text class="label" x="316" y="318" font-size="18" text-anchor="start">파일·익명 매핑</text><text class="muted" x="316" y="344" font-size="15" text-anchor="start">mmap 등</text><rect class="panel" x="300" y="355" width="565" height="58"/><text class="label" x="316" y="385" font-size="18" text-anchor="start">스레드 스택</text><text class="muted" x="316" y="411" font-size="15" text-anchor="start">스레드별 호출 상태</text><text class="muted" x="880" y="230" font-size="15" text-anchor="start">가상 주소</text><text class="muted" x="48" y="451" font-size="15" text-anchor="start">영역의 위아래 순서는 예시일 뿐입니다. 예약된 주소와 RAM 상주를 동일시하지 않습니다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+
+.bg{fill:#f9fafb}.panel{fill:#edf0f4;stroke:#596075;stroke-width:1.5}.outlined{fill:none;stroke:#405067;stroke-width:1.6}.soft{fill:#e1e6eb;stroke:#596075;stroke-width:1.5}.label{fill:#202632;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:600}.muted{fill:#405067;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:400}.arrow{fill:none;stroke:#354155;stroke-width:2.2;marker-end:url(#end)}.plain{fill:none;stroke:#596075;stroke-width:1.8}.dash{fill:none;stroke:#596075;stroke-width:1.6;stroke-dasharray:7 6}.sep{stroke:#777;stroke-width:1}
+
+[fill="#dedede"]{fill:#354155}
+[stroke="#dedede"]{stroke:#354155}
+}
+]]></style>
 </svg>
