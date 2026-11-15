@@ -32,6 +32,8 @@ references:
   스레드 A  스레드 B
 ```
 
+![두 스레드의 독립 스택과 하나의 공유 힙 객체 접근](/learning/operating-systems/thread-shared-state.svg)
+
 ### 공유된다는 사실과 안전하게 수정할 수 있다는 사실은 다르다
 
 두 스레드가 같은 `counter`를 동시에 증가시킨다고 하자. `counter = counter + 1`은 개념적으로 읽기 → 계산 → 쓰기 여러 단계로 나뉠 수 있다. 실행이 교차되면 둘 다 같은 이전 값을 읽고 한 번의 갱신이 사라질 수 있다.

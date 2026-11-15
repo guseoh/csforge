@@ -40,6 +40,8 @@ references:
 종료 절차
 ```
 
+![잠금 소유와 대기를 통해 공유 상태의 동시 수정을 막는 임계 구역](/learning/operating-systems/critical-section-exclusion.svg)
+
 예를 들어 큐의 `tail 확인 → 원소 저장 → tail 갱신`이 하나의 enqueue 불변 조건을 이룬다면 그중 일부만 보호해서는 중간 상태가 다른 스레드에 노출될 수 있다.
 
 ### 상호 배제만이 전부는 아니다

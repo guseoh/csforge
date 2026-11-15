@@ -32,6 +32,8 @@ references:
 실행 ── 종료 ──> 종료됨
 ```
 
+![프로세스의 생성·준비·실행·대기·종료 상태 전이와 발생 원인](/learning/operating-systems/process-state-transitions.svg)
+
 ### 준비 상태와 실행 상태는 다르다
 
 준비(ready) 상태의 프로세스는 실행할 조건은 갖췄지만 아직 CPU를 배정받지 못했다. 실행(running) 상태는 실제 CPU 코어에서 명령어를 실행하고 있는 상태다.
