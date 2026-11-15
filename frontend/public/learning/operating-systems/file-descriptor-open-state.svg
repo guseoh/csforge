@@ -23,4 +23,12 @@
 <text class="small" x="48" y="366">예: dup2(3, 7)로 fd 7이 fd 3과 같은 열린 파일 설명을 참조합니다.</text>
 <text class="small" x="48" y="390">두 fd는 별도 항목이지만 같은 열린 파일 설명을 가리키므로 파일 오프셋을 공유합니다.</text>
 <text class="small" x="48" y="422">예: fd 3으로 4바이트를 읽어 오프셋이 104가 되면 fd 7도 같은 위치 104를 사용합니다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+.bg{fill:#f9fafb}.box{fill:#edf0f4;stroke:#334155;stroke-width:1.6}.inner{fill:#e1e6eb;stroke:#334155;stroke-width:1.4}.title{fill:#202632;font:600 25px Arial,"Noto Sans KR",sans-serif}.label{fill:#202632;font:600 18px Arial,"Noto Sans KR",sans-serif}.small{fill:#405067;font:400 16px Arial,"Noto Sans KR",sans-serif}.arrow{fill:none;stroke:#354155;stroke-width:2.2;marker-end:url(#end)}
+[fill="#e5e5e5"]{fill:#354155}
+[stroke="#e5e5e5"]{stroke:#354155}
+}
+]]></style>
 </svg>
