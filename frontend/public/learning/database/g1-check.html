@@ -28,10 +28,11 @@ html.dark{color-scheme:dark;--bg:#14171b;--fg:#f4f5f6;--sub:#c2cbd4;--line:#626d
 <div class="controls">
 <label for="concept-id">Concept ID</label><input id="concept-id" type="number" min="1" max="999999" value="122">
 <button id="check" type="button">API 본문 확인</button>
+<button id="check-all" type="button">Database 17개 본문 전수 확인</button>
 <button id="theme" type="button">다크 모드 전환</button>
 <a id="reader" href="/concepts/122">Concept Reader 열기</a>
 </div>
-<section id="status" role="status" aria-live="polite">진단을 시작합니다…</section>
+<section id="status" role="status" aria-live="polite">진단을 시작합니다…</section><section id="full-status" role="status" aria-live="polite"></section>
 <p class="muted">해당 Concept가 17개 변경 대상에 없으면 현재 페이지의 도식은 이번 G1 작업으로 바뀌지 않습니다. 대상인데 본문에 새 SVG 경로가 없다면 DB 콘텐츠 동기화가 필요합니다. 경로가 있는데 표시가 안 되면 이미지 로딩·Reader 렌더링을 조사해야 합니다.</p>
 <h2>G1 SVG 17개 · 배포된 정적 자산 미리보기</h2>
 <p class="muted">아래 그림은 API/DB와 무관하게 Preview 배포의 정적 파일을 로딩합니다. 실제 Concept Reader에 반영되었다는 의미는 아닙니다.</p>
@@ -97,6 +98,45 @@ async function check(){
  }catch(e){status.replaceChildren();append("진단 중 오류: "+String(e),"fail")}
  finally{btn.disabled=false}
 }
+async function checkAll(){
+ const button=document.getElementById("check-all");
+ const output=document.getElementById("full-status");
+ const write=(value)=>{const row=document.createElement("div");row.className="status-line";row.textContent=value;output.appendChild(row)};
+ button.disabled=true;output.replaceChildren();write("Database 전체 Concept를 읽기 전용 API로 확인 중입니다…");
+ try{
+  const listing=[];
+  for(let page=0;page<6;page++){
+   const p=await json("/api/public/concepts?area=database&page="+page+"&size=30&sort=CURRICULUM");
+   if(!Array.isArray(p.items))throw new Error("목록 items 형식이 다릅니다.");
+   listing.push(...p.items);
+   if(!p.page?.hasNext)break;
+  }
+  if(listing.length<entries.length)throw new Error("Database 목록이 너무 짧습니다: "+listing.length);
+  const details=[];
+  for(let i=0;i<listing.length;i+=4){
+   const batch=listing.slice(i,i+4);
+   const rows=await Promise.allSettled(batch.map(c=>json("/api/public/concepts/"+c.id)));
+   for(let k=0;k<rows.length;k++)if(rows[k].status==="fulfilled")details.push(rows[k].value);
+   write("조회: "+Math.min(i+4,listing.length)+" / "+listing.length+" (상세 성공 "+details.length+")");
+  }
+  output.replaceChildren();
+  write("Database 공개 Concept: "+listing.length+"개 · 상세 조회 성공: "+details.length+"개");
+  const byKey=new Map(details.filter(c=>typeof c.contentKey==="string").map(c=>[c.contentKey,c]));
+  let ok=0,stale=0,notFound=0;
+  for(const entry of entries){
+   const c=byKey.get(entry.contentKey),path=base+entry.asset+".svg";
+   if(!c){write("대상 매핑 없음: "+entry.title+" / "+entry.contentKey);notFound++;continue;}
+   const match=typeof c.contentMarkdown==="string"&&c.contentMarkdown.includes(path);
+   write((match?"반영":"미반영")+" · #"+c.id+" · "+entry.title+" · "+entry.contentKey);
+   if(match)ok++;else stale++;
+  }
+  write("결과: 반영 "+ok+"/17 · 미반영 "+stale+" · 매핑 실패 "+notFound);
+  if(stale||notFound)write("판정: Preview API DB 콘텐츠가 G1 Markdown과 일치하지 않습니다. 운영 DB 수정 대신 격리 Import 및 Reader 연결을 확인해야 합니다.");
+  else write("판정: 17개 API Markdown에 SVG 경로가 있습니다. 실제 Reader 표시·다크·라이트 검증은 별도로 필요합니다.");
+ }catch(e){write("전수 확인 실패: "+String(e))}
+ finally{button.disabled=false}
+}
+document.getElementById("check-all").addEventListener("click",checkAll);
 document.getElementById("theme").addEventListener("click",()=>{
  const dark=document.documentElement.classList.toggle("dark");
  document.getElementById("theme").textContent=dark?"라이트 모드 전환":"다크 모드 전환";
