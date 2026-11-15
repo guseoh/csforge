@@ -76,11 +76,18 @@
 
 ## 검증 상태 및 남은 과제
 
-- 생성 단계: 17개 SVG가 title/desc/viewBox를 포함하는지 검사; 17개 canonical MD의 첫 text 도식만 대체
+- 정적 검사: 17개 SVG의 title/desc/viewBox·금지 요소·텍스트 위치 기초 검사, 17개 canonical MD의 이미지 경로·frontmatter·코드 펜스 확인
 - 정적 SVG의 XML/보안 검사, 실제 Reader 다크/라이트 및 900px/1280px 시각 확인, Import Preview/Apply/재import, 전체 CI는 실행 결과를 확인하기 전까지 미검증
 - 외부 SVG의 `prefers-color-scheme`은 OS 테마를 기준으로 하므로 Reader의 앱 내부 테마와 다른 경우 팔레트가 일치하지 않을 수 있음
-- G1 미적용 `POLISH`/추가 `ADD` 항목은 후속 QA에서 순차 검토하며 구현 완료로 취급하지 않음
+- KEEP 21개 Concept는 원본을 유지했고, REBUILD/REWORK/POLISH/ADD로 분류된 나머지 17개에 SVG를 반영했습니다.
 
 ## G1 보강
 
 추가 6개 Concept에 독립 SVG를 적용해 전수 분류의 17개 REBUILD/REWORK/POLISH/ADD 대상을 모두 반영했습니다. 비대상 21개 KEEP Concept는 그대로 유지했습니다. 다만 모든 변경의 브라우저·Import 검증은 별도 증거가 확인되기 전까지 미완료입니다.
+
+## 후속 정적 QA 정리
+
+- 복합 인덱스 그림에서 2픽셀짜리 의미 없는 화살표를 제거했습니다.
+- Keyset 그림을 행별 복합 키와 정확한 커서 경계가 보이도록 수정했습니다.
+- 현 단계에서 자동 정적 검사와 Markdown 연결 검사는 가능하지만, Reader 실제 화면의 라이트·다크·두 데스크톱 폭 테스트 및 격리 Import/재import는 **미검증**입니다.
+- `repository-validation.yml`은 `refactor` 대상 PR 이벤트에서 실행되지 않도록 구성되어 있으므로, 별도 CI가 자동으로 시작되지 않는 것을 통과로 간주하지 않습니다. Vercel 상태와 Repository Validation 테스트를 구별합니다.
