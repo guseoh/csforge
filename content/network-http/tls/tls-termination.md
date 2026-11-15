@@ -35,10 +35,14 @@ references:
 
 리버스 프록시나 로드 밸런서가 클라이언트와 직접 TLS 핸드셰이크를 수행하면 그 장비가 **TLS 종단점(endpoint)**이 된다. 클라이언트가 보낸 암호화된 데이터는 프록시에서 복호화되고, 프록시는 HTTP 내용을 읽고 필요한 처리를 한 뒤 백엔드로 별도의 연결을 만들어 전달한다. 이를 TLS 종료(TLS termination)라고 한다.
 
-```text
-클라이언트 ── TLS 연결 A ──> [프록시: TLS 종료·복호화·HTTP 처리]
-                           │
-                           └── HTTP 또는 TLS 연결 B ──> 백엔드
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "TLS 종료(Termination) 경계",
+  "description": "개념의 기술적 관계와 상태를 검증된 고정 예제로 보여줍니다.",
+  "example": "tls-termination"
+}
 ```
 
 여기서 `클라이언트 → 프록시`와 `프록시 → 백엔드`는 하나의 종단 간 TLS 연결이 아니다. 첫 번째 연결의 인증서와 키 상태는 프록시에서 끝나고, 두 번째 구간은 평문 HTTP일 수도 있고 새로운 TLS 연결일 수도 있다.
