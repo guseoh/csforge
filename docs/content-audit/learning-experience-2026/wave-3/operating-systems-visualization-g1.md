@@ -209,3 +209,28 @@
 - Linux `dup(2)`: https://man7.org/linux/man-pages/man2/dup.2.html (열린 파일 설명·오프셋 공유)
 
 대표 코드·도식에서 보장·구현·교육적 단순화를 구분했다. 언급한 자료는 고유 도식 설계의 사실 확인용이며 다른 자료의 그림을 복제하지 않는다.
+
+
+## 컨트롤 타워 리뷰 후속 조치 (2026-11-15)
+
+리뷰: [PR #302 코멘트](https://github.com/guseoh/csforge/pull/302#issuecomment-6892848155)
+
+### 적용 결과
+
+- **P1 의미 경계:** `user-kernel-mode.svg`의 모호한 '직접 장치 접근 / 권한 검사로 제한'을 '특권 장치 제어 불가 / 커널 서비스에 요청'으로 교체했다.
+- **P1 테마:** OS SVG 46개 전부에 독립적인 `@media (prefers-color-scheme: light)` 밝은 팔레트를 추가했다. 원래의 어두운 팔레트는 그대로 유지했다. 각 SVG가 외부 이미지 `<img>`로 로드되므로 `html[data-theme]` 앱 수동 테마 강제값을 상속하지 못한다. **브라우저 시스템 테마와 앱 수동 테마가 불일치할 때까지 해결됐다는 뜻은 아니다.**
+- **P2 학습 중복:** ASCII 상태 도식과 새 SVG가 바로 이어지던 11개 Concept에서 중복 ASCII만 삭제했다. 별개의 원인/대안 비교, 코드 실행 예제 및 설명형 문단은 유지했다.
+- **P2 fd 정확성:** `file-descriptor-open-state.svg`에 `dup2(3, 7)`을 명시하여 최저 미사용 fd를 고르는 `dup()`과 구별했다. 공식 근거: https://man7.org/linux/man-pages/man2/dup.2.html
+- **P2 가독성:** Container·epoll·IPC 주요 영문 레이블을 한국어로 개선하고, 장치 I/O·호스트 커널·inode·namespace·mmap·process isolation·shared memory 등 7개 SVG에서 폭을 넘기던 긴 설명을 줄였다.
+
+### 검증 현황과 증거 범위
+
+- **정적 링크/무결성 PASS:** Curriculum `DIAGRAM 47/47`의 canonical Markdown 경로·`contentKey`·SVG 존재 확인. 기존 33개 및 신규 13개 = 총 고유 SVG 46개.
+- **원격 자산 응답 PASS:** Vercel Preview의 46개 SVG를 각각 `GET`하여 `200`, `<svg>`, `role=img`, `aria-labelledby`, 밝은 팔레트 CSS 존재를 확인했다. 후속으로 문구를 바꾼 7개도 최종 배포에서 각각 `200`을 확인했다.
+- **정적 SVG 기초 검사 PASS:** 46개 SVG 태그 균형, `viewBox` 양수 여부, 접근성 이름·설명, 기본 외부 실행 요소 부재, 테마 스타일 존재를 확인했다. 출처와 육안 렌더는 별도다.
+- **Frontend Build PASS:** 후속 변경 커밋 `98179b24fcfe0f1768f07b7750e4905d335bac04`의 Vercel Preview 배포 `dpl_68U67qQ9fYmHjEMp3y5rR6iQWGZX`가 READY. 빌드 로그에서 `tsc -b && vite build`, 601 modules transformed, build 성공을 확인했다.
+- **GitHub CI 미수행:** 위 커밋의 GitHub Actions 조회 결과 workflow run 0건. 별도 `npm run test` 및 실행 환경의 `npm run lint` 명령은 실행하지 않았다 (빌드 과정의 `tsc -b`만 확인).
+- **시각 QA 미완료:** 실제 브라우저의 Reader에서 47개 Concept을 900/1280px, 앱 라이트/다크에서 직접 열어 스크린샷을 비교·검수하는 단계는 수행하지 못했다. 자산 200 응답이나 좌표 기반 텍스트 점검을 Reader 육안 QA로 대체하지 않는다.
+- **격리 Import 미완료:** Preview ERROR=0 → Apply → 동일 Pack 재import UNCHANGED 및 학습 이력 보존 검증을 실제 격리 DB/백엔드로 실행하지 않았다. 운영 DB는 수정하지 않았다.
+
+**판정: P1 의미 수정 완료, P1 앱 수동 테마 일치와 실제 Reader QA는 잔여 리스크. Draft 유지 및 병합 보류.** 공통 컴포넌트/다른 LearningArea 변경 금지 조건을 지킨다.
