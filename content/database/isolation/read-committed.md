@@ -20,16 +20,9 @@ references:
 
 PostgreSQL의 기본 isolation level은 READ COMMITTED입니다. 이름만 보면 “commit된 것만 읽는다” 정도로 이해하기 쉽지만, 실무에서 더 중요한 특징은 **각 SQL command가 시작될 때 자기 snapshot을 얻는다**는 점입니다.
 
-```text
-T1                               T2
-──────────────────────────────   ─────────────────────
-BEGIN
-SELECT balance → 100
-                                 UPDATE balance=200
-                                 COMMIT
-SELECT balance → 200
-COMMIT
-```
+![READ COMMITTED: 문장별 스냅샷](/learning/database/isolation-read-committed.svg)
+
+*PostgreSQL 16 기준의 설명용 도식입니다. PostgreSQL 16에서 T1의 SELECT 1은 가격 100, T2 커밋 후 SELECT 2는 가격 200을 볼 수 있다.*
 
 T1이 같은 transaction 안에 있어도 두 SELECT의 시작 시점이 다르기 때문에 두 번째 SELECT는 T2의 commit을 볼 수 있습니다.
 

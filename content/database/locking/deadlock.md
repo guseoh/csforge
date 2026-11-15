@@ -20,18 +20,9 @@ references:
 
 두 트랜잭션이 각각 다른 행을 먼저 잠근 뒤 상대 행을 기다리면 둘 다 스스로는 진행할 수 없는 순환이 만들어집니다.
 
-```text
-T1                                  T2
-────────────────────────────────    ────────────────────────────────
-UPDATE account 1  → lock A
-                                    UPDATE account 2 → lock B
-UPDATE account 2
-→ B 기다림                         UPDATE account 1
-                                    → A 기다림
+![교착 상태: 잠금 대기의 순환](/learning/database/locking-deadlock.svg)
 
-T1 waits for T2 ─────┐
-                     └──── T2 waits for T1
-```
+*PostgreSQL 16 기준의 설명용 도식입니다. T1은 A 잠금을 보유하고 B를 기다리며, T2는 B 잠금을 보유하고 A를 기다린다. PostgreSQL은 한 트랜잭션을 중단한다.*
 
 누군가 양보하지 않으면 무한 대기입니다. PostgreSQL은 교착 상태를 감지하면 트랜잭션 하나를 중단해 순환을 끊습니다.
 

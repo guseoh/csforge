@@ -22,11 +22,9 @@ references:
 
 예를 들어 다음과 같은 출력이 있다고 해 봅시다.
 
-```text
-Nested Loop  (cost=... rows=20 ...) (actual ... rows=20000 loops=1)
-  -> Index Scan on member ...
-  -> Index Scan on orders ... (actual ... rows=1000 loops=20)
-```
+![EXPLAIN: 실행 계획 트리와 loops](/learning/database/optimizer-explain.svg)
+
+*PostgreSQL 16 기준의 설명용 도식입니다. PostgreSQL EXPLAIN ANALYZE 예시. Inner Scan의 actual rows 1000은 20회 실행 각각의 평균이며 총 약 20000행이 공급될 수 있다.*
 
 ### plan은 tree다
 

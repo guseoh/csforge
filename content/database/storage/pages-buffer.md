@@ -32,14 +32,9 @@ references:
 
 SQL에서는 행 단위로 데이터를 다루지만 저장 장치는 매번 “행 하나”라는 추상 단위로 읽고 쓰지 않습니다. PostgreSQL은 테이블과 인덱스를 **고정 크기 페이지(block)** 단위로 관리하며 기본 빌드에서는 보통 8KB 페이지를 사용합니다.
 
-```text
-relation file
-┌──────── page 0 ────────┐
-│ tuple A │ tuple B │ ...│
-├──────── page 1 ────────┤
-│ tuple C │ free space   │
-└────────────────────────┘
-```
+![데이터 페이지와 공유 버퍼](/learning/database/storage-pages-buffer.svg)
+
+*PostgreSQL 16 기준의 설명용 도식입니다. PostgreSQL에서 페이지가 shared_buffers에 캐시되고, 변경된 페이지가 dirty가 되는 흐름. 관련 WAL flush가 데이터 페이지 기록보다 먼저 일어난다.*
 
 ### SELECT는 필요한 페이지를 메모리에서 찾는다
 

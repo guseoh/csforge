@@ -22,17 +22,9 @@ references:
 
 여기서 `standby`와 `read replica`를 완전히 같은 말로 쓰면 경계가 흐려집니다. PostgreSQL 스탠바이가 복구 중 읽기 전용 쿼리를 받으려면 **Hot Standby로 동작하도록 구성되어 있어야** 합니다. 즉 물리 스탠바이는 복제 역할을 나타내고, 그 스탠바이를 읽기 확장에도 사용할지는 별도의 읽기 제공 설정과 운영 정책이 포함된 문제입니다.
 
-```text
-Client writes
-     │
-     ▼
-  Primary
-     │ WAL stream
-     ├──────────────► Standby A
-     └──────────────► Hot Standby B
-                         │
-                         └─ read-only query serving 가능
-```
+![비동기 복제: 커밋과 재생 시점](/learning/database/replication-primary-replica.svg)
+
+*PostgreSQL 16 기준의 설명용 도식입니다. PostgreSQL 16 기본 비동기 Streaming Replication. WAL을 수신해도 replay 전이면 standby의 SELECT는 이전 값을 볼 수 있다.*
 
 ### 스탠바이는 프라이머리와 같은 순간을 보고 있다고 보장되지 않는다
 

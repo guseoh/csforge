@@ -44,14 +44,9 @@ ON orders(member_id, status, created_at DESC, id DESC);
 
 개념적으로는 같은 `member_id` 범위 안에서 `status`, `created_at`, `id` 순으로 값이 이어집니다.
 
-```text
-member 42
-  ├─ CANCELLED ...
-  └─ PAID
-      ├─ 2026-08-31 / id 900
-      ├─ 2026-08-30 / id 850
-      └─ ...
-```
+![복합 B-tree: 키의 사전식 정렬](/learning/database/index-composite.svg)
+
+*PostgreSQL 16 기준의 설명용 도식입니다. PostgreSQL 16의 member_id, status, created_at DESC 키 예시. 선두 조건으로 연속 구간을 찾는다.*
 
 ### 선두의 동등 비교 조건이 탐색 범위를 먼저 좁힌다
 

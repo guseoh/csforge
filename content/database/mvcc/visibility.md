@@ -28,18 +28,9 @@ references:
 
 ### READ COMMITTED에서는 SQL 문마다 기준이 바뀔 수 있다
 
-```text
-T1                                     T2
-──────────────────────────────────     ─────────────────────────
-BEGIN
-SELECT price → 10,000
-  └─ statement snapshot S1
-                                       UPDATE price=12,000
-                                       COMMIT
-SELECT price → 12,000
-  └─ 새 statement snapshot S2
-COMMIT
-```
+![스냅샷 유지 기간: RC vs RR](/learning/database/mvcc-visibility.svg)
+
+*PostgreSQL 16 기준의 설명용 도식입니다. PostgreSQL 16에서 두 SELECT 사이에 T2가 커밋하는 경우. RC는 새 스냅샷을, RR은 첫 쿼리의 스냅샷을 유지한다.*
 
 T1은 하나의 트랜잭션이지만 두 SQL 문이 서로 다른 스냅샷을 사용할 수 있으므로 두 번째 SELECT는 그 사이 완료된 커밋을 볼 수 있습니다.
 
