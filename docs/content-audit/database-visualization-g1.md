@@ -94,3 +94,10 @@
 - Keyset 그림을 행별 복합 키와 정확한 커서 경계가 보이도록 수정했습니다.
 - 현 단계에서 자동 정적 검사와 Markdown 연결 검사는 가능하지만, Reader 실제 화면의 라이트·다크·두 데스크톱 폭 테스트 및 격리 Import/재import는 **미검증**입니다.
 - `repository-validation.yml`은 `refactor` 대상 PR 이벤트에서 실행되지 않도록 구성되어 있으므로, 별도 CI가 자동으로 시작되지 않는 것을 통과로 간주하지 않습니다. Vercel 상태와 Repository Validation 테스트를 구별합니다.
+
+## Preview API/정적 파일 분리 진단
+
+- `/learning/database/g1-check.html?id=122`에 Database 전용 읽기 전용 검증 화면을 추가했습니다. 17개 SVG 원본, Preview 빌드 SHA, `/api/public/concepts/:id`의 실제 `contentKey`와 본문에 포함된 새 이미지 경로를 **브라우저에서** 비교합니다.
+- 이 화면은 Import 권한이나 비밀 키를 사용하지 않으며 Production DB에 쓰지 않습니다. 정적 SVG 자체의 접근성과 API 본문 출처를 분리하여 진단합니다.
+- 원인 구조: `frontend/vercel.ts`는 `/api/` 요청을 `CSFORGE_BACKEND_ORIGIN`의 백엔드로 전달합니다. `.github/workflows/content-sync.yml`은 `main`에서 Repository Validation 성공 후의 동기화만 허용합니다.
+- 현재 사용 가능한 Neon 연결에서 CSForge 프로젝트가 조회되지 않았으므로 안전한 격리 DB의 Preview/Apply/UNCHANGED 검증과 실제 Reader 재연결은 **미완료**입니다. 정적 진단 화면을 정식 Reader E2E 검증으로 간주하지 않습니다.
