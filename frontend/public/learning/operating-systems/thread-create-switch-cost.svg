@@ -6,4 +6,14 @@
 </style></defs><rect class="bg" width="1020" height="480"/>
 <text class="label" x="48" y="49" font-size="25" text-anchor="start">스레드 생성·전환 비용의 원천</text>
 <text class="label" x="55" y="119" font-size="19" text-anchor="start">작업마다 스레드 생성</text><rect class="panel" x="55" y="153" width="270" height="83"/><text class="label" x="71" y="183" font-size="18" text-anchor="start">스레드·스택 준비</text><text class="muted" x="71" y="209" font-size="15" text-anchor="start">자원 초기화</text><rect class="panel" x="368" y="153" width="270" height="83"/><text class="label" x="384" y="183" font-size="18" text-anchor="start">스케줄링·실행</text><text class="muted" x="384" y="209" font-size="15" text-anchor="start">CPU 시간 배정</text><rect class="panel" x="680" y="153" width="280" height="83"/><text class="label" x="696" y="183" font-size="18" text-anchor="start">종료·자원 회수</text><text class="muted" x="696" y="209" font-size="15" text-anchor="start">작업 완료</text><path class="arrow" d="M325 194L368 194"/><path class="arrow" d="M638 194L680 194"/><text class="label" x="55" y="307" font-size="19" text-anchor="start">이미 존재하는 작업자 재사용</text><rect class="panel" x="55" y="333" width="270" height="73"/><text class="label" x="71" y="363" font-size="18" text-anchor="start">대기열에 작업 제출</text><text class="muted" x="71" y="389" font-size="15" text-anchor="start">작업자에게 전달</text><rect class="panel" x="368" y="333" width="270" height="73"/><text class="label" x="384" y="363" font-size="18" text-anchor="start">실행·문맥 전환</text><text class="muted" x="384" y="389" font-size="15" text-anchor="start">스택/캐시 영향</text><rect class="panel" x="680" y="333" width="280" height="73"/><text class="label" x="696" y="363" font-size="18" text-anchor="start">다음 작업 처리</text><text class="muted" x="696" y="389" font-size="15" text-anchor="start">새 스레드 생성 생략</text><path class="arrow" d="M325 370L368 370"/><path class="arrow" d="M638 370L680 370"/><text class="muted" x="48" y="452" font-size="15" text-anchor="start">비용 크기와 재사용 효과는 운영체제·JVM·부하에 따라 달라집니다. 항상 풀 방식이 빠른 것은 아닙니다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+
+.bg{fill:#f9fafb}.panel{fill:#edf0f4;stroke:#596075;stroke-width:1.5}.outlined{fill:none;stroke:#405067;stroke-width:1.6}.soft{fill:#e1e6eb;stroke:#596075;stroke-width:1.5}.label{fill:#202632;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:600}.muted{fill:#405067;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:400}.arrow{fill:none;stroke:#354155;stroke-width:2.2;marker-end:url(#end)}.plain{fill:none;stroke:#596075;stroke-width:1.8}.dash{fill:none;stroke:#596075;stroke-width:1.6;stroke-dasharray:7 6}.sep{stroke:#777;stroke-width:1}
+
+[fill="#dedede"]{fill:#354155}
+[stroke="#dedede"]{stroke:#354155}
+}
+]]></style>
 </svg>

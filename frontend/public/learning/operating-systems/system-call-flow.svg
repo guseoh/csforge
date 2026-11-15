@@ -6,4 +6,14 @@
 </style></defs><rect class="bg" width="1020" height="480"/>
 <text class="label" x="48" y="49" font-size="25" text-anchor="start">시스템 콜 처리 순서</text>
 <rect class="panel" x="48" y="138" width="177" height="100"/><text class="label" x="64" y="168" font-size="18" text-anchor="start">1. 요청</text><text class="muted" x="64" y="194" font-size="15" text-anchor="start">read() 호출</text><rect class="panel" x="237" y="138" width="177" height="100"/><text class="label" x="253" y="168" font-size="18" text-anchor="start">2. 커널 진입</text><text class="muted" x="253" y="194" font-size="15" text-anchor="start">특권 경계 이동</text><rect class="panel" x="426" y="138" width="177" height="100"/><text class="label" x="442" y="168" font-size="18" text-anchor="start">3. 검증</text><text class="muted" x="442" y="194" font-size="15" text-anchor="start">fd·주소·권한</text><rect class="panel" x="615" y="138" width="177" height="100"/><text class="label" x="631" y="168" font-size="18" text-anchor="start">4. 처리</text><text class="muted" x="631" y="194" font-size="15" text-anchor="start">데이터 읽기 수행</text><rect class="panel" x="804" y="138" width="177" height="100"/><text class="label" x="820" y="168" font-size="18" text-anchor="start">5. 복귀</text><text class="muted" x="820" y="194" font-size="15" text-anchor="start">결과 또는 오류</text><path class="arrow" d="M225 188L237 188"/><path class="arrow" d="M414 188L426 188"/><path class="arrow" d="M603 188L615 188"/><path class="arrow" d="M792 188L804 188"/><text class="label" x="55" y="310" font-size="19" text-anchor="start">실패 경로</text><path class="arrow" d="M538 238V305H750"/><rect class="panel" x="750" y="267" width="205" height="95"/><text class="label" x="766" y="297" font-size="18" text-anchor="start">검증·처리 실패</text><text class="muted" x="766" y="323" font-size="15" text-anchor="start">오류 반환</text><text class="muted" x="48" y="427" font-size="15" text-anchor="start">시간은 왼쪽에서 오른쪽으로 흐릅니다. 시스템 콜은 항상 I/O 완료까지 블로킹하지는 않습니다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+
+.bg{fill:#f9fafb}.panel{fill:#edf0f4;stroke:#596075;stroke-width:1.5}.outlined{fill:none;stroke:#405067;stroke-width:1.6}.soft{fill:#e1e6eb;stroke:#596075;stroke-width:1.5}.label{fill:#202632;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:600}.muted{fill:#405067;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:400}.arrow{fill:none;stroke:#354155;stroke-width:2.2;marker-end:url(#end)}.plain{fill:none;stroke:#596075;stroke-width:1.8}.dash{fill:none;stroke:#596075;stroke-width:1.6;stroke-dasharray:7 6}.sep{stroke:#777;stroke-width:1}
+
+[fill="#dedede"]{fill:#354155}
+[stroke="#dedede"]{stroke:#354155}
+}
+]]></style>
 </svg>

@@ -6,4 +6,14 @@
 </style></defs><rect class="bg" width="1020" height="480"/>
 <text class="label" x="48" y="49" font-size="25" text-anchor="start">스레드 풀 — 작업 수용과 한계</text>
 <rect class="panel" x="44" y="159" width="187" height="92"/><text class="label" x="60" y="189" font-size="18" text-anchor="start">작업 도착</text><text class="muted" x="60" y="215" font-size="15" text-anchor="start">요청 A·B·C·D·E</text><rect class="panel" x="277" y="159" width="218" height="92"/><text class="label" x="293" y="189" font-size="18" text-anchor="start">대기열 (최대 2)</text><text class="muted" x="293" y="215" font-size="15" text-anchor="start">C · D 대기</text><rect class="panel" x="552" y="105" width="213" height="90"/><text class="label" x="568" y="135" font-size="18" text-anchor="start">작업자 1</text><text class="muted" x="568" y="161" font-size="15" text-anchor="start">A 실행</text><rect class="panel" x="552" y="223" width="213" height="90"/><text class="label" x="568" y="253" font-size="18" text-anchor="start">작업자 2</text><text class="muted" x="568" y="279" font-size="15" text-anchor="start">B 실행</text><path class="arrow" d="M231 205H277"/><path class="arrow" d="M495 204H522V150H552"/><path class="arrow" d="M522 204V265H552"/><rect class="panel" x="784" y="345" width="190" height="83"/><text class="label" x="800" y="375" font-size="18" text-anchor="start">포화 시 정책</text><text class="muted" x="800" y="401" font-size="15" text-anchor="start">E: 거절 / 기다림</text><path class="dash" d="M385 251V380H784"/><text class="muted" x="807" y="304" font-size="15" text-anchor="start">예: 모든 작업자가 사용 중</text><text class="muted" x="48" y="462" font-size="15" text-anchor="start">풀·큐가 반드시 유한한 것은 아닙니다. 그림은 제한을 명시한 하나의 설정 사례입니다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+
+.bg{fill:#f9fafb}.panel{fill:#edf0f4;stroke:#596075;stroke-width:1.5}.outlined{fill:none;stroke:#405067;stroke-width:1.6}.soft{fill:#e1e6eb;stroke:#596075;stroke-width:1.5}.label{fill:#202632;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:600}.muted{fill:#405067;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:400}.arrow{fill:none;stroke:#354155;stroke-width:2.2;marker-end:url(#end)}.plain{fill:none;stroke:#596075;stroke-width:1.8}.dash{fill:none;stroke:#596075;stroke-width:1.6;stroke-dasharray:7 6}.sep{stroke:#777;stroke-width:1}
+
+[fill="#dedede"]{fill:#354155}
+[stroke="#dedede"]{stroke:#354155}
+}
+]]></style>
 </svg>
