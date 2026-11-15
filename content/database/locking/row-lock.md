@@ -22,7 +22,7 @@ references:
 
 ![행 잠금: 일반 SELECT와 잠금 읽기 구분](/learning/database/locking-row-lock.svg)
 
-*PostgreSQL 16 기준으로 단순화한 상태·관계 그림입니다. PostgreSQL 16 READ COMMITTED 예시. T1이 특정 행을 UPDATE하고 잠금을 보유하는 동안 같은 행의 T2 SELECT FOR UPDATE는 기다리고 일반 T3 SELECT는 이전 커밋 버전을 읽을 수 있다.*
+*PostgreSQL 16의 잠금 흐름입니다. 일반 SELECT와 SELECT FOR UPDATE는 행 잠금 대기 동작이 다릅니다.*
 
 ### 일반 SELECT가 모두 기다리는 것은 아니다
 

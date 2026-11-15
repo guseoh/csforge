@@ -30,7 +30,7 @@ SERIALIZABLE은 모든 transaction을 물리적으로 한 줄로 세워 실행�
 
 ![SERIALIZABLE: 쓰기 편향을 중단](/learning/database/isolation-serializable.svg)
 
-*PostgreSQL 16 기준으로 단순화한 상태·관계 그림입니다. PostgreSQL 16 SSI 예시. 두 트랜잭션이 당직자 수 2명을 읽고 각각 한 명을 해제하면 직렬화 불가능한 결과가 될 수 있어 하나가 serialization_failure로 중단된다.*
+*PostgreSQL 16의 SSI 사례입니다. 한 트랜잭션이 중단될 수 있지만 어떤 트랜잭션인지는 고정되지 않습니다.*
 
 각자 읽은 시점에는 규칙을 만족하지만 둘 다 commit하면 당직이 0명이 됩니다. 반면 실제 serial execution이라면 첫 transaction이 한 명을 해제한 뒤 두 번째 transaction은 당직 1명을 읽어 같은 결정을 내릴 수 없습니다. 따라서 이 concurrent history는 그대로 두면 어떤 올바른 serial order와도 같은 관측·결정으로 설명할 수 없습니다.
 

@@ -22,7 +22,7 @@ PostgreSQL의 기본 isolation level은 READ COMMITTED입니다. 이름만 보�
 
 ![READ COMMITTED: 문장별 스냅샷](/learning/database/isolation-read-committed.svg)
 
-*PostgreSQL 16 기준의 설명용 도식입니다. PostgreSQL 16에서 T1의 SELECT 1은 가격 100, T2 커밋 후 SELECT 2는 가격 200을 볼 수 있다.*
+*PostgreSQL 16의 일반 SELECT 예시입니다. READ COMMITTED에서는 각 SQL 문이 별도의 스냅샷을 사용합니다.*
 
 T1이 같은 transaction 안에 있어도 두 SELECT의 시작 시점이 다르기 때문에 두 번째 SELECT는 T2의 commit을 볼 수 있습니다.
 

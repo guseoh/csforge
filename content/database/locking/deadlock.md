@@ -22,7 +22,7 @@ references:
 
 ![교착 상태: 잠금 대기의 순환](/learning/database/locking-deadlock.svg)
 
-*PostgreSQL 16 기준의 설명용 도식입니다. T1은 A 잠금을 보유하고 B를 기다리며, T2는 B 잠금을 보유하고 A를 기다린다. PostgreSQL은 한 트랜잭션을 중단한다.*
+*PostgreSQL 16에서 서로 다른 행 잠금의 대기 관계가 순환하는 경우를 단순화했습니다.*
 
 누군가 양보하지 않으면 무한 대기입니다. PostgreSQL은 교착 상태를 감지하면 트랜잭션 하나를 중단해 순환을 끊습니다.
 

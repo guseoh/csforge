@@ -40,7 +40,7 @@ ORDER BY created_at;
 
 ![PostgreSQL B-tree 페이지 탐색](/learning/database/index-btree.svg)
 
-*PostgreSQL 16 기준의 설명용 도식입니다. 내부 페이지는 하위 페이지를 가리키고 리프 페이지는 정렬된 인덱스 엔트리를 가진다. 범위 20 이상 40 미만의 예시.*
+*PostgreSQL 16의 B-tree 내부·리프 페이지 연결을 단순화한 예시입니다. 실제 페이지 크기와 분할은 다를 수 있습니다.*
 
 실제 PostgreSQL B-tree는 페이지 단위의 균형 트리 구조이며 동등 비교와 범위 비교, 정렬에 활용될 수 있습니다. 하지만 쿼리가 반환하는 컬럼이 테이블에만 있다면 인덱스로 후보를 찾은 뒤 힙(heap) 페이지를 방문해야 할 수 있습니다.
 
