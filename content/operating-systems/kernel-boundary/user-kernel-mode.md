@@ -24,16 +24,6 @@ references:
 
 그래서 CPU는 실행 권한 수준(privilege level)을 나눈다. 일반 애플리케이션은 낮은 권한의 **사용자 모드(user mode)**에서 실행하고, 커널은 더 높은 권한의 **커널 모드(kernel mode)**에서 실행한다.
 
-```text
-사용자 모드
-  애플리케이션 코드
-      │
-      │ 통제된 진입 경로
-      ▼
-커널 모드
-  자원 관리 / 장치 드라이버 / 보호
-```
-
 ![사용자 모드와 커널 모드의 권한 경계 및 시스템 콜 진입](/learning/operating-systems/user-kernel-mode.svg)
 
 ### 사용자 모드는 제한된 권한으로 실행된다
