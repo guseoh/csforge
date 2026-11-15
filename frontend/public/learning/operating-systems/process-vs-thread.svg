@@ -6,4 +6,14 @@
 </style></defs><rect class="bg" width="1020" height="480"/>
 <text class="label" x="48" y="49" font-size="25" text-anchor="start">프로세스와 스레드 — 자원 경계</text>
 <rect class="outlined" x="48" y="103" width="594" height="299"/><text class="label" x="66" y="137" font-size="20" text-anchor="start">프로세스 A · 가상 주소 공간 A</text><rect class="panel" x="78" y="161" width="535" height="74"/><text class="label" x="94" y="191" font-size="18" text-anchor="start">공유 코드 / 힙 / 열린 자원</text><text class="muted" x="94" y="217" font-size="15" text-anchor="start">두 스레드가 같은 객체를 접근할 수 있음</text><rect class="panel" x="78" y="263" width="242" height="91"/><text class="label" x="94" y="293" font-size="18" text-anchor="start">스레드 A1</text><text class="muted" x="94" y="319" font-size="15" text-anchor="start">PC · 레지스터 · 스택</text><rect class="panel" x="368" y="263" width="245" height="91"/><text class="label" x="384" y="293" font-size="18" text-anchor="start">스레드 A2</text><text class="muted" x="384" y="319" font-size="15" text-anchor="start">PC · 레지스터 · 스택</text><path class="arrow" d="M198 263L198 235"/><path class="arrow" d="M490 263L490 235"/><rect class="outlined" x="674" y="103" width="302" height="299"/><text class="label" x="696" y="137" font-size="20" text-anchor="start">프로세스 B</text><rect class="panel" x="697" y="161" width="251" height="74"/><text class="label" x="713" y="191" font-size="18" text-anchor="start">별도 주소 공간</text><text class="muted" x="713" y="217" font-size="15" text-anchor="start">A의 힙 직접 접근 불가</text><rect class="panel" x="697" y="263" width="251" height="91"/><text class="label" x="713" y="293" font-size="18" text-anchor="start">스레드 B1</text><text class="muted" x="713" y="319" font-size="15" text-anchor="start">독립 실행 문맥</text><text class="muted" x="48" y="447" font-size="15" text-anchor="start">프로세스 사이 데이터 교환에는 명시적인 IPC 또는 공유 메모리 매핑 등의 수단이 필요합니다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+
+.bg{fill:#f9fafb}.panel{fill:#edf0f4;stroke:#596075;stroke-width:1.5}.outlined{fill:none;stroke:#405067;stroke-width:1.6}.soft{fill:#e1e6eb;stroke:#596075;stroke-width:1.5}.label{fill:#202632;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:600}.muted{fill:#405067;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:400}.arrow{fill:none;stroke:#354155;stroke-width:2.2;marker-end:url(#end)}.plain{fill:none;stroke:#596075;stroke-width:1.8}.dash{fill:none;stroke:#596075;stroke-width:1.6;stroke-dasharray:7 6}.sep{stroke:#777;stroke-width:1}
+
+[fill="#dedede"]{fill:#354155}
+[stroke="#dedede"]{stroke:#354155}
+}
+]]></style>
 </svg>
