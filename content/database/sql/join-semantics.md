@@ -34,7 +34,7 @@ WHERE o.status = 'PAID';
 
 ![LEFT JOIN: ON과 WHERE의 결과 비교](/learning/database/sql-join.svg)
 
-*PostgreSQL 16 기준으로 단순화한 상태·관계 그림입니다. 회원 1은 PAID 주문 101이 있고 회원 2는 주문이 없다. 주문 상태 조건을 WHERE에 두면 회원 2가 제거되고, ON에 두면 회원 2는 NULL 주문 열과 함께 유지된다.*
+*PostgreSQL 16 LEFT JOIN 예시입니다. ON 조건과 WHERE 조건은 왼쪽 행 보존에 서로 다른 영향을 줍니다.*
 
 하지만 이후 `WHERE o.status = 'PAID'`에서 두 번째 row의 비교 결과는 TRUE가 아니므로 제거됩니다. 결과적으로 의도는 LEFT JOIN이었지만 출력은 주문이 있는 회원만 남게 됩니다.
 

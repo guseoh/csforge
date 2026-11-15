@@ -24,7 +24,7 @@ references:
 
 ![비동기 복제: 커밋과 재생 시점](/learning/database/replication-primary-replica.svg)
 
-*PostgreSQL 16 기준의 설명용 도식입니다. PostgreSQL 16 기본 비동기 Streaming Replication. WAL을 수신해도 replay 전이면 standby의 SELECT는 이전 값을 볼 수 있다.*
+*PostgreSQL 16의 기본 비동기 스트리밍 복제 예시입니다. WAL 수신과 재실행(replay) 완료는 별개입니다.*
 
 ### 스탠바이는 프라이머리와 같은 순간을 보고 있다고 보장되지 않는다
 

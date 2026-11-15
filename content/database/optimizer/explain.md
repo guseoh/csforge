@@ -24,7 +24,7 @@ references:
 
 ![EXPLAIN: 실행 계획 트리와 loops](/learning/database/optimizer-explain.svg)
 
-*PostgreSQL 16 기준의 설명용 도식입니다. PostgreSQL EXPLAIN ANALYZE 예시. Inner Scan의 actual rows 1000은 20회 실행 각각의 평균이며 총 약 20000행이 공급될 수 있다.*
+*PostgreSQL EXPLAIN ANALYZE의 예시 수치입니다. 실제 행 수를 읽을 때는 노드의 반복 실행 횟수(loops)를 함께 봅니다.*
 
 ### plan은 tree다
 

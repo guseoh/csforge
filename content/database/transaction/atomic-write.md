@@ -28,7 +28,7 @@ references:
 
 ![조건부 UPDATE: 두 요청의 재고 경합](/learning/database/transaction-atomic-update.svg)
 
-*PostgreSQL 16 기준으로 단순화한 상태·관계 그림입니다. PostgreSQL 16 READ COMMITTED에서 quantity=1인 같은 행을 두 UPDATE가 처리하는 예시. 요청 A가 1행 갱신해 커밋하면 기다린 B는 최신 버전의 quantity>0을 재검사해 0행 갱신할 수 있다.*
+*PostgreSQL 16 READ COMMITTED 예시입니다. 기다리던 UPDATE는 먼저 커밋된 최신 행에 조건을 재평가할 수 있습니다.*
 
 동시에 두 요청이 1을 읽으면 둘 다 판매 가능하다고 판단할 수 있습니다. 하나의 트랜잭션 안에서 실행한다는 사실만으로, 격리 수준과 잠금 동작을 고려하지 않은 읽기-수정-쓰기(read-modify-write) 경쟁이 원하는 방식으로 직렬화된다고 가정하면 안 됩니다.
 

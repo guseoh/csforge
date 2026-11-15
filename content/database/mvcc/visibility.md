@@ -30,7 +30,7 @@ references:
 
 ![스냅샷 유지 기간: RC vs RR](/learning/database/mvcc-visibility.svg)
 
-*PostgreSQL 16 기준의 설명용 도식입니다. PostgreSQL 16에서 두 SELECT 사이에 T2가 커밋하는 경우. RC는 새 스냅샷을, RR은 첫 쿼리의 스냅샷을 유지한다.*
+*PostgreSQL 16의 일반 SELECT 예시입니다. READ COMMITTED와 REPEATABLE READ는 스냅샷 유지 범위가 다릅니다.*
 
 T1은 하나의 트랜잭션이지만 두 SQL 문이 서로 다른 스냅샷을 사용할 수 있으므로 두 번째 SELECT는 그 사이 완료된 커밋을 볼 수 있습니다.
 
