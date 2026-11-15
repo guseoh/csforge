@@ -22,12 +22,9 @@ MVCC는 읽기와 쓰기의 충돌을 줄이는 대신 UPDATE와 DELETE 뒤에 *
 
 ### UPDATE가 많은 테이블에서는 dead tuple이 쌓인다
 
-```text
-account #1
-version A: balance 100   → old
-version B: balance 120   → old
-version C: balance 90    → current
-```
+![VACUUM: 오래된 스냅샷과 버전 회수](/learning/database/mvcc-cleanup.svg)
+
+*PostgreSQL 16 기준으로 단순화한 상태·관계 그림입니다. PostgreSQL 16. 오래된 스냅샷에서 아직 필요한 행 버전은 일반 VACUUM이 제거할 수 없다. 오래된 스냅샷이 끝난 뒤 안전한 버전은 이후 VACUUM 작업에서 재사용 가능한 공간으로 바뀔 수 있다.*
 
 어떤 활성 스냅샷도 A와 B를 볼 필요가 없다고 판단할 수 있어야 안전하게 정리할 수 있습니다.
 

@@ -22,21 +22,21 @@
 | `index/partial-index.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `isolation/anomalies.md` | REBUILD | G1 SVG 반영 |
 | `isolation/read-committed.md` | REBUILD | G1 SVG 반영 |
-| `isolation/serializable.md` | POLISH | 원본 유지·추가 검토 대상 |
+| `isolation/serializable.md` | POLISH | G1 SVG 반영 |
 | `locking/deadlock.md` | REBUILD | G1 SVG 반영 |
 | `locking/pessimistic.md` | KEEP | 원본 유지·추가 검토 대상 |
-| `locking/row-lock.md` | POLISH | 원본 유지·추가 검토 대상 |
+| `locking/row-lock.md` | POLISH | G1 SVG 반영 |
 | `model/normalization.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `model/null-three-valued.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `model/relation-tuple.md` | KEEP | 원본 유지·추가 검토 대상 |
-| `mvcc/cleanup.md` | POLISH | 원본 유지·추가 검토 대상 |
+| `mvcc/cleanup.md` | POLISH | G1 SVG 반영 |
 | `mvcc/versions.md` | REBUILD | G1 SVG 반영 |
 | `mvcc/visibility.md` | REBUILD | G1 SVG 반영 |
 | `optimizer/cost-estimate.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `optimizer/explain.md` | REWORK | G1 SVG 반영 |
 | `optimizer/statistics.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `query-patterns/batch-n-plus-one.md` | KEEP | 원본 유지·추가 검토 대상 |
-| `query-patterns/keyset-pagination.md` | ADD | 원본 유지·추가 검토 대상 |
+| `query-patterns/keyset-pagination.md` | ADD | G1 SVG 반영 |
 | `query-patterns/offset-pagination.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `replication/failover.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `replication/lag.md` | KEEP | 원본 유지·추가 검토 대상 |
@@ -45,19 +45,19 @@
 | `schema/primary-key.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `schema/unique-check.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `sql/aggregate.md` | KEEP | 원본 유지·추가 검토 대상 |
-| `sql/join-semantics.md` | POLISH | 원본 유지·추가 검토 대상 |
+| `sql/join-semantics.md` | POLISH | G1 SVG 반영 |
 | `sql/select-order.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `sql/window-function.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `storage/checkpoint-recovery.md` | KEEP | 원본 유지·추가 검토 대상 |
 | `storage/pages-buffer.md` | REBUILD | G1 SVG 반영 |
 | `storage/wal.md` | REBUILD | G1 SVG 반영 |
 | `transaction/acid.md` | KEEP | 원본 유지·추가 검토 대상 |
-| `transaction/atomic-write.md` | POLISH | 원본 유지·추가 검토 대상 |
+| `transaction/atomic-write.md` | POLISH | G1 SVG 반영 |
 | `transaction/autocommit.md` | KEEP | 원본 유지·추가 검토 대상 |
 
 ## G1 구현 범위
 
-총 11개 Database Concept의 첫 ASCII 도식을 교재형 SVG 이미지로 대체했습니다. 독립 SVG의 접근성 `title`/`desc`, 가변 `viewBox`, 한국어 라벨, 별도 라이트/다크 팔레트를 설정했습니다. 페이지, 트리, 스냅샷, wait-for 관계, 플랜 트리, WAL, 복제 지연 등 각 개념의 실제 관계를 그림으로 표현합니다.
+총 17개 Database Concept의 첫 ASCII 도식을 교재형 SVG 이미지로 대체했습니다. 독립 SVG의 접근성 `title`/`desc`, 가변 `viewBox`, 한국어 라벨, 별도 라이트/다크 팔레트를 설정했습니다. 페이지, 트리, 스냅샷, wait-for 관계, 플랜 트리, WAL, 복제 지연 등 각 개념의 실제 관계를 그림으로 표현합니다.
 
 변경 경계: `content/database/**`, `frontend/public/learning/database/**`, `docs/content-audit/database-visualization-g1.md`뿐입니다. 다른 LearningArea, 공통 렌더러, API/DB, 개인 이력·canonical ID는 변경하지 않습니다.
 
@@ -76,7 +76,11 @@
 
 ## 검증 상태 및 남은 과제
 
-- 생성 단계: 11개 SVG가 title/desc/viewBox를 포함하는지 검사; 11개 canonical MD의 첫 text 도식만 대체
+- 생성 단계: 11개 SVG가 title/desc/viewBox를 포함하는지 검사; 17개 canonical MD의 첫 text 도식만 대체
 - 정적 SVG의 XML/보안 검사, 실제 Reader 다크/라이트 및 900px/1280px 시각 확인, Import Preview/Apply/재import, 전체 CI는 실행 결과를 확인하기 전까지 미검증
 - 외부 SVG의 `prefers-color-scheme`은 OS 테마를 기준으로 하므로 Reader의 앱 내부 테마와 다른 경우 팔레트가 일치하지 않을 수 있음
 - G1 미적용 `POLISH`/추가 `ADD` 항목은 후속 QA에서 순차 검토하며 구현 완료로 취급하지 않음
+
+## G1 보강
+
+추가 6개 Concept에 독립 SVG를 적용해 전수 분류의 17개 REBUILD/REWORK/POLISH/ADD 대상을 모두 반영했습니다. 비대상 21개 KEEP Concept는 그대로 유지했습니다. 다만 모든 변경의 브라우저·Import 검증은 별도 증거가 확인되기 전까지 미완료입니다.

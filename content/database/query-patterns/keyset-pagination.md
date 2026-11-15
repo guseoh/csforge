@@ -38,15 +38,9 @@ ORDER BY created_at DESC, id DESC
 LIMIT 20;
 ```
 
-```text
-정렬 순서 (DESC): [803 ─ 802 ─ 801 ─ 800] │ [799 ─ 798 ─ …]
-                 └── page 1에서 소비 완료 ─┘   └─ page 2 후보
-                                      ▲
-                            cursor = (10:00, 800)
+![Keyset 페이지네이션: 복합 커서 다음](/learning/database/query-keyset.svg)
 
-다음 page: (created_at, id) < (10:00, 800)만 탐색
-           cursor 행 800은 다시 포함되지 않음
-```
+*PostgreSQL 16 기준으로 단순화한 상태·관계 그림입니다. created_at이 모두 10:00으로 같은 행의 id 내림차순 예시. 첫 페이지의 마지막 튜플 (10:00, 800)보다 작은 튜플을 다음 페이지에서 조회해 800을 중복하지 않는다.*
 
 ### 커서는 정렬 계약을 그대로 담아야 한다
 

@@ -20,20 +20,9 @@ references:
 
 동시성 문제를 설명할 때 “DB가 행을 잠근다”라고만 말하면 누가 기다리고 누가 계속 읽을 수 있는지 알 수 없습니다. PostgreSQL의 행 수준 잠금은 **같은 행을 수정하거나 호환되지 않는 방식으로 잠그려는 트랜잭션 사이의 충돌을 제어**합니다.
 
-```text
-T1                               T2
-──────────────────────────────   ─────────────────────
-BEGIN
-UPDATE inventory
-SET quantity = quantity - 1
-WHERE id = 10;
-                                 UPDATE inventory
-                                 SET quantity = ...
-                                 WHERE id = 10;
-                                 → T1 종료까지 wait
-COMMIT
-                                 → 이후 진행
-```
+![행 잠금: 일반 SELECT와 잠금 읽기 구분](/learning/database/locking-row-lock.svg)
+
+*PostgreSQL 16 기준으로 단순화한 상태·관계 그림입니다. PostgreSQL 16 READ COMMITTED 예시. T1이 특정 행을 UPDATE하고 잠금을 보유하는 동안 같은 행의 T2 SELECT FOR UPDATE는 기다리고 일반 T3 SELECT는 이전 커밋 버전을 읽을 수 있다.*
 
 ### 일반 SELECT가 모두 기다리는 것은 아니다
 
