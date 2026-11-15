@@ -1,21 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="400" viewBox="0 0 960 400" role="img" aria-labelledby="title desc">
-  <title id="title">Page table translation</title>
-  <desc id="desc">Virtual address의 virtual page number를 page table에서 찾아 physical frame number로 바꾸고 offset은 유지하는 구조</desc>
-  <rect width="960" height="400" rx="24" fill="#111827"/>
-  <text x="48" y="52" fill="#f9fafb" font-size="28" font-family="Arial, sans-serif" font-weight="700">Page Table Translation</text>
-  <rect x="60" y="110" width="250" height="90" rx="14" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
-  <text x="185" y="142" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">Virtual Address</text>
-  <line x1="185" y1="155" x2="185" y2="190" stroke="#6b7280"/>
-  <text x="125" y="180" text-anchor="middle" fill="#d1d5db" font-size="15" font-family="Arial, sans-serif">VPN</text><text x="245" y="180" text-anchor="middle" fill="#d1d5db" font-size="15" font-family="Arial, sans-serif">offset</text>
-  <rect x="385" y="90" width="190" height="200" rx="16" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
-  <text x="480" y="125" text-anchor="middle" fill="#f9fafb" font-size="20" font-family="Arial, sans-serif">Page Table</text>
-  <text x="480" y="164" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">VPN → PFN</text>
-  <text x="480" y="196" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">R / W / X</text>
-  <text x="480" y="228" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">present / mapping state</text>
-  <rect x="650" y="110" width="250" height="90" rx="14" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
-  <text x="775" y="142" text-anchor="middle" fill="#f9fafb" font-size="18" font-family="Arial, sans-serif">Physical Address</text>
-  <text x="715" y="180" text-anchor="middle" fill="#d1d5db" font-size="15" font-family="Arial, sans-serif">PFN</text><text x="835" y="180" text-anchor="middle" fill="#d1d5db" font-size="15" font-family="Arial, sans-serif">same offset</text>
-  <line x1="310" y1="155" x2="385" y2="155" stroke="#e5e7eb" stroke-width="3"/><polygon points="385,155 371,147 371,163" fill="#e5e7eb"/>
-  <line x1="575" y1="155" x2="650" y2="155" stroke="#e5e7eb" stroke-width="3"/><polygon points="650,155 636,147 636,163" fill="#e5e7eb"/>
-  <text x="480" y="335" text-anchor="middle" fill="#9ca3af" font-size="16" font-family="Arial, sans-serif">Mapping 존재와 접근 permission은 서로 다른 판단이다.</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 462" role="img" aria-labelledby="title desc">
+<title id="title">페이지 테이블 — 매핑과 접근 권한</title><desc id="desc">4 KiB 페이지에서 가상 주소 0x3100의 VPN 3과 offset 0x100을 PFN 9와 결합하여 물리 주소 0x9100을 얻는 예시.</desc>
+<defs><marker id="arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#ededed"/></marker>
+<style>.bg{fill:#171717}.box{fill:#262626;stroke:#999;stroke-width:1.6}.linebox{fill:none;stroke:#bbb;stroke-width:1.7}.shade{fill:#363636;stroke:#ededed;stroke-width:1.6}.label{fill:#f7f7f7;font:600 18px Arial,"Noto Sans KR",sans-serif}.sub{fill:#d6d6d6;font-family:Arial,"Noto Sans KR",sans-serif}.arrow{stroke:#ededed;stroke-width:2.1;fill:none;marker-end:url(#arrowhead)}.plain{stroke:#acacac;stroke-width:1.6;fill:none}.dashed{stroke:#aaa;stroke-width:1.5;stroke-dasharray:7 5;fill:none}.divider{stroke:#8d8d8d;stroke-width:1.3}</style></defs>
+<rect class="bg" width="1000" height="462"/><text class="label" x="42" y="49" font-size="25" text-anchor="start">페이지 테이블 — 매핑과 접근 권한</text><rect class="box" x="50" y="124" width="270" height="102"/><text class="label" x="64" y="155" font-size="18" text-anchor="start">가상 주소 0x3100</text><text class="sub" x="64" y="182" font-size="15" text-anchor="start">VPN 3 | offset 0x100</text><rect class="box" x="374" y="104" width="270" height="147"/><text class="label" x="388" y="135" font-size="18" text-anchor="start">페이지 테이블 항목</text><text class="sub" x="388" y="162" font-size="15" text-anchor="start">VPN 3 → PFN 9</text><text class="sub" x="389" y="210" font-size="16" text-anchor="start">상주·접근 권한 검사</text><rect class="box" x="698" y="124" width="270" height="102"/><text class="label" x="712" y="155" font-size="18" text-anchor="start">물리 주소 0x9100</text><text class="sub" x="712" y="182" font-size="15" text-anchor="start">PFN 9 | offset 0x100</text><path class="arrow" d="M320 177L374 177"/><path class="arrow" d="M644 177L698 177"/><rect class="linebox" x="78" y="297" width="844" height="79"/><text class="label" x="98" y="327" font-size="17" text-anchor="start">가정: 페이지 크기 = 0x1000 (4096B)</text><text class="label" x="98" y="357" font-size="17" text-anchor="start">0x3100 = 3 × 0x1000 + 0x100  →  9 × 0x1000 + 0x100 = 0x9100</text><text class="sub" x="53" y="421" font-size="15" text-anchor="start">매핑 부재 또는 권한 위반은 페이지 폴트 등 예외 처리가 필요합니다. 비트 명칭은 아키텍처별로 다릅니다.</text></svg>

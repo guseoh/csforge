@@ -1,21 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="360" viewBox="0 0 960 360" role="img" aria-labelledby="title desc">
-  <title id="title">Round Robin quantum flow</title>
-  <desc id="desc">A B C 세 task가 quantum 단위로 순환 실행되는 흐름</desc>
-  <rect width="960" height="360" rx="24" fill="#111827"/>
-  <text x="48" y="52" fill="#f9fafb" font-size="28" font-family="Arial, sans-serif" font-weight="700">Round Robin — quantum = 10 ms</text>
-  <line x1="70" y1="180" x2="890" y2="180" stroke="#6b7280" stroke-width="2"/>
-  <g font-family="Arial, sans-serif" font-size="18" text-anchor="middle">
-    <rect x="80" y="120" width="150" height="80" rx="12" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
-    <text x="155" y="155" fill="#f9fafb">A</text><text x="155" y="183" fill="#d1d5db">0–10 ms</text>
-    <rect x="245" y="120" width="150" height="80" rx="12" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
-    <text x="320" y="155" fill="#f9fafb">B</text><text x="320" y="183" fill="#d1d5db">10–20 ms</text>
-    <rect x="410" y="120" width="150" height="80" rx="12" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
-    <text x="485" y="155" fill="#f9fafb">C</text><text x="485" y="183" fill="#d1d5db">20–30 ms</text>
-    <rect x="575" y="120" width="150" height="80" rx="12" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
-    <text x="650" y="155" fill="#f9fafb">A</text><text x="650" y="183" fill="#d1d5db">30–40 ms</text>
-    <rect x="740" y="120" width="130" height="80" rx="12" fill="#1f2937" stroke="#9ca3af" stroke-width="2"/>
-    <text x="805" y="155" fill="#f9fafb">…</text><text x="805" y="183" fill="#d1d5db">repeat</text>
-  </g>
-  <text x="480" y="260" text-anchor="middle" fill="#d1d5db" font-size="17" font-family="Arial, sans-serif">unfinished task → runnable queue 뒤로</text>
-  <text x="480" y="300" text-anchor="middle" fill="#9ca3af" font-size="16" font-family="Arial, sans-serif">작은 quantum: 빠른 turn-taking / 많은 switch · 큰 quantum: 적은 switch / FCFS에 가까워짐</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 465" role="img" aria-labelledby="title desc">
+<title id="title">라운드 로빈 — 10 ms씩 순환 실행</title><desc id="desc">0 ms에 A B C가 모두 준비되고 CPU 작업을 계속하는 예시. 문맥 전환 오버헤드는 그림의 시간축에서 제외.</desc>
+<defs><marker id="arrowhead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#ededed"/></marker>
+<style>.bg{fill:#171717}.box{fill:#262626;stroke:#999;stroke-width:1.6}.linebox{fill:none;stroke:#bbb;stroke-width:1.7}.shade{fill:#363636;stroke:#ededed;stroke-width:1.6}.label{fill:#f7f7f7;font:600 18px Arial,"Noto Sans KR",sans-serif}.sub{fill:#d6d6d6;font-family:Arial,"Noto Sans KR",sans-serif}.arrow{stroke:#ededed;stroke-width:2.1;fill:none;marker-end:url(#arrowhead)}.plain{stroke:#acacac;stroke-width:1.6;fill:none}.dashed{stroke:#aaa;stroke-width:1.5;stroke-dasharray:7 5;fill:none}.divider{stroke:#8d8d8d;stroke-width:1.3}</style></defs>
+<rect class="bg" width="1000" height="465"/><text class="label" x="42" y="49" font-size="25" text-anchor="start">라운드 로빈 — 10 ms씩 순환 실행</text><text class="sub" x="56" y="119" font-size="17" text-anchor="start">시간 (ms)</text><text class="sub" x="158" y="160" font-size="17" text-anchor="middle">0</text><text class="sub" x="313" y="160" font-size="17" text-anchor="middle">10</text><text class="sub" x="468" y="160" font-size="17" text-anchor="middle">20</text><text class="sub" x="623" y="160" font-size="17" text-anchor="middle">30</text><text class="sub" x="778" y="160" font-size="17" text-anchor="middle">40</text><text class="sub" x="933" y="160" font-size="17" text-anchor="middle">50</text><rect class="shade" x="158" y="176" width="155" height="95"/><text class="label" x="235.5" y="225" font-size="24" text-anchor="middle">A</text><rect class="box" x="313" y="176" width="155" height="95"/><text class="label" x="390.5" y="225" font-size="24" text-anchor="middle">B</text><rect class="shade" x="468" y="176" width="155" height="95"/><text class="label" x="545.5" y="225" font-size="24" text-anchor="middle">C</text><rect class="box" x="623" y="176" width="155" height="95"/><text class="label" x="700.5" y="225" font-size="24" text-anchor="middle">A</text><rect class="shade" x="778" y="176" width="155" height="95"/><text class="label" x="855.5" y="225" font-size="24" text-anchor="middle">B</text><path class="plain" d="M158 166V284"/><path class="plain" d="M313 166V284"/><path class="plain" d="M468 166V284"/><path class="plain" d="M623 166V284"/><path class="plain" d="M778 166V284"/><path class="plain" d="M933 166V284"/><text class="label" x="62" y="346" font-size="18" text-anchor="start">할당량 종료</text><path class="dashed" d="M244 284V315H400"/><text class="sub" x="416" y="322" font-size="17" text-anchor="start">작업이 미완료면 준비 큐 뒤로</text><text class="sub" x="62" y="417" font-size="15" text-anchor="start">가정: 단일 CPU, A·B·C 모두 CPU 작업 지속, 새 작업 도착 없음, 전환 비용 생략</text></svg>
