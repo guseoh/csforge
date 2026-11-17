@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 480" role="img" aria-labelledby="os-title os-desc">
+<title id="os-title">프로세스 상태 — 전이 원인</title><desc id="os-desc">생성, 준비, 실행, 대기, 종료와 CPU 배정, 선점, 사건 완료에 따른 상태 이동.</desc>
+<defs><marker id="end" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#dedede"/></marker>
+<style>
+.bg{fill:#171717}.panel{fill:#242424;stroke:#8f8f8f;stroke-width:1.5}.outlined{fill:none;stroke:#d6d6d6;stroke-width:1.6}.soft{fill:#303030;stroke:#a8a8a8;stroke-width:1.5}.label{fill:#f5f5f5;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:600}.muted{fill:#d1d1d1;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:400}.arrow{fill:none;stroke:#dedede;stroke-width:2.2;marker-end:url(#end)}.plain{fill:none;stroke:#b7b7b7;stroke-width:1.8}.dash{fill:none;stroke:#bcbcbc;stroke-width:1.6;stroke-dasharray:7 6}.sep{stroke:#777;stroke-width:1}
+</style></defs><rect class="bg" width="1020" height="480"/>
+<text class="label" x="48" y="49" font-size="25" text-anchor="start">프로세스 상태 — 전이 원인</text>
+<rect class="panel" x="58" y="174" width="150" height="76"/><text class="label" x="74" y="204" font-size="18" text-anchor="start">생성</text><text class="muted" x="74" y="230" font-size="15" text-anchor="start">new</text><rect class="panel" x="265" y="174" width="150" height="76"/><text class="label" x="281" y="204" font-size="18" text-anchor="start">준비</text><text class="muted" x="281" y="230" font-size="15" text-anchor="start">ready</text><rect class="panel" x="530" y="174" width="150" height="76"/><text class="label" x="546" y="204" font-size="18" text-anchor="start">실행</text><text class="muted" x="546" y="230" font-size="15" text-anchor="start">running</text><rect class="panel" x="794" y="174" width="150" height="76"/><text class="label" x="810" y="204" font-size="18" text-anchor="start">종료</text><text class="muted" x="810" y="230" font-size="15" text-anchor="start">terminated</text><rect class="panel" x="527" y="327" width="178" height="76"/><text class="label" x="543" y="357" font-size="18" text-anchor="start">대기</text><text class="muted" x="543" y="383" font-size="15" text-anchor="start">waiting</text><path class="arrow" d="M208 211L265 211"/><text class="muted" x="237" y="198" font-size="14" text-anchor="middle">진입</text><path class="arrow" d="M415 200L530 200"/><text class="muted" x="470" y="186" font-size="15" text-anchor="middle">디스패치</text><path class="arrow" d="M530 233H485V269H342V250"/><text class="muted" x="398" y="285" font-size="15" text-anchor="middle">선점 → 준비</text><path class="arrow" d="M680 210L794 210"/><text class="muted" x="740" y="195" font-size="15" text-anchor="middle">종료</text><path class="arrow" d="M615 250L615 327"/><text class="label" x="633" y="294" font-size="15" text-anchor="start">사건 대기</text><path class="arrow" d="M527 364H336V250"/><text class="muted" x="410" y="344" font-size="15" text-anchor="middle">사건 완료</text><text class="muted" x="48" y="447" font-size="15" text-anchor="start">교과서형 단순 모델입니다. 대기 해제 후에는 바로 실행이 아니라 준비 상태로 돌아옵니다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+
+.bg{fill:#f9fafb}.panel{fill:#edf0f4;stroke:#596075;stroke-width:1.5}.outlined{fill:none;stroke:#405067;stroke-width:1.6}.soft{fill:#e1e6eb;stroke:#596075;stroke-width:1.5}.label{fill:#202632;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:600}.muted{fill:#405067;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:400}.arrow{fill:none;stroke:#354155;stroke-width:2.2;marker-end:url(#end)}.plain{fill:none;stroke:#596075;stroke-width:1.8}.dash{fill:none;stroke:#596075;stroke-width:1.6;stroke-dasharray:7 6}.sep{stroke:#777;stroke-width:1}
+
+[fill="#dedede"]{fill:#354155}
+[stroke="#dedede"]{stroke:#354155}
+}
+]]></style>
+</svg>

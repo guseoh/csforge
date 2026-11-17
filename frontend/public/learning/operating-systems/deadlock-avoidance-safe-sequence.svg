@@ -17,4 +17,12 @@
   <rect class="done" x="900" y="145" width="150" height="155" rx="14"/><text class="label" x="940" y="185">P3</text><text class="small" x="922" y="220">Need 3 ≤ 8</text><text class="small" x="918" y="248">완료 가능</text><text class="label" x="930" y="280">Work 10</text>
   <text class="small" x="70" y="365">P1부터는 시작할 수 없다(Need 4 > Available 3). 하지만 P2 또는 P3부터 완료할 수 있으므로 safe state다.</text>
   <text class="small" x="70" y="398">Safe sequence는 실제 scheduler 순서를 고정하는 것이 아니라 모든 process가 끝날 수 있는 순서가 존재함을 보이는 증명이다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+.bg{fill:#f9fafb}.title{fill:#202632;font:700 25px Inter,Arial,sans-serif}.label{fill:#242b38;font:650 17px Inter,Arial,sans-serif}.small{fill:#596075;font:500 14px Inter,Arial,sans-serif}.box{fill:#edf0f4;stroke:#6643a7;stroke-width:2}.done{fill:#e4f3ea;stroke:#167249;stroke-width:2}.line{stroke:#6643a7;stroke-width:3;fill:none;marker-end:url(#arrow)}
+[fill="#a56df4"]{fill:#6643a7}
+[stroke="#a56df4"]{stroke:#6643a7}
+}
+]]></style>
 </svg>

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 480" role="img" aria-labelledby="os-title os-desc">
+<title id="os-title">사용자 모드와 커널 모드</title><desc id="os-desc">사용자 모드에서는 특권 장치 제어가 허용되지 않고 커널이 제공하는 시스템 콜 경유로 요청함. 모드 전환과 문맥 전환은 별개.</desc>
+<defs><marker id="end" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#dedede"/></marker>
+<style>
+.bg{fill:#171717}.panel{fill:#242424;stroke:#8f8f8f;stroke-width:1.5}.outlined{fill:none;stroke:#d6d6d6;stroke-width:1.6}.soft{fill:#303030;stroke:#a8a8a8;stroke-width:1.5}.label{fill:#f5f5f5;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:600}.muted{fill:#d1d1d1;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:400}.arrow{fill:none;stroke:#dedede;stroke-width:2.2;marker-end:url(#end)}.plain{fill:none;stroke:#b7b7b7;stroke-width:1.8}.dash{fill:none;stroke:#bcbcbc;stroke-width:1.6;stroke-dasharray:7 6}.sep{stroke:#777;stroke-width:1}
+</style></defs><rect class="bg" width="1020" height="480"/>
+<text class="label" x="48" y="49" font-size="25" text-anchor="start">사용자 모드와 커널 모드</text>
+<rect class="outlined" x="55" y="92" width="910" height="129"/><text class="label" x="78" y="122" font-size="20" text-anchor="start">사용자 모드 · 제한된 권한</text><rect class="panel" x="105" y="145" width="330" height="60"/><text class="label" x="121" y="175" font-size="18" text-anchor="start">애플리케이션</text><text class="muted" x="121" y="201" font-size="15" text-anchor="start">일반 명령 실행</text><rect class="panel" x="600" y="145" width="290" height="60"/><text class="label" x="616" y="175" font-size="18" text-anchor="start">특권 장치 제어 불가</text><text class="muted" x="616" y="201" font-size="15" text-anchor="start">커널 서비스에 요청</text><rect class="outlined" x="55" y="293" width="910" height="124"/><text class="label" x="78" y="325" font-size="20" text-anchor="start">커널 모드 · 특권 실행</text><rect class="panel" x="105" y="343" width="330" height="60"/><text class="label" x="121" y="373" font-size="18" text-anchor="start">시스템 콜 처리</text><text class="muted" x="121" y="399" font-size="15" text-anchor="start">자원·인자 검증</text><rect class="panel" x="600" y="343" width="290" height="60"/><text class="label" x="616" y="373" font-size="18" text-anchor="start">드라이버·메모리 관리</text><text class="muted" x="616" y="399" font-size="15" text-anchor="start">보호된 커널 서비스</text><path class="arrow" d="M265 206L265 337"/><text class="label" x="293" y="261" font-size="17" text-anchor="start">시스템 콜 진입</text><path class="arrow" d="M740 337V278H389V211"/><text class="label" x="512" y="262" font-size="17" text-anchor="start">커널에서 복귀</text><text class="muted" x="48" y="454" font-size="15" text-anchor="start">모드 전환은 같은 실행 흐름 안에서도 가능하며 다른 태스크로 교체된다는 뜻은 아닙니다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+
+.bg{fill:#f9fafb}.panel{fill:#edf0f4;stroke:#596075;stroke-width:1.5}.outlined{fill:none;stroke:#405067;stroke-width:1.6}.soft{fill:#e1e6eb;stroke:#596075;stroke-width:1.5}.label{fill:#202632;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:600}.muted{fill:#405067;font-family:Arial,"Noto Sans KR",sans-serif;font-weight:400}.arrow{fill:none;stroke:#354155;stroke-width:2.2;marker-end:url(#end)}.plain{fill:none;stroke:#596075;stroke-width:1.8}.dash{fill:none;stroke:#596075;stroke-width:1.6;stroke-dasharray:7 6}.sep{stroke:#777;stroke-width:1}
+
+[fill="#dedede"]{fill:#354155}
+[stroke="#dedede"]{stroke:#354155}
+}
+]]></style>
+</svg>

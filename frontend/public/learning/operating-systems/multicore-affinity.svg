@@ -16,4 +16,22 @@
   <text x="710" y="268" text-anchor="middle" fill="#d1d5db" font-size="16" font-family="Arial, sans-serif">load 분산 / queue 감소 가능</text>
   <text x="710" y="293" text-anchor="middle" fill="#9ca3af" font-size="15" font-family="Arial, sans-serif">migration 시 cache locality 비용 가능</text>
   <text x="480" y="348" text-anchor="middle" fill="#9ca3af" font-size="16" font-family="Arial, sans-serif">hard affinity를 좁힐수록 scheduler의 load-balancing 선택지도 줄어든다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+
+[fill="#111827"]{fill:#f9fafb}
+[stroke="#111827"]{stroke:#f9fafb}
+[fill="#f9fafb"]{fill:#202632}
+[stroke="#f9fafb"]{stroke:#202632}
+[fill="#1f2937"]{fill:#edf0f4}
+[stroke="#1f2937"]{stroke:#edf0f4}
+[fill="#9ca3af"]{fill:#475569}
+[stroke="#9ca3af"]{stroke:#475569}
+[fill="#6b7280"]{fill:#64748b}
+[stroke="#6b7280"]{stroke:#64748b}
+[fill="#d1d5db"]{fill:#405067}
+[stroke="#d1d5db"]{stroke:#405067}
+}
+]]></style>
 </svg>
