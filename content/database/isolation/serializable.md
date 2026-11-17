@@ -28,13 +28,9 @@ SERIALIZABLE은 모든 transaction을 물리적으로 한 줄로 세워 실행�
 
 두 의사가 각각 “현재 당직 의사가 최소 2명인지” 확인하고 자기 당직을 해제하는 상황을 생각해 봅시다.
 
-```text
-T1                               T2
-──────────────────────────────   ─────────────────────
-현재 당직 2명 확인                현재 당직 2명 확인
-내 당직 해제                     내 당직 해제
-COMMIT?                          COMMIT?
-```
+![SERIALIZABLE: 쓰기 편향을 중단](/learning/database/isolation-serializable.svg)
+
+*PostgreSQL 16의 SSI 사례입니다. 한 트랜잭션이 중단될 수 있지만 어떤 트랜잭션인지는 고정되지 않습니다.*
 
 각자 읽은 시점에는 규칙을 만족하지만 둘 다 commit하면 당직이 0명이 됩니다. 반면 실제 serial execution이라면 첫 transaction이 한 명을 해제한 뒤 두 번째 transaction은 당직 1명을 읽어 같은 결정을 내릴 수 없습니다. 따라서 이 concurrent history는 그대로 두면 어떤 올바른 serial order와도 같은 관측·결정으로 설명할 수 없습니다.
 

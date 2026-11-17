@@ -38,15 +38,9 @@ ORDER BY created_at DESC, id DESC
 LIMIT 20;
 ```
 
-```text
-정렬 순서 (DESC): [803 ─ 802 ─ 801 ─ 800] │ [799 ─ 798 ─ …]
-                 └── page 1에서 소비 완료 ─┘   └─ page 2 후보
-                                      ▲
-                            cursor = (10:00, 800)
+![Keyset 페이지네이션: 복합 커서 다음](/learning/database/query-keyset.svg)
 
-다음 page: (created_at, id) < (10:00, 800)만 탐색
-           cursor 행 800은 다시 포함되지 않음
-```
+*PostgreSQL 16의 복합 커서 예시입니다. 같은 시각의 행은 id까지 비교해 누락·중복을 줄입니다.*
 
 ### 커서는 정렬 계약을 그대로 담아야 한다
 

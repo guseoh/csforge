@@ -22,21 +22,9 @@ DB가 트랜잭션을 커밋할 때마다 변경된 모든 테이블 페이지�
 
 ### write-ahead의 핵심 순서
 
-```text
-UPDATE row
-   │
-   ├─ memory page 변경 (dirty)
-   │
-   └─ WAL record 생성
-          │
-          ▼
-      WAL을 먼저 durable하게 기록
-          │
-          ▼
-      COMMIT 성공 가능
-          │
-          └─ data page는 이후 checkpoint/background write에서 기록 가능
-```
+![WAL: 복구 기록이 데이터 파일보다 먼저](/learning/database/storage-wal.svg)
+
+*PostgreSQL 16에서 synchronous_commit=on인 로컬 커밋 예시입니다. 설정에 따라 성공 응답 시점은 달라질 수 있습니다.*
 
 장애가 데이터 페이지 쓰기 전에 발생해도 필요한 WAL 레코드가 내구성 경계를 통과했다면 재시작 복구에서 페이지 변경을 재실행할 수 있습니다. 이 물리적인 WAL 재실행과 트랜잭션의 커밋·중단 상태 및 MVCC 가시성 판정은 같은 개념이 아닙니다.
 

@@ -22,16 +22,9 @@ references:
 
 ### Dirty read: 커밋되지 않은 값을 읽는 경우
 
-```text
-T1                               T2
-──────────────────────────────   ─────────────────────
-BEGIN
-UPDATE account SET balance=0
-                                 BEGIN
-                                 SELECT balance → 0 ?
-ROLLBACK
-                                 COMMIT
-```
+![읽기 이상 현상: 트랜잭션 사이의 변화](/learning/database/isolation-anomalies.svg)
+
+*SQL의 대표적인 읽기 이상 현상을 비교합니다. PostgreSQL READ COMMITTED는 dirty read를 허용하지 않습니다.*
 
 T2가 T1의 커밋되지 않은 값을 읽었다면 dirty read입니다. T1이 롤백하면 T2는 결국 존재하지 않았던 상태를 기반으로 판단한 셈입니다. PostgreSQL에서는 `READ UNCOMMITTED`를 요청해도 실질적으로 READ COMMITTED처럼 동작하므로 dirty read를 허용하지 않습니다.
 

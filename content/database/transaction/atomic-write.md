@@ -26,11 +26,9 @@ references:
 
 재고를 하나 줄이기 위해 다음처럼 구현했다고 해 봅시다.
 
-```text
-1. SELECT quantity → 1
-2. Java에서 quantity - 1 계산
-3. UPDATE quantity = 0
-```
+![조건부 UPDATE: 두 요청의 재고 경합](/learning/database/transaction-atomic-update.svg)
+
+*PostgreSQL 16 READ COMMITTED 예시입니다. 기다리던 UPDATE는 먼저 커밋된 최신 행에 조건을 재평가할 수 있습니다.*
 
 동시에 두 요청이 1을 읽으면 둘 다 판매 가능하다고 판단할 수 있습니다. 하나의 트랜잭션 안에서 실행한다는 사실만으로, 격리 수준과 잠금 동작을 고려하지 않은 읽기-수정-쓰기(read-modify-write) 경쟁이 원하는 방식으로 직렬화된다고 가정하면 안 됩니다.
 

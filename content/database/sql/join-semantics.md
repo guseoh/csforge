@@ -32,12 +32,9 @@ WHERE o.status = 'PAID';
 
 주문이 없는 회원은 JOIN 직후에는 다음처럼 남습니다.
 
-```text
-member.id │ order.id │ order.status
-──────────┼──────────┼─────────────
-1         │ 101      │ PAID
-2         │ NULL     │ NULL
-```
+![LEFT JOIN: ON과 WHERE의 결과 비교](/learning/database/sql-join.svg)
+
+*PostgreSQL 16 LEFT JOIN 예시입니다. ON 조건과 WHERE 조건은 왼쪽 행 보존에 서로 다른 영향을 줍니다.*
 
 하지만 이후 `WHERE o.status = 'PAID'`에서 두 번째 row의 비교 결과는 TRUE가 아니므로 제거됩니다. 결과적으로 의도는 LEFT JOIN이었지만 출력은 주문이 있는 회원만 남게 됩니다.
 
