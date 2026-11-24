@@ -25,10 +25,13 @@ const loadConcept = ([, contentKey, path], index) => {
   }
 }
 const concepts = rows.map(loadConcept)
-const sequence = loadConcept([null,'network-http.core.tcp.sequence-number','content/network-http/tcp/sequence-number.md'],53)
+const staticCases = [["tcp/sequence-number","tcp-sequence-number"],["dns/dns-ttl-cache","dns-ttl-cache"],["tcp/retransmission","tcp-retransmission"],["tls/key-agreement","tls-key-agreement"],["http-cache/freshness","http-cache-freshness"]].map(([path,asset],index)=>({
+  ...loadConcept([null,'network-http.core.'+path.replace('/','.'),'content/network-http/'+path+'.md'],53+index),
+  asset:'/learning/network-http/'+asset+'.svg',
+}))
 const ids = new Set(concepts.map(item => item.contentKey))
 assert.equal(ids.size, 53, 'Duplicate Network DIAGRAM key')
-const byId = new Map([...concepts,sequence].map(item => [item.id, {
+const byId = new Map([...concepts,...staticCases].map(item => [item.id, {
   ...item, contentStatus: 'PUBLISHED',
   area: { id: 1, slug: 'network-http', name: 'Network & HTTP' },
   topic: { id: 25, slug: 'network-diagrams', title: 'Network & HTTP' },
@@ -149,9 +152,10 @@ try {
       }
     }
   }
+  for (const sequence of staticCases) {
   await guest.goto('http://127.0.0.1:5173/concepts/' + sequence.id, {waitUntil:'domcontentloaded'})
   const sequenceTrigger = guest.locator('article.concept-reading-content .markdown-image-trigger').filter({
-    has:guest.locator('img[src="/learning/network-http/tcp-sequence-number.svg"]'),
+    has:guest.locator('img[src="'+sequence.asset+'"]'),
   })
   await sequenceTrigger.waitFor({timeout:15000})
   for (const theme of ['light','dark']) {
@@ -168,7 +172,7 @@ try {
       })
       assert.ok(m.loaded && m.scheme===theme && m.left>=-2 && m.right<=width+2 && m.overflow<=2,
         'Sequence SVG Reader: '+JSON.stringify(m))
-      const file='reader-sequence-'+theme+'-'+width+'.png'
+      const file='reader-static-'+sequence.slug+'-'+theme+'-'+width+'.png'
       await sequenceTrigger.screenshot({path:resolve(out,file),animations:'disabled'})
       screenshots.push(file)
       await sequenceTrigger.click()
@@ -180,6 +184,7 @@ try {
       checks.push({contentKey:sequence.contentKey,mode:'guest-static',theme,width,result:'PASS'})
     }
   }
+  }
   await guest.emulateMedia({colorScheme:null})
   const owner = await makePage(true)
   for (const item of [concepts[0], concepts[14], concepts[25], concepts[48]]) {
@@ -189,15 +194,15 @@ try {
     checks.push({ contentKey: item.contentKey, mode: 'owner', result: 'PASS' })
   }
   assert.deepEqual(errors, [], 'Browser JavaScript errors')
-  assert.equal(checks.length, 53 * 4 + 4 + 4)
-  console.log('NETWORK_READER_ROUTE_PASS 212 interactive guest theme/width cases, 4 sequence SVG cases, 4 owner Reader cases')
+  assert.equal(checks.length, 53 * 4 + staticCases.length * 4 + 4)
+  console.log('NETWORK_READER_ROUTE_PASS 212 interactive guest theme/width cases, 20 static SVG cases, 4 owner Reader cases')
 } catch (error) {
   errors.push({ stage: 'reader', message: String(error) })
   console.error(error)
   process.exitCode = 1
 } finally {
   writeFileSync(resolve(out, 'qa.json'), JSON.stringify({
-    cases: 54, checks, screenshots, errors,
+    cases: 58, checks, screenshots, errors,
   }, null, 2))
   for (const context of contexts) await context.close().catch(() => {})
   await browser.close()

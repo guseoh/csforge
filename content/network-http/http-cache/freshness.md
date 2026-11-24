@@ -61,17 +61,9 @@ RFC 5861의 `stale-while-revalidate` 지시어는 응답이 기본 신선도 수
 Cache-Control: max-age=60, stale-while-revalidate=30
 ```
 
-```text
-0~59초
-→ fresh, 일반 재사용 가능
+![HTTP 응답의 신선도와 제한적 stale 재사용: max-age=60과 stale-while-revalidate=30 예시. 현재 나이 60초 미만은 fresh, 60~90초 미만은 조건부 stale 허용, 90초부터 해당 허용 기간 종료.](/learning/network-http/http-cache-freshness.svg)
 
-60~89초
-→ 오래됐지만 `stale-while-revalidate` 허용 범위 안
-→ 기존 응답을 제공하면서 재검증 가능
-
-90초 이후
-→ 오래된 응답을 허용하는 기간도 종료
-```
+그림은 저장 이후 경과 시간이 아니라 응답의 `current age`를 기준으로 읽어야 합니다. 다른 정책에 의해 재사용이 금지되지 않는다는 가정이며, age가 90초에 도달하면 이 확장 지시어에 의한 허용 범위가 끝납니다.
 
 검증자가 있으면 백그라운드 요청을 조건부 요청으로 보내 304를 받을 수 있고, 표현이 바뀌었다면 새 200 응답으로 저장 항목을 교체할 수 있다. 검증자가 없다면 새 표현을 다시 받아야 할 수 있다.
 

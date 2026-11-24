@@ -211,3 +211,10 @@
 - 기존 49개 고정 예시 ID와 Markdown fence 계약 유지. Network 전용 renderer/type/test 변경만 수행했습니다. 기존 9개를 포함하여 초기 36개 개선 후보 중 17개 소스 구현, 19개 후속 검토 대상입니다. 코드/시각 QA 통과를 의미하지 않습니다.
 - 공식 참고: RFC 1812, RFC 3022, RFC 9525, RFC 9000 및 기존 Concept Reference. 실제 렌더링·픽셀 검수는 미완료입니다.
 - 이전 #45432415050은 frontend/backend SUCCESS 이후 Chromium 설치에서 Ubuntu 26.04와 Playwright 1.56.1 비호환으로 실패했습니다. QA runner를 ubuntu-24.04로 고정했습니다. 제품 의존성 변경 없음.
+
+
+## 10. 신규 정적 도식 배치 (2026-11-25)
+
+- ADD 4개 추가: DNS TTL(권한 값 변경과 캐시 수명), TCP retransmission(RTO 손실 복구), ECDHE key-agreement(공개점 교환과 스칼라 곱), HTTP freshness(current age 60/90초 경계). 본문 기존 중복 표/ASCII를 대체하고 식별자와 Reference frontmatter·Question을 보존했습니다. 특히 refactor 원문의 잘못된 ECDHE 덧셈 표기를 교정했습니다.
+- RFC 1035/8767, 6298, 9846, 9111/5861을 참고했습니다. 각 SVG는 독립 viewBox·title/desc·라이트/다크 CSS·외부 의존성 없는 구조입니다. Curriculum의 기존 53 DIAGRAM fence 계약은 유지하고 TEXT 내 보조 SVG 5개를 별도 검사합니다.
+- 기존 17개를 포함해 36개 개선 후보 중 21개 소스 구현, 남은 POLISH 15개. 격리 Import 검증 범위를 58개, Reader 정적 SVG 검증을 20조건으로 확대했습니다. 최신 CI 및 실제 픽셀 감사 미완료.

@@ -25,8 +25,8 @@ export function drawNetworkG2Boundary(spec:Spec,marker:string) {
       <Cell x={20} y={60} w={160} label="호스트 A"/>
       <Cell x={20} y={137} w={160} label="호스트 B"/>
       <Cell x={20} y={214} w={160} label="호스트 C"/>
-      <rect x={290} y={44} width={200} height={234} className="network-area__rect"/>
-      <Label x={390} y={67}>스위치</Label>
+      <rect x={290} y={36} width={200} height={242} className="network-area__rect"/>
+      <Label x={390} y={27}>스위치</Label>
       {[82,159,236].map((y,i)=><g key={i}><Cell x={305} y={y-22} w={170} label={'포트 '+(i+1)} active={i<2}/></g>)}
       {arrow(180,82,302,82)}{arrow(302,159,180,159)}
       <line x1={180} y1={236} x2={305} y2={236} className="network-area__separator"/>
@@ -92,7 +92,7 @@ export function drawNetworkG2Boundary(spec:Spec,marker:string) {
     </>)
     case 'pki':return wrap(342,<>
       {heading('접속 대상: api.example.com')}
-      <Label x={220} y={62}>서버가 제공하는 인증서</Label><Label x={670} y={62}>클라이언트의 로컬 검증</Label>
+      <Label x={220} y={62}>발급 경로 (로컬 기준점 포함)</Label><Label x={670} y={62}>클라이언트의 로컬 검증</Label>
       <Cell x={35} y={82} w={370} label="Leaf · SAN api.example.com" active/>
       <Cell x={35} y={164} w={370} label="Intermediate CA"/>
       <Cell x={35} y={246} w={370} label="로컬 trust anchor"/>
