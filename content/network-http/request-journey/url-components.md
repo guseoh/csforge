@@ -21,6 +21,16 @@ references:
 
 브라우저나 HTTP 클라이언트가 URL 하나를 받았다고 해서 그 문자열 전체를 그대로 DNS에 보내거나 HTTP 요청으로 전달하는 것은 아니다. URL 안의 각 구성 요소는 **연결할 대상을 찾는 단계와 실제 HTTP 요청을 만드는 단계에서 서로 다른 역할**을 한다.
 
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-area",
+  "title": "URL 구성 요소",
+  "description": "메시지 전달의 계층과 프로토콜 의미를 고정 예제로 비교합니다.",
+  "example": "url-components"
+}
+```
+
 예를 들어 다음 URL을 보자.
 
 ```text

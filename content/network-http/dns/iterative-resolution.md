@@ -21,15 +21,14 @@ references:
 
 `www.example.com`을 찾는 흐름을 단순화하면 다음과 같다.
 
-```text
-재귀 리졸버 → 루트 서버
-             ← .com 권한 서버로 가는 위임 정보
-
-재귀 리졸버 → .com TLD 서버
-             ← example.com 권한 서버로 가는 위임 정보
-
-재귀 리졸버 → example.com 권한 서버
-             ← 최종 A/AAAA 등 응답
+```csforge-viz
+{
+  "version": 1,
+  "type": "network-core",
+  "title": "재귀 리졸버의 DNS 반복 조회",
+  "description": "캐시 적중 시 곧바로 응답하고, 캐시 미스 시 루트·TLD·권한 서버의 위임 정보를 따라 A 레코드를 조회하는 고정 예시입니다.",
+  "example": "dns-iterative"
+}
 ```
 
 루트 서버가 모든 호스트 주소를 직접 가지고 있는 것이 아니라 **더 구체적인 관리 경계로 가는 길을 알려 준다**는 점이 핵심이다.
