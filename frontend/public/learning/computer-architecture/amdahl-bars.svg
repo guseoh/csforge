@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 308" role="img" aria-labelledby="amdahl-bars-title amdahl-bars-desc"><title id="amdahl-bars-title">암달의 법칙 · 전체 시간의 20%를 10배 가속</title><desc id="amdahl-bars-desc">기준 1, 변경 없음 0.8, 개선 대상 0.2→0.02, 합계 0.82. 막대 길이 비례.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="308"/><text x="28" y="43" class="h" text-anchor="start">암달의 법칙 · 전체 시간의 20%를 10배 가속</text><text x="28" y="82" class="s" text-anchor="start">기준 시간 = 1.00 · 개선 비율 p=0.20 · 가속 s=10</text>
+<text x="28" y="145" class="b" text-anchor="start">개선 전</text>
+<rect x="180" y="115" width="600" height="56" class="p"/>
+<rect x="780" y="115" width="150" height="56" class="v"/>
+<text x="480" y="150" class="m" text-anchor="middle">0.80</text>
+<text x="855" y="150" class="m" text-anchor="middle">0.20</text>
+<text x="28" y="229" class="b" text-anchor="start">개선 후</text>
+<rect x="180" y="199" width="600" height="56" class="p"/>
+<rect x="780" y="199" width="15" height="56" class="v"/>
+<path d="M795 199L830 184H930" class="l"/>
+<text x="930" y="179" class="m" text-anchor="end">0.02</text>
+<text x="480" y="234" class="m" text-anchor="middle">0.80</text>
+<text x="28" y="291" class="s" text-anchor="start">새 실행 시간 = 0.82 · 전체 가속 ≈ 1.22× (추가 비용 없음)</text></svg>

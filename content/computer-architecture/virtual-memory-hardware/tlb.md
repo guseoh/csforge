@@ -22,13 +22,9 @@ references:
 
 TLB는 최근 가상 페이지와 물리 프레임의 매핑을 보관하는 작은 주소 변환 캐시다. 메모리 접근마다 다단계 페이지 테이블을 다시 걷는 비용을 줄이기 위해 사용한다.
 
-```text
-virtual page
-    ↓
-   TLB
-   ├─ hit  → physical frame + permission 확인
-   └─ miss → 하드웨어 walk 또는 소프트웨어 refill → TLB fill → access 재개
-```
+![TLB hit에서도 접근 권한이 필요합니다. 유효한 miss는 변환 캐시를 채운 뒤 접근할 수 있습니다.](/learning/computer-architecture/tlb-path.svg)
+
+*TLB hit에서도 접근 권한이 필요합니다. 유효한 miss는 변환 캐시를 채운 뒤 접근할 수 있습니다.*
 
 ### TLB hit는 페이지 테이블 조회 경로를 생략하게 한다
 

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 310" role="img" aria-labelledby="instruction-cycle-title instruction-cycle-desc"><title id="instruction-cycle-title">ADD x3, x1, x2 · 명령어의 논리 단계</title><desc id="instruction-cycle-desc">RV32I에서 PC=0x1000, x1=7, x2=5, ADD 결과 x3=12, 순차 PC=0x1004.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="310"/><text x="28" y="43" class="h" text-anchor="start">ADD x3, x1, x2 · 명령어의 논리 단계</text><text x="28" y="82" class="s" text-anchor="start">RV32I · x1=7 · x2=5 · PC=0x1000</text>
+<rect x="28" y="112" width="202" height="96" class="p"/>
+<text x="129" y="143" class="b" text-anchor="middle">인출</text>
+<text x="129" y="178" class="s" text-anchor="middle">PC → 명령어</text>
+<path d="M230 160H251" class="e"/>
+<rect x="258" y="112" width="202" height="96" class="p"/>
+<text x="359" y="143" class="b" text-anchor="middle">해독</text>
+<text x="359" y="178" class="s" text-anchor="middle">rs1=x1, rs2=x2</text>
+<path d="M460 160H481" class="e"/>
+<rect x="488" y="112" width="202" height="96" class="v"/>
+<text x="589" y="143" class="b" text-anchor="middle">실행</text>
+<text x="589" y="178" class="s" text-anchor="middle">ALU: 7 + 5</text>
+<path d="M690 160H711" class="e"/>
+<rect x="718" y="112" width="202" height="96" class="p"/>
+<text x="819" y="143" class="b" text-anchor="middle">기록</text>
+<text x="819" y="178" class="s" text-anchor="middle">x3 ← 12</text>
+<text x="28" y="250" class="b" text-anchor="start">다음 PC = 0x1004 (정상 순차 실행)</text>
+<text x="28" y="289" class="s" text-anchor="start">실제 CPU 내부 단계의 고정 실행 순서를 나타내는 그림은 아닙니다.</text></svg>

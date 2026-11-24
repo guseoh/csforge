@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 420" role="img" aria-labelledby="tlb-path-title tlb-path-desc"><title id="tlb-path-title">TLB miss와 page fault는 다르다</title><desc id="tlb-path-desc">하드웨어 관리 TLB 모델. 매핑 miss 시 page walker가 접근 가능한 매핑을 얻으면 TLB 채운 뒤 접근. 권한 위반 등 fault.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="420"/><text x="28" y="43" class="h" text-anchor="start">TLB miss와 page fault는 다르다</text><rect x="30" y="78" width="900" height="50" class="v"/><text x="480" y="111" class="b" text-anchor="middle">VPN + offset · 접근 종류</text>
+<path d="M480 128V153" class="e"/>
+<rect x="320" y="160" width="320" height="50" class="p"/><text x="480" y="193" class="b" text-anchor="middle">TLB 조회</text>
+<path d="M320 185H170V235" class="e"/>
+<path d="M640 185H740V235" class="e"/>
+<text x="180" y="225" class="s" text-anchor="start">hit</text>
+<text x="750" y="225" class="s" text-anchor="start">miss</text>
+<rect x="30" y="243" width="280" height="55" class="v"/><text x="170" y="278.5" class="b" text-anchor="middle">캐시된 변환·권한</text>
+<rect x="590" y="243" width="340" height="55" class="p"/><text x="760" y="278.5" class="b" text-anchor="middle">page-table walker</text>
+<path d="M170 298V323" class="e"/>
+<path d="M760 298V313H480V323" class="e"/>
+<rect x="30" y="331" width="550" height="55" class="v"/><text x="305" y="366.5" class="b" text-anchor="middle">유효·허용 → PA로 정상 접근</text>
+<path d="M830 298V323" class="e"/>
+<rect x="610" y="331" width="320" height="55" class="p"/><text x="770" y="366.5" class="s" text-anchor="middle">매핑·권한 오류 → fault</text>
+<text x="28" y="409" class="s" text-anchor="start">하드웨어 walker 예시. 소프트웨어 refill 방식도 존재합니다.</text></svg>
