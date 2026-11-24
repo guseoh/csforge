@@ -39,7 +39,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import tools.jackson.databind.ObjectMapper;
 
-/** OS G1 도식 17개의 격리 Import, 재수입, 이력 보존과 실제 Reader API를 검증한다. */
+/** OS G1 도식 47개의 격리 Import, 재수입, 이력 보존과 실제 Reader API를 검증한다. */
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class OperatingSystemsG1FullPackIntegrationTest {
@@ -106,7 +106,7 @@ class OperatingSystemsG1FullPackIntegrationTest {
         for (var file : diagrams) {
             String svg = asset(file);
             assertTrue(text(file).contains("](/learning/operating-systems/" + svg + ")"), file.path());
-            Path asset = Path.of("../frontend/public/learning/database", svg);
+            Path asset = Path.of("../frontend/public/learning/operating-systems", svg);
             assertTrue(Files.isRegularFile(asset), () -> "Missing SVG: " + asset);
             assertTrue(Files.readString(asset).contains("<svg"), () -> "Malformed SVG: " + asset);
         }
