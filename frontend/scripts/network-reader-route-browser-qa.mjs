@@ -116,6 +116,16 @@ try {
           'Reader figure sizing: ' + item.contentKey)
         assert.ok(measure.diagramPan <= 2,
           'Desktop Network diagram requires internal horizontal scroll: ' + item.contentKey)
+        if (item.contentKey === 'network-http.core.tcp.three-way-handshake') {
+          const buttons = figure.locator('.tcp-handshake-editorial__controls .diagram-controls button')
+          assert.equal(await buttons.count(), 3)
+          const sizes = await buttons.evaluateAll(elements => elements.map(button => ({
+            height: button.getBoundingClientRect().height,
+            font: getComputedStyle(button).fontSize,
+          })))
+          assert.ok(sizes.every(size => size.height >= 34 && size.height <= 36 && size.font === '13px'),
+            'N-01 compact controls: ' + JSON.stringify(sizes))
+        }
         checks.push({ contentKey: item.contentKey, mode: 'guest', theme, width, result: 'PASS' })
         if (i % 13 === 0) {
           const file = 'reader-' + item.id + '-' + theme + '-' + width + '.png'

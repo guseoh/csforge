@@ -185,3 +185,10 @@
 - [RFC 9000](https://www.rfc-editor.org/rfc/rfc9000.html) — QUIC의 연결 및 스트림별 전송.
 - [RFC 9110](https://www.rfc-editor.org/rfc/rfc9110.html) — HTTP 의미론·메서드 효과·중개자.
 - [RFC 9111](https://www.rfc-editor.org/rfc/rfc9111.html) — 캐시 신선도 및 재검증.
+
+
+## 7. G2 재개 (2026-11-25)
+
+- G1 PR #303이 반영된 refactor `8f01a8ba`를 병합했습니다. 기존 G2 세 파일의 공통 조상 대비 refactor blob 변경 여부를 먼저 비교하여 충돌이 없음을 확인했습니다. 기존 #513 SVG 및 Markdown을 보존합니다.
+- #517 TCP Handshake 전용 CSS에서 버튼 최소 높이 34px, 글꼴 13px, 좌우 패딩 10px, gap 8px, 단계 표기 13px를 적용했습니다. 공통 DiagramControls와 다른 영역 스타일은 변경하지 않았습니다.
+- 기존 Network Reader Chromium QA에 #517 버튼 크기 검사를 추가했습니다. CI 및 실제 렌더링 결과는 미확인입니다. 36개 G2 개선 후보 전체 구현 완료를 의미하지 않으며, #513 실제 Reader 검증도 별도입니다.
