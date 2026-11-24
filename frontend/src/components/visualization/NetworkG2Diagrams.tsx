@@ -50,7 +50,7 @@ export function drawNetworkG2(spec:G2Spec,marker:string) {
       return {height:366,content:<g data-g2-layout="ipv4-prefix">
         <Text x={445} y={26}>192.0.2.0/24</Text>
         <Text x={405} y={54} muted>앞 24비트 · prefix</Text>
-        <Text x={735} y={54} muted>나머지 8비트</Text>
+        <Text x={782} y={54} muted>나머지 8비트</Text>
         {[mask,...addresses].map((octets,row)=>{
           const y=75+row*58
           return <g key={row}><Text x={12} y={y+26} anchor="start">{row===0?'서브넷 마스크':octets.join('.')}</Text>
@@ -101,7 +101,7 @@ export function drawNetworkG2(spec:G2Spec,marker:string) {
     }
     case 'cookie-conditions': {
       const rows=[['Domain / host','api.example.com이 호스트 범위에 해당'],['Path','/api/orders가 Path=/api에 해당'],['Secure','HTTPS 연결에서 전송'],['SameSite','동일 사이트 요청이라는 가정'],['만료·추가 정책','아직 유효하며 브라우저가 허용']]
-      return {height:402,content:<g data-g2-layout="cookie-conditions">
+      return {height:420,content:<g data-g2-layout="cookie-conditions">
         <Text x={450} y={24}>저장된 Secure 쿠키 → HTTPS api.example.com/api/orders</Text>
         {rows.map(([label,detail],i)=><g key={label}>
           <Block x={25} y={49+i*54} w={190} label={label}/>

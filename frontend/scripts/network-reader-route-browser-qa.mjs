@@ -10,7 +10,7 @@ const inventory = readFileSync(resolve(root, 'docs/content-corrections/network-p
 const rows = [...inventory.matchAll(/^\| [\w-]+ \| \[(network-http\.core\.[\w.-]+)\]\(\.\.\/\.\.\/\.\.\/(content\/network-http\/[^)]+)\) \|/gm)]
 assert.equal(rows.length, 53, 'Curriculum DIAGRAM inventory must have 53 Concept rows')
 
-const concepts = rows.map(([, contentKey, path], index) => {
+const loadConcept = ([, contentKey, path], index) => {
   const raw = readFileSync(resolve(root, path), 'utf8')
   const source = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n([\s\S]*)$/)
   assert.ok(source, path)
@@ -23,10 +23,12 @@ const concepts = rows.map(([, contentKey, path], index) => {
     level: Number(field('level', '1')),
     contentMarkdown: source[2],
   }
-})
+}
+const concepts = rows.map(loadConcept)
+const sequence = loadConcept([null,'network-http.core.tcp.sequence-number','content/network-http/tcp/sequence-number.md'],53)
 const ids = new Set(concepts.map(item => item.contentKey))
 assert.equal(ids.size, 53, 'Duplicate Network DIAGRAM key')
-const byId = new Map(concepts.map(item => [item.id, {
+const byId = new Map([...concepts,sequence].map(item => [item.id, {
   ...item, contentStatus: 'PUBLISHED',
   area: { id: 1, slug: 'network-http', name: 'Network & HTTP' },
   topic: { id: 25, slug: 'network-diagrams', title: 'Network & HTTP' },
@@ -126,6 +128,18 @@ try {
           assert.ok(sizes.every(size => size.height >= 34 && size.height <= 36 && size.font === '13px'),
             'N-01 compact controls: ' + JSON.stringify(sizes))
         }
+        if (await figure.locator('[data-g2-layout]').count() > 0) {
+          const outliers = await figure.locator('svg').evaluate(svg => {
+            const v = svg.viewBox.baseVal
+            return [...svg.querySelectorAll('text')].flatMap(text => {
+              const b = text.getBBox()
+              return b.x < v.x - 1 || b.y < v.y - 1 ||
+                b.x+b.width > v.x+v.width+1 || b.y+b.height > v.y+v.height+1
+                ? [{label:text.textContent,x:b.x,y:b.y,width:b.width,height:b.height}] : []
+            })
+          })
+          assert.deepEqual(outliers, [], 'G2 SVG labels outside viewBox: '+item.contentKey)
+        }
         checks.push({ contentKey: item.contentKey, mode: 'guest', theme, width, result: 'PASS' })
         if (i % 13 === 0 || await figure.locator('[data-g2-layout]').count() > 0) {
           const file = 'reader-' + item.id + '-' + theme + '-' + width + '.png'
@@ -135,6 +149,38 @@ try {
       }
     }
   }
+  await guest.goto('http://127.0.0.1:5173/concepts/' + sequence.id, {waitUntil:'domcontentloaded'})
+  const sequenceTrigger = guest.locator('article.concept-reading-content .markdown-image-trigger').filter({
+    has:guest.locator('img[src="/learning/network-http/tcp-sequence-number.svg"]'),
+  })
+  await sequenceTrigger.waitFor({timeout:15000})
+  for (const theme of ['light','dark']) {
+    await guest.emulateMedia({colorScheme:theme==='light'?'dark':'light'})
+    await guest.getByRole('button',{name:theme==='light'?'라이트 테마':'다크 테마'}).click()
+    for (const width of [1280,1440]) {
+      await guest.setViewportSize({width,height:940})
+      await sequenceTrigger.scrollIntoViewIfNeeded()
+      await sequenceTrigger.locator('img').evaluate(async el=>{await el.decode()})
+      const m=await sequenceTrigger.evaluate(el=>{
+        const image=el.querySelector('img'),r=el.getBoundingClientRect()
+        return {loaded:image.naturalWidth>0,scheme:getComputedStyle(image).colorScheme,
+          left:r.left,right:r.right,overflow:document.documentElement.scrollWidth-innerWidth}
+      })
+      assert.ok(m.loaded && m.scheme===theme && m.left>=-2 && m.right<=width+2 && m.overflow<=2,
+        'Sequence SVG Reader: '+JSON.stringify(m))
+      const file='reader-sequence-'+theme+'-'+width+'.png'
+      await sequenceTrigger.screenshot({path:resolve(out,file),animations:'disabled'})
+      screenshots.push(file)
+      await sequenceTrigger.click()
+      const dialog=guest.locator('dialog.markdown-image-dialog[open]')
+      await dialog.waitFor()
+      await guest.keyboard.press('Escape')
+      await dialog.waitFor({state:'hidden'})
+      assert.ok(await sequenceTrigger.evaluate(el=>document.activeElement===el))
+      checks.push({contentKey:sequence.contentKey,mode:'guest-static',theme,width,result:'PASS'})
+    }
+  }
+  await guest.emulateMedia({colorScheme:null})
   const owner = await makePage(true)
   for (const item of [concepts[0], concepts[14], concepts[25], concepts[48]]) {
     await openConcept(owner, item)
@@ -143,15 +189,15 @@ try {
     checks.push({ contentKey: item.contentKey, mode: 'owner', result: 'PASS' })
   }
   assert.deepEqual(errors, [], 'Browser JavaScript errors')
-  assert.equal(checks.length, 53 * 4 + 4)
-  console.log('NETWORK_READER_ROUTE_PASS 212 guest theme/width cases, 4 owner Reader cases')
+  assert.equal(checks.length, 53 * 4 + 4 + 4)
+  console.log('NETWORK_READER_ROUTE_PASS 212 interactive guest theme/width cases, 4 sequence SVG cases, 4 owner Reader cases')
 } catch (error) {
   errors.push({ stage: 'reader', message: String(error) })
   console.error(error)
   process.exitCode = 1
 } finally {
   writeFileSync(resolve(out, 'qa.json'), JSON.stringify({
-    cases: 53, checks, screenshots, errors,
+    cases: 54, checks, screenshots, errors,
   }, null, 2))
   for (const context of contexts) await context.close().catch(() => {})
   await browser.close()
