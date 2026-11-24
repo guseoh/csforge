@@ -7,14 +7,12 @@ export const linkRouteDiagrams = {
  note:'TCP 연결이 성공해도 HTTP 처리나 업무 트랜잭션 성공을 뜻하지 않습니다.'
 },
 encapsulation: {
- layout:'stack',title:'송신 측 캡슐화',lead:'각 하위 계층이 상위 데이터를 페이로드로 감싸 전달 정보를 추가합니다.',
- layers:[{head:'HTTP 메시지',detail:'애플리케이션 데이터'},{head:'TCP 세그먼트',detail:'TCP 헤더 + 응용 데이터 바이트'},{head:'IP 패킷',detail:'IP 헤더 + 전송 데이터'},{head:'이더넷 프레임',detail:'링크 헤더 + IP 패킷 + 트레일러'}],
- note:'포함 관계를 단순화한 예시입니다. HTTP 메시지 하나가 항상 세그먼트 하나인 것은 아닙니다.'
+ layout:'packet-envelope',direction:'send',title:'송신 측 캡슐화',lead:'같은 응용 데이터 바이트를 TCP·IP·이더넷이 각각 자신의 전달 단위로 감쌉니다.',
+ note:'TCP 데이터 일부를 담은 IPv4/Ethernet 예시입니다. 헤더 폭은 실제 바이트 길이에 비례하지 않으며 HTTP 메시지와 세그먼트는 일대일이 아닙니다.'
 },
 decapsulation: {
- layout:'stack',title:'수신 측 역캡슐화',lead:'최종 수신 호스트는 계층마다 헤더와 상태를 검증한 뒤 상위로 전달합니다.',
- layers:[{head:'링크 프레임',detail:'링크 주소·프레임 검증'},{head:'IP 패킷',detail:'목적지·IP 헤더 검증'},{head:'TCP/UDP',detail:'포트·TCP 순서 복원 또는 UDP 데이터그램'},{head:'애플리케이션',detail:'HTTP 메시지 경계와 의미 해석'}],
- note:'중간 라우터는 일반적으로 HTTP까지 해석하지 않고 다음 링크에 맞는 프레임을 새로 만듭니다.'
+ layout:'packet-envelope',direction:'receive',title:'수신 측 역캡슐화',lead:'최종 목적지 호스트에서 검증을 통과한 데이터만 상위 계층으로 넘어갑니다.',
+ note:'TCP는 순서 있는 바이트 스트림을 복원한 뒤 애플리케이션에 전달합니다. 중간 라우터는 일반적으로 IP 전달까지만 수행합니다.'
 },
 'switch-forwarding': {
  layout:'branch',title:'스위치 MAC 학습과 전달',lead:'출발지 MAC A를 수신 포트 1에 연결해 학습한 뒤 목적지 MAC B를 조회합니다.',
@@ -41,10 +39,8 @@ arp: {
  note:'IP 목적지는 최종 서버로 유지되고, 현재 링크의 프레임 목적지 MAC만 게이트웨이가 될 수 있습니다.'
 },
 'prefix-subnet': {
- layout:'compare',title:'CIDR 192.0.2.0/24의 범위',lead:'앞의 24비트가 일치하는 주소를 같은 prefix로 묶습니다.',
- left:{heading:'같은 /24',lines:['192.0.2.10','192.0.2.30','상위 24비트 동일']},
- right:{heading:'다른 /24',lines:['192.0.3.30','상위 24비트 차이','별도 경로가 필요할 수 있음']},
- note:'같은 주소 범위라고 해서 링크 도달이나 방화벽 통과가 자동 보장되지는 않습니다.'
+ layout:'ipv4-prefix',title:'CIDR 192.0.2.0/24의 비트 경계',lead:'첫 24비트와 마지막 8비트를 나누어 어느 주소가 같은 prefix에 포함되는지 판단합니다.',
+ note:'192.0.2.0~192.0.2.255는 256개 주소를 포함하는 범위이며 모두 할당 가능한 호스트 주소라는 뜻은 아닙니다. 같은 범위라도 도달성을 보장하지 않습니다.'
 },
 'routing-table': {
  layout:'matrix',title:'10.1.2.30의 최장 접두사 일치',lead:'세 경로에 모두 일치해도 가장 구체적인 /24가 선택됩니다.',

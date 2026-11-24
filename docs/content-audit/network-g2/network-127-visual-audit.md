@@ -192,3 +192,12 @@
 - G1 PR #303이 반영된 refactor `8f01a8ba`를 병합했습니다. 기존 G2 세 파일의 공통 조상 대비 refactor blob 변경 여부를 먼저 비교하여 충돌이 없음을 확인했습니다. 기존 #513 SVG 및 Markdown을 보존합니다.
 - #517 TCP Handshake 전용 CSS에서 버튼 최소 높이 34px, 글꼴 13px, 좌우 패딩 10px, gap 8px, 단계 표기 13px를 적용했습니다. 공통 DiagramControls와 다른 영역 스타일은 변경하지 않았습니다.
 - 기존 Network Reader Chromium QA에 #517 버튼 크기 검사를 추가했습니다. CI 및 실제 렌더링 결과는 미확인입니다. 36개 G2 개선 후보 전체 구현 완료를 의미하지 않으며, #513 실제 Reader 검증도 별도입니다.
+
+
+## 8. G2 구조 개선 배치 1 (2026-11-25)
+
+- REBUILD 2개: encapsulation/decapsulation의 동일 데이터 바이트 위치와 추가·제거되는 헤더 경계를 정렬했습니다.
+- REWORK 5개: prefix-subnet의 /24 비트 경계, acknowledgement의 누적 ACK 1500→2500, tcp-head-of-line의 순서 전달 대기, http2-stream의 프레임 교차 전송, cookie-scope의 독립 전송 조건을 구현했습니다.
+- 49개 예시 ID/53개 DIAGRAM fence/공통 스키마는 유지합니다. Network 내부 고정 타입과 전용 React SVG만 변경했습니다. #513과 #517을 합쳐 36개 초기 개선 후보 중 9개 소스 구현(아직 승인 아님), 27개 후속 검토/구현 대상입니다.
+- RFC 1122 §1.3.3, RFC 4632 §3.1, RFC 9113 §§4.3, 5를 대조했습니다. HTTP/2 예시는 각 HEADERS가 END_HEADERS로 종료되고 프레임이 같은 방향에서 전송되는 조건입니다.
+- Vitest 핵심 레이블과 신규 구조 회귀 테스트 및 7개 변경 도식의 전체 테마/폭 스크린샷 수집을 추가했습니다. CI/실제 스크린샷 시각 검수 및 전체 G2 승인은 미완료입니다.

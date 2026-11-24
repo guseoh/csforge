@@ -18,10 +18,8 @@ cname: {
  note:'명시적 부정 응답은 부정 캐시 대상이 될 수 있으나 timeout과 같은 방식으로 무한 재시도하면 안 됩니다.'
 },
 acknowledgement: {
- layout:'compare',title:'누적 ACK는 다음 기대 바이트',lead:'먼저 도착한 비연속 바이트가 있어도 빈 구간은 누적 확인되지 않습니다.',
- left:{heading:'연속 수신',lines:['1000~1499 B 수신','다음 기대 바이트 = 1500','누적 ACK = 1500']},
- right:{heading:'빈 구간 발생',lines:['1000~1499 B 수신','1500~1999 B 누락 / 2000~2499 B 도착','누적 ACK는 여전히 1500']},
- note:'SACK는 협상된 경우 비연속 수신 범위를 추가로 알릴 수 있습니다. TCP ACK는 업무 처리 완료가 아닙니다.'
+ layout:'byte-gap',focus:'ack',title:'누적 ACK는 다음 기대 바이트',lead:'이미 받은 뒤쪽 바이트가 있어도 빈 구간이 채워질 때까지 누적 ACK는 전진하지 않습니다.',
+ note:'SACK를 협상했다면 비연속 수신 구간을 추가로 알릴 수 있습니다. TCP ACK는 업무 처리 완료가 아닙니다.'
 },
 'congestion-control': {
  layout:'compare',title:'수신 흐름 제어와 경로 혼잡 제어',lead:'송신 가능한 미확인 데이터 양은 수신 윈도와 혼잡 윈도 양쪽 조건을 받아야 합니다.',
@@ -30,9 +28,8 @@ acknowledgement: {
  note:'실제 미확인 데이터 상한을 min(rwnd, cwnd) 관점으로 이해하되 CUBIC 등 알고리즘별 변화량은 다릅니다.'
 },
 'tcp-head-of-line': {
- layout:'path',title:'앞선 TCP 바이트 손실이 만드는 HOL 차단',lead:'뒤 바이트가 도착해도 앞의 누락 구간이 복구되어야 스트림을 순서대로 전달합니다.',
- steps:[{head:'1000~1499 수신',detail:'연속 수신 구간'},{head:'1500~1999 누락',detail:'TCP 스트림의 빈 구간'},{head:'2000~2499 선도착',detail:'수신 버퍼에 보관, 애플리케이션 전달 대기'},{head:'누락 바이트 재전송',detail:'1500~1999가 채워짐'},{head:'연속 전달 재개',detail:'이후 받은 데이터까지 순서대로 전달 가능'}],
- note:'HTTP/2의 다중 스트림도 한 TCP 바이트 순서를 공유합니다. QUIC은 스트림별 수신 순서를 분리합니다.'
+ layout:'byte-gap',focus:'delivery',title:'TCP 순서 전달을 막는 바이트 공백',lead:'앞쪽 손실을 복구하기 전까지 이후에 도착한 바이트는 순서 있는 애플리케이션 스트림에 전달할 수 없습니다.',
+ note:'HTTP/2의 여러 스트림도 같은 TCP 전달 순서를 공유합니다. QUIC은 스트림별 순서 전달을 분리합니다.'
 },
 'delivery-order-guarantee': {
  layout:'compare',title:'UDP 송신 순서와 가능한 수신 관찰',lead:'UDP 데이터그램은 전송·도착·정렬·중복 제거를 자체 상태로 보장하지 않습니다.',

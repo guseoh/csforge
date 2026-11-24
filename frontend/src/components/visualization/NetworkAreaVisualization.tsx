@@ -3,6 +3,7 @@ import type { VisualizationOf } from '../../lib/learning-visualization'
 import type { AreaDiagram } from '../../lib/network-area-types'
 import { networkAreaSpecs } from '../../lib/network-area-model'
 import './network-area-editorial.css'
+import { drawNetworkG2 } from './NetworkG2Diagrams'
 
 function displayLength(value: string): number {
   return Array.from(value).reduce((n, c) => n + (c.charCodeAt(0) > 255 ? 1.75 : 1), 0)
@@ -49,6 +50,12 @@ function TextBox({ x, y, width, height, head, detail, selected=false }: {
 
 function draw(spec: AreaDiagram, marker: string) {
   switch (spec.layout) {
+    case 'packet-envelope':
+    case 'ipv4-prefix':
+    case 'frame-interleave':
+    case 'byte-gap':
+    case 'cookie-conditions':
+      return drawNetworkG2(spec, marker)
     case 'stack': {
       const height = 65 + spec.layers.length * 92
       return { height, content: <g>

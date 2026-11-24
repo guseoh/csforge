@@ -12,9 +12,8 @@ export const httpTransportCacheDiagrams = {
  note:'응답 순서 제약과 전송 재시도 불확실성 때문에 HTTP/2 스트림 다중화와 다릅니다.'
 },
 'http2-stream': {
- layout:'matrix',title:'HTTP/2 연결 안의 독립 스트림',lead:'하나의 연결에서 HEADERS·DATA 프레임을 스트림 ID별로 구분하여 교차 전송할 수 있습니다.',
- columns:['스트림 ID','논리 교환','프레임 예제'],rows:[['1','요청 A ↔ 응답 A','HEADERS / DATA'],['3','요청 B ↔ 응답 B','HEADERS / DATA'],['5','요청 C ↔ 응답 C','HEADERS / DATA']],
- note:'한 메시지가 한 프레임이라는 뜻은 아닙니다. 스트림 ID는 연결 안에서만 구분하는 값이고 TCP의 순서 제약은 남습니다.'
+ layout:'frame-interleave',title:'HTTP/2 한 연결에서 교차 전송되는 프레임',lead:'같은 방향의 프레임 열을 스트림 ID로 분리하면 각 스트림의 메시지를 재구성할 수 있습니다.',
+ note:'HEADERS 예시는 END_HEADERS로 끝난 단일 프레임입니다. CONTINUATION이 필요한 필드 블록은 중간에 다른 프레임을 끼워 넣을 수 없습니다. TCP 순서 제약은 남습니다.'
 },
 quic: {
  layout:'compare',title:'QUIC의 스트림별 순서 전달',lead:'UDP 위의 QUIC은 신뢰성·암호화·연결 상태와 독립적인 전송 스트림을 제공합니다.',
@@ -46,9 +45,8 @@ quic: {
  note:'Vary·인증·캐시 제어가 허용한 경우에만 공유 캐시를 재사용합니다. 각 CDN/브라우저 캐시는 별도 상태입니다.'
 },
 'cookie-scope': {
- layout:'path',title:'쿠키를 붙이기 전의 전송 조건',lead:'저장된 쿠키라도 모든 HTTP 요청에 자동으로 포함되는 것은 아닙니다.',
- steps:[{head:'Domain/host 범위',detail:'요청 호스트와 도메인 속성 비교'},{head:'Path 범위',detail:'요청 경로가 쿠키 Path에 맞는지 검사'},{head:'Secure 전송 조건',detail:'보안 연결(예: HTTPS)인지 확인'},{head:'SameSite 문맥',detail:'동일 사이트/교차 사이트와 요청 문맥 고려'},{head:'Cookie 요청 필드',detail:'조건을 만족한 쿠키만 포함'}],
- note:'Path는 보안 접근 경계가 아닙니다. HttpOnly는 스크립트 접근 제한이며 쿠키 적용 범위에 포트는 보통 포함되지 않습니다.'
+ layout:'cookie-conditions',title:'쿠키 전송을 결정하는 독립 조건',lead:'저장된 쿠키마다 호스트, 경로, 보안 전송, 사이트 문맥과 만료 여부를 함께 판단합니다.',
+ note:'Path는 보안 접근 경계가 아닙니다. HttpOnly는 스크립트 접근 제한이며 쿠키 적용 범위에 포트는 보통 포함되지 않습니다. 브라우저의 추가 정책도 영향을 줍니다.'
 },
 proxy: {
  layout:'path',title:'정방향 프록시는 클라이언트 측 중개자',lead:'클라이언트가 프록시에 요청하고 프록시는 원본을 향해 별도 구간을 만듭니다.',

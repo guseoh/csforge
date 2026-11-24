@@ -10,3 +10,8 @@ export type AreaDiagram =
   | (Base & {readonly layout:'branch'; readonly question:string; readonly arms:readonly Step[]})
   | (Base & {readonly layout:'matrix'; readonly columns:readonly [string,string,string];readonly rows:readonly (readonly [string,string,string])[];readonly focusRow?:number})
   | (Base & {readonly layout:'sequence'; readonly parties:readonly [string,string];readonly messages:readonly Message[]})
+  | (Base & {readonly layout:'packet-envelope'; readonly direction:'send'|'receive'})
+  | (Base & {readonly layout:'ipv4-prefix'})
+  | (Base & {readonly layout:'frame-interleave'})
+  | (Base & {readonly layout:'byte-gap'; readonly focus:'ack'|'delivery'})
+  | (Base & {readonly layout:'cookie-conditions'})
