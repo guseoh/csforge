@@ -18,7 +18,7 @@ references:
 ---
 # 자동 커밋(Autocommit)과 트랜잭션 경계
 
-`BEGIN`을 쓰지 않았으니 트랜잭션이 없다고 생각하면 안 됩니다. PostgreSQL은 **모든 SQL 문을 트랜잭션 안에서 실행**합니다. 명시적인 `BEGIN`이 없는 SQL 문은 서버 관점에서 암시적 트랜잭션으로 실행되고, 성공하면 문장 끝에서 커밋되는 것처럼 동작합니다. PostgreSQL 문서도 이 동작을 흔히 autocommit이라고 부릅니다.
+`BEGIN`을 쓰지 않았으니 트랜잭션이 없다고 생각하면 안 됩니다. PostgreSQL은 **모든 SQL 문을 트랜잭션 안에서 실행**합니다. 명시적인 `BEGIN`이 없는 SQL 문은 서버 관점에서 암시적 트랜잭션으로 실행되고, 성공하면 문장 끝에서 커밋되는 것처럼 동작합니다. PostgreSQL 문서도 이 동작을 흔히 autocommit이라고 부릅니다. 다만 simple query protocol로 여러 SQL 문을 하나의 메시지에 보내면 명시적 트랜잭션 제어가 없는 경우 한 암시적 트랜잭션으로 실행될 수 있습니다. 아래 예시는 클라이언트가 각 UPDATE를 별도 요청으로 실행하는 경우입니다.
 
 다만 애플리케이션에서 보는 `autocommit` 설정은 JDBC 드라이버, 클라이언트 라이브러리, SQL 도구 같은 **클라이언트 계층의 트랜잭션 제어 정책**일 수 있습니다. 클라이언트가 여러 SQL 문 앞에 `BEGIN`을 자동으로 열거나 연결의 트랜잭션 모드를 제어할 수 있으므로, “PostgreSQL 서버의 암시적 SQL 문 트랜잭션”과 “JDBC/클라이언트의 autocommit 옵션”을 같은 설정 하나로 생각하지 않습니다.
 
@@ -37,6 +37,8 @@ UPDATE account SET balance = balance - 100 WHERE id = 1;
 UPDATE account SET balance = balance + 100 WHERE id = 2;
 COMMIT;
 ```
+
+이 예시는 두 계좌가 존재한다고 가정한 트랜잭션 경계 설명입니다. 실제 송금에서는 잔액 조건, 영향받은 행 수, 금액 검증, 잠금 순서와 실패 시 롤백도 함께 설계해야 합니다.
 
 ```text
 statement 1 ─┐
