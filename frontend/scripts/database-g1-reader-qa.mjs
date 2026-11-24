@@ -10,10 +10,10 @@ const root = resolve(process.cwd(), '..')
 const out = resolve(root, 'artifacts/' + area + '-g1-reader')
 mkdirSync(out, { recursive: true })
 const concepts = JSON.parse(readFileSync(resolve(root, 'artifacts/' + area + '-g1-api-fixtures.json'), 'utf8'))
-assert.equal(concepts.length, 17)
-assert.equal(new Set(concepts.map(x => x.contentKey)).size, 17)
+assert.equal(concepts.length, 19)
+assert.equal(new Set(concepts.map(x => x.contentKey)).size, 19)
 const byId = new Map(concepts.map(x => [Number(x.id ?? x.conceptId), x]))
-assert.equal(byId.size, 17, 'API fixture IDs must be unique')
+assert.equal(byId.size, 19, 'API fixture IDs must be unique')
 const browser = await chromium.launch({ headless: true })
 const context = await browser.newContext({ viewport: { width: 1280, height: 940 }, deviceScaleFactor: 1, serviceWorkers: 'block' })
 await context.addInitScript(() => localStorage.setItem('csforge.theme.v1', 'light'))
@@ -70,7 +70,7 @@ try {
     }
   }
   assert.deepEqual(errors, [])
-  assert.equal(checks.length, 17*4)
+  assert.equal(checks.length, 19*4)
   console.log('G1_READER_PASS', area, checks.length)
 } catch (error) {
   errors.push({stage:'reader',message:String(error)})

@@ -39,7 +39,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import tools.jackson.databind.ObjectMapper;
 
-/** Database G1 도식 17개의 격리 Import, 재수입, 이력 보존과 실제 Reader API를 검증한다. */
+/** Database G1 도식 19개의 격리 Import, 재수입, 이력 보존과 실제 Reader API를 검증한다. */
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class DatabaseG1FullPackIntegrationTest {
@@ -48,6 +48,7 @@ class DatabaseG1FullPackIntegrationTest {
     private static final Map<String, String> ASSETS = Map.ofEntries(
             Map.entry("database/index/btree.md", "index-btree.svg"),
             Map.entry("database/index/composite-index.md", "index-composite.svg"),
+            Map.entry("database/index/covering-index.md", "index-covering.svg"),
             Map.entry("database/isolation/anomalies.md", "isolation-anomalies.svg"),
             Map.entry("database/isolation/read-committed.md", "isolation-read-committed.svg"),
             Map.entry("database/isolation/serializable.md", "isolation-serializable.svg"),
@@ -60,6 +61,7 @@ class DatabaseG1FullPackIntegrationTest {
             Map.entry("database/query-patterns/keyset-pagination.md", "query-keyset.svg"),
             Map.entry("database/replication/primary-replica.md", "replication-primary-replica.svg"),
             Map.entry("database/sql/join-semantics.md", "sql-join.svg"),
+            Map.entry("database/sql/window-function.md", "sql-window-frame.svg"),
             Map.entry("database/storage/pages-buffer.md", "storage-pages-buffer.svg"),
             Map.entry("database/storage/wal.md", "storage-wal.svg"),
             Map.entry("database/transaction/atomic-write.md", "transaction-atomic-update.svg")
@@ -86,7 +88,7 @@ class DatabaseG1FullPackIntegrationTest {
     }
 
     @Test
-    void databaseG1UpdatesExactly17AndPreservesHistoryAndServesAllReaderMarkdown() throws Exception {
+    void databaseG1UpdatesExactly19AndPreservesHistoryAndServesAllReaderMarkdown() throws Exception {
         var bootstrapResult = bootstrap.bootstrap();
         assertTrue(bootstrapResult.success(), () -> "Isolated bootstrap: " + bootstrapResult);
         assertEquals(0, bootstrapResult.totals().errors());
@@ -95,7 +97,7 @@ class DatabaseG1FullPackIntegrationTest {
         var concepts = files.stream().filter(file -> file.path().endsWith(".md")).toList();
         assertEquals(38, concepts.size(), "Database Concept inventory");
         var g1 = concepts.stream().filter(file -> ASSETS.containsKey(file.path())).toList();
-        assertEquals(17, g1.size());
+        assertEquals(19, g1.size());
         var plan = planner.plan(files);
         assertEquals(12, plan.topicCount());
         assertEquals(38, plan.conceptCount());
@@ -120,7 +122,7 @@ class DatabaseG1FullPackIntegrationTest {
             assertEquals(batch.itemCount(), apply.apply(batch.command(), p.previewDigest()).updated());
             oldUpdates += p.updated();
         }
-        assertEquals(17, oldUpdates);
+        assertEquals(19, oldUpdates);
         var beforeConcepts = jdbc.queryForList(
                 "select content_key, id from concept where content_key like 'database.%' order by content_key");
         var beforeQuestions = jdbc.queryForList(
@@ -150,8 +152,8 @@ class DatabaseG1FullPackIntegrationTest {
             updated += applied.updated();
             unchanged += applied.unchanged();
         }
-        assertEquals(17, updated);
-        assertEquals(plan.totalItemCount() - 17, unchanged);
+        assertEquals(19, updated);
+        assertEquals(plan.totalItemCount() - 19, unchanged);
         assertEquals(beforeConcepts, jdbc.queryForList(
                 "select content_key, id from concept where content_key like 'database.%' order by content_key"));
         assertEquals(beforeQuestions, jdbc.queryForList(
@@ -198,8 +200,8 @@ class DatabaseG1FullPackIntegrationTest {
         }
         assertEquals(plan.totalItemCount(), exactUnchanged);
         assertEquals(history, history(), "Exact Database G1 reimport must preserve history");
-        System.out.println("DATABASE_G1_PASS 17 UPDATED, " + exactUnchanged
-                + " UNCHANGED, 17 public Reader HTTP 200");
+        System.out.println("DATABASE_G1_PASS 19 UPDATED, " + exactUnchanged
+                + " UNCHANGED, 19 public Reader HTTP 200");
     }
 
     private void seedHistory() {
