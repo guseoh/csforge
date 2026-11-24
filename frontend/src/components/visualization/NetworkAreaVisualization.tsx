@@ -4,6 +4,7 @@ import type { AreaDiagram } from '../../lib/network-area-types'
 import { networkAreaSpecs } from '../../lib/network-area-model'
 import './network-area-editorial.css'
 import { drawNetworkG2 } from './NetworkG2Diagrams'
+import { drawNetworkG2Boundary } from './NetworkG2BoundaryDiagrams'
 
 function displayLength(value: string): number {
   return Array.from(value).reduce((n, c) => n + (c.charCodeAt(0) > 255 ? 1.75 : 1), 0)
@@ -50,6 +51,8 @@ function TextBox({ x, y, width, height, head, detail, selected=false }: {
 
 function draw(spec: AreaDiagram, marker: string) {
   switch (spec.layout) {
+    case 'boundary':
+      return drawNetworkG2Boundary(spec, marker)
     case 'packet-envelope':
     case 'ipv4-prefix':
     case 'frame-interleave':
@@ -160,7 +163,7 @@ export function NetworkAreaVisualization({ data }: {data:VisualizationOf<'networ
       <svg className="network-area__svg" viewBox={'0 0 900 '+figure.height} role="img"
         aria-labelledby={titleId+' '+descId}>
         <title id={titleId}>{title}</title>
-        <desc id={descId}>{lead} {note}</desc>
+        <desc id={descId}>{lead + ' ' + note}</desc>
         <defs>
           <marker id={marker} viewBox="0 0 10 10" refX="9" refY="5"
             markerWidth="7" markerHeight="7" orient="auto-start-reverse">

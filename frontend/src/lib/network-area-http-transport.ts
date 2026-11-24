@@ -22,10 +22,8 @@ quic: {
  note:'QUIC은 UDP 자체의 보장을 바꾼 것이 아니라 UDP 데이터그램 위에 별도의 전송 프로토콜을 구성합니다.'
 },
 'transport-head-of-line': {
- layout:'compare',title:'TCP 기반 HTTP/2 vs QUIC 기반 HTTP/3의 HOL',lead:'HTTP/2는 HTTP 프레임을 다중화하지만 TCP 바이트 순서를 공유합니다.',
- left:{heading:'HTTP/2 over TCP',lines:['여러 HTTP 스트림 프레임이 한 TCP 순서에 배치','앞 바이트 손실 시 TCP 전달 대기','다른 HTTP 스트림 바이트도 차단 가능']},
- right:{heading:'HTTP/3 over QUIC',lines:['QUIC 스트림별 순서 전달','한 스트림 손실로 다른 스트림이 동일 차단되지 않음','혼잡·대역폭 등 연결 자원은 공유']},
- note:'HTTP/1.1 응답 순서 HOL, TCP 바이트 HOL, QUIC 스트림별 순서는 서로 다른 계층의 문제입니다.'
+ layout:'boundary',example:'hol',title:"TCP 공통 순서와 QUIC 스트림별 순서",lead:"TCP 바이트 공백은 뒤에 도착한 여러 HTTP/2 스트림을 막을 수 있지만 QUIC은 스트림별 전달 순서를 유지합니다.",
+ note:"QUIC 예시는 B의 필요한 데이터와 제어 정보가 모두 도착했다고 가정합니다. 연결 혼잡 제어·대역폭은 공유됩니다."
 },
 'if-none-match': {
  layout:'branch',title:'GET에서 If-None-Match의 ETag 비교',lead:'저장한 표현의 ETag를 서버가 현재 선택한 표현의 검증자와 비교합니다.',
@@ -59,10 +57,8 @@ proxy: {
  note:'프록시가 원본과 동일한 TCP/TLS 연결을 공유하지는 않습니다. 캐싱·로드밸런싱은 선택적 기능입니다.'
 },
 'trusted-proxy-boundary': {
- layout:'compare',title:'Forwarded 헤더는 신뢰 경계 뒤에서 해석',lead:'클라이언트가 만든 전달 헤더를 그대로 서버 신원 근거로 사용하면 위조될 수 있습니다.',
- left:{heading:'외부 · 신뢰되지 않은 입력',lines:['X-Forwarded-For: 임의 IP 위조 가능','클라이언트가 직접 값 삽입 가능','주소·스킴·Host를 인증 정보처럼 믿지 않음']},
- right:{heading:'신뢰된 프록시 경계',lines:['기존 전달 값 제거 또는 정책에 따라 정리','관찰한 클라이언트 정보 재작성','백엔드는 허용된 프록시 연결에서만 사용']},
- note:'신뢰된 전달 IP도 사용자 인증·인가를 대신하지 않습니다. 프록시 체인의 첫/마지막 주소를 무조건 믿으면 안 됩니다.'
+ layout:'boundary',example:'proxy',title:"외부 전달 헤더와 신뢰 프록시 경계",lead:"외부에서 주장한 주소를 경계에서 정리하고 실제 연결 상대를 검증한 백엔드만 전달 메타데이터를 사용합니다.",
+ note:"단일 신뢰 프록시의 정책 예시입니다. 다중 홉에서는 허용 프록시 체인 규칙이 필요하며 전달 IP는 사용자 인증이 아닙니다."
 },
 'cdn-http-intermediary': {
  layout:'branch',title:'CDN Edge가 응답을 만드는 두 경로',lead:'CDN 엣지는 원본 앞의 HTTP 중개자이며 재사용 가능하면 캐시 응답을 직접 보냅니다.',

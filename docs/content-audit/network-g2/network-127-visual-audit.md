@@ -203,3 +203,11 @@
 - Vitest 핵심 레이블과 신규 구조 회귀 테스트 및 7개 변경 도식의 전체 테마/폭 스크린샷 수집을 추가했습니다. CI/실제 스크린샷 시각 검수 및 전체 G2 승인은 미완료입니다.
 
 - #513 정적 SVG까지 실제 Reader(합성 API 응답) 4개 조건·확대/ESC/포커스 및 격리 Import 54개 변경 범위로 검증 대상을 확장했습니다. 신규 7개 도식은 SVG viewBox 밖 레이블 검사도 추가했습니다. 실행 결과와 실제 픽셀 감사 미확인.
+
+
+## 9. G2 구조 개선 배치 2 및 Chromium 환경 교정 (2026-11-25)
+
+- 8개 REWORK 추가: switch-forwarding, arp, router-forwarding, nat, nat-mapping, pki, transport-head-of-line, trusted-proxy-boundary. 실제 포트/FDB·링크 브로드캐스트·패킷 헤더·NAPT 테이블·인증서 경로·스트림별 offset·프록시 신뢰 경계를 별도 공간으로 표현합니다.
+- 기존 49개 고정 예시 ID와 Markdown fence 계약 유지. Network 전용 renderer/type/test 변경만 수행했습니다. 기존 9개를 포함하여 초기 36개 개선 후보 중 17개 소스 구현, 19개 후속 검토 대상입니다. 코드/시각 QA 통과를 의미하지 않습니다.
+- 공식 참고: RFC 1812, RFC 3022, RFC 9525, RFC 9000 및 기존 Concept Reference. 실제 렌더링·픽셀 검수는 미완료입니다.
+- 이전 #45432415050은 frontend/backend SUCCESS 이후 Chromium 설치에서 Ubuntu 26.04와 Playwright 1.56.1 비호환으로 실패했습니다. QA runner를 ubuntu-24.04로 고정했습니다. 제품 의존성 변경 없음.

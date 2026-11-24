@@ -15,3 +15,4 @@ export type AreaDiagram =
   | (Base & {readonly layout:'frame-interleave'})
   | (Base & {readonly layout:'byte-gap'; readonly focus:'ack'|'delivery'})
   | (Base & {readonly layout:'cookie-conditions'})
+  | (Base & {readonly layout:'boundary'; readonly example:'switch'|'arp'|'router'|'nat'|'mapping'|'pki'|'hol'|'proxy'})

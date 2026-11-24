@@ -44,9 +44,8 @@ acknowledgement: {
  note:'이 ACK는 UDP의 내장 기능이 아니라 상위 프로토콜이 직접 정의한 메시지입니다.'
 },
 pki: {
- layout:'stack',title:'PKI 인증서 경로와 신뢰 기준점',lead:'서버 인증서를 받았다고 즉시 신뢰하지 않고 경로·제약·호스트 이름을 검증합니다.',
- layers:[{head:'서버(leaf) 인증서',detail:'서버가 제시 · 서비스 이름의 신원 주장'},{head:'중간 CA 인증서',detail:'발급자 서명·CA 제약을 확인'},{head:'클라이언트 신뢰 기준점',detail:'로컬 trust store에 미리 신뢰된 발급자'}],
- note:'서버가 루트 인증서를 보내야만 신뢰가 생기는 것은 아닙니다. 경로 검증과 호스트 이름 검증은 모두 필요합니다.'
+ layout:'boundary',example:'pki',title:"인증서 경로와 서비스 이름의 독립 검증",lead:"로컬 신뢰 기준점과 인증서 발급 관계, 접속한 서비스 이름을 각각 검증합니다.",
+ note:"루트를 서버가 반드시 보내는 것은 아닙니다. 인증서 경로 및 서비스 이름 검증 외에도 TLS의 다른 인증 절차가 필요합니다."
 },
 'tls-handshake': {
  layout:'sequence',title:'TLS 1.3 서버 인증 핸드셰이크',lead:'키 합의, 서버 인증서 검증, Finished 확인 후 보호된 HTTP 데이터를 전달합니다.',
