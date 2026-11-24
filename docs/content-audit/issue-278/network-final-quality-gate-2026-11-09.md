@@ -79,3 +79,9 @@
 - 우선 본문 12개 개별 편집: http-versions/http10-connection, http-versions/header-compression, http-versions/http2-stream, http-versions/quic, http-state-intermediary/gateway, http-status/200-201-202-204, dns/dns-failure, dns/negative-cache, http-cache/if-none-match, http-cache/304, http-cache/intermediary-cache, tcp/congestion-control. 우선 보강 6개 전량 및 DNS failure/RFC9520, 캐시 전제조건·재검증, cwnd 설명을 합쇼체/예시/보장 경계로 재작성. 기존 Reference 메타데이터와 fence 보존. 나머지 전체 합쇼체 편집 및 최종 문항·Reference 대조는 미완료이며 완료로 표시하지 않습니다.
 - 주요 명세: https://www.rfc-editor.org/rfc/rfc9520.html#section-3, https://www.rfc-editor.org/rfc/rfc9110.html#section-13, https://datatracker.ietf.org/doc/html/rfc9111#section-4.3.4, https://datatracker.ietf.org/doc/html/rfc9113#section-5, https://www.rfc-editor.org/rfc/rfc9000.html, https://datatracker.ietf.org/doc/html/rfc9001, https://www.rfc-editor.org/rfc/rfc7541.html, https://www.rfc-editor.org/rfc/rfc9204.html, https://www.rfc-editor.org/rfc/rfc5681.html.
 - 실행 QA/운영 동기화/병합·배포 미수행. 기존 #299와 #305는 별도 승인 없이 병합 또는 닫지 않습니다.
+
+### 추가 개별 편집 결과
+
+- DNS Topic의 나머지 8개 Concept를 개별 재작성하여 DNS 10/10, Network 전체 20/127 본문 개별 품질 편집을 반영했습니다. DNS 위임·권한 서버·캐시·CNAME·주소 후보·NS/MX의 동작과 운영 경계를 보강하고 기존 시각화 fence/이미지 경로 및 frontmatter를 보존했습니다.
+- 7개 답안의 질문-정답-해설 정합성을 추가 교정했습니다(기존 개선 문항 5개 후속 보강, DNS failure 2개 신규). 이번 작업에서 변경한 고유 Question은 75개입니다. TCP 500+800바이트 SEQ/ACK, HTTP 불완전 응답, 외부 결제 대사, HTTP 상태 코드, If-Match 원자적 갱신, DNS 재시도/실패 캐싱 규칙을 명확히 했습니다.
+- 나머지 107개 Concept의 개별 본문 편집, 383개 문항 최종 개별 판정 및 Reference-주장 정합성 검토는 남아 있습니다. 실행 QA는 전체 영역 구현 이후로 이관했습니다. 이번 소스 반영을 Network 전체 콘텐츠 완료 또는 승인으로 간주하지 않습니다.
