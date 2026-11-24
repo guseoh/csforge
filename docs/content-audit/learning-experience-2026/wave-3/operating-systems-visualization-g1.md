@@ -234,3 +234,43 @@
 - **격리 Import 미완료:** Preview ERROR=0 → Apply → 동일 Pack 재import UNCHANGED 및 학습 이력 보존 검증을 실제 격리 DB/백엔드로 실행하지 않았다. 운영 DB는 수정하지 않았다.
 
 **판정: P1 의미 수정 완료, P1 앱 수동 테마 일치와 실제 Reader QA는 잔여 리스크. Draft 유지 및 병합 보류.** 공통 컴포넌트/다른 LearningArea 변경 금지 조건을 지킨다.
+
+
+## 2026-11-25 — 영역 단위 콘텐츠·도식 보강 (실행 QA 이관)
+
+- 기준 HEAD `49f55dc00f7a0a6378ee89dc2a7fcefdab688f61`의 [Reader 재검증 CI](https://github.com/guseoh/csforge/actions/runs/45433995949)는 SUCCESS. 이 결과는 이전 47개 Reader 연결·46개 SVG에 대한 실행 증거이며 최신 소스의 검증 결과가 아니다.
+- Wave 3의 12 Topic / 97 Concept / 331 Question 전수 감사 기록과 현재 소스의 과거 지적 사항을 대조했다. 과거 수정된 단답 허용 답, FCFS/RR 전제, 자원 할당 그래프, fd offset, PID 1, O_NONBLOCK 범위 등은 유지했다. 이번에는 고위험 및 학습 효과가 큰 항목을 선별 편집했다. 97개 현재 본문과 331개 전체 문항의 독립 재감사 완료를 주장하지 않는다.
+
+### 본문 10개 교정
+
+| 개념 | 반영 |
+| --- | --- |
+| copy-on-write | private 익명 페이지의 PTE 쓰기 제한, 공유 분리, 단독 소유 시 복사 생략과 MAP_SHARED 구분 |
+| page-fault | OS 영역의 허용 정책과 현재 PTE 접근 권한 구분, 복구 실패 및 RAM 캐시 경로 |
+| page-replacement | FIFO와 정확한 LRU의 다른 victim 예시 |
+| fcfs | 단일 논리 CPU·동시 도착·전환 비용 생략, 동일 시간축의 SJF 비교 |
+| non-blocking-io | 양수/EOF/errno 분기, EAGAIN과 EINTR 구분 |
+| epoll | ET 처리 종료 조건, 처리 예산과 잔여 작업 재스케줄 |
+| condition-variable | signal 후 다른 소비자가 먼저 자원을 소비하는 스케줄에서 while 재검사 |
+| java-virtual-thread-boundary | 실제 논리 CPU와 DB 연결 풀의 독립 용량 제한 |
+| deadlock-avoidance | Need <= Work 및 반환 후 Work=10, 기존 참고자료 오류 주의 |
+| deadlock-detection-recovery | 미래 Need와 현재 Request의 차이 및 참고자료 주의 |
+
+공유 Reference 메타데이터와 YAML frontmatter는 유지했다. UIC 자료의 문제는 기존 Wave 3 감사 근거에 따른 본문 주의사항으로 처리했으며 링크의 전체 접근성과 정확성 재검증은 남는다.
+
+### 도식
+
+- ADD `copy-on-write.svg`: 부모·자식 VA 0x1000의 공유 프레임 F(10)에서 자식만 F2(20)로 분리. 동일 대상 상대 좌표 유지.
+- ADD `fcfs-sjf-timeline.svg`: A=100ms, B=C=10ms를 비례 시간축에서 비교. FCFS 평균 대기 70ms, SJF 10ms, 전체 실행 120ms.
+- REWORK `page-fault-flow.svg`: OS 정책상 접근 허용 여부, COW 및 요구 페이징, 복구 실패 가능성을 분리.
+- 총 고유 SVG 48개, 기존 46개 중 1개 재구성 및 45개 유지. 예상 Reader 연결 49개(기존 47 + 신규 2). 전체 최신 링크 인벤토리와 화면 검증은 통합 QA에 포함한다. 기존 curriculum의 시각화 지정 분류는 변경하지 않았다.
+
+### 문항
+
+현재 331개 고유 contentKey(객관식 86, 서술형 126, 시나리오 100, 단답형 19)를 확인했다. 기존 감사 후보와 현재 수정 대상 문항을 선별 검토했다. 5개 고유 문항 수정: copy-on-write.q2, page-fault.q2, page-replacement.q2, epoll.q2, condition-variable.q4. ID·유형·객관식 정답 키·Concept 연결 보존. 변경된 문항의 이전 답변이 새 질문에도 유효하다고 보장하지 않는다.
+
+기술 참고: https://man7.org/linux/man-pages/man2/mmap.2.html 및 https://man7.org/linux/man-pages/man7/epoll.7.html, https://docs.kernel.org/6.18/core-api/mm-api.html 의 COW·ET 관련 근거. 기존 Java 25 및 POSIX 관련 Reference 유지. 
+
+### 후속 검증
+
+사용자가 확정한 CSF-0007 일정대로 이번 소스 개선은 [skip ci]로 반영한다. 기존 격리 Import 테스트의 합성 이전 이미지 대상 13→15개, SVG 46→48개 및 Reader 응답 47→49개, fixture replay 188→196조건으로 조정했으나 최신 HEAD에서 실행하지 않았다. 문항 및 비도식 본문 업데이트 검증과 9종 이력 보존, 동일 전체 Pack 재import UNCHANGED, 실제 Reader 픽셀/테마/폭 검증, Reference 전수 대조 및 나머지 현재 소스 독립 검토는 통합 QA에 남는다. Draft 유지, 병합·운영 DB 변경·배포 없음.
