@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 315" role="img" aria-labelledby="binary32-title binary32-desc"><title id="binary32-title">IEEE 754 binary32 · 값 1.5</title><desc id="binary32-desc">sign=0 exponent=127 fraction=0.1 binary. 1.1 binary × 2^0 = 1.5.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="315"/><text x="28" y="43" class="h" text-anchor="start">IEEE 754 binary32 · 값 1.5</text><text x="28" y="80" class="s" text-anchor="start">0x3FC00000 = 0 | 01111111 | 10000000000000000000000</text>
+<rect x="32" y="110" width="28" height="65" class="p"/>
+<text x="46" y="151" class="m" text-anchor="middle">0</text>
+<rect x="60" y="110" width="224" height="65" class="v"/>
+<text x="172" y="151" class="m" text-anchor="middle">01111111</text>
+<rect x="284" y="110" width="644" height="65" class="p"/>
+<text x="606" y="151" class="m" text-anchor="middle">10000000000000000000000</text>
+<text x="46" y="208" class="s" text-anchor="middle">부호</text>
+<text x="172" y="208" class="b" text-anchor="middle">지수 127</text>
+<text x="606" y="208" class="b" text-anchor="middle">fraction 0.5</text>
+<text x="28" y="260" class="m" text-anchor="start">(+1) × (1 + 0.5) × 2^(127−127) = 1.5</text>
+<text x="28" y="296" class="s" text-anchor="start">정규 유한수의 해석입니다. exponent=0 또는 255는 별도 규칙을 적용합니다.</text></svg>

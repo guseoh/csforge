@@ -24,13 +24,9 @@ references:
 
 다단계 페이지 테이블은 가상 페이지 번호를 여러 인덱스로 나누고 **필요한 하위 테이블만 생성할 수 있도록 계층으로 구성**한다.
 
-```text
-VPN part A → root entry
-               ↓
-VPN part B → next-level table
-               ↓
-VPN part C → leaf entry → physical frame
-```
+![사용하지 않는 두 root entry 아래에는 테이블 자체가 없습니다.](/learning/computer-architecture/sparse-page-table.svg)
+
+*사용하지 않는 두 root entry 아래에는 테이블 자체가 없습니다.*
 
 ### 희소 주소 공간에서 페이지 테이블 메모리를 아낄 수 있다
 

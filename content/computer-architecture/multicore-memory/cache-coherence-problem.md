@@ -65,3 +65,7 @@ ordering   → 여러 memory operation의 관찰 순서
 ```
 
 다음 Concept에서는 실제 캐시 일관성 프로토콜이 라인마다 어떤 상태와 소유권을 추적하는지 본다.
+
+![캐시 일관성은 같은 라인의 권한과 최신 데이터 위치를 조정하며 복합 연산의 원자성을 자동 제공하지 않습니다.](/learning/computer-architecture/coherence-states.svg)
+
+*캐시 일관성은 같은 라인의 권한과 최신 데이터 위치를 조정하며 복합 연산의 원자성을 자동 제공하지 않습니다.*

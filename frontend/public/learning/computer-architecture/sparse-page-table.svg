@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" role="img" aria-labelledby="sparse-page-table-title sparse-page-table-desc"><title id="sparse-page-table-title">희소 주소 공간 · 필요한 테이블만 할당</title><desc id="sparse-page-table-desc">교육용 2-level 모델. root entry 0과3만 하위 테이블을 가리키고 1,2는 invalid. 할당된 두 하위 테이블에 leaf entries.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="380"/><text x="28" y="43" class="h" text-anchor="start">희소 주소 공간 · 필요한 테이블만 할당</text><text x="28" y="80" class="s" text-anchor="start">교육용 2-level · 각 표는 4개 entry로 축소</text>
+<text x="28" y="125" class="b" text-anchor="start">root</text>
+<rect x="28" y="142" width="202" height="52" class="v"/><text x="129" y="176" class="s" text-anchor="middle">0: valid</text>
+<rect x="258" y="142" width="202" height="52" class="p"/><text x="359" y="176" class="s" text-anchor="middle">1: invalid</text>
+<rect x="488" y="142" width="202" height="52" class="p"/><text x="589" y="176" class="s" text-anchor="middle">2: invalid</text>
+<rect x="718" y="142" width="202" height="52" class="v"/><text x="819" y="176" class="s" text-anchor="middle">3: valid</text>
+<path d="M129 194V232" class="e"/>
+<path d="M819 194V232" class="e"/>
+<text x="129" y="257" class="b" text-anchor="middle">하위 테이블</text>
+<rect x="28" y="270" width="50" height="45" class="p"/><text x="53" y="300.5" class="s" text-anchor="middle">–</text>
+<rect x="78" y="270" width="50" height="45" class="v"/><text x="103" y="300.5" class="s" text-anchor="middle">V</text>
+<rect x="128" y="270" width="50" height="45" class="p"/><text x="153" y="300.5" class="s" text-anchor="middle">–</text>
+<rect x="178" y="270" width="50" height="45" class="p"/><text x="203" y="300.5" class="s" text-anchor="middle">–</text>
+<text x="819" y="257" class="b" text-anchor="middle">하위 테이블</text>
+<rect x="718" y="270" width="50" height="45" class="p"/><text x="743" y="300.5" class="s" text-anchor="middle">–</text>
+<rect x="768" y="270" width="50" height="45" class="v"/><text x="793" y="300.5" class="s" text-anchor="middle">V</text>
+<rect x="818" y="270" width="50" height="45" class="p"/><text x="843" y="300.5" class="s" text-anchor="middle">–</text>
+<rect x="868" y="270" width="50" height="45" class="p"/><text x="893" y="300.5" class="s" text-anchor="middle">–</text>
+<rect x="258" y="241" width="432" height="78" class="z"/>
+<text x="474" y="274" class="b" text-anchor="middle">하위 테이블 없음</text>
+<text x="474" y="301" class="s" text-anchor="middle">미사용 범위에 할당하지 않음</text>
+<text x="28" y="359" class="s" text-anchor="start">희소 매핑의 공간 절약과 큰 페이지의 상위 leaf 기능은 서로 다른 메커니즘입니다.</text></svg>

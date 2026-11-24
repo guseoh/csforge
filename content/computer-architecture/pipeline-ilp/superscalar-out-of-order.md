@@ -48,11 +48,9 @@ RAW(Read After Write)는 실제 값의 생산과 소비 관계이므로 보존�
 
 비순차 실행 CPU는 명령어를 서로 다른 순서로 실행할 수 있지만, 아키텍처 상태와 예외는 ISA가 요구하는 의미를 유지해야 한다. 그래서 완료된 결과를 추적하다가 앞선 명령어의 상태가 안전하게 확정되면 프로그램 순서에 맞춰 retire/commit하는 구조를 사용한다.
 
-```text
-issue/execute:   A(wait)   C(done)   B(wait)
-                         ↓
-architectural state: A → B → C 순서의 의미를 보존
-```
+![실행할 수 있는 명령과 안전하게 확정할 수 있는 명령을 구분합니다.](/learning/computer-architecture/ooo-retire.svg)
+
+*실행할 수 있는 명령과 안전하게 확정할 수 있는 명령을 구분합니다.*
 
 앞선 명령어에서 예외나 분기 예측 실패가 발견되면 뒤에서 추측적으로 실행한 결과는 아키텍처 상태에 남지 않아야 한다. 이것이 정확한 상태(precise state)를 유지하는 핵심이다.
 

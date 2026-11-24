@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 385" role="img" aria-labelledby="sv39-walk-title sv39-walk-desc"><title id="sv39-walk-title">Sv39 · 세 단계 주소 변환의 예</title><desc id="sv39-walk-desc">39bit VA VPN[2] 9bit VPN[1] 9bit VPN[0] 9bit offset12bit. 4KiB page leaf at level0. 각 PTE에서 다음 table을 찾고 leaf PPN+offset.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="385"/><text x="28" y="43" class="h" text-anchor="start">Sv39 · 세 단계 주소 변환의 예</text><text x="28" y="80" class="s" text-anchor="start">RISC-V Sv39 · 4KiB 페이지 · 유효한 일반 leaf 매핑</text>
+<rect x="28" y="110" width="207" height="58" class="p"/><text x="131.5" y="147" class="m" text-anchor="middle">VPN[2]</text>
+<rect x="235" y="110" width="207" height="58" class="p"/><text x="338.5" y="147" class="m" text-anchor="middle">VPN[1]</text>
+<rect x="442" y="110" width="207" height="58" class="p"/><text x="545.5" y="147" class="m" text-anchor="middle">VPN[0]</text>
+<rect x="649" y="110" width="276" height="58" class="v"/><text x="787" y="147" class="m" text-anchor="middle">offset</text>
+<rect x="28" y="232" width="202" height="68" class="p"/><text x="129" y="274" class="s" text-anchor="middle">root PTE</text>
+<path d="M230 266H251" class="e"/>
+<rect x="258" y="232" width="202" height="68" class="p"/><text x="359" y="274" class="s" text-anchor="middle">level 1 PTE</text>
+<path d="M460 266H481" class="e"/>
+<rect x="488" y="232" width="202" height="68" class="v"/><text x="589" y="274" class="s" text-anchor="middle">level 0 PTE</text>
+<path d="M690 266H711" class="e"/>
+<rect x="718" y="232" width="202" height="68" class="p"/><text x="819" y="274" class="s" text-anchor="middle">물리 주소</text>
+<path d="M131.5 168V190H129V224" class="e"/>
+<path d="M338.5 168V198H359V224" class="e"/>
+<path d="M545.5 168V206H589V224" class="e"/>
+<path d="M787 168V212H819V224" class="e"/>
+<text x="819" y="329" class="m" text-anchor="middle">PPN + offset</text>
+<text x="28" y="367" class="s" text-anchor="start">상위 leaf·실패 경로·캐시 최적화는 생략. offset 12비트는 그대로 유지됩니다.</text></svg>

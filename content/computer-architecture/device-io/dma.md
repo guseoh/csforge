@@ -23,15 +23,9 @@ DMA(Direct Memory Access)는 CPU가 데이터의 각 바이트를 직접 load/st
 
 CPU는 먼저 전송에 필요한 버퍼 주소, 길이, 방향과 디스크립터를 준비한다. 이후 장치가 전송을 진행하고 완료 또는 오류 상태를 남긴다.
 
-```text
-CPU
- ├─ buffer/descriptor 준비
- └─ DMA 시작
-        ↓
-device ⇄ memory
-        ↓
-completion / error
-```
+![제어, 데이터 이동, 완료 알림의 세 경로를 구분합니다.](/learning/computer-architecture/dma-path.svg)
+
+*제어, 데이터 이동, 완료 알림의 세 경로를 구분합니다.*
 
 ### CPU 개입을 줄이지만 CPU가 완전히 사라지는 것은 아니다
 
