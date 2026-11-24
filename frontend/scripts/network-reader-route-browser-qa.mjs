@@ -144,7 +144,7 @@ try {
           assert.deepEqual(outliers, [], 'G2 SVG labels outside viewBox: '+item.contentKey)
         }
         checks.push({ contentKey: item.contentKey, mode: 'guest', theme, width, result: 'PASS' })
-        if (i % 13 === 0 || await figure.locator('[data-g2-layout]').count() > 0) {
+        {
           const file = 'reader-' + item.id + '-' + theme + '-' + width + '.png'
           await figure.screenshot({ path: resolve(out, file), animations: 'disabled' })
           screenshots.push(file)

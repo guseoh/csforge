@@ -22,10 +22,10 @@ acknowledgement: {
  note:'SACK를 협상했다면 비연속 수신 구간을 추가로 알릴 수 있습니다. TCP ACK는 업무 처리 완료가 아닙니다.'
 },
 'congestion-control': {
- layout:'compare',title:'수신 흐름 제어와 경로 혼잡 제어',lead:'송신 가능한 미확인 데이터 양은 수신 윈도와 혼잡 윈도 양쪽 조건을 받아야 합니다.',
- left:{heading:'rwnd · 흐름 제어',lines:['수신자 버퍼 수용 가능량','수신 측이 광고','수신 버퍼를 과도하게 채우지 않음']},
- right:{heading:'cwnd · 혼잡 제어',lines:['공유 네트워크 경로의 여유','송신 측이 관리','혼잡·손실·ACK 등 신호에 따라 변경']},
- note:'실제 미확인 데이터 상한을 min(rwnd, cwnd) 관점으로 이해하되 CUBIC 등 알고리즘별 변화량은 다릅니다.'
+ layout:'compare',title:'수신 흐름 제어와 경로 혼잡 제어',lead:'새 데이터를 보낼 여유는 rwnd와 cwnd 및 이미 비행 중인 데이터의 영향을 받습니다.',
+ left:{heading:'rwnd · 흐름 제어',lines:['수신 측이 광고하는 허용 범위','수신 버퍼 보호','예: rwnd = 800 B']},
+ right:{heading:'cwnd · 혼잡 제어',lines:['송신 측이 유지하는 혼잡 윈도','네트워크 혼잡 제어','예: cwnd = 400 B']},
+ note:'단순 정상 전송에서 flight size가 200 B라면 min(800, 400) − 200 = 200 B의 추가 전송 여유가 있습니다. 실제 전송은 복구 상태 등에도 의존합니다.'
 },
 'tcp-head-of-line': {
  layout:'byte-gap',focus:'delivery',title:'TCP 순서 전달을 막는 바이트 공백',lead:'앞쪽 손실을 복구하기 전까지 이후에 도착한 바이트는 순서 있는 애플리케이션 스트림에 전달할 수 없습니다.',
@@ -40,7 +40,7 @@ acknowledgement: {
 'application-reliability': {
  layout:'sequence',title:'ACK 유실과 애플리케이션 중복 처리',lead:'UDP 위에 자체 재전송을 구현하면 수신 성공과 ACK 수신 실패를 구별해야 합니다.',
  parties:['상위 송신 프로토콜','상위 수신 프로토콜'],
- messages:[{from:'left',text:'메시지 #17 전송',detail:'수신 측이 작업을 정상 처리함'},{from:'right',text:'ACK #17 전송, 도중 유실',detail:'송신자는 확인 응답을 받지 못함'},{from:'left',text:'timeout → 메시지 #17 재전송',detail:'처리 완료 여부를 모르는 상태'},{from:'right',text:'ID #17 중복 감지',detail:'중복 업무 효과 방지 후 확인 응답'}],
+ messages:[{from:'left',text:'메시지 #17 전송',detail:'수신 측이 작업을 정상 처리함'},{from:'right',text:'상위 프로토콜 ACK #17 · 유실',detail:'UDP 자체 ACK가 아님'},{from:'left',text:'timeout → 메시지 #17 재전송',detail:'처리 완료 여부를 모르는 상태'},{from:'right',text:'상위 ACK #17 재응답',detail:'수신 측이 ID 중복을 확인한 예시'}],
  note:'이 ACK는 UDP의 내장 기능이 아니라 상위 프로토콜이 직접 정의한 메시지입니다.'
 },
 pki: {
@@ -50,8 +50,8 @@ pki: {
 'tls-handshake': {
  layout:'sequence',title:'TLS 1.3 서버 인증 핸드셰이크',lead:'키 합의, 서버 인증서 검증, Finished 확인 후 보호된 HTTP 데이터를 전달합니다.',
  parties:['클라이언트','서버'],
- messages:[{from:'left',text:'ClientHello',detail:'버전·암호군·key_share 제안'},{from:'right',text:'ServerHello',detail:'선택값·key_share 응답'},{from:'right',text:'암호화된 서버 handshake flight',detail:'EncryptedExtensions · Certificate · CertificateVerify · Finished'},{from:'left',text:'클라이언트 Finished',detail:'핸드셰이크 transcript·키 상태 확인'},{from:'left',text:'보호된 애플리케이션 데이터',detail:'TLS 레코드로 HTTP 등 상위 데이터 전달'}],
- note:'0-RTT 재개와 클라이언트 인증은 제외한 일반적인 TLS 1.3 흐름입니다. CertificateVerify와 Finished는 다른 검증입니다.'
+ messages:[{from:'left',text:'ClientHello',detail:'버전·암호군·key_share 제안'},{from:'right',text:'ServerHello',detail:'선택값·key_share 응답'},{from:'right',text:'암호화된 서버 핸드셰이크',detail:'EncryptedExtensions → Certificate'},{from:'right',text:'CertificateVerify → Finished',detail:'서명 검증 → transcript·키 확인'},{from:'left',text:'클라이언트 Finished',detail:'핸드셰이크 transcript·키 상태 확인'},{from:'left',text:'보호된 애플리케이션 데이터',detail:'TLS 레코드로 HTTP 등 상위 데이터 전달'}],
+ note:'인증서 기반 TLS 1.3 예시로 0-RTT·HelloRetryRequest·클라이언트 인증은 생략합니다. CertificateVerify는 인증 키 서명, Finished는 transcript와 키 상태 확인입니다.'
 },
 'tls-termination': {
  layout:'compare',title:'TLS 연결 A와 별도 백엔드 연결 B',lead:'리버스 프록시가 TLS를 종료하면 클라이언트 TLS 보호 구간은 프록시에서 끝납니다.',

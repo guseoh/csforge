@@ -20,7 +20,7 @@ function TcpWindowSnapshot({ ackReceived }: { ackReceived: boolean }) {
   }
 
   return <svg viewBox="0 0 740 166" className="study-visual__tcp-canvas" role="img" aria-labelledby={`tcp-title-${id} tcp-desc-${id}`}>
-    <title id={`tcp-title-${id}`}>{ackReceived ? 'ACK 1200 수신 후' : 'ACK 수신 전'} 송신 윈도우</title>
+    <title id={`tcp-title-${id}`}>{`${ackReceived ? 'ACK 1200 수신 후' : 'ACK 수신 전'} 송신 윈도우`}</title>
     <desc id={`tcp-desc-${id}`}>
       {ackReceived
         ? '1000~1199 바이트는 누적 확인되었고 송신 윈도우가 1200~1599로 이동합니다. 1200~1399는 전송했지만 확인되지 않았고 1400~1599는 새로 전송할 수 있습니다.'
@@ -46,7 +46,7 @@ function TcpWindowSnapshot({ ackReceived }: { ackReceived: boolean }) {
       return <g key={start} data-tcp-byte={start} data-tcp-state={state}>
         <rect x={x} y="56" width="100" height="77" className={`study-visual__tcp-cell study-visual__tcp-cell--${state === '확인됨' ? 'acked' : state === '대기' || state === '보냄' ? 'sent' : state === '전송 가능' ? 'available' : 'outside'}`} />
         {state === '확인됨' && <rect x={x} y="56" width="100" height="77" fill={`url(#tcp-hatch-${id})`} className="study-visual__tcp-hatch" />}
-        <text x={x + 50} y="88" textAnchor="middle" className="study-visual__svg-identifier">{start}</text>
+        <text x={x + 50} y="88" textAnchor="middle" className="study-visual__svg-identifier">{`${start}–${start + 99}`}</text>
         <text x={x + 50} y="115" textAnchor="middle" className="study-visual__svg-muted">{state}</text>
       </g>
     })}
@@ -55,7 +55,7 @@ function TcpWindowSnapshot({ ackReceived }: { ackReceived: boolean }) {
 
 export function TcpSlidingWindowStudyVisual({ embedded = false }: { embedded?: boolean } = {}) {
   const contents = <div className="study-visual__content">
-      <p className="study-visual__instruction">100B씩 전송한 데이터를 누적 ACK 수신 전후로 비교합니다.</p>
+      <p className="study-visual__instruction">100 B씩 나눈 동일한 바이트 범위를 누적 ACK 수신 전후로 비교합니다.</p>
       <div className="study-visual__tcp-sequence">
         <section className="study-visual__panel">
           <h3>① ACK 수신 전</h3>

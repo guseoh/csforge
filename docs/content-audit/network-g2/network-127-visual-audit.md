@@ -218,3 +218,10 @@
 - ADD 4개 추가: DNS TTL(권한 값 변경과 캐시 수명), TCP retransmission(RTO 손실 복구), ECDHE key-agreement(공개점 교환과 스칼라 곱), HTTP freshness(current age 60/90초 경계). 본문 기존 중복 표/ASCII를 대체하고 식별자와 Reference frontmatter·Question을 보존했습니다. 특히 refactor 원문의 잘못된 ECDHE 덧셈 표기를 교정했습니다.
 - RFC 1035/8767, 6298, 9846, 9111/5861을 참고했습니다. 각 SVG는 독립 viewBox·title/desc·라이트/다크 CSS·외부 의존성 없는 구조입니다. Curriculum의 기존 53 DIAGRAM fence 계약은 유지하고 TEXT 내 보조 SVG 5개를 별도 검사합니다.
 - 기존 17개를 포함해 36개 개선 후보 중 21개 소스 구현, 남은 POLISH 15개. 격리 Import 검증 범위를 58개, Reader 정적 SVG 검증을 20조건으로 확대했습니다. 최신 CI 및 실제 픽셀 감사 미완료.
+
+
+## 11. POLISH 잔여 15개 처리 및 통합 QA 이관 (2026-11-25)
+
+- 15개 POLISH 처리: connection-tuple, iterative-resolution, sliding-window, congestion-control, connection-teardown, application-reliability, tls-handshake, url-components, tls-before-http, protocol-idempotency-boundary, http11-pipelining, quic, if-none-match, 304, intermediary-cache. 기존 #517까지 POLISH 16개 소스 편집 완료.
+- 4-tuple 역할·재귀/반복 책임·100B 범위·rwnd/cwnd 수치·FIN 단계 컨트롤·상위 ACK·TLS 메시지 순서·fragment·QUIC CRYPTO·HTTP 멱등성과 업무 효과·응답 순서·스트림 공유 자원·약한 ETag 비교·304 본문/메타데이터·캐시 재사용 자격을 교정했습니다. 일반 레이블의 무조건 3줄 절단도 제거했습니다. 긴 텍스트 실측은 통합 QA 대상입니다.
+- 초기 127개 분류의 36 개선 후보 소스 반영 완료, KEEP 91 유지. 실제 Reader 픽셀·Import·회귀 QA는 사용자 결정에 따라 전체 학습 영역 구현 뒤 일괄 수행합니다. 이것은 QA 승인 또는 배포 승인이 아닙니다.
