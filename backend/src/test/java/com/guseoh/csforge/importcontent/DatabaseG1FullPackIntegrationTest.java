@@ -161,6 +161,7 @@ class DatabaseG1FullPackIntegrationTest {
                 "select concept_id, reference_id from concept_reference order by concept_id, reference_id"));
         assertEquals(history, history(), "G1 updates must preserve personal history");
 
+        var apiFixtures = new java.util.ArrayList<tools.jackson.databind.JsonNode>();
         for (var file : g1) {
             String contentKey = key(file);
             String assetPath = "/learning/database/" + ASSETS.get(file.path());
@@ -173,10 +174,15 @@ class DatabaseG1FullPackIntegrationTest {
                     .GET().build(), HttpResponse.BodyHandlers.ofString());
             assertEquals(200, response.statusCode(), () -> "Reader GET: " + contentKey);
             var body = json.readTree(response.body());
+            apiFixtures.add(body);
             assertEquals(contentKey, body.get("contentKey").asText());
             assertTrue(body.get("contentMarkdown").asText().contains(assetPath),
                     () -> "Reader served stale Markdown: " + contentKey);
         }
+
+        Path fixturePath = Path.of("../artifacts/database-g1-api-fixtures.json");
+        Files.createDirectories(fixturePath.getParent());
+        Files.writeString(fixturePath, json.writeValueAsString(apiFixtures));
 
         int exactUnchanged = 0;
         for (var batch : plan.batches()) {
