@@ -8,6 +8,6 @@
 <rect x="365" y="258" width="230" height="70" class="v"/><text x="480" y="301" class="b" text-anchor="middle">메모리 버퍼</text>
 <path d="M817 193V293H603" class="e"/>
 <text x="748" y="282" class="s" text-anchor="middle">DMA 데이터 쓰기</text>
-<path d="M143 193V293H357" class="e"/>
+<path d="M365 293H143V201" class="e"/>
 <text x="217" y="282" class="s" text-anchor="middle">완료 후 소비</text>
 <text x="28" y="354" class="s" text-anchor="start">CPU가 데이터 블록의 각 바이트를 직접 복사하지 않습니다.</text></svg>
