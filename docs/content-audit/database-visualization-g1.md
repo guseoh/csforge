@@ -118,3 +118,71 @@
 - 검증용 `.github/workflows/database-g1-qa.yml`은 GitHub Actions 실행 후 **최종 PR 변경 범위에서 제거**합니다. PASS 실행 기록은 남지만 해당 workflow가 최종 Git 트리에 남아 있는 것은 아닙니다.
 - **독립적인 남은 경계:** Vercel Preview에는 `CSFORGE_BACKEND_ORIGIN` 공통 Preview 백엔드 설정이 있고, canonical 콘텐츠 동기화는 검증된 `main` 기준으로만 활성화됩니다. 따라서 G1 브랜치의 새 Markdown이 Vercel의 `/concepts/122`에 나타나는지 확인할 **전용 Preview DB/백엔드**는 아직 없습니다. 사용자 시각 확인은 접수했지만, Production·Preview DB 버전 일치와 실제 Reader 다크/라이트·900/1280px 전수 자동화는 별도 미검증입니다.
 - 연결된 Neon Plugin 계정에서는 CSForge 프로젝트를 찾지 못했습니다. 격리 Import와 Reader HTTP QA는 Testcontainers로 대체해 검증했지만, **전용 Vercel Preview API 연결 자체**를 개통하려면 접근 가능한 격리 백엔드/DB가 필요합니다. 승인 없는 운영 DB 쓰기·PR 병합은 하지 않았습니다.
+
+
+## 2026-11-25 — 영역 단위 도식 및 콘텐츠 통합 개선
+
+기준 HEAD: `766c791ca6df97637c228cb133a8d7d857feade4`. [이전 Reader CI](https://github.com/guseoh/csforge/actions/runs/45433976417)는 Ubuntu 24.04에서 실행한 isolated-reader Job SUCCESS입니다. 해당 성공은 기존 17개 SVG 및 이전 소스의 증거이며, 신규 SVG와 본문·문항 교정의 실행 검증으로 확대하지 않습니다.
+
+### 본문 검토 및 수정 범위
+
+이전 Wave 2 감사 보고서의 수정 후보가 현재 소스에서 이미 해결된 경우 중복 수정하지 않았습니다. 전체 12 Topic·38 Concept의 본문을 읽고 다음과 같이 국소 수정했습니다. 표에서 유지한 24개 본문은 이번 소스 편집 대상에서 제외했으며 독립 최종 품질 승인을 의미하지 않습니다.
+
+| Topic | 전체 Concept | 수정 | 주요 판단 |
+| --- | ---: | ---: | --- |
+| Model | 3 | 2 | 정규화 FK 대상 이름, NOT IN의 UNKNOWN과 NOT EXISTS 비교 |
+| SQL | 4 | 2 | 집계와 함수적 종속성, RANGE/ROWS frame 및 출력 순서 |
+| Schema | 3 | 0 | 기존 식별자·제약·참조 무결성 설명 유지 |
+| Index | 4 | 2 | Index-only scan의 VM/힙 접근, 부분 인덱스 수치와 NOT NULL 전제 |
+| Optimizer | 3 | 0 | 기존 cost·loops·통계·generic/custom plan 설명 유지 |
+| Transaction | 3 | 3 | 0행 UPDATE의 의미, autocommit 메시지 경계, 원자적 UPDATE 실행 순서 |
+| Isolation | 3 | 0 | 기존 문장 스냅샷·SSI 재시도 설명 유지 |
+| Locking | 3 | 1 | 충돌하는 잠금 요청 및 없는 행의 잠금 범위 |
+| MVCC | 3 | 0 | 기존 xmin/xmax·snapshot·정리 설명 유지, 문항에서 가시성 목표 보강 |
+| Storage | 3 | 1 | WAL 내구화와 데이터 파일 기록·성공 응답의 서로 다른 조건 |
+| Replication | 3 | 1 | WAL 생성/로컬 커밋/원격 write·flush·replay의 관계 |
+| Query Patterns | 3 | 2 | Offset 삽입·삭제 효과 및 keyset의 일관된 복합 커서 |
+| 합계 | 38 | 14 | 24개 본문 유지 |
+
+### 도식 개선
+
+기존 17개 SVG의 title/desc/텍스트와 연결 본문을 확인했습니다. 새 분류는 KEEP 15, REWORK 2, ADD 2입니다. 기존 17개 도식 중 나머지 15개는 유지하며 최종 실화면 감사에 포함합니다.
+
+- ADD `index-covering.svg`: B-tree 키와 INCLUDE 값, visibility map의 all-visible 여부에 따른 힙 접근 분기. 실제 실행 계획이 Index Only Scan으로 선택되었다는 조건을 명시했습니다.
+- ADD `sql-window-frame.svg`: 동일한 세 주문을 같은 위치에 두고 첫 행의 RANGE/ROWS frame 비교. 기본 RANGE의 결과 3000/3000/3500, 고유 정렬 기준과 ROWS의 결과 1000/3000/3500.
+- REWORK `storage-wal.svg`: 변경 WAL flush → 데이터 페이지 기록과 커밋 레코드 flush → 성공 응답을 별개 경로로 표현했습니다. fsync=on·synchronous_commit=on의 일반 영구 테이블을 전제로 하며 두 경로의 완료 순서는 고정하지 않습니다.
+- REWORK `transaction-atomic-update.svg`: A가 먼저 잠금 획득 → B 대기 → A 커밋 → B 조건 재평가의 가능한 실행 순서. A 롤백 시 결과가 달라질 수 있음을 본문에 명시했습니다.
+
+총 19개 SVG, 각 Concept에 1개씩 연결됩니다. 기존 public 진단 HTML은 이번 변경에서 보존한 역사적 도구로 신규 19개 coverage의 증거가 아닙니다.
+
+### 문항 및 참조
+
+현재 77개 Question(객관식 15, 단답형 22, 서술형 19, 시나리오 21)을 읽어 정답·해설·구조를 확인했습니다. 기존 감사 보고서의 75개는 당시 기준입니다. 이번 수정은 고유 6문항입니다.
+
+- normalization.q1: 갱신 이상 해설에 삽입·삭제 이상 추가.
+- join-semantics.q3: 두 테이블인데 세 테이블이라고 한 문구 교정.
+- window-function.q1: 기존 최신 주문 동률 선택과 연결되는 누적 frame 계산 비교 추가.
+- partial-index.q2: NOT NULL 가정 명시.
+- autocommit.q2: SQL 문을 각각 별도 요청으로 실행한다는 조건 명시.
+- visibility.q2: 격리 수준 재질문 대신 행 버전 메타데이터와 트랜잭션 상태 판정으로 학습 목표 보강. 기존 식별자는 유지하되 변경된 질문에 과거 답안이 자동으로 유효하다고 보장하지 않습니다.
+
+77개 고유 contentKey 및 객관식 정답 키·선택지 rationale/단답 acceptedAnswers/서술·시나리오 modelAnswer 존재를 정적 확인했습니다. 기존 YAML frontmatter, 공통 Reference 메타데이터, Question 식별자·유형·객관식 정답 키·Concept 연결은 유지했습니다. 전체 Reference 링크의 현행 접근성과 모든 기술 주장에 대한 독립 공식 자료 대조는 미완료입니다.
+
+이번 고위험 수정에 직접 확인한 PostgreSQL 16 공식 자료:
+
+- https://www.postgresql.org/docs/16/indexes-index-only-scans.html
+- https://www.postgresql.org/docs/16/tutorial-window.html
+- https://www.postgresql.org/docs/16/runtime-config-wal.html
+- https://www.postgresql.org/docs/16/warm-standby.html
+- https://www.postgresql.org/docs/16/queries-limit.html
+- https://www.postgresql.org/docs/16/protocol-flow.html
+- https://www.postgresql.org/docs/16/sql-select.html
+- https://www.postgresql.org/docs/16/indexes-partial.html
+- https://www.postgresql.org/docs/16/explicit-locking.html
+- https://www.postgresql.org/docs/16/storage-page-layout.html
+
+### 실행 QA 이관 및 한계
+
+사용자 확정 영역 단위 개선·전체 통합 QA 일정(CSF-0007)에 따라 소스 변경을 [skip ci] 커밋으로 반영했습니다. 기존 통합 테스트의 도식 목록을 19개로 확대하고 실제 Reader API fixture replay의 2테마×2폭 조건을 76건으로 조정했습니다. 19개 합성 이미지 이전 본문 UPDATED/전체 Database Pack 동일 재import UNCHANGED 및 이력 보존을 검사하도록 되어 있으나 최신 소스에서는 아직 실행하지 않았습니다. 이는 변경된 모든 문항과 비도식 본문의 이전 버전 업데이트 검증까지 포괄하지 않습니다. 최종 통합 QA에서 문항·본문 업데이트 및 개인 이력 보존 검증을 별도로 포함해야 합니다.
+
+최신 refactor 대비 기존 분기에서 한 커밋 뒤처진 상태이므로 전체 영역 통합 전에 base drift와 충돌을 재확인해야 합니다. SVG 형식·픽셀/실화면(19개 전수), 최신 Import/재import·회귀 테스트, Reference 전수 검증 및 승인 미완료. Draft #301 유지. 운영 DB 쓰기, 병합, 배포 없음.
