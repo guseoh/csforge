@@ -26,7 +26,7 @@ export function drawNetworkG2Boundary(spec:Spec,marker:string) {
       <Cell x={20} y={137} w={160} label="호스트 B"/>
       <Cell x={20} y={214} w={160} label="호스트 C"/>
       <rect x={290} y={36} width={200} height={242} className="network-area__rect"/>
-      <Label x={390} y={27}>스위치</Label>
+      <Label x={390} y={52}>스위치</Label>
       {[82,159,236].map((y,i)=><g key={i}><Cell x={305} y={y-22} w={170} label={'포트 '+(i+1)} active={i<2}/></g>)}
       {arrow(180,82,302,82)}{arrow(302,159,180,159)}
       <line x1={180} y1={236} x2={305} y2={236} className="network-area__separator"/>
