@@ -85,3 +85,11 @@
 - DNS Topic의 나머지 8개 Concept를 개별 재작성하여 DNS 10/10, Network 전체 20/127 본문 개별 품질 편집을 반영했습니다. DNS 위임·권한 서버·캐시·CNAME·주소 후보·NS/MX의 동작과 운영 경계를 보강하고 기존 시각화 fence/이미지 경로 및 frontmatter를 보존했습니다.
 - 7개 답안의 질문-정답-해설 정합성을 추가 교정했습니다(기존 개선 문항 5개 후속 보강, DNS failure 2개 신규). 이번 작업에서 변경한 고유 Question은 75개입니다. TCP 500+800바이트 SEQ/ACK, HTTP 불완전 응답, 외부 결제 대사, HTTP 상태 코드, If-Match 원자적 갱신, DNS 재시도/실패 캐싱 규칙을 명확히 했습니다.
 - 나머지 107개 Concept의 개별 본문 편집, 383개 문항 최종 개별 판정 및 Reference-주장 정합성 검토는 남아 있습니다. 실행 QA는 전체 영역 구현 이후로 이관했습니다. 이번 소스 반영을 Network 전체 콘텐츠 완료 또는 승인으로 간주하지 않습니다.
+
+## 2026-11-25 — Network 전 Topic 본문 편집 반영 완료 (실행 QA 이관)
+
+- 이전 HEAD 7412ee6의 20개 개별 편집에 이어 12개 Topic별 커밋으로 남은 107개 Concept의 본문을 개별 재작성했습니다. GitHub 비교에서 변경된 Markdown 107개, 타 경로 0개를 확인했습니다. 누적 127/127 Concept 본문 편집 및 초기 G2 개선 후보 36/36 소스 반영 완료입니다.
+- 추가 편집: Layering 6, Local Delivery 6, IP & Routing 9, Port & NAT 8, TCP 11, UDP 5, TLS 8, Request Journey 8, HTTP Message 9, HTTP Methods 8, HTTP Status 7, HTTP Versions 6, HTTP Cache 7, HTTP State & Intermediary 9. DNS 10개와 각 Topic의 앞선 20개 편집은 유지합니다.
+- 본문을 자연스러운 합쇼체로 개별 편집하고 도식과 중복되는 설명을 정리했습니다. MTU/MSS, 라우팅과 바인딩, NAPT 매핑, TCP ACK/윈도/RTO, TLS 인증·키 합의, HTTP 프레이밍·멱등성·캐시·프록시 신뢰 경계를 구체화했습니다. 기존 YAML frontmatter 및 도식 fence/이미지 연결은 편집 과정에서 보존했습니다. Reference 공통 메타데이터 변경은 하지 않았습니다.
+- Question 개선 누적 75/383(이전 배치에서 수정된 고유 문항) 유지. 나머지 문항은 수정하지 않았습니다. 전체 문항 및 Reference 주장과 최신 개정 본문의 최종 개별 대조·Reviewer 승인까지 완료된 것은 아닙니다. 새 본문의 기술적 깊이·누락 여부 역시 통합 검토 대상입니다.
+- 사용자 확정 작업 일정에 따라 실행 QA(Import/UNCHANGED, 데이터 이력 보존, 빌드/회귀 및 Reader 시각 검증)는 전체 LearningArea 구현 뒤 일괄 수행합니다. 이번 변경은 [skip ci]로 커밋하며 기존 테스트는 유지합니다. Draft PR #305, Issue #278 OPEN. 운영 #300 미복구, main/refactor 병합 및 운영 쓰기/배포 없음.
