@@ -39,7 +39,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import tools.jackson.databind.ObjectMapper;
 
-/** OS G1 도식 47개의 격리 Import, 재수입, 이력 보존과 실제 Reader API를 검증한다. */
+/** OS G1 도식 49개의 격리 Import, 재수입, 이력 보존과 실제 Reader API를 검증한다. */
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class OperatingSystemsG1FullPackIntegrationTest {
@@ -58,7 +58,9 @@ class OperatingSystemsG1FullPackIntegrationTest {
             "operating-systems/threads/process-vs-thread.md",
             "operating-systems/threads/thread-create-switch-cost.md",
             "operating-systems/threads/thread-pool.md",
-            "operating-systems/threads/thread-shared-state.md"
+            "operating-systems/threads/thread-shared-state.md",
+            "operating-systems/virtual-memory/copy-on-write.md",
+            "operating-systems/scheduling/fcfs.md"
     );
     private static String asset(CanonicalContentFile file) {
         var matcher = java.util.regex.Pattern.compile("\\]\\(/learning/operating-systems/([^)/]+\\.svg)\\)").matcher(text(file));
@@ -86,7 +88,7 @@ class OperatingSystemsG1FullPackIntegrationTest {
     }
 
     @Test
-    void osG1UpdatesExactly13AndPreservesHistoryAndServesAll47ReaderMarkdown() throws Exception {
+    void osG1UpdatesExactly15AndPreservesHistoryAndServesAll49ReaderMarkdown() throws Exception {
         var bootstrapResult = bootstrap.bootstrap();
         assertTrue(bootstrapResult.success(), () -> "Isolated bootstrap: " + bootstrapResult);
         assertEquals(0, bootstrapResult.totals().errors());
@@ -96,9 +98,9 @@ class OperatingSystemsG1FullPackIntegrationTest {
         assertEquals(97, concepts.size(), "OS Concept inventory");
         var g1 = concepts.stream().filter(file -> CHANGED.contains(file.path())).toList();
         var diagrams = concepts.stream().filter(file -> asset(file) != null).toList();
-        assertEquals(47, diagrams.size());
-        assertEquals(46, diagrams.stream().map(OperatingSystemsG1FullPackIntegrationTest::asset).distinct().count());
-        assertEquals(13, g1.size());
+        assertEquals(49, diagrams.size());
+        assertEquals(48, diagrams.stream().map(OperatingSystemsG1FullPackIntegrationTest::asset).distinct().count());
+        assertEquals(15, g1.size());
         var plan = planner.plan(files);
         assertEquals(12, plan.topicCount());
         assertEquals(97, plan.conceptCount());
@@ -123,7 +125,7 @@ class OperatingSystemsG1FullPackIntegrationTest {
             assertEquals(batch.itemCount(), apply.apply(batch.command(), p.previewDigest()).updated());
             oldUpdates += p.updated();
         }
-        assertEquals(13, oldUpdates);
+        assertEquals(15, oldUpdates);
         var beforeConcepts = jdbc.queryForList(
                 "select content_key, id from concept where content_key like 'operating-systems.%' order by content_key");
         var beforeQuestions = jdbc.queryForList(
@@ -153,8 +155,8 @@ class OperatingSystemsG1FullPackIntegrationTest {
             updated += applied.updated();
             unchanged += applied.unchanged();
         }
-        assertEquals(13, updated);
-        assertEquals(plan.totalItemCount() - 13, unchanged);
+        assertEquals(15, updated);
+        assertEquals(plan.totalItemCount() - 15, unchanged);
         assertEquals(beforeConcepts, jdbc.queryForList(
                 "select content_key, id from concept where content_key like 'operating-systems.%' order by content_key"));
         assertEquals(beforeQuestions, jdbc.queryForList(
@@ -201,8 +203,8 @@ class OperatingSystemsG1FullPackIntegrationTest {
         }
         assertEquals(plan.totalItemCount(), exactUnchanged);
         assertEquals(history, history(), "Exact OS G1 reimport must preserve history");
-        System.out.println("OS_G1_PASS 13 UPDATED, " + exactUnchanged
-                + " UNCHANGED, 47 public Reader HTTP 200");
+        System.out.println("OS_G1_PASS 15 UPDATED, " + exactUnchanged
+                + " UNCHANGED, 49 public Reader HTTP 200");
     }
 
     private void seedHistory() {
