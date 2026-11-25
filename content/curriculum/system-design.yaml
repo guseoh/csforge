@@ -74,7 +74,7 @@ topics:
     level: 2
     objective: 모듈 경계·팀 자율성·배포 결합도·운영 비용을 고려해 분리 시점을 판단한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: system-design.core.architecture.decision-evidence
     title: 설계 결정의 근거와 변경 조건
     order: 40

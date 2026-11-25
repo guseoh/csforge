@@ -28,15 +28,9 @@ references:
 
 처음부터 두 저장소를 분리할 필요는 없습니다. 하나의 relational schema가 현재 workload를 충분히 처리한다면 그 구조가 가장 단순합니다. 하지만 특정 read가 반복적인 join·aggregation 때문에 실제 병목이 되고 요구 latency를 만족하지 못한다면 별도 projection이나 denormalized read model을 검토할 수 있습니다.
 
-```text
-command
-   ↓
-canonical write model
-   │
-   └─ change propagation
-          ↓
-     read projection
-```
+![쓰기 모델과 읽기 모델의 최신성 경계](/learning/system-design/write-read-freshness.svg)
+
+전파 이전 조회의 한 예입니다. 읽기 모델 분리가 필요하지 않다면 같은 관계형 모델을 유지할 수 있으며, 재구축 가능성은 원본·변경 이력 보존과 동기화 정책에 달려 있습니다.
 
 별도 read model을 두는 순간 새로운 계약이 생깁니다. Projection은 canonical source보다 늦을 수 있고, update가 실패할 수도 있으며, schema가 바뀌면 backfill이나 rebuild가 필요합니다. 따라서 “조회가 빠르다”만 볼 것이 아니라 허용 stale 시간과 재생성 방법도 함께 정해야 합니다.
 
