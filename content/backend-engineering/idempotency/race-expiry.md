@@ -20,17 +20,9 @@ references:
 
 Idempotency key가 있어도 구현을 `SELECT 후 INSERT`로 만들면 동일 key 요청이 정확히 동시에 도착했을 때 두 요청이 모두 처음 보는 key라고 판단할 수 있습니다. 중복을 막으려면 **부수 효과를 실행하기 전에 누가 이 작업을 처리할지 원자적으로 결정**해야 합니다.
 
-```text
-Request A                    Request B
-   │                            │
-SELECT key → 없음            SELECT key → 없음
-   │                            │
-결제 실행                    결제 실행
-   │                            │
-INSERT key                   INSERT key
+![멱등성 경쟁 · 부수 효과보다 먼저 소유권 예약](/learning/backend-engineering/idempotency-reservation-race.svg)
 
-→ reservation보다 side effect가 먼저라 중복 가능
-```
+오른쪽은 A가 예약을 커밋한 경우의 예시입니다. 충돌 요청은 fingerprint와 현재 처리 상태를 확인합니다. 예약 이후 외부 호출의 성공 여부가 불명확하면 공급자 키나 상태 대조가 필요합니다.
 
 ### 처리 소유권을 먼저 원자적으로 확보한다
 

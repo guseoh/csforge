@@ -22,12 +22,9 @@ Transaction 경계를 repository method마다 기계적으로 두는 것과 사�
 
 주문 생성에서 다음 세 변경이 같은 PostgreSQL 안에 있다고 해 보겠습니다.
 
-```text
-placeOrder()
- ├─ orders INSERT
- ├─ inventory UPDATE
- └─ coupon UPDATE
-```
+![유스케이스 · 로컬 원자성과 외부 효과](/learning/backend-engineering/local-transaction-effects.svg)
+
+동일 데이터베이스의 세 변경이 실제로 하나의 로컬 트랜잭션에 참여한다는 가정입니다. HTTP 결제나 메일 송신은 이 로컬 원자성의 범위에 포함되지 않습니다.
 
 주문은 생성됐는데 재고 예약이나 쿠폰 사용만 rollback되는 상태가 제품 규칙상 허용되지 않는다면 세 변경을 하나의 DB transaction으로 묶는 것이 자연스럽습니다.
 
