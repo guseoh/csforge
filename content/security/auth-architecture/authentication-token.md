@@ -24,7 +24,7 @@ Spring Security의 `Authentication`은 로그인 완료 후의 사용자 정보�
 
 ![Authentication의 검증 전후 상태](/learning/security/authentication-before-after.svg)
 
-대표적인 사용자 이름/비밀번호 인증 예입니다. 인증 방식에 따라 실제 객체 타입과 값이 달라집니다.
+대표적인 사용자 이름/비밀번호 인증 예입니다. 인증 전 토큰을 AuthenticationManager에 전달하고 지원하는 제공자의 검증을 거칩니다. 인증 방식에 따라 실제 객체 타입과 값이 달라집니다.
 
 이 시점의 인증 주체 문자열은 사용자가 제출한 입력일 뿐 검증된 신원이 아닙니다.
 
@@ -34,6 +34,7 @@ Spring Security의 `Authentication`은 로그인 완료 후의 사용자 정보�
 AuthenticationProvider
   ├─ 사용자 조회
   ├─ 비밀번호 비교
+  ├─ 계정 상태 등 필수 검사
   └─ 권한 목록 조회
        │
        ▼

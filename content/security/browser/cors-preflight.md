@@ -54,6 +54,7 @@ Fetch 표준 기준 preflight에는 교차 출처 자격 증명이 포함되지 
 
 ```http
 OPTIONS /orders HTTP/1.1
+Host: api.example.com
 Origin: https://app.example.com
 Access-Control-Request-Method: POST
 Access-Control-Request-Headers: content-type
@@ -64,6 +65,7 @@ Access-Control-Allow-Methods: POST
 Access-Control-Allow-Headers: content-type
 
 POST /orders HTTP/1.1
+Host: api.example.com
 Origin: https://app.example.com
 Content-Type: application/json
 

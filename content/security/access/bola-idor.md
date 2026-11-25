@@ -22,10 +22,10 @@ API가 다음처럼 동작한다고 해 봅시다.
 
 ```http
 GET /api/orders/1001
-Authorization: session of member 42
+Cookie: SESSION=S123
 ```
 
-사용자가 URL의 `1001`을 `1002`로 바꿨더니 다른 회원 주문이 보인다면 전형적인 객체별 인가 실패입니다.
+서버에서 세션 S123을 회원 42의 인증 상태와 연결했다고 가정합니다. 사용자가 URL의 `1001`을 `1002`로 바꿨더니 다른 회원 주문이 보인다면 전형적인 객체별 인가 실패입니다.
 
 ![객체 수준 인가 · 소유권 조회 조건](/learning/security/object-owner-query-boundary.svg)
 
