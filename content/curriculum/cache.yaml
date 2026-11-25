@@ -40,7 +40,7 @@ topics:
     level: 2
     objective: 캐시와 원본 저장소의 쓰기를 연결하는 방식의 지연 시간, 내구성, 실패 순서와 적합한 사용 사례를 비교한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: cache.core.models.key-serialization
     title: 캐시 키와 직렬화 계약
     order: 30
@@ -67,7 +67,7 @@ topics:
     level: 1
     objective: TTL을 단순한 기술 숫자가 아니라 허용 가능한 오래된 값의 시간·변경 빈도·업무 위험과 연결한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: cache.core.consistency.invalidation
     title: 캐시 무효화 순서와 오래된 값의 재등장
     order: 20
@@ -94,7 +94,7 @@ topics:
     level: 2
     objective: maxmemory와 퇴출 정책, 작업 집합과 객체 크기를 캐시 적중률·캐시 쓰기 실패와 연결한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: cache.core.operations.hot-key
     title: 핫 키와 접근 편향
     order: 20
