@@ -31,6 +31,10 @@ IN_PROGRESS 현재 DFS path 안에 있음
 FINISHED    모든 neighbor 처리 완료
 ```
 
+![DFS · 현재 경로와 완료 상태](/learning/dsa/dfs-active-finished.svg)
+
+A에서 B를 먼저 선택하는 재귀 DFS 예입니다. 호출 경로의 마지막 정점이 완료되면 스택에서 빠지고, 이전 정점의 남은 이웃을 처리합니다.
+
 정점을 처음 발견하면 `IN_PROGRESS`, 모든 neighbor 탐색이 끝나면 `FINISHED`로 바꾼다. 이 상태 구분을 통해 현재 경로의 ancestor로 돌아가는 간선과 이미 처리가 끝난 정점을 가리키는 간선을 다르게 해석할 수 있다.
 
 Adjacency list에서는 각 정점과 간선을 제한된 횟수만 확인하므로 시간은 O(V+E)다. 다만 매우 긴 chain에서는 재귀 깊이가 O(V)까지 커질 수 있으므로 total work와 maximum 스택 깊이를 별도로 생각해야 한다.
