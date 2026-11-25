@@ -1,1 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="400" viewBox="0 0 960 400"><rect width="960" height="400" rx="24" fill="#111827"/><text x="48" y="50" fill="#f9fafb" font-size="24" font-family="sans-serif" font-weight="700">Unix-Domain Socket Lifecycle</text><rect x="70" y="125" width="200" height="95" rx="14" fill="#1f2937" stroke="#60a5fa"/><text x="115" y="180" fill="#dbeafe" font-size="19" font-family="sans-serif">Client process</text><rect x="380" y="105" width="210" height="135" rx="14" fill="#1f2937" stroke="#f59e0b"/><text x="424" y="150" fill="#fef3c7" font-size="19" font-family="sans-serif">AF_UNIX endpoint</text><text x="418" y="190" fill="#f9fafb" font-size="16" font-family="sans-serif">path / local namespace</text><rect x="700" y="125" width="190" height="95" rx="14" fill="#1f2937" stroke="#34d399"/><text x="743" y="180" fill="#d1fae5" font-size="19" font-family="sans-serif">Server process</text><path d="M270 173 L380 173" stroke="#93c5fd" stroke-width="4"/><path d="M590 173 L700 173" stroke="#6ee7b7" stroke-width="4"/><text x="297" y="153" fill="#9ca3af" font-size="14" font-family="sans-serif">connect</text><text x="612" y="153" fill="#9ca3af" font-size="14" font-family="sans-serif">accept</text><text x="70" y="310" fill="#f9fafb" font-size="17" font-family="sans-serif">SOCK_STREAM → byte stream framing still required</text><text x="70" y="350" fill="#d1d5db" font-size="17" font-family="sans-serif">Local endpoint permissions, peer credentials, close and stale-path cleanup are part of lifecycle.</text></svg>
+<svg role="img" aria-labelledby="os-a11y-title os-a11y-desc" xmlns="http://www.w3.org/2000/svg" width="960" height="400" viewBox="0 0 960 400"><title id="os-a11y-title">유닉스 도메인 소켓</title><desc id="os-a11y-desc">같은 호스트 프로세스 사이의 커널 소켓 엔드포인트 통신</desc><rect width="960" height="400" rx="24" fill="#111827"/><text x="48" y="50" fill="#f9fafb" font-size="24" font-family="sans-serif" font-weight="700">Unix-Domain Socket Lifecycle</text><rect x="70" y="125" width="200" height="95" rx="14" fill="#1f2937" stroke="#60a5fa"/><text x="115" y="180" fill="#dbeafe" font-size="19" font-family="sans-serif">Client process</text><rect x="380" y="105" width="210" height="135" rx="14" fill="#1f2937" stroke="#f59e0b"/><text x="424" y="150" fill="#fef3c7" font-size="19" font-family="sans-serif">AF_UNIX endpoint</text><text x="418" y="190" fill="#f9fafb" font-size="16" font-family="sans-serif">path / local namespace</text><rect x="700" y="125" width="190" height="95" rx="14" fill="#1f2937" stroke="#34d399"/><text x="743" y="180" fill="#d1fae5" font-size="19" font-family="sans-serif">Server process</text><path d="M270 173 L380 173" stroke="#93c5fd" stroke-width="4"/><path d="M590 173 L700 173" stroke="#6ee7b7" stroke-width="4"/><text x="297" y="153" fill="#9ca3af" font-size="14" font-family="sans-serif">connect</text><text x="612" y="153" fill="#9ca3af" font-size="14" font-family="sans-serif">accept</text><text x="70" y="310" fill="#f9fafb" font-size="17" font-family="sans-serif">SOCK_STREAM → byte stream framing still required</text><text x="70" y="350" fill="#d1d5db" font-size="17" font-family="sans-serif">Local endpoint permissions, peer credentials, close and stale-path cleanup are part of lifecycle.</text>
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+
+[fill="#111827"]{fill:#f9fafb}
+[stroke="#111827"]{stroke:#f9fafb}
+[fill="#f9fafb"]{fill:#202632}
+[stroke="#f9fafb"]{stroke:#202632}
+[fill="#1f2937"]{fill:#edf0f4}
+[stroke="#1f2937"]{stroke:#edf0f4}
+[fill="#60a5fa"]{fill:#245bb0}
+[stroke="#60a5fa"]{stroke:#245bb0}
+[fill="#dbeafe"]{fill:#204c8a}
+[stroke="#dbeafe"]{stroke:#204c8a}
+[fill="#f59e0b"]{fill:#936200}
+[stroke="#f59e0b"]{stroke:#936200}
+[fill="#fef3c7"]{fill:#764e00}
+[stroke="#fef3c7"]{stroke:#764e00}
+[fill="#34d399"]{fill:#167249}
+[stroke="#34d399"]{stroke:#167249}
+[fill="#d1fae5"]{fill:#165a3d}
+[stroke="#d1fae5"]{stroke:#165a3d}
+[fill="#93c5fd"]{fill:#245bb0}
+[stroke="#93c5fd"]{stroke:#245bb0}
+[fill="#6ee7b7"]{fill:#167249}
+[stroke="#6ee7b7"]{stroke:#167249}
+[fill="#9ca3af"]{fill:#475569}
+[stroke="#9ca3af"]{stroke:#475569}
+[fill="#d1d5db"]{fill:#405067}
+[stroke="#d1d5db"]{stroke:#405067}
+}
+]]></style>
+</svg>

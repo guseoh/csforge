@@ -35,6 +35,8 @@ T2 write 2                      T2 write 1
 result = 2                      result = 1
 ```
 
+![두 스레드의 읽기·수정·쓰기 교차가 일으키는 갱신 손실](/learning/operating-systems/interleaving-lost-update.svg)
+
 두 스레드가 실행한 코드는 같지만 단계가 교차되는 순서가 달라지면서 한 번의 갱신이 사라진다.
 
 ### 단일 코어에서도 실행 교차는 가능하다

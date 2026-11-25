@@ -130,13 +130,13 @@
   {
     "kind": "question",
     "contentKey": "operating-systems.core.synchronization.condition-variable.q4",
-    "promptMarkdown": "조건 변수의 신호를 받았다는 사실과 보호된 조건이 참이라는 사실이 같지 않은 이유를 설명하라.",
+    "promptMarkdown": "생산자가 큐에 항목 하나를 넣고 대기 중인 C1에 signal을 보낸다. 생산자가 mutex를 놓은 뒤 C2가 먼저 획득하여 유일한 항목을 꺼내고 mutex를 놓는다. C1이 mutex를 재획득했다면 큐의 상태와 C1이 해야 할 동작은 무엇인가?",
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
     "conceptKeys": ["operating-systems.core.synchronization.condition-variable"],
-    "modelAnswer": "신호는 대기자에게 다시 실행해 상태를 검사할 기회를 주는 사건이지 조건 값을 예약해 주는 것이 아니다. 여러 대기자나 경쟁 스레드 때문에 깨어난 뒤 조건이 다시 거짓일 수 있다.",
-    "explanationMarkdown": "통지와 공유 상태의 현재 값은 서로 다른 것이다. 신호 뒤 대기자가 뮤텍스를 다시 얻기까지 다른 스레드가 자원을 소비할 수 있으므로 **깨움은 재검사 기회이지 `predicate=true` 보증이 아니다.**"
+    "modelAnswer": "큐는 다시 비어 있다. C1은 뮤텍스를 보유한 상태에서 조건을 다시 검사하고, 큐가 비어 있다면 조건 변수의 wait로 뮤텍스를 해제하며 다시 대기해야 한다. signal은 항목의 예약이나 소유권 이전이 아니다.",
+    "explanationMarkdown": "통지와 공유 상태의 현재 값은 서로 다른 것이다. 신호 뒤 대기자가 뮤텍스를 다시 얻기까지 다른 스레드가 자원을 소비할 수 있으므로 **깨움은 재검사 기회이지 `predicate=true` 보증이 아니다.** 이 실행 순서에서는 C2가 유일한 항목을 소비했으므로 C1은 깨어났더라도 빈 큐를 관찰한다. while로 조건을 검사하면 다시 대기할 수 있다."
   },
   {
     "kind": "question",
