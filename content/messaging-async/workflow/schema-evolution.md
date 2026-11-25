@@ -48,16 +48,9 @@ new producer ─┘
 
 Confluent Schema Registry 용어에서 호환성 방향은 다음처럼 정의됩니다.
 
-```text
-BACKWARD
-새 스키마를 사용하는 consumer가 이전 스키마로 기록된 데이터를 읽을 수 있음
+![스키마 읽기·쓰기 호환성 매트릭스](/learning/messaging-async/schema-reader-writer-matrix.svg)
 
-FORWARD
-이전 스키마를 사용하는 consumer가 새 스키마로 기록된 데이터를 읽을 수 있음
-
-FULL
-양방향 모두 호환
-```
+표의 비대각 칸은 호환성이 성립해야 하는 읽기 조합을 나타내며 무조건 성공한다는 뜻이 아닙니다. 실제 직렬화 형식과 소비자 코드의 업무 계약을 별도로 확인해야 합니다.
 
 또한 비전이(non-transitive) 정책은 직전 버전만 비교할 수 있고, 전이(transitive) 정책은 더 오래된 버전까지 호환성을 검사합니다. 보존 기간 전체를 재생해야 한다면 어느 범위까지 보장하는지 확인해야 합니다.
 

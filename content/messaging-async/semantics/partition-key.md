@@ -30,12 +30,9 @@ references:
 
 Kafka 토픽은 하나의 거대한 순차 파일이 아니라 여러 파티션으로 나뉠 수 있습니다. 각 파티션은 레코드가 추가된 순서를 가지며, 컨슈머 그룹은 여러 파티션을 나눠 읽어 병렬 처리합니다.
 
-```text
-order-events
-  ├─ Partition 0: e1 → e4 → e7
-  ├─ Partition 1: e2 → e5
-  └─ Partition 2: e3 → e6
-```
+![Kafka 파티션 로그와 Consumer Group 할당](/learning/messaging-async/partition-log-assignment.svg)
+
+레코드 ID와 파티션별 오프셋은 서로 다른 값입니다. 오프셋 0부터 시작하는 연속 로그와 일반 Consumer Group의 할당 예입니다. Share Group 등 다른 소비 모델은 이 그림의 범위가 아닙니다.
 
 Kafka가 보장하는 순서는 **토픽 전체가 아니라 각 파티션 안의 레코드 순서**입니다.
 
