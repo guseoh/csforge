@@ -39,6 +39,10 @@ WHERE email = '' OR '1'='1';
 
 ### 매개변수 바인딩은 데이터와 SQL 구조를 분리한다
 
+![SQL 구조와 값의 분리](/learning/security/sql-structure-value-boundary.svg)
+
+값을 전달하는 경계와 문법을 구성하는 경계를 분리합니다.
+
 ```java
 TypedQuery<Member> query = entityManager.createQuery(
     "select m from Member m where m.email = :email",

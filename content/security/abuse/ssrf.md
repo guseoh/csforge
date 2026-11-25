@@ -29,15 +29,9 @@ POST /preview
 
 공격자가 URL을 `http://127.0.0.1:8080/admin`이나 클라우드 메타데이터 엔드포인트로 바꾸면 **외부 사용자가 직접 갈 수 없는 네트워크 위치를 서버 권한으로 요청**하게 만들 수 있습니다.
 
-```text
-공격자
-   │ URL=http://internal-service/admin
-   ▼
-공개 백엔드
-   │ 외부로 나가는 요청
-   ▼
-내부망 / 메타데이터 서비스 / localhost
-```
+![서버 요청의 목적지 검증 경계](/learning/security/ssrf-destination-validation.svg)
+
+방어 관점의 모델입니다. 메타데이터 제어 범위는 플랫폼별로 확인합니다.
 
 ### 문자열 접두부 검사만으로는 부족하다
 

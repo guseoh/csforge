@@ -20,27 +20,18 @@ references:
 
 보안 오류가 모두 컨트롤러의 예외 처리기로 전달되는 것은 아닙니다. 컨트롤러보다 앞선 필터 체인에서 발생한 인증·인가 예외는 Spring Security가 처리할 수 있습니다.
 
-```text
-ExceptionTranslationFilter
-       │ 뒤쪽 필터·애플리케이션 호출
-       ▼
-AuthenticationException 또는 AccessDeniedException 포착
-       │
-       ├─ 인증이 필요함 → AuthenticationEntryPoint
-       │                  └─ 401 또는 로그인 리다이렉트
-       │
-       └─ 인증됐지만 권한이 없음 → AccessDeniedHandler
-                                  └─ 403
-```
+![인증·인가 예외의 응답 변환](/learning/security/security-exception-routing.svg)
+
+실제 HTTP 응답은 설정된 처리기가 결정합니다. 익명·remember-me인 경우 추가 인증이 필요할 수 있습니다.
 
 `ExceptionTranslationFilter`는 뒤쪽 처리에서 발생한 두 예외를 HTTP 응답으로 바꿉니다. `AccessDeniedException`이어도 요청자가 인증되지 않았다면 인증 시작점으로 보낼 수 있습니다.
 
 ### 401과 403은 질문이 다르다
 
 - 401 성격: **누구인지 확인할 자격 증명이 없거나 유효하지 않음**
-- 403 성격: **누구인지는 알지만 이 작업을 할 권한이 없음**
+- 403 성격: **서버가 요청을 이해했지만 수행을 거부함** (인증된 주체의 권한 부족은 대표 사례)
 
-실제 처리 경로는 익명 인증 상태 등에 따라 달라질 수 있지만, 인증이 필요한 상황과 권한이 부족한 상황은 구분해야 합니다.
+HTTP 401에는 해당 자원에 적용할 인증 challenge를 담은 `WWW-Authenticate` 헤더가 필요합니다. 403은 반드시 인증이 완료된 사용자에게만 반환되는 코드는 아닙니다. 실제 Spring Security 처리 경로는 익명·remember-me 인증 여부 및 설정에 따라 달라질 수 있지만, 인증이 필요한 상황과 권한이 부족한 상황은 구분해야 합니다.
 
 ### JSON API와 브라우저 로그인은 시작 응답이 다를 수 있다
 

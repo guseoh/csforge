@@ -61,22 +61,9 @@ references:
 
 다음은 사용자(리소스 소유자)가 브라우저(user agent)를 통해 클라이언트에 권한을 위임하는 인가 코드 흐름입니다. 클라이언트는 인가 서버(Authorization Server, AS)와 리소스 서버(Resource Server, RS)를 별도 신뢰 경계로 다뤄야 합니다.
 
-```text
-사용자·브라우저        Client 앱                AS                    RS(API)
-     │                   │                    │                      │
-     │ 로그인/연결 요청  ─►│                    │                      │
-     │◄── 302 AS authorize (client_id, redirect_uri, scope,
-     │                    state 또는 적절한 CSRF 바인딩, code_challenge)
-     ├────── 로그인·동의 (AS에서) ──────────►│                      │
-     │◄───────── 302 redirect_uri?code=... ──┤                      │
-     ├── callback(code, state 등) ─►│        │                      │
-     │                   ├── token endpoint: code + code_verifier + client/redirect binding
-     │                   │───────────────────►│                      │
-     │                   │◄──── access token ─┤                      │
-     │                   │ (+ OIDC면 ID token) │                      │
-     │                   ├──────────── access token ────────────────►│
-     │                   │◄────────── 리소스 응답 ───────────────────┤
-```
+![OAuth 인가 코드와 OIDC의 전체 경계](/learning/security/authorization-code-trust-boundaries.svg)
+
+서버 측 웹 클라이언트의 인가 코드 + PKCE 예입니다. 기밀 클라이언트 인증 및 callback 검증은 본문을 따릅니다.
 
 **인가 코드(code)**는 브라우저를 경유해 클라이언트의 redirect callback으로 돌아오지만, 일반적으로 **토큰 교환은 클라이언트가 AS의 토큰 엔드포인트와 수행하는 별도 요청**입니다. AS는 코드가 올바른 클라이언트·redirect URI 및 PKCE 챌린지와 연결되어 있는지 검증합니다. 클라이언트는 응답이 자신이 시작한 로그인/위임 요청에 속하는지 검사하고, 여러 AS를 쓴다면 발급자 혼동(mix-up)에 대한 방어도 필요합니다.
 
