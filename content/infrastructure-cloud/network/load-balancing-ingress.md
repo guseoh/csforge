@@ -63,11 +63,9 @@ Kubernetes Ingress API는 안정적이지만 새 기능 개발은 동결(frozen)
 
 반면 liveness는 프로세스를 다시 시작해야 할 정도로 회복 불가능한 상태인지 판단하는 신호입니다. Readiness 실패를 곧바로 재시작 사유로 사용하면 일시적인 의존성 장애 때 불필요한 재시작이 반복될 수 있습니다.
 
-```text
-프로세스 실행 중
-  ├─ 준비됨     → 트래픽 수신 가능
-  └─ 준비 안 됨 → 트래픽 대상에서 제외
-```
+![상태 확인과 트래픽 대상](/learning/infrastructure-cloud/readiness-traffic-membership.svg)
+
+Kubernetes의 일반 Service 트래픽과 readiness 조건을 단순화했습니다. publishNotReadyAddresses, 종료 중 엔드포인트, 컨트롤러 반영 지연 등 예외는 별도입니다.
 
 ### 배포 중에도 상태 확인이 트래픽 전환을 결정한다
 

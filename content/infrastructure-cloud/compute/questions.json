@@ -2,7 +2,7 @@
   {
     "kind": "question",
     "contentKey": "infrastructure.core.compute.execution-models.q1",
-    "promptMarkdown": "VM·컨테이너·서버리스를 비교할 때 애플리케이션 팀이 가장 먼저 확인할 핵심 기준을 한 구절로 쓰라.",
+    "promptMarkdown": "VM·컨테이너·서버리스를 비교할 때 직접 관리할 범위와 플랫폼에 위임할 범위를 구분하는 기준을 본문에서는 무엇이라고 부르는가? (운영 책임에 관한 용어)",
     "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",

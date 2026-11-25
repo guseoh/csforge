@@ -33,7 +33,7 @@ topics:
     level: 1
     objective: 프로세스 재시작과 컨테이너·Pod 재생성을 구분하고, 이미지·실행 환경·영구 데이터의 수명 주기와 관리형 실행에서 운영 책임이 이동하는 범위를 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: infrastructure.core.compute.resource-boundaries
     title: 리소스 요청과 제한
     order: 20
@@ -47,7 +47,7 @@ topics:
     level: 2
     objective: 컨테이너 이미지와 실행 환경별 설정을 분리하고, 비밀 정보의 노출·교체·최소 권한 경계를 설계한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: infrastructure.core.network
   title: 인프라 네트워킹
   order: 20
@@ -74,7 +74,7 @@ topics:
     level: 2
     objective: DNS 캐시 TTL을 고려한 엔드포인트 전환과 TLS 인증서의 발급·검증·교체·만료를 운영 흐름으로 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: infrastructure.core.reliability
   title: 저장소와 배포 신뢰성
   order: 30
