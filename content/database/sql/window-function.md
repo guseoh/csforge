@@ -80,6 +80,10 @@ member_id=7   id    created_at   amount   기본 RANGE 누적합
                103   10:01          500      3,500
 ```
 
+![RANGE와 ROWS의 윈도 누적합 비교](/learning/database/sql-window-frame.svg)
+
+*동일 회원의 세 주문을 같은 위치에 배치하고 첫 행의 계산 범위(frame)를 강조했습니다. 오른쪽은 id까지 정렬하여 순서를 고정한 사례입니다.*
+
 반면 한 행씩 증가하는 누적합을 원한다면 **고유한 동률 해소 정렬 기준과 명시적 ROWS frame**을 함께 쓰는 것이 명확합니다.
 
 ```sql
@@ -96,5 +100,7 @@ FROM orders;
 `ROWS`만 지정하고 동률을 구분하지 않으면 같은 `created_at`을 가진 행 사이의 물리적 처리 순서가 보장되지 않아 어느 행이 1,000을 먼저 받는지 달라질 수 있습니다. 반대로 `ORDER BY created_at, id`로 고유하게 정렬하면 기본 `RANGE`에서도 동료 행이 갈라져 위의 누적합처럼 계산됩니다. **frame 종류와 정렬의 유일성**을 함께 판단해야 합니다.
 
 `ROW_NUMBER`, `RANK`, `LAG`, `LEAD`도 같은 윈도 모델 위에서 동작합니다. 예를 들어 회원별 최신 주문 하나를 고를 때 `ROW_NUMBER() OVER (PARTITION BY member_id ORDER BY created_at DESC, id DESC)`를 사용한 뒤 1번 행만 선택할 수 있습니다.
+
+윈도 `ORDER BY`는 계산 순서를 정하며 최종 결과의 출력 순서를 보장하지 않습니다. 결과까지 정렬하려면 바깥 SELECT에 `ORDER BY`를 명시합니다. 윈도 함수 계산 결과로 필터링하려면 서브쿼리 또는 CTE에서 계산한 뒤 바깥 WHERE를 적용합니다.
 
 윈도 함수는 “집계의 고급 버전”이 아니라 **행 수를 유지해야 할 때 사용하는 다른 계산 모델**입니다.
