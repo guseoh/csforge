@@ -47,6 +47,13 @@ class NetworkDiagramFullPackIntegrationTest {
     private static final String TEXT_PILOT =
             "network-http/request-journey/transport-establishment.md";
 
+    private static final Map<String, String> STATIC_ASSETS = Map.of(
+            "network-http/tcp/sequence-number.md", "/learning/network-http/tcp-sequence-number.svg",
+            "network-http/dns/dns-ttl-cache.md", "/learning/network-http/dns-ttl-cache.svg",
+            "network-http/tcp/retransmission.md", "/learning/network-http/tcp-retransmission.svg",
+            "network-http/tls/key-agreement.md", "/learning/network-http/tls-key-agreement.svg",
+            "network-http/http-cache/freshness.md", "/learning/network-http/http-cache-freshness.svg");
+
     @Container
     static final PostgreSQLContainer<?> POSTGRES =
             PostgresIntegrationTestSupport.container("csforge_network_diagram_qa");
@@ -68,7 +75,7 @@ class NetworkDiagramFullPackIntegrationTest {
     }
 
     @Test
-    void all53DiagramUpdatesPreserveHistoryAndReaderAndReimportUnchanged() throws Exception {
+    void all58DiagramUpdatesPreserveHistoryAndReaderAndReimportUnchanged() throws Exception {
         var initial = bootstrapService.bootstrap();
         assertTrue(initial.success(), () -> "Initial isolated bootstrap: " + initial);
         assertEquals(CanonicalInventory.TOTAL_ITEMS, initial.totalItems());
@@ -85,8 +92,20 @@ class NetworkDiagramFullPackIntegrationTest {
         assertTrue(concepts.stream().anyMatch(f -> f.path().equals(TEXT_PILOT)
                 && sourceText(f).contains("```csforge-viz")));
 
-        var historical = diagrams.stream().map(file -> new CanonicalContentFile(
-                file.path(), removeDiagram(sourceText(file)).getBytes(StandardCharsets.UTF_8))).toList();
+        var staticDiagrams = concepts.stream().filter(f -> STATIC_ASSETS.containsKey(f.path())).toList();
+        assertEquals(5, staticDiagrams.size());
+        for (var file : staticDiagrams) {
+            assertTrue(sourceText(file).contains(STATIC_ASSETS.get(file.path())), file.path());
+            assertTrue(java.nio.file.Files.isRegularFile(java.nio.file.Path.of(
+                    "../frontend/public" + STATIC_ASSETS.get(file.path()))), file.path());
+        }
+        var allDiagrams = new java.util.ArrayList<>(diagrams);
+        allDiagrams.addAll(staticDiagrams);
+        var historical = allDiagrams.stream().map(file -> new CanonicalContentFile(
+                file.path(), (STATIC_ASSETS.containsKey(file.path())
+                        ? sourceText(file).lines().filter(line -> !line.contains(STATIC_ASSETS.get(file.path())))
+                            .collect(Collectors.joining("\n"))
+                        : removeDiagram(sourceText(file))).getBytes(StandardCharsets.UTF_8))).toList();
         int historicalUpdates = 0;
         for (var batch : batchPlanner.plan(historical).batches()) {
             var preview = previewService.preview(batch.command());
@@ -97,7 +116,7 @@ class NetworkDiagramFullPackIntegrationTest {
             assertEquals(batch.itemCount(), result.updated());
             historicalUpdates += result.updated();
         }
-        assertEquals(53, historicalUpdates);
+        assertEquals(58, historicalUpdates);
 
         var conceptIds = jdbc.queryForList("select content_key, id from concept "
                 + "where content_key like 'network-http.%' order by content_key");
@@ -109,7 +128,7 @@ class NetworkDiagramFullPackIntegrationTest {
         seedHistory();
         var history = historySnapshot();
 
-        Set<String> changedKeys = diagrams.stream().map(NetworkDiagramFullPackIntegrationTest::contentKey)
+        Set<String> changedKeys = allDiagrams.stream().map(NetworkDiagramFullPackIntegrationTest::contentKey)
                 .collect(Collectors.toSet());
         var plan = batchPlanner.plan(networkFiles);
         assertEquals(127, plan.conceptCount());
@@ -133,8 +152,8 @@ class NetworkDiagramFullPackIntegrationTest {
             updated += applied.updated();
             unchanged += applied.unchanged();
         }
-        assertEquals(53, updated);
-        assertEquals(plan.totalItemCount() - 53, unchanged);
+        assertEquals(58, updated);
+        assertEquals(plan.totalItemCount() - 58, unchanged);
         assertEquals(conceptIds, jdbc.queryForList("select content_key, id from concept "
                 + "where content_key like 'network-http.%' order by content_key"));
         assertEquals(questionIds, jdbc.queryForList("select content_key, id from question "
@@ -144,20 +163,21 @@ class NetworkDiagramFullPackIntegrationTest {
                 + "order by concept_id, reference_id"));
         assertEquals(history, historySnapshot(), "History changed on diagram updates");
 
-        for (CanonicalContentFile file : diagrams) {
+        for (CanonicalContentFile file : allDiagrams) {
             String key = contentKey(file);
             long id = jdbc.queryForObject("select id from concept where content_key = ?",
                     Long.class, key);
             var detail = learningQueryService.getConcept(id);
             assertEquals(key, detail.contentKey());
-            assertTrue(detail.contentMarkdown().contains("```csforge-viz"), key);
+            String expected = STATIC_ASSETS.getOrDefault(file.path(), "```csforge-viz");
+            assertTrue(detail.contentMarkdown().contains(expected), key);
             HttpResponse<String> response = HTTP.send(HttpRequest.newBuilder(
                     URI.create("http://127.0.0.1:" + port + "/api/concepts/" + id))
                     .GET().build(), HttpResponse.BodyHandlers.ofString());
             assertEquals(200, response.statusCode(), () -> "Reader HTTP: " + key);
             JsonNode body = mapper.readTree(response.body());
             assertEquals(key, body.get("contentKey").asText());
-            assertTrue(body.get("contentMarkdown").asText().contains("```csforge-viz"), key);
+            assertTrue(body.get("contentMarkdown").asText().contains(expected), key);
         }
 
         int secondUnchanged = 0;
@@ -174,8 +194,8 @@ class NetworkDiagramFullPackIntegrationTest {
         }
         assertEquals(plan.totalItemCount(), secondUnchanged);
         assertEquals(history, historySnapshot(), "History changed on exact reimport");
-        System.out.println("NETWORK_DIAGRAM_FULL_PACK_PASS 53 UPDATED, "
-                + secondUnchanged + " UNCHANGED, 53 Reader HTTP 200");
+        System.out.println("NETWORK_DIAGRAM_FULL_PACK_PASS 58 UPDATED, "
+                + secondUnchanged + " UNCHANGED, 58 Reader HTTP 200");
     }
 
     private void seedHistory() {

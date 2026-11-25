@@ -16,7 +16,7 @@ describe('Network & HTTP 49 authored diagram contracts', () => {
     expect(networkAreaExamples).toHaveLength(49)
     expect(new Set(networkAreaExamples).size).toBe(49)
     expect(new Set(Object.values(networkAreaSpecs).map(x=>x.layout))).toEqual(
-      new Set(['stack','path','compare','branch','matrix','sequence'])
+      new Set(['stack','path','compare','branch','matrix','sequence','packet-envelope','ipv4-prefix','frame-interleave','byte-gap','cookie-conditions','boundary'])
     )
   })
 
@@ -35,6 +35,29 @@ describe('Network & HTTP 49 authored diagram contracts', () => {
     expect(html).toContain(spec.note.replace(/&/g,'&amp;').replace(/"/g,'&quot;'))
     expect(html).not.toContain('<foreignObject')
     expect(html).not.toContain('<script')
+  })
+
+  it.each([
+    ['encapsulation','응용 데이터 바이트','FCS'],
+    ['decapsulation','TCP 순서 복원 후 전달','링크 검증 후 IP 추출'],
+    ['prefix-subnet','11111111','192.0.2.0 ~ 192.0.2.255'],
+    ['acknowledgement','누적 ACK = 1500','누적 ACK = 2500'],
+    ['tcp-head-of-line','1000–1499까지 전달 가능','2500 이전까지 순서대로 전달 가능'],
+    ['http2-stream','HEADERS · 1','HEADERS · 3'],
+    ['cookie-scope','SameSite','만료·추가 정책'],
+    ['switch-forwarding','A · 학습','B · 조회'],
+    ['arp','Who has 192.0.2.10?','aa:bb:cc:dd:ee:ff'],
+    ['router-forwarding','TTL 64','TTL 63'],
+    ['nat','10.0.0.5:40000','203.0.113.9:62000'],
+    ['nat-mapping','매핑 없음','이전 흐름 확인 불가'],
+    ['pki','로컬 trust anchor','이름 검증'],
+    ['transport-head-of-line','B도 전달 대기','B 전달 가능'],
+    ['trusted-proxy-boundary','198.51.100.77 (주장)','192.0.2.10 (재작성)'],
+  ])('%s retains spatial G2 teaching labels', (example, first, second) => {
+    const html=renderToStaticMarkup(<LearningVisualization source={payload(example)}/>)
+    expect(html).toContain('data-g2-layout=')
+    expect(html).toContain(first)
+    expect(html).toContain(second)
   })
 
   it('rejects arbitrary content or malformed/unsafe example IDs',()=>{
@@ -75,7 +98,7 @@ describe('Network & HTTP 49 authored diagram contracts', () => {
 
   it('preserves key technical distinctions in high-risk examples',()=>{
     const arpMarkdown=readFileSync(resolve(root,'content/network-http/local-delivery/arp.md'),'utf8')
-    expect(arpMarkdown).toContain(networkAreaSpecs.arp.messages[0].text.replace('ARP Request · ',''))
+    expect(arpMarkdown).toContain('Who has 192.0.2.10?')
     expect(networkAreaSpecs.acknowledgement.note).toContain('ACK')
     expect(networkAreaSpecs['tls-handshake'].note).toContain('0-RTT')
     expect(networkAreaSpecs['redirect-status'].note).toContain('307')

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 530" role="img" aria-labelledby="tcp-seq-title tcp-seq-desc">
+  <title id="tcp-seq-title">TCP 시퀀스 번호와 누락 구간 복구 전후 비교</title>
+  <desc id="tcp-seq-desc">각 구간은 500바이트입니다. 처음에는 1000부터 1499까지 연속으로 수신했으며 1500부터 1999까지 누락되고 2000부터 2499까지 먼저 도착했습니다. 누적 ACK는 1500입니다. 누락된 500바이트를 재전송으로 받은 후 1000부터 2499까지 연속 수신하며 누적 ACK는 2500으로 진행합니다. 순서 번호는 패킷 번호가 아니라 바이트 번호입니다.</desc>
+  <style>
+    .surface{fill:#fafafa}.panel{fill:#fff;stroke:#777;stroke-width:1}.ink{fill:#202020}.muted{fill:#555}.received{fill:#e7e7e7;stroke:#666;stroke-width:1.5}.pending{fill:#f4f4f4;stroke:#777;stroke-width:1.5;stroke-dasharray:7 5}.buffered{fill:#d0d0d0;stroke:#555;stroke-width:1.5}.guide{stroke:#777;stroke-width:1.5}.dash{stroke-dasharray:5 5}.heading{font:600 21px/1.3 'Noto Sans CJK KR','Malgun Gothic','NanumSquare',sans-serif}.body{font:500 17px/1.4 'Noto Sans CJK KR','Malgun Gothic','NanumSquare',sans-serif}.small{font:400 14px/1.5 'Noto Sans CJK KR','Malgun Gothic','NanumSquare',sans-serif}.number{font:600 17px/1.4 ui-monospace,Consolas,monospace}
+    @media (prefers-color-scheme:dark){.surface{fill:#191919}.panel{fill:#222;stroke:#aaa}.ink{fill:#f3f3f3}.muted{fill:#d0d0d0}.received{fill:#333;stroke:#aaa}.pending{fill:#222;stroke:#ccc}.buffered{fill:#505050;stroke:#ddd}.guide{stroke:#aaa}}
+  </style>
+  <rect class="surface" width="960" height="530"/>
+  <text class="heading ink" x="34" y="41">TCP 시퀀스 번호: 바이트 범위와 누적 ACK</text>
+  <text class="small muted" x="34" y="70">예시 조건: 데이터 500B씩 세 구간 · SYN/FIN 없음 · SACK는 생략</text>
+  <rect class="panel" x="20" y="94" width="920" height="179"/>
+  <text class="body ink" x="40" y="124">재전송 전 · 중간 500B가 빠진 상태</text>
+  <g text-anchor="middle">
+    <rect class="received" x="56" y="145" width="262" height="70"/>
+    <text class="number ink" x="187" y="171">1000–1499</text>
+    <text class="small muted" x="187" y="195">연속 수신 · 500B</text>
+    <rect class="pending" x="330" y="145" width="262" height="70"/>
+    <text class="number ink" x="461" y="171">1500–1999</text>
+    <text class="small muted" x="461" y="195">누락 · 500B</text>
+    <rect class="buffered" x="604" y="145" width="262" height="70"/>
+    <text class="number ink" x="735" y="171">2000–2499</text>
+    <text class="small ink" x="735" y="195">선도착 · 전달 대기</text>
+  </g>
+  <text class="body ink" x="40" y="247">누적 ACK = 1500</text>
+  <text class="small muted" x="245" y="247">다음에 기대하는 바이트는 1500입니다.</text>
+  <path class="guide dash" d="M461 274 V310"/>
+  <text class="small muted" x="477" y="296">누락 구간 재전송 후</text>
+  <rect class="panel" x="20" y="311" width="920" height="175"/>
+  <text class="body ink" x="40" y="342">재전송 후 · 세 구간이 연속된 상태</text>
+  <g text-anchor="middle">
+    <rect class="received" x="56" y="359" width="262" height="70"/>
+    <text class="number ink" x="187" y="384">1000–1499</text>
+    <text class="small muted" x="187" y="409">수신 완료</text>
+    <rect class="buffered" x="330" y="359" width="262" height="70"/>
+    <text class="number ink" x="461" y="384">1500–1999</text>
+    <text class="small ink" x="461" y="409">재전송으로 복구</text>
+    <rect class="received" x="604" y="359" width="262" height="70"/>
+    <text class="number ink" x="735" y="384">2000–2499</text>
+    <text class="small muted" x="735" y="409">이제 연속 범위에 포함</text>
+  </g>
+  <text class="body ink" x="40" y="463">누적 ACK = 2500</text>
+  <text class="small muted" x="245" y="463">1000–2499가 연속 수신되어 다음 바이트를 기다립니다.</text>
+  <text class="small muted" x="34" y="516">ACK는 수신 바이트의 연속 범위를 나타내며, 애플리케이션 업무 처리 완료를 뜻하지 않습니다.</text>
+</svg>
