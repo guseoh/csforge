@@ -39,6 +39,10 @@ IN_PROGRESS
 FINISHED
 ```
 
+![방향 그래프 · 현재 경로와 완료 정점의 차이](/learning/dsa/directed-back-edge.svg)
+
+왼쪽은 현재 DFS 경로의 조상 A로 돌아오는 경우입니다. 오른쪽은 A에서 B를 먼저 탐색해 완료한 뒤 C를 방문한 경우이며, 점선 C→B는 완료 정점으로 향합니다.
+
 현재 `IN_PROGRESS`인 정점으로 향하는 간선을 만나면 현재 경로의 ancestor로 돌아가는 back 간선이므로 directed cycle이다. 이미 `FINISHED`인 정점을 가리키는 간선은 그것만으로 cycle을 의미하지 않는다.
 
 핵심은 "전에 본 정점인가"가 아니라 **현재 탐색 경로가 다시 닫히는가**다. 이 차이를 이해하면 DAG의 정상적인 cross 간선을 cycle로 잘못 판단하는 실수를 피할 수 있다.

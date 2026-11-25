@@ -28,6 +28,10 @@ references:
 h >= log2(n!)
 ```
 
+![비교 정렬 · 세 원소의 여섯 가능한 순서](/learning/dsa/comparison-decision-tree.svg)
+
+세 원소가 모두 다르면 가능한 정렬 순서는 6가지입니다. 결정 트리의 왼쪽은 참, 오른쪽은 거짓이며 가장 긴 경로에는 비교가 3번 필요합니다.
+
 `log(n!)`은 Θ(n log n)이므로 comparison만 사용하는 일반 정렬의 최악의 경우 comparison 수에는 Ω(n log n) lower bound가 생긴다.
 
 병합 정렬처럼 O(n log n) comparison으로 정렬하는 알고리즘은 이 model에서 asymptotically lower bound와 같은 차수에 도달한다.

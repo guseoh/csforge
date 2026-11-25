@@ -32,6 +32,10 @@ Union-Find(Disjoint Set Union)는 서로 겹치지 않는 여러 집합을 관�
 connected(a,b) = find(a) == find(b)
 ```
 
+![Union–Find · 두 집합의 루트 연결](/learning/dsa/union-find-root-merge.svg)
+
+화살표는 parent 포인터 방향입니다. 두 루트 중 C를 A 아래 연결하는 한 가지 구현 예이며, DSU 내부의 링크는 실제 그래프 간선이 아닙니다.
+
 Undirected 그래프에서 새 간선 `(u,v)`를 추가하려 할 때 이미 `find(u) == find(v)`라면 두 정점 사이에 기존 경로가 있다. 이 간선을 추가하면 cycle이 생긴다. Kruskal은 이 성질을 사용해 cycle을 만드는 간선을 건너뛴다.
 
 단순 구현에서 루트를 임의로 연결하면 parent tree가 길어져 `find`가 느려질 수 있다. 이를 줄이기 위해 경로 압축과 랭크 기반 합치기/size를 사용한다.

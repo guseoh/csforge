@@ -28,11 +28,9 @@ size = 3, capacity = 6
 
 `size < capacity`라면 끝에 원소를 추가하는 append는 다음 빈 슬롯에 값을 쓰고 size를 증가시키면 되므로 `O(1)`이다. 하지만 용량이 가득 차면 더 큰 배열을 확보하고 기존 원소를 복사해야 한다.
 
-```text
-[A][B][C][D]          capacity 4
-      ↓ resize + copy
-[A][B][C][D][ ][ ][ ][ ]   capacity 8
-```
+![용량이 4에서 8로 늘 때 기존 원소 4개를 복사하며 old/new 배열이 잠시 함께 존재합니다.](/learning/dsa/dynamic-array-resize.svg)
+
+*용량이 4에서 8로 늘 때 기존 원소 4개를 복사하며 old/new 배열이 잠시 함께 존재합니다.*
 
 크기 조정이 발생한 한 번의 append는 기존 `n`개 원소를 복사하므로 `O(n)`일 수 있다. 그러나 용량을 두 배처럼 비율로 늘리면 크기 조정이 점점 드물어져 긴 연속 추가 연산의 분할 상환 cost는 `O(1)`이 된다.
 

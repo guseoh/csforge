@@ -21,17 +21,15 @@ references:
 
 Boundary search는 특정 값을 하나 찾는 것이 아니라 **조건이 처음 false에서 true로 바뀌는 위치**를 찾는다. 정렬 배열에서 lower bound는 `value >= target`이 처음 참인 위치이고, upper bound는 `value > target`이 처음 참인 위치다.
 
-```text
-value:   1 2 2 2 5 8
->= 2 ?:  F T T T T T
-           ↑ lower bound
-```
+![Lower bound · 미확인 원소와 정답 경계](/learning/dsa/lower-bound-interval.svg)
+
+굵은 구간은 미확인 원소 [left, right)를 나타냅니다. 정답 경계는 right 자체도 가능하므로 가능한 경계는 [left, right]에 남습니다.
 
 비감소 순으로 정렬된 배열의 lower bound에서 `[left, right)`는 **아직 확인하지 않은 원소의 구간**이고, 가능한 정답 경계 위치는 **닫힌 구간 `[left, right]`**에 남는다. `[0,left)`는 이미 false, `[right,n)`은 이미 true라고 확인된 원소다. Mid가 조건을 만족하면 `right = mid`로 갱신해 `mid`를 미확인 구간에서는 제거하되 **정답 경계로는 보존**한다. 만족하지 않으면 `left = mid + 1`로 이동해 false인 `mid`까지 제거한다. 모든 값이 false면 정답은 `n`이므로 `[left,right)` 안에 정답 원소가 반드시 존재한다는 식으로 설명하면 안 된다.
 
 ```text
 while left < right:
-    mid = left + (right - left) / 2
+    mid = left + (right - left) // 2
     if predicate(mid):
         right = mid
     else:

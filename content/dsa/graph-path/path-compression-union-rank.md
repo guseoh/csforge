@@ -30,6 +30,10 @@ find(x):
     return parent[x]
 ```
 
+![Union–Find · 경로 압축 전후](/learning/dsa/dsu-path-compression.svg)
+
+find(D)가 A에 도달한 뒤 C와 D의 parent를 A로 바꿉니다. 이미 A를 가리키던 B와 집합의 구성원은 그대로입니다.
+
 이 변경은 set membership을 바꾸지 않는다. 같은 집합의 원소가 같은 루트를 찾는 불변식을 유지하면서 다음 find의 경로만 짧게 만든다.
 
 랭크 기반 합치기 또는 size는 두 루트를 합칠 때 더 작은 tree를 큰 tree 아래에 붙여 불필요한 높이 증가를 막는다. Rank는 union 방향을 결정하기 위한 높이의 근사·상한 정보이며 경로 압축 이후 실제 높이와 같을 필요는 없다.
