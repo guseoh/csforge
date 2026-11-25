@@ -20,18 +20,9 @@ references:
 
 보안 오류가 모두 컨트롤러의 예외 처리기로 전달되는 것은 아닙니다. 컨트롤러보다 앞선 필터 체인에서 발생한 인증·인가 예외는 Spring Security가 처리할 수 있습니다.
 
-```text
-ExceptionTranslationFilter
-       │ 뒤쪽 필터·애플리케이션 호출
-       ▼
-AuthenticationException 또는 AccessDeniedException 포착
-       │
-       ├─ 인증이 필요함 → AuthenticationEntryPoint
-       │                  └─ 401 또는 로그인 리다이렉트
-       │
-       └─ 인증됐지만 권한이 없음 → AccessDeniedHandler
-                                  └─ 403
-```
+![인증·인가 예외의 응답 변환](/learning/security/security-exception-routing.svg)
+
+실제 HTTP 응답은 설정된 처리기가 결정합니다. 익명·remember-me인 경우 추가 인증이 필요할 수 있습니다.
 
 `ExceptionTranslationFilter`는 뒤쪽 처리에서 발생한 두 예외를 HTTP 응답으로 바꿉니다. `AccessDeniedException`이어도 요청자가 인증되지 않았다면 인증 시작점으로 보낼 수 있습니다.
 

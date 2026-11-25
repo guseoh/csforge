@@ -20,21 +20,9 @@ references:
 
 비밀번호·API 키·OTP처럼 인증 방식이 여러 개라면 각 자격 증명의 검증 책임을 별도 `AuthenticationProvider`로 나눌 수 있습니다.
 
-```text
-AuthenticationManager
-      │
-      ▼
-ProviderManager
-      │
-      ├─ DaoAuthenticationProvider
-      │    └─ 사용자 이름/비밀번호 처리
-      │
-      ├─ ApiKeyAuthenticationProvider
-      │    └─ API 키 토큰 처리
-      │
-      └─ OtpAuthenticationProvider
-           └─ OTP 토큰 처리
-```
+![인증 관리자와 제공자 선택](/learning/security/provider-manager-dispatch.svg)
+
+하나의 요청 타입 예입니다. 실패 종류에 따라 후속 제공자 시도 여부가 달라집니다.
 
 ### 제공자는 자신이 처리할 인증 요청 유형을 선언한다
 

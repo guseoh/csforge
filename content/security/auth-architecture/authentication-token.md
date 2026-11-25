@@ -22,18 +22,9 @@ Spring Security의 `Authentication`은 로그인 완료 후의 사용자 정보�
 
 ### 로그인 입력은 아직 신뢰할 수 없는 토큰이다
 
-```text
-사용자 이름/비밀번호 요청
-       │
-       ▼
-UsernamePasswordAuthenticationToken
-인증 주체   = 제출된 사용자 이름
-credentials = 원문 비밀번호
-authenticated = false
-       │
-       ▼
-AuthenticationManager
-```
+![Authentication의 검증 전후 상태](/learning/security/authentication-before-after.svg)
+
+대표적인 사용자 이름/비밀번호 인증 예입니다. 인증 방식에 따라 실제 객체 타입과 값이 달라집니다.
 
 이 시점의 인증 주체 문자열은 사용자가 제출한 입력일 뿐 검증된 신원이 아닙니다.
 

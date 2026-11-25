@@ -34,20 +34,9 @@ SecurityContext(?)  ← 별도 스레드
 
 Spring Security는 `DelegatingSecurityContextRunnable`, `DelegatingSecurityContextExecutor`처럼 보안 컨텍스트를 전달하는 래퍼를 제공합니다.
 
-```text
-submit 시점
-현재 SecurityContext 캡처
-        │
-        ▼
-작업 스레드 시작
-문맥 설정
-        │
-        ▼
-작업 실행
-        │
-        ▼
-finally에서 문맥 정리
-```
+![비동기 인증 문맥 전달](/learning/security/async-security-context-lifecycle.svg)
+
+캡처된 인증 객체가 불변 스냅샷이라는 보장은 없습니다.
 
 작업 스레드는 다시 쓰일 수 있으므로 작업이 끝나면 전달한 보안 컨텍스트를 정리해야 합니다.
 

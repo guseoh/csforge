@@ -26,13 +26,9 @@ references:
 
 JWT 액세스 토큰 예제를 보면 `xxxxx.yyyyy.zzzzz` 세 부분이 보여 암호화된 문자열처럼 느껴집니다. 일반적인 서명된 JWT(JWS)에서는 헤더와 내용이 **base64url 인코딩**될 뿐 비밀정보로 숨겨지는 것이 아닙니다.
 
-```text
-header.payload.signature
-  │      │         │
-  │      │         └─ 서명 입력에 대한 서명 또는 MAC
-  │      └─ 클레임: sub, iss, aud, exp ...
-  └─ alg, typ 등 메타데이터
-```
+![JWT 구조와 서명 입력](/learning/security/jws-jwt-signing-boundary.svg)
+
+일반적인 compact JWS JWT 예입니다. JWE는 별도 암호화 형식입니다.
 
 누구든 토큰을 얻으면 내용을 디코딩할 수 있으므로 비밀번호, API 키, 민감 개인정보를 “JWT 안이니까 안전하다”며 넣으면 안 됩니다.
 
