@@ -74,7 +74,7 @@ topics:
     level: 2
     objective: 고정된 복제본 집합에서 N/R/W 정족수의 교집합이 직접 보장하는 것과 보장하지 않는 것을 설명하고, Dynamo 방식의 복구·충돌 해결을 합의 알고리즘의 다수결 정족수와 구분해 데이터 의미에 맞게 판단한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: distributed.core.consistency.leader-election
     title: 리더 선출과 합의 경계
     order: 30
