@@ -28,18 +28,9 @@ references:
 
 예를 들어 `route`, `status_class`, `region`처럼 값의 범위가 제한된 차원은 운영 질문에 유용할 수 있습니다. 반면 사용자 ID, 이메일, 요청 ID, 원문 URL처럼 값이 계속 늘어나는 식별자를 레이블에 넣으면 요청 수에 가까운 수의 시계열이 생길 수 있습니다.
 
-```text
-좋은 예
-http_server_duration_seconds{
-  route="/users/{id}",
-  status_class="2xx"
-}
+![레이블 조합 · 시계열 수의 증가](/learning/performance-observability-operations/cardinality-product-growth.svg)
 
-위험한 예
-http_server_duration_seconds{
-  user_id="847193..."
-}
-```
+메트릭 하나와 모든 조합이 존재하는 경우의 최대치입니다. classic histogram의 bucket·sum·count와 추가 target label 등은 별도 시계열을 만듭니다.
 
 카디널리티는 여러 차원이 곱해지면서 커집니다. `route 100개 × status 5개 × region 4개 × version 3개`라면 이미 최대 6,000개 조합이 가능하고, 여기에 인스턴스나 테넌트 같은 차원이 추가되면 더 빠르게 증가합니다.
 
