@@ -67,7 +67,7 @@ topics:
     level: 2
     objective: 일시적(transient)·영구적(permanent) 실패를 분류하고 재시도 횟수·시간 예산(retry budget), 대기 간격(backoff), 실패 메시지 격리(DLQ)와 재처리 운영을 설계한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: messaging.core.delivery.ordering
     title: 메시지 순서와 병렬 처리
     order: 30
