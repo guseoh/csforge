@@ -34,6 +34,10 @@ references:
 
 Raft를 예로 들면 노드는 term이라는 세대를 사용하고, 후보(candidate)가 과반수의 표를 얻으면 해당 term의 리더가 됩니다. 이후 리더는 로그 엔트리를 복제본에 전달하며, 현재 term의 엔트리가 다수 노드에 저장되면 커밋 여부를 판정하고 그보다 앞선 엔트리도 함께 커밋합니다. 이전 term의 엔트리가 과반수에 복제됐다는 사실만으로 직접 커밋을 판정하지 않습니다. 선출의 로그 최신성 조건과 현재 term 커밋 규칙을 함께 적용합니다. 선출, 로그 복제, 안전성 규칙이 함께 동작해야 복제 상태 머신의 일관성을 만들 수 있습니다.
 
+![Raft term 변경과 선출 정족수](/learning/distributed-systems/raft-election-majority.svg)
+
+A가 격리되고 B가 C의 투표를 얻는 가능한 선출 결과입니다. A가 아직 새 term을 모를 수 있지만 과반 복제 없이 새로운 합의 커밋을 만들 수 없습니다.
+
 ![Raft · 현재 term 커밋과 이전 로그](/learning/distributed-systems/raft-current-term-commit.svg)
 
 선출이 정상 완료되고 로그 일치·영속화 등 Raft 규칙을 충족한 고정 멤버십 예입니다. 외부 DB/API는 이 커밋의 자동 참여자가 아닙니다.
