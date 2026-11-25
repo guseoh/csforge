@@ -20,33 +20,9 @@ references:
 
 브라우저가 `/orders/10`으로 요청을 보냈다고 해서 Spring이 URL 문자열을 곧바로 Controller 메서드와 연결하는 것은 아닙니다. Servlet 기반 Spring MVC에서는 요청이 먼저 Servlet 컨테이너에 들어오고 Spring이 등록한 **front controller인 `DispatcherServlet`**이 MVC 처리의 중심점이 됩니다.
 
-```text
-HTTP 요청
-    │
-    ▼
-Servlet 컨테이너
-    │
-    ▼
-DispatcherServlet
-    │
-    ▼
-HandlerMapping          -> 어느 handler가 처리할까?
-    │
-    ▼
-HandlerAdapter          -> 인자를 준비하고 handler를 호출
-    │
-    ▼
-Controller 메서드 실행
-    │
-    ▼
-반환값 처리              -> 메시지 변환 또는 뷰 렌더링
-    │
-    ▼
-HTTP 응답
+![DispatcherServlet · 요청 위임과 반환값 처리](/learning/spring/mvc-dispatch-sequence.svg)
 
-매핑·인자 해석·handler 실행 등에서 예외 발생
-    └─ HandlerExceptionResolver -> 처리 가능한 경우 오류 응답 구성
-```
+정상적인 동기 REST 요청을 단순화한 시퀀스입니다. 메시지 변환 등 반환값 처리는 Controller 호출 후에 수행하며, 매핑·인자 해석·호출 중 예외는 별도로 처리될 수 있습니다.
 
 정상 경로에서는 **Controller 호출 후에 반환값을 처리**합니다. 반면 예외는 매핑부터 인자 변환, Controller 실행 등 여러 단계에서 발생할 수 있고, `DispatcherServlet`은 처리 가능한 예외를 `HandlerExceptionResolver`에 위임합니다. 예외 처리기가 문제를 해결하지 못하면 예외가 Servlet 컨테이너까지 전파될 수도 있습니다. 따라서 “예외 처리 → Controller 호출”이라는 하나의 순차 흐름으로 그려서는 안 됩니다.
 
