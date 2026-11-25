@@ -51,17 +51,9 @@ singleton이 한 `RequestContext` 객체를 계속 들고 있다면 요청 A와 
 
 ### scoped proxy는 실제 객체 조회를 호출 시점으로 늦춘다
 
-```text
-AuditService(singleton)
-      │
-      ▼
-RequestContext proxy
-      │ 메서드 호출
-      ▼
-현재 request scope에서 실제 객체 조회
-   ├─ 요청 A -> RequestContext #A
-   └─ 요청 B -> RequestContext #B
-```
+![Request scoped proxy · 호출 시 대상 선택](/learning/spring/request-scoped-proxy.svg)
+
+singleton과 주입된 proxy는 유지되고, 실제 대상은 현재 요청에 따라 달라집니다. 활성 request scope가 없는 곳에서는 대상 조회가 실패할 수 있습니다.
 
 `AuditService`에는 안정적인 proxy 참조를 주입하고 메서드를 호출할 때 proxy가 현재 활성화된 scope의 실제 객체를 찾아 위임합니다. 그래서 singleton 생성 시점과 요청별 실제 객체 생성 시점을 분리할 수 있습니다.
 

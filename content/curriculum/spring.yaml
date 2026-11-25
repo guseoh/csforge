@@ -38,7 +38,7 @@ topics:
     level: 1
     objective: 객체가 다른 객체와 협력할 때 생성·선택·연결 책임을 누가 가져야 하는지 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: spring.core.why.coupling
     title: 결합도와 변경 비용
     order: 20
@@ -52,7 +52,7 @@ topics:
     level: 1
     objective: 객체가 필요한 협력자를 직접 고르지 않고 외부 조립자가 전달하는 구조와 그 이점을 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: spring.core.container
   title: ApplicationContext와 Bean
   order: 20
@@ -79,7 +79,7 @@ topics:
     level: 1
     objective: 같은 Bean 정의를 조회할 때 같은 객체 참조를 돌려주는 범위와 공유 변경 가능 상태의 위험을 판단한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: spring.core.registration
   title: Bean 등록 방식
   order: 30
@@ -146,7 +146,7 @@ topics:
     level: 2
     objective: scope가 객체 수명과 조회 identity를 어떻게 바꾸는지 비교하고 singleton을 GoF Singleton과 구분한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: spring.core.scope-lifecycle.scope-proxy
     title: Bean 범위 불일치와 scoped proxy
     order: 20
@@ -160,7 +160,7 @@ topics:
     level: 2
     objective: 생성, dependency injection, post-processing, initialization, 사용 가능, destruction 순서를 실제 자원 관리와 연결한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: spring.core.config
   title: 설정과 실행 환경
   order: 60
@@ -221,7 +221,7 @@ topics:
     level: 2
     objective: request/response body와 Java object 사이 변환이 Content-Type/Accept와 어떤 관계를 갖는지 추론한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: spring.core.validation-error
   title: 검증과 오류 처리
   order: 80
@@ -275,7 +275,7 @@ topics:
     level: 2
     objective: lazy association 접근이 추가 query를 만드는 시점과 fetch join/entity graph/batch fetch 선택을 비교한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: spring.core.transaction-aop
   title: 트랜잭션과 AOP
   order: 100
@@ -302,7 +302,7 @@ topics:
     level: 3
     objective: exception type과 rollback-only 상태, checked/unchecked 기본 규칙, rollbackFor 설정을 구분한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: spring.core.testing
   title: Spring 테스트
   order: 110
@@ -329,7 +329,7 @@ topics:
     level: 3
     objective: test method rollback이 production commit 시점·lazy loading·constraint 확인을 가릴 수 있는 사례를 판단한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: spring.core.production
   title: 운영 환경의 동작
   order: 120
@@ -356,4 +356,4 @@ topics:
     level: 3
     objective: 새 요청 수락 중단, 진행 중 요청 완료, 자원 종료 순서를 배포/종료 상황과 연결한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM

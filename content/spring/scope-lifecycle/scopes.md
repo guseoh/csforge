@@ -32,13 +32,9 @@ Bean scope는 “이 annotation을 붙이면 어떻게 생성된다”는 문법
 
 요청이 두 개 들어오는 상황을 비교해 보겠습니다.
 
-```text
-Request A ──► singleton Service #1
-Request B ──► singleton Service #1
+![Bean scope · 조회 시점과 객체 정체성](/learning/spring/scope-object-identity.svg)
 
-Request A ──► request Bean #A
-Request B ──► request Bean #B
-```
+각 칸은 컨테이너에서 해당 Bean을 직접 조회한 결과입니다. prototype을 singleton에 한 번 직접 주입하면 그 참조가 계속 유지되므로, 메서드 호출마다 새 객체가 만들어지는 것은 아닙니다.
 
 singleton Service 필드에 요청별 값을 저장하면 A와 B가 같은 메모리 상태를 만집니다. request scope Bean은 각 요청마다 분리되지만 그렇다고 모든 요청 데이터를 Bean으로 만들 필요는 없습니다. 메서드 매개변수나 지역 변수가 더 단순한 경우가 많습니다.
 

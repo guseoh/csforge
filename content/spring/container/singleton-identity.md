@@ -27,11 +27,9 @@ class OrderService { }
 
 같은 컨텍스트에서 `OrderController`와 `OrderScheduler`가 `OrderService`를 주입받으면 일반적으로 둘은 같은 `OrderService` 객체를 참조합니다.
 
-```text
-OrderController ──┐
-                  ├──► OrderService 객체 #1
-OrderScheduler ───┘
-```
+![singleton · 같은 정의와 다른 컨테이너](/learning/spring/singleton-identity-boundary.svg)
+
+서로 독립적인 두 ApplicationContext에 같은 클래스의 Bean 정의를 각각 등록한 예입니다. 같은 컨테이너 안에서도 서로 다른 Bean 정의는 다른 인스턴스를 만들 수 있습니다.
 
 ### 공유가 문제인 것이 아니라 공유되는 변경 가능 상태가 문제다
 

@@ -35,13 +35,9 @@ for (Order order : orders) {
 
 `member` 연관관계가 LAZY이고 첫 쿼리에서 함께 가져오지 않았다면 각 주문의 `member`에 접근하는 시점에 추가 쿼리가 실행될 수 있습니다.
 
-```text
-1) SELECT orders ... limit 20      -> 1 query
-2) SELECT member WHERE id=?        -> order 1
-3) SELECT member WHERE id=?        -> order 2
-...
-21) SELECT member WHERE id=?       -> order 20
-```
+![N+1 · 객체 탐색이 추가 SQL이 되는 순간](/learning/spring/n-plus-one-query-trace.svg)
+
+예시는 회원 식별자가 모두 다르고 기존 로딩·캐시·batch fetch가 없다는 조건에서 데이터 조회 SQL만 센 것입니다. 실제 Page 집계 쿼리와 조회 계획에 따라 SQL 수는 달라집니다.
 
 이런 **첫 목록 쿼리 1개 + 각 행·연관관계 접근마다 추가 쿼리 N개** 패턴을 N+1이라고 부릅니다.
 

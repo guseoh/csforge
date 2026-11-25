@@ -28,18 +28,9 @@ Accept: application/json
 {"productId":10,"quantity":2}
 ```
 
-```text
-HTTP 본문 + Content-Type
-       │
-       ▼
-적합한 HttpMessageConverter 선택
-       │
-       ▼
-CreateOrderRequest 객체
-       │
-       ▼
-Controller 메서드
-```
+![HTTP 메시지 변환 · JSON 파싱과 검증의 분리](/learning/spring/http-body-conversion-boundary.svg)
+
+JSON 메시지 변환과 Bean Validation은 서로 다른 단계입니다. @Valid가 적용되고 오류를 별도로 받는 BindingResult 매개변수가 없는 일반적 REST 메서드 예시입니다.
 
 ### `Content-Type`은 “내가 보내는 본문이 무엇인가”를 말한다
 

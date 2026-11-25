@@ -31,21 +31,9 @@ class OrderServiceTest {
 
 편리하지만 이 구조가 운영 요청의 트랜잭션 생명주기와 같다는 뜻은 아닙니다.
 
-```text
-테스트
-  T_test 시작
-    -> Service 호출
-    -> Repository 호출
-    -> 검증
-  T_test rollback
+![테스트 트랜잭션과 운영 서비스 트랜잭션](/learning/spring/test-vs-service-transaction.svg)
 
-운영
-  Controller
-    -> Service proxy가 T_service 시작
-    -> Service 반환
-    -> flush/commit
-  -> 응답
-```
+같은 스레드에서 참여 가능한 테스트 트랜잭션을 가정했습니다. 테스트의 rollback이 운영 commit 시점 제약과 트랜잭션 밖의 지연 로딩 실패를 가릴 수 있습니다.
 
 ### 바깥 테스트 트랜잭션이 Service 경계를 덮을 수 있다
 
