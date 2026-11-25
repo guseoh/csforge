@@ -22,12 +22,9 @@ references:
 
 그래서 batch는 정상 처리량뿐 아니라 **어디까지 완료됐고, 실패 뒤 어느 지점부터 어떤 근거로 다시 시작할지**를 설계해야 합니다.
 
-```text
-Step A ─ completed
-Step B ─ completed
-Step C ─ item 42,001에서 failed
-Step D ─ not started
-```
+![배치 재시작 · 커밋된 범위와 재처리 범위](/learning/backend-engineering/batch-checkpoint-restart.svg)
+
+업무 데이터와 checkpoint가 안전하게 일치하며 입력 순서가 안정적인 예시입니다. 외부 부수 효과는 DB rollback과 함께 취소되지 않으므로 별도의 멱등성·대사 정책이 필요합니다.
 
 ### 재시작하려면 진행 상태가 process 밖에 남아 있어야 한다
 

@@ -24,18 +24,9 @@ migration은 SQL 파일을 순서대로 실행하는 기능만의 문제가 아�
 
 안전한 변경은 흔히 세 단계로 나눈다.
 
-```text
-1. Expand
-   새 column/table 추가
-   기존 코드도 계속 동작
+![Expand · Migrate · Contract의 호환 구간](/learning/backend-engineering/expand-migrate-contract.svg)
 
-2. Migrate
-   새 코드가 새 구조를 사용
-   필요하면 backfill / dual write
-
-3. Contract
-   더 이상 사용하지 않는 column 제거
-```
+기존 표현을 authoritative로 유지하는 전략의 예입니다. 모든 활성 writer가 두 표현을 일관되게 쓰는 다른 전략도 가능합니다. backfill이 완료됐다는 사실만으로 새 표현의 최신성이나 삭제 안전성이 보장되지 않습니다.
 
 예를 들어 `name`을 `first_name`, `last_name`으로 나누고 싶다면 기존 `name`을 즉시 삭제하지 않는다. 새 column을 추가하고, 데이터를 채우고, 애플리케이션 읽기/쓰기를 전환한 뒤 실제 사용이 사라졌음을 확인하고 제거한다.
 

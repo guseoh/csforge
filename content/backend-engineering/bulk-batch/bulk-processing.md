@@ -22,13 +22,9 @@ references:
 
 대량 처리에서는 "몇 개씩 처리한다"는 말을 하나의 숫자로 보지 않고 **읽기 단위, DB 쓰기 전송 단위, 트랜잭션 commit 단위**를 분리해서 봅니다.
 
-```text
-입력 1,000,000건
-        │
-        ├─ 읽기 버퍼/페이지 단위 : 메모리에 한 번에 올릴 양
-        ├─ DB batch write 단위   : 한 번에 전송할 쓰기 수
-        └─ 트랜잭션 commit 단위  : 한 commit이 책임질 작업 범위
-```
+![대량 처리 · 읽기·전송·커밋 단위](/learning/backend-engineering/bulk-unit-boundaries.svg)
+
+이 그림은 단위를 구분하기 위한 모델입니다. JDBC batch 호출 횟수와 실제 네트워크 왕복은 드라이버·설정에 따라 달라질 수 있습니다. Spring Batch의 chunk는 일반적인 읽기 버퍼와 달리 commit interval과 연결된 처리 단위입니다.
 
 세 값은 같을 필요가 없습니다. 예를 들어 1,000개씩 읽고, 100개씩 JDBC batch로 전송하면서, 1,000개 단위로 commit할 수 있습니다. 여기서 **일반적인 읽기 버퍼 단위를 Spring Batch의 `chunk`와 같은 말로 사용하지 않는 것이 중요합니다.** Spring Batch의 chunk-oriented processing에서 chunk는 설정한 commit interval만큼 항목을 읽어 묶어 쓰고 트랜잭션을 commit하는 처리 경계를 가리킵니다.
 

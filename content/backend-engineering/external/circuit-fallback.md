@@ -32,21 +32,9 @@ references:
 
 외부 서비스가 계속 timeout이나 5xx를 반환하는데 모든 사용자 요청이 같은 dependency를 계속 호출하면 실패 자체보다 **기다리는 local thread·connection과 원격 부하가 함께 누적되는 문제**가 커질 수 있습니다. Circuit breaker는 이런 반복 실패를 관찰해 일정 조건에서 호출을 빠르게 거절하고, 이후 제한된 호출로 복구 여부를 확인하는 패턴입니다.
 
-```text
-정상 호출 허용
-   CLOSED
-      │ failure/slow-call threshold 초과
-      ▼
-    OPEN
-      │ wait duration 경과
-      ▼
- HALF_OPEN
-   │      │
-회복     실패 지속
-   │      │
-   ▼      ▼
-CLOSED   OPEN
-```
+![Circuit Breaker · 호출 허용 상태](/learning/backend-engineering/circuit-breaker-states.svg)
+
+최소 표본 수, 실패·느린 호출 임계치, HALF_OPEN 시험 호출 수는 설정에 의존합니다. 대기 후 상태 전환을 실제 호출이 촉발할지 자동으로 전환할지도 설정에 따릅니다.
 
 Resilience4j 같은 구현에서는 최소 표본 수, sliding window, failure rate, slow-call rate, HALF_OPEN에서 허용할 호출 수가 설정에 따라 달라집니다. 따라서 "한 번 실패하면 OPEN", "probe 한 번 성공하면 CLOSED" 같은 규칙으로 일반화하지 않습니다.
 
