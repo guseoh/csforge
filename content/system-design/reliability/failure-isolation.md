@@ -40,4 +40,8 @@ Bulkhead, timeout, rate limit, backpressure, circuit breaker, load shedding은 �
 
 과부하 응답의 계약도 구분합니다. 미접수 거절은 429/503 등으로 요청이 접수되지 않았음을 명시하고, 적절한 재시도 조건을 안내합니다. 품질을 낮춘 조회는 일부 생략 또는 오래된 값이라는 사실을 표시합니다. 지연 접수는 내구성 있는 작업 기록과 operation ID를 남기고 PENDING에서 최종 완료/실패를 확인할 책임을 갖습니다. HTTP 202 자체가 내구성을 보장하지는 않습니다. 작업을 버리면서 처리 중이라고 응답해서는 안 됩니다.
 
+![과부하 응답 계약 비교](/learning/system-design/overload-response-contracts.svg)
+
+세 가지 대응의 적용 가능성은 업무 정확성, 허용 지연과 자원 예산에 따라 달라집니다.
+
 과부하 상황에서는 모든 요청을 어떻게든 처리하려 하기보다 우선순위를 정하는 것이 중요합니다. 핵심 write는 보호하고 비핵심 보고서나 enrichment는 제한하는 식으로, **어떤 failure domain이 어느 범위까지만 영향을 미치게 할지**를 architecture 수준에서 정합니다.
