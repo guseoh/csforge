@@ -32,18 +32,19 @@ Idempotency key가 있어도 구현을 `SELECT 후 INSERT`로 만들면 동일 k
 INSERT INTO idempotency_record(
     account_id,
     idempotency_key,
+    request_fingerprint,
     status
 )
-VALUES (:accountId, :key, 'PROCESSING')
-ON CONFLICT DO NOTHING;
+VALUES (:accountId, :key, :fingerprint, 'PROCESSING')
+ON CONFLICT (account_id, idempotency_key) DO NOTHING;
 ```
 
 ```text
-INSERT 성공
+INSERT 결과 1행 + 예약 commit 성공
 → 이 요청이 최초 처리 소유권 획득
 
-INSERT 충돌
-→ 이미 같은 작업을 처리 중이거나 완료함
+INSERT 결과 0행
+→ 같은 식별자의 기록을 다시 읽고 fingerprint·상태 확인
 ```
 
 그다음 기존 record의 fingerprint와 상태를 확인해 같은 요청인지, 완료 결과를 재사용할지, 아직 처리 중이라고 응답할지를 결정합니다.

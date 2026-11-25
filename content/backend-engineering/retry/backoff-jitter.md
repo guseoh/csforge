@@ -49,13 +49,9 @@ attempt 4 → 약 800ms
 
 모든 client가 같은 `100 → 200 → 400ms`를 그대로 따르면 exponential backoff여도 같은 시점에 다시 몰릴 수 있습니다.
 
-```text
-nominal 400ms
-client A → 271ms
-client B → 388ms
-client C → 147ms
-client D → 423ms
-```
+![Jitter · 재시도 시점의 분산](/learning/backend-engineering/retry-jitter-time-axis.svg)
+
+기존 본문의 지연 수치를 사용한 한 번의 재시도 비교입니다. 이 값은 특정 full-jitter 공식의 결과를 의미하지 않습니다. 최대 지연과 시도 수, 전체 deadline을 함께 제한해야 합니다.
 
 정확한 jitter 공식은 구현 정책입니다. 특정 공식 하나를 backoff의 정의처럼 외우기보다 **동일한 실패를 경험한 caller들의 다음 시도를 시간축에 분산한다**는 목적을 이해하는 것이 중요합니다.
 

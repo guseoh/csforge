@@ -75,12 +75,9 @@ DB 저장 형식
 
 2026년 `America/New_York`에서는 **3월 8일 02:30**이 시계를 02:00에서 03:00으로 앞당기는 구간에 걸려 존재하지 않는 지역 시각(gap)입니다. 반대로 **11월 1일 01:30**은 시계를 02:00에서 01:00으로 되돌리면서 두 번 나타나는 지역 시각(overlap)입니다.
 
-```text
-LocalDateTime + ZoneId("America/New_York")
-  2026-03-08 02:30 → valid offsets 0개 → gap: 존재하지 않는 예약 시각
-  2026-11-01 01:30 → valid offsets 2개 → overlap: 두 개의 가능한 Instant
-  평상시 지역 시각     → valid offsets 1개 → 하나의 Instant
-```
+![DST · 지역 시각이 가리키는 절대 시점](/learning/backend-engineering/dst-local-time-offsets.svg)
+
+2026년 뉴욕의 표준 DST 규칙을 가정합니다. `ZoneRules.getValidOffsets()`의 0개/2개 결과를 업무 정책으로 처리해야 하며 Java의 기본 `atZone()` 자동 해석과 구별합니다.
 
 Java에서는 `zone.getRules().getValidOffsets(localDateTime)`로 유효한 offset을 확인할 수 있습니다. 예약 계약에서 gap은 **입력 거절** 또는 명시적으로 다음 유효 시각으로 이동하는 정책을 고르고, overlap은 **더 이른 offset / 더 늦은 offset** 중 어느 쪽을 선택할지 결정해야 합니다. 같은 지역 시각을 다시 받았을 때 같은 시점으로 해석해야 한다면 결정한 offset이나 확정된 `Instant`도 보존해야 합니다.
 
