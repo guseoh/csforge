@@ -81,7 +81,7 @@ topics:
     level: 2
     objective: 레이블·속성 조합이 시계열 수와 저장·질의 비용을 어떻게 늘리는지 판단하고 불필요한 차원을 통제한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: performance.core.operations
   title: 운영 대응과 용량 계획
   order: 30
