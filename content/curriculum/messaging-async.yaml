@@ -101,14 +101,14 @@ topics:
     level: 2
     objective: 생산률(producer rate)과 컨슈머 처리 용량의 차이가 lag·메모리·지연 시간을 만드는 이유와 흐름 제어(flow control)를 판단한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: messaging.core.workflow.schema-evolution
     title: 메시지 스키마의 호환 가능한 진화
     order: 30
     level: 2
     objective: 생산자·소비자가 다른 버전으로 공존할 때 호환 가능한 필드 추가, 하위·상위 호환성(backward/forward compatibility), 메시지 재생과 마이그레이션을 설계한다.
     density: STANDARD
-    visualization: TEXT
+    visualization: DIAGRAM
 boundaries:
 - area: Database
   owns: 기준이 되는 트랜잭션과 내구성 있는 업무 상태
