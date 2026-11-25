@@ -21,13 +21,9 @@ references:
 
 Breadth-First Search(BFS)는 시작 정점에서 간선 수 기준으로 가까운 정점부터 layer 순서로 탐색한다. 이 순서를 만드는 핵심 자료구조가 FIFO 큐다.
 
-```text
-queue: [A]
-A 처리 → B, C 발견
-queue: [B, C]
-B 처리 → D 발견
-queue: [C, D]
-```
+![BFS · 거리 계층과 FIFO 큐](/learning/dsa/bfs-queue-layers.svg)
+
+A의 이웃을 B, C 순서로 확인한다고 가정합니다. D는 B에서 발견되어 큐에 들어가므로 C에서 다시 발견해도 중복 삽입하지 않습니다.
 
 일반적인 BFS에서는 정점을 **처음 발견해 큐에 넣는 순간** visited 처리한다. 그래야 여러 정점이 같은 neighbor를 가리켜도 같은 정점이 큐에 중복으로 들어가는 일을 막을 수 있다.
 
