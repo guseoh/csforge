@@ -42,18 +42,9 @@ CORS 헤더가 없거나 허용 출처가 맞지 않으면 브라우저가 스�
 
 ### 일부 요청은 사전 요청으로 허용 여부를 확인한다
 
-```text
-브라우저 ── 사전 요청 ──► API
-OPTIONS /orders
-Origin: https://app.example.com
-Access-Control-Request-Method: POST
+![CORS · 사전 요청과 응답 노출](/learning/security/cors-preflight-two-gates.svg)
 
-API ── 사전 요청 응답 ──► 브라우저
-Access-Control-Allow-Origin: https://app.example.com
-Access-Control-Allow-Methods: POST
-
-허용되면 브라우저 ── 실제 POST ──► API
-```
+Fetch 표준 기준 preflight에는 교차 출처 자격 증명이 포함되지 않습니다. preflight 캐시가 유효하면 OPTIONS가 생략될 수 있습니다.
 
 사용자 정의 헤더나 특정 본문 형식·HTTP 메서드 조합은 사전 요청 대상이 될 수 있습니다.
 

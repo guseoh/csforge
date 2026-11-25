@@ -68,14 +68,14 @@ topics:
     level: 1
     objective: 자격 증명을 검증해 요청 주체에 대한 신뢰 수준을 세우는 과정과 실패 상태를 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.authn-authz.authorization
     title: 인가(authorization)
     order: 30
     level: 1
     objective: 인증된 주체도 리소스와 작업마다 권한을 다시 판단해야 하는 이유를 소유권과 역할 사례로 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: security.core.password
   title: 비밀번호의 안전한 저장
   order: 30
@@ -95,7 +95,7 @@ topics:
     level: 1
     objective: 사용자별 솔트가 같은 비밀번호의 저장 값을 다르게 만들고 사전 계산 공격의 재사용을 어렵게 하는 원리를 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.password.work-factor
     title: 비밀번호 검증 비용과 work factor
     order: 30
@@ -122,7 +122,7 @@ topics:
     level: 2
     objective: 쿠키 속성이 HTTPS 전송, 스크립트 접근, 교차 사이트 전송에 미치는 효과와 한계를 구분한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.session-cookie.fixation-expiration
     title: 세션 고정과 ID 교체·만료
     order: 30
@@ -142,7 +142,7 @@ topics:
     level: 2
     objective: 스킴·호스트·포트로 정하는 출처와 브라우저가 교차 출처 응답 읽기를 제한하는 이유를 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.browser.cors-preflight
     title: 교차 출처 리소스 공유(CORS)와 사전 요청
     order: 20
@@ -176,7 +176,7 @@ topics:
     level: 2
     objective: 사용자 입력을 SQL 문법에 직접 붙일 때 데이터가 쿼리 구조를 바꾸는 위험과 매개변수 바인딩을 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.injection.jpql-native
     title: JPQL·네이티브 쿼리의 동적 구조
     order: 20
@@ -210,7 +210,7 @@ topics:
     level: 2
     objective: URL·경로·본문의 객체 식별자를 바꿔 다른 사용자의 리소스에 접근하는 수평 권한 상승을 엔드포인트 흐름에서 진단한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.access.vertical
     title: 수직 권한 상승
     order: 30

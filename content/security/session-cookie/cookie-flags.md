@@ -60,7 +60,9 @@ Set-Cookie: SESSION=S123; HttpOnly
 | `https://example.com:443` → `https://example.com:8443` | 같은 site | 다른 origin |
 | `http://app.example.com` → `https://api.example.com` | 다른 site (scheme이 다름) | 다른 origin |
 
-따라서 app/API가 같은 site라도 **다른 origin의 스크립트가 응답을 읽으려면 CORS 조건을 충족**해야 합니다. 또한 `SameSite=Lax`/ `Strict` 조건을 통과해도 쿠키의 `Domain`, `Path`, `Secure` 등의 전송 조건을 따로 만족해야 합니다. `Domain`이 없는 host-only 쿠키는 기본적으로 발급한 호스트에만 전송되며, `Domain=example.com`처럼 설정하면 관련 하위 도메인으로 범위가 확장될 수 있습니다. 같은 site에서 발생한 공격이나 잘못된 서버 인가까지 SameSite가 차단하는 것은 아닙니다.
+![쿠키 SameSite와 Origin 비교](/learning/security/site-origin-cookie-scope.svg)
+
+위 도식은 비교 기준을 분리합니다. 따라서 app/API가 같은 site라도 **다른 origin의 스크립트가 응답을 읽으려면 CORS 조건을 충족**해야 합니다. 또한 `SameSite=Lax`/ `Strict` 조건을 통과해도 쿠키의 `Domain`, `Path`, `Secure` 등의 전송 조건을 따로 만족해야 합니다. `Domain`이 없는 host-only 쿠키는 기본적으로 발급한 호스트에만 전송되며, `Domain=example.com`처럼 설정하면 관련 하위 도메인으로 범위가 확장될 수 있습니다. 같은 site에서 발생한 공격이나 잘못된 서버 인가까지 SameSite가 차단하는 것은 아닙니다.
 
 ### Domain과 Path를 인가로 쓰지 않는다
 
