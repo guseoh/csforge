@@ -43,3 +43,7 @@ total pop  <= n
 ```
 
 Sliding-window maximum에서는 deque에 인덱스를 저장해 front에서는 window 밖으로 나간 후보를 제거하고, back에서는 새 값보다 약해 앞으로 maximum이 될 수 없는 후보를 제거한다. **Monotonic 구조의 핵심은 dominance를 증명해 필요 없는 후보를 일찍 제거하고, 그 제거 횟수를 전체 sequence에서 제한하는 것**이다.
+
+![덱에는 최댓값 후보만 남깁니다. 인덱스는 window 만료 여부를 판별합니다.](/learning/dsa/monotonic-deque-window.svg)
+
+*덱에는 최댓값 후보만 남깁니다. 인덱스는 window 만료 여부를 판별합니다.*

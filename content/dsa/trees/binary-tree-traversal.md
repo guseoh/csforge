@@ -22,13 +22,9 @@ references:
 
 Binary tree traversal은 모든 노드를 방문하되, 노드 자신을 left/right 부분 트리보다 언제 처리하는지에 따라 순서가 달라진다.
 
-```text
-        A
-       / \
-      B   C
-     / \
-    D   E
-```
+![같은 트리라도 노드를 처리하는 시점에 따라 네 가지 방문 순서가 만들어집니다.](/learning/dsa/tree-traversal-orders.svg)
+
+*같은 트리라도 노드를 처리하는 시점에 따라 네 가지 방문 순서가 만들어집니다.*
 
 이 tree의 preorder는 `A B D E C`, inorder는 `D B E A C`, postorder는 `D E B C A`다. Level order는 깊이가 작은 노드부터 방문하므로 `A B C D E`가 된다.
 
