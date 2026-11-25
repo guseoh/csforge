@@ -8,6 +8,7 @@ const direct = (type: 'java-definite-assignment' | 'java-array-store') =>
   JSON.stringify({version:1,type,title:'Java learning',description:'언어 계약'})
 function canonical(path: string) {
   const markdown = readFileSync(new URL('../../../../content/java/' + path, import.meta.url), 'utf8')
+    .replace(/\r\n/g, '\n')
   const fence = String.fromCharCode(96).repeat(3)
   const start = markdown.indexOf(fence + 'csforge-viz\n')
   if (start < 0) throw new Error('Missing canonical diagram: ' + path)
