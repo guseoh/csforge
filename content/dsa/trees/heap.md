@@ -27,7 +27,7 @@ Binary heap은 **complete binary tree shape**와 **parent-child priority 불변�
 
 Heap은 전체를 정렬하지 않는다. 위 예에서 5와 4의 상대 순서는 문제가 되지 않는다. 서로 parent-child 관계가 아니기 때문이다. 따라서 루트의 최우선 값을 빠르게 얻을 수 있지만 arbitrary key를 이진 탐색처럼 찾을 수는 없다.
 
-Complete binary tree는 마지막 level을 제외하고 모두 채우고, 마지막 level도 왼쪽부터 채운다. 이 shape 덕분에 pointer 없이 배열에 compact하게 저장할 수 있다. 0-based 인덱스에서는 보통 `left=2i+1`, `right=2i+2`, `parent=floor((i-1)/2)` 관계를 사용한다. 부모 계산은 i > 0일 때만 적용하며, 자식 인덱스가 배열 길이 이상이면 해당 자식은 존재하지 않는다.
+Complete binary tree는 마지막 level을 제외하고 모두 채우고, 마지막 level도 왼쪽부터 채운다. 이 shape 덕분에 pointer 없이 배열에 compact하게 저장할 수 있다. 0-based 인덱스에서는 보통 `left=2i+1`, `right=2i+2`, `parent=floor((i-1)/2)` 관계를 사용한다.
 
 Insert는 새 원소를 배열 끝에 추가해 shape를 먼저 지킨 뒤, parent와 비교하며 위로 이동시켜 heap 불변식을 복구한다. 루트를 제거할 때는 마지막 원소를 루트로 옮긴 뒤 적절한 자식과 교환하며 아래로 내려간다. Tree 높이가 O(log n)이므로 두 연산은 O(log n)이다.
 

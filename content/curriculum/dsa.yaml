@@ -591,7 +591,7 @@ topics:
         level: 1
         objective: "base 상태부터 dependency 순으로 상향식 표를 채운다."
         density: CORE
-        visualization: TEXT
+        visualization: DIAGRAM
       - key: dsa.core.dynamic-programming.state-definition
         title: "동적 계획법 상태 정의(DP State)"
         order: 50
