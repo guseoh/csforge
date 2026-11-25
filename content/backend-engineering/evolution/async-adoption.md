@@ -37,14 +37,9 @@ references:
 
 producer가 DB commit 후 메시지 발행 전에 죽으면 canonical state는 바뀌었지만 event가 사라질 수 있다. 반대로 message를 먼저 발행하고 DB transaction이 rollback되면 존재하지 않는 상태를 소비자가 처리할 수 있다. 이런 이유로 transactional outbox 같은 패턴을 검토한다.
 
-```text
-DB transaction
-  ├─ business row
-  └─ outbox row
-       │ commit
-       ▼
-publisher → broker → consumer
-```
+![비동기 전달 · 업무 변경과 Outbox 기록](/learning/backend-engineering/outbox-durable-handoff.svg)
+
+같은 DB 안의 업무 row와 outbox row만 원자적으로 저장합니다. relay는 커밋된 기록을 전달하며 전달 성공과 상태 기록 사이의 장애로 중복 발행할 수 있습니다. consumer의 멱등성은 여전히 필요합니다.
 
 ### consumer는 중복을 견뎌야 한다
 

@@ -22,19 +22,9 @@ references:
 
 CSForge에서 기본으로 삼는 방향은 다음과 같습니다.
 
-```text
-API
- │ HTTP parsing / validation / request-response mapping
- ▼
-Application
- │ use-case orchestration / transaction boundary
- ▼
-Domain
-   invariant / valid creation / state transition
+![계층 · 소스 의존성과 실행 호출의 구분](/learning/backend-engineering/dependency-contracts.svg)
 
-Infrastructure
- └─ DB, HTTP client 같은 바깥 기술을 안쪽에서 필요한 계약에 맞춰 구현
-```
+실선은 소스 수준 참조·구현 의존을, 점선은 주입된 어댑터로 이어지는 실행 시 호출을 뜻합니다. 내부 계약의 구체 위치는 프로젝트 책임에 맞게 정하며 모든 클래스에 인터페이스가 필요한 것은 아닙니다.
 
 이 그림은 단순한 호출 순서를 뜻하지 않습니다. 실행 중에는 애플리케이션 서비스가 저장소를 호출하지만, **도메인 규칙이 JPA나 HTTP 타입을 알아야 하는 방향으로 의존성이 뒤집히지 않게 한다**는 것이 핵심입니다.
 

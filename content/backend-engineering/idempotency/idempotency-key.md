@@ -22,21 +22,9 @@ Idempotency key는 같은 HTTP body를 hash하면 자동으로 중복이 사라�
 
 예를 들어 결제 요청을 다음 상태로 관리할 수 있습니다.
 
-```text
-(key, request fingerprint)
-           │
-           ▼
-       NOT_SEEN
-           │ reserve
-           ▼
-       PROCESSING
-        /       \
-   success     failure
-      │           │
-      ▼           ▼
- COMPLETED    실패 정책에 따라
-              재시도/종료
-```
+![멱등성 키 · 동일성 확인과 결과 재사용](/learning/backend-engineering/idempotency-record-state.svg)
+
+NOT_SEEN은 아직 해당 record가 없다는 논리 상태입니다. 그림은 멱등성 처리의 한 가지 계약 예이며, 실패 결과 보존이나 진행 중 응답 방식은 제품별로 결정합니다.
 
 DB에는 구현에 따라 다음과 같은 정보를 저장할 수 있습니다.
 

@@ -38,12 +38,9 @@ WHERE id = 42
 
 두 사용자가 같은 version을 읽었다면 먼저 성공한 write가 version을 8로 바꾸고, 뒤의 write는 `version = 7` 조건을 만족하지 못합니다.
 
-```text
-T1 reads v7
-T2 reads v7
-T1 update where v7 → success, v8
-T2 update where v7 → 0 rows
-```
+![낙관적 버전 · 같은 행의 조건부 갱신](/learning/backend-engineering/version-conditional-write.svg)
+
+행이 존재하고 다른 조건은 동일하며 T1이 먼저 커밋한 예입니다. JPA `@Version`은 충돌을 감지하지만 충돌 후 재시도·병합·사용자 안내는 별도 정책입니다.
 
 ### JPA의 `@Version`도 같은 문제를 해결한다
 
