@@ -98,11 +98,11 @@ describe('Network & HTTP 49 authored diagram contracts', () => {
 
   it('preserves key technical distinctions in high-risk examples',()=>{
     const arpMarkdown=readFileSync(resolve(root,'content/network-http/local-delivery/arp.md'),'utf8')
-    expect(arpMarkdown).toContain('Who has 192.0.2.10?')
+    expect(arpMarkdown).toContain('로컬 브로드캐스트')
     expect(networkAreaSpecs.acknowledgement.note).toContain('ACK')
     expect(networkAreaSpecs['tls-handshake'].note).toContain('0-RTT')
     expect(networkAreaSpecs['redirect-status'].note).toContain('307')
     expect(networkAreaSpecs['cookie-scope'].note).toContain('Path')
-    expect(networkAreaSpecs['transport-head-of-line'].note).toContain('TCP')
+    expect(networkAreaSpecs['transport-head-of-line'].note).toContain('연결 혼잡 제어·대역폭은 공유')
   })
 })
