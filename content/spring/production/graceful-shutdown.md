@@ -24,23 +24,9 @@ references:
 
 개념적으로는 다음 순서를 생각할 수 있습니다.
 
-```text
-정상 서비스
-   │
-   │ SIGTERM / application stop
-   ▼
-종료 시작
-   │
-   ├─ 새 요청 수신 중단 또는 readiness 해제
-   │
-   ├─ 진행 중 요청 완료 대기
-   │
-   ├─ executor / scheduler 정리
-   │
-   └─ DB pool / 기타 자원 종료
-   ▼
-프로세스 종료
-```
+![정상 종료 · 신규 요청 차단과 진행 중 작업](/learning/spring/shutdown-drain-timeline.svg)
+
+Spring Boot의 정상 종료는 서버·수명주기 설정에 따라 신규 요청을 중단하고 기존 요청에 제한된 시간을 부여합니다. 모든 외부 효과나 진행 중 작업이 완료된다는 보장은 없습니다.
 
 중요한 점은 **영원히 기다릴 수는 없다는 것**입니다. 오래 걸리는 요청이나 멈춘 외부 API 호출 때문에 종료가 무한정 지연되면 배포 시스템이 강제 종료할 수 있습니다. 그래서 graceful shutdown에는 timeout이 함께 필요합니다.
 
