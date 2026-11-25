@@ -78,16 +78,8 @@ COMMIT
 
 Kafka 트랜잭션을 사용하면 Kafka 입력을 처리해 Kafka 출력을 쓰는 흐름에서 출력 레코드와 소비한 오프셋을 같은 Kafka 트랜잭션으로 묶는 구성이 가능합니다. 출력을 읽는 다운스트림 컨슈머는 `isolation.level=read_committed`로 중단된 트랜잭션의 출력을 제외해야 하며, 재처리·오프셋과 transactional producer의 수명도 올바르게 관리해야 합니다. 하지만 그 트랜잭션에 PostgreSQL, 결제 API, 이메일 시스템이 자동으로 참여하는 것은 아닙니다.
 
-```text
-Kafka input
-   │
-   ▼
-Kafka transaction
-  ├─ output records
-  └─ consumed offsets
+![Kafka 트랜잭션 · 출력과 오프셋의 원자적 확정](/learning/messaging-async/kafka-transaction-output-offset.svg)
 
-외부 DB/API 효과
-→ 별도 transaction / idempotency 경계
-```
+연속 오프셋 42를 처리하고 43을 다음 위치로 확정하는 예입니다. 트랜잭션이 abort되면 중단된 출력은 read_committed 소비자에게 노출되지 않으며 확정 위치 변경도 적용되지 않습니다.
 
 따라서 exactly-once는 “전체 시스템에서 모든 업무 효과가 물리적으로 한 번만 실행된다”는 문장이 아니라 **어느 자원과 트랜잭션 경계 안에서 중복을 제거하는지**를 구체적으로 설명해야 합니다.
