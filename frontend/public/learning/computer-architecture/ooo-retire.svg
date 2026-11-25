@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 360" role="img" aria-labelledby="ooo-retire-title ooo-retire-desc"><title id="ooo-retire-title">실행 완료 순서와 아키텍처 확정 순서</title><desc id="ooo-retire-desc">A load 장기 대기, B A 의존, C 독립. C 실행 완료 먼저, A 및 B 뒤에 완료, 순서대로 retire A B C.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="360"/><text x="28" y="43" class="h" text-anchor="start">실행 완료 순서와 아키텍처 확정 순서</text><text x="28" y="80" class="s" text-anchor="start">예시: A=load, B=A 결과 필요, C=독립 연산 · in-order retire 모델</text>
+<text x="28" y="129" class="b" text-anchor="start">실행 가능 상태</text>
+<rect x="28" y="145" width="280" height="70" class="p"/><text x="168" y="188" class="s" text-anchor="middle">A: load 대기</text>
+<rect x="340" y="145" width="280" height="70" class="p"/><text x="480" y="188" class="s" text-anchor="middle">B: A 결과 대기</text>
+<rect x="652" y="145" width="280" height="70" class="v"/><text x="792" y="188" class="s" text-anchor="middle">C: 실행 완료</text>
+<path d="M308 180H332" class="e"/>
+<text x="28" y="253" class="b" text-anchor="start">retire (확정)</text>
+<rect x="28" y="269" width="280" height="57" class="p"/><text x="168" y="305.5" class="m" text-anchor="middle">A</text>
+<path d="M308 297H332" class="e"/>
+<rect x="340" y="269" width="280" height="57" class="p"/><text x="480" y="305.5" class="m" text-anchor="middle">B</text>
+<path d="M620 297H644" class="e"/>
+<rect x="652" y="269" width="280" height="57" class="v"/><text x="792" y="305.5" class="m" text-anchor="middle">C</text>
+<text x="28" y="348" class="s" text-anchor="start">C의 실행 완료가 먼저여도 A의 예외가 발생하면 C를 확정하지 않을 수 있습니다.</text></svg>

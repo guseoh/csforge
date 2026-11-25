@@ -38,13 +38,9 @@ value ≈ sign × significand × 2^exponent
 
 ### IEEE 754 binary32의 필드 배치
 
-```text
-bit index     31      30             23 22                         0
-              +--------+---------------+----------------------------+
-field         | sign   | exponent      | fraction                   |
-width         | 1 bit  | 8 bits        | 23 bits                    |
-              +--------+---------------+----------------------------+
-```
+![정규 binary32 표현의 실제 비트와 해석식을 연결합니다.](/learning/computer-architecture/binary32.svg)
+
+*정규 binary32 표현의 실제 비트와 해석식을 연결합니다.*
 
 정규화된 유한수는 `(-1)^sign × 1.fraction × 2^(exponent - 127)`로 해석한다. `exponent`가 0이면 subnormal 또는 0으로 해석하며 숨은 선행 1을 쓰지 않고, 255이면 infinity 또는 NaN을 나타낸다.
 

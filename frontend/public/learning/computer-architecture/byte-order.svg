@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 324" role="img" aria-labelledby="byte-order-title byte-order-desc"><title id="byte-order-title">0x12345678 · 바이트 순서</title><desc id="byte-order-desc">주소 1000부터 big-endian 12 34 56 78, little-endian 78 56 34 12.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="324"/><text x="28" y="43" class="h" text-anchor="start">0x12345678 · 바이트 순서</text><text x="310" y="100" class="m" text-anchor="middle">1000</text>
+<text x="460" y="100" class="m" text-anchor="middle">1001</text>
+<text x="610" y="100" class="m" text-anchor="middle">1002</text>
+<text x="760" y="100" class="m" text-anchor="middle">1003</text>
+<text x="28" y="159" class="b" text-anchor="start">Big-endian</text>
+<rect x="235" y="120" width="150" height="62" class="v"/><text x="310" y="159" class="m" text-anchor="middle">12</text>
+<rect x="385" y="120" width="150" height="62" class="p"/><text x="460" y="159" class="m" text-anchor="middle">34</text>
+<rect x="535" y="120" width="150" height="62" class="p"/><text x="610" y="159" class="m" text-anchor="middle">56</text>
+<rect x="685" y="120" width="150" height="62" class="p"/><text x="760" y="159" class="m" text-anchor="middle">78</text>
+<text x="28" y="249" class="b" text-anchor="start">Little-endian</text>
+<rect x="235" y="210" width="150" height="62" class="p"/><text x="310" y="249" class="m" text-anchor="middle">78</text>
+<rect x="385" y="210" width="150" height="62" class="p"/><text x="460" y="249" class="m" text-anchor="middle">56</text>
+<rect x="535" y="210" width="150" height="62" class="p"/><text x="610" y="249" class="m" text-anchor="middle">34</text>
+<rect x="685" y="210" width="150" height="62" class="v"/><text x="760" y="249" class="m" text-anchor="middle">12</text>
+<text x="28" y="308" class="s" text-anchor="start">회색 칸은 최상위 바이트 0x12입니다. 정수 값 자체는 동일합니다.</text></svg>

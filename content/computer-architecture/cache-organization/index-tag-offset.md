@@ -26,10 +26,9 @@ references:
 - **index**: 어느 세트를 확인할지 고른다.
 - **tag**: 그 세트에 들어 있는 라인이 요청한 메모리 블록과 같은지 확인한다.
 
-```text
-high bits                              low bits
-|              tag              | index | offset |
-```
+![비트 폭은 실제 필드 크기에 비례하며 해시 인덱싱 등은 생략합니다.](/learning/computer-architecture/address-fields.svg)
+
+*비트 폭은 실제 필드 크기에 비례하며 해시 인덱싱 등은 생략합니다.*
 
 ### 먼저 라인 수와 세트 수를 구한다
 

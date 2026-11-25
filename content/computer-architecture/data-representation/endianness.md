@@ -30,15 +30,9 @@ references:
 
 32-bit 값 `0x12345678`을 주소 1000부터 저장한다고 해 보자.
 
-```text
-Big-endian
-address 1000  1001  1002  1003
-value     12    34    56    78
+![동일한 정수를 낮은 주소부터 배치한 예입니다.](/learning/computer-architecture/byte-order.svg)
 
-Little-endian
-address 1000  1001  1002  1003
-value     78    56    34    12
-```
+*동일한 정수를 낮은 주소부터 배치한 예입니다.*
 
 두 경우가 표현하는 수치 값은 같다. 차이는 그 값을 여러 바이트로 분해해 메모리에 놓는 순서다. CPU가 레지스터 안의 정수를 연산할 때 숫자가 매번 앞뒤로 뒤집히는 것이 아니다.
 

@@ -22,14 +22,9 @@ references:
 
 TLB에 필요한 주소 변환이 없다면 저장된 매핑 정보를 찾아야 한다. **하드웨어 페이지 테이블 walker가 있는 대표 모델**에서는 MMU가 다단계 페이지 테이블의 가상 페이지 번호를 여러 인덱스로 나눠 루트부터 하위 단계까지 따라간다. 이 과정을 페이지 테이블 순회(page-table walk)라고 한다. 아키텍처마다 탐색을 하드웨어에 맡기는지, OS 소프트웨어가 관리하는 TLB refill handler에 맡기는지 다르다.
 
-```text
-virtual address
-   ├─ VPN part A ─> level 1 entry
-   ├─ VPN part B ─> level 2 entry
-   └─ ...        ─> leaf entry ─> physical frame
+![Sv39의 유효한 4KiB leaf 순회 예이며 모든 ISA가 하드웨어 walker를 제공하는 것은 아닙니다.](/learning/computer-architecture/sv39-walk.svg)
 
-page offset ───────────────────────> 그대로 유지
-```
+*Sv39의 유효한 4KiB leaf 순회 예이며 모든 ISA가 하드웨어 walker를 제공하는 것은 아닙니다.*
 
 ### 순회 자체도 메모리 접근을 만든다
 
