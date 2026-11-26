@@ -21,7 +21,9 @@ public interface WrongNoteRepository extends JpaRepository<WrongNote, Long> {
 
     List<WrongNote> findByQuestionIdIn(List<Long> questionIds);
 
-    @EntityGraph(attributePaths = {"question", "lastWrongAttempt", "lastWrongAttempt.selectedChoice"})
+    boolean existsByQuestionId(long questionId);
+
+    @EntityGraph(attributePaths = {"question", "lastWrongAttempt", "lastWrongAttempt.quizSession", "lastWrongAttempt.selectedChoice"})
     Optional<WrongNote> findByQuestionId(long questionId);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
