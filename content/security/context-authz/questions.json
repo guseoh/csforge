@@ -1,8 +1,324 @@
 [
-  {"kind":"question","contentKey":"security.core.context-authz.context-holder.q1","promptMarkdown":"요청 종료 후 `SecurityContext`를 정리하지 않아 다음 요청에 이전 신원이 섞이는 문제를 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.context-authz.context-holder"],"acceptedAnswers":["이전 요청의 인증 정보가 다음 요청에 섞인다","스레드 재사용으로 이전 인증 주체가 노출된다","보안 컨텍스트 누출","SecurityContext 누출"],"explanationMarkdown":"요청 처리 스레드가 재사용될 때 이전 요청의 `SecurityContext`가 남아 있으면 다음 요청이 다른 사용자의 신원으로 처리될 수 있다. 요청 종료 시 컨텍스트를 정리해야 한다."},
-  {"kind":"question","contentKey":"security.core.context-authz.method-security.q1","promptMarkdown":"`@PreAuthorize`가 붙은 메서드를 같은 빈의 다른 메서드가 `this.securedMethod()`로 호출한다. 기본 프록시 기반 메서드 보안에서 반드시 가로채기된다고 가정하면 안 되는 이유는?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.context-authz.method-security"],"modelAnswer":"같은 대상 객체 내부 호출은 외부 프록시를 다시 통과하지 않을 수 있어 메서드 보안 인터셉터가 실행되지 않을 수 있다. 실제 프록시 경계를 확인하고 인가 책임을 호출 구조에 맞게 배치해야 한다.","explanationMarkdown":"프록시 기반 보안은 프록시를 거치는 메서드 호출을 가로챈다. 같은 객체 안에서 `this.securedMethod()`를 호출하면 프록시를 우회할 수 있어 `@PreAuthorize`가 실행된다고 보장할 수 없다."},
-  {"kind":"question","contentKey":"security.core.context-authz.async-context.q1","promptMarkdown":"HTTP 스레드에서 작업 실행기의 스레드로 넘어갈 때 현재 인증 정보가 사라지는 기본 원인을 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["security.core.context-authz.async-context"],"acceptedAnswers":["SecurityContext가 스레드 로컬이라 다른 스레드에 자동 전달되지 않는다","스레드 로컬의 인증 정보가 작업 스레드로 자동 전파되지 않는다","SecurityContext는 ThreadLocal에 있으므로 다른 스레드에 자동 전파되지 않는다"],"explanationMarkdown":"기본 스레드 로컬 저장 방식에서는 요청 스레드의 `SecurityContext`가 다른 작업 스레드로 자동 복사되지 않는다. 비동기 작업에 필요한 인증 정보는 명시적으로 전달하고 사용 후 정리해야 한다."},
-  {"kind":"question","contentKey":"security.core.context-authz.context-holder.q2","promptMarkdown":"SecurityContextHolder가 스레드 로컬이라는 이유만으로 비동기 작업 실행기와 요청 스레드 사이의 인증을 안전하게 공유해도 되는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.context-authz.context-holder","security.core.context-authz.async-context"],"modelAnswer":"아니다. 작업 스레드가 다르고 재사용되므로 문맥이 자동 전달되지 않거나 이전 요청 문맥이 남을 수 있다. 명시적 전달용 래퍼와 작업 종료 정리를 사용하고, 장기 작업에서는 최신 권한을 다시 확인할지 결정해야 한다.","explanationMarkdown":"스레드 로컬은 스레드마다 값을 분리할 뿐 작업 사이의 안전한 전파를 보장하지 않는다. 재사용되는 작업 스레드에는 이전 값이 남을 수도 있으므로 전달과 정리를 함께 설계해야 한다."},
-  {"kind":"question","contentKey":"security.core.context-authz.method-security.q2","promptMarkdown":"같은 애플리케이션 서비스 메서드에 다음 두 호출 경로가 있다.\n\n- 컨트롤러: `@PreAuthorize`를 거쳐 호출\n- 배치와 메시지 소비자: 서비스 메서드를 직접 호출\n\n어떤 인가 누락을 점검해야 하는가?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["security.core.context-authz.method-security"],"modelAnswer":"컨트롤러 경계의 애너테이션만으로 모든 호출 경로가 보호된다고 가정하면 배치·메시지 소비자 경로가 인가를 우회할 수 있다. 실제 프록시 가로채기와 호출 진입점을 확인하고, 유스케이스별 실행 주체와 시스템 권한 및 메서드 수준 정책을 각 실행 경계에 맞게 명시해야 한다.","explanationMarkdown":"컨트롤러의 `@PreAuthorize`는 그 경로만 보호한다. 배치나 메시지 소비자가 서비스를 직접 호출하면 같은 인가를 거치지 않을 수 있으므로 각 진입 경로와 서비스의 권한 정책을 확인해야 한다."},
-  {"kind":"question","contentKey":"security.core.context-authz.async-context.q2","promptMarkdown":"인증 정보가 사용되는 시점이 다음처럼 분리된다.\n\n1. 요청 시점에 인증 정보를 캡처한다.\n2. 10분 뒤 비동기 환불 작업에 그대로 전달한다.\n\n실행 전에 추가로 판단해야 할 것은?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.context-authz.async-context"],"modelAnswer":"요청 제출 시점의 신원과 실행 시점의 권한·계정 상태가 달라졌을 수 있으므로 문맥을 무조건 신뢰할지 최신 인가를 다시 확인할지 정해야 한다. 장기 작업에는 실행 주체의 식별 정보를 명시적으로 기록하고 재검증·감사·취소 정책을 설계하는 편이 안전하다.","explanationMarkdown":"요청 때 캡처한 인증 정보는 10분 뒤에도 같은 권한을 가진다는 보장이 없다. 환불 실행 시점에 계정 상태와 작업 권한을 다시 확인할지 정책으로 정해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.context-holder.q1",
+    "promptMarkdown": "요청 종료 후 `SecurityContext`를 정리하지 않아 다음 요청에 이전 신원이 섞이는 문제를 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.context-holder"
+    ],
+    "acceptedAnswers": [
+      "이전 요청의 인증 정보가 다음 요청에 섞인다",
+      "스레드 재사용으로 이전 인증 주체가 노출된다",
+      "보안 컨텍스트 누출",
+      "SecurityContext 누출"
+    ],
+    "explanationMarkdown": "요청 처리 스레드가 재사용될 때 이전 요청의 `SecurityContext`가 남아 있으면 다음 요청이 다른 사용자의 신원으로 처리될 수 있다. 요청 종료 시 컨텍스트를 정리해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.method-security.q1",
+    "promptMarkdown": "`@PreAuthorize`가 붙은 메서드를 같은 빈의 다른 메서드가 `this.securedMethod()`로 호출한다. 기본 프록시 기반 메서드 보안에서 반드시 가로채기된다고 가정하면 안 되는 이유는?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.method-security"
+    ],
+    "modelAnswer": "같은 대상 객체 내부 호출은 외부 프록시를 다시 통과하지 않을 수 있어 메서드 보안 인터셉터가 실행되지 않을 수 있다. 실제 프록시 경계를 확인하고 인가 책임을 호출 구조에 맞게 배치해야 한다.",
+    "explanationMarkdown": "프록시 기반 보안은 프록시를 거치는 메서드 호출을 가로챈다. 같은 객체 안에서 `this.securedMethod()`를 호출하면 프록시를 우회할 수 있어 `@PreAuthorize`가 실행된다고 보장할 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.async-context.q1",
+    "promptMarkdown": "HTTP 스레드에서 작업 실행기의 스레드로 넘어갈 때 현재 인증 정보가 사라지는 기본 원인을 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.async-context"
+    ],
+    "acceptedAnswers": [
+      "SecurityContext가 스레드 로컬이라 다른 스레드에 자동 전달되지 않는다",
+      "스레드 로컬의 인증 정보가 작업 스레드로 자동 전파되지 않는다",
+      "SecurityContext는 ThreadLocal에 있으므로 다른 스레드에 자동 전파되지 않는다"
+    ],
+    "explanationMarkdown": "기본 스레드 로컬 저장 방식에서는 요청 스레드의 `SecurityContext`가 다른 작업 스레드로 자동 복사되지 않는다. 비동기 작업에 필요한 인증 정보는 명시적으로 전달하고 사용 후 정리해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.context-holder.q2",
+    "promptMarkdown": "SecurityContextHolder가 스레드 로컬이라는 이유만으로 비동기 작업 실행기와 요청 스레드 사이의 인증을 안전하게 공유해도 되는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.context-holder",
+      "security.core.context-authz.async-context"
+    ],
+    "modelAnswer": "아니다. 작업 스레드가 다르고 재사용되므로 문맥이 자동 전달되지 않거나 이전 요청 문맥이 남을 수 있다. 명시적 전달용 래퍼와 작업 종료 정리를 사용하고, 장기 작업에서는 최신 권한을 다시 확인할지 결정해야 한다.",
+    "explanationMarkdown": "스레드 로컬은 스레드마다 값을 분리할 뿐 작업 사이의 안전한 전파를 보장하지 않는다. 재사용되는 작업 스레드에는 이전 값이 남을 수도 있으므로 전달과 정리를 함께 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.method-security.q2",
+    "promptMarkdown": "같은 애플리케이션 서비스 메서드에 다음 두 호출 경로가 있다.\n\n- 컨트롤러: `@PreAuthorize`를 거쳐 호출\n- 배치와 메시지 소비자: 서비스 메서드를 직접 호출\n\n어떤 인가 누락을 점검해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.method-security"
+    ],
+    "modelAnswer": "컨트롤러 경계의 애너테이션만으로 모든 호출 경로가 보호된다고 가정하면 배치·메시지 소비자 경로가 인가를 우회할 수 있다. 실제 프록시 가로채기와 호출 진입점을 확인하고, 유스케이스별 실행 주체와 시스템 권한 및 메서드 수준 정책을 각 실행 경계에 맞게 명시해야 한다.",
+    "explanationMarkdown": "컨트롤러의 `@PreAuthorize`는 그 경로만 보호한다. 배치나 메시지 소비자가 서비스를 직접 호출하면 같은 인가를 거치지 않을 수 있으므로 각 진입 경로와 서비스의 권한 정책을 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.async-context.q2",
+    "promptMarkdown": "인증 정보가 사용되는 시점이 다음처럼 분리된다.\n\n1. 요청 시점에 인증 정보를 캡처한다.\n2. 10분 뒤 비동기 환불 작업에 그대로 전달한다.\n\n실행 전에 추가로 판단해야 할 것은?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.async-context"
+    ],
+    "modelAnswer": "요청 제출 시점의 신원과 실행 시점의 권한·계정 상태가 달라졌을 수 있으므로 문맥을 무조건 신뢰할지 최신 인가를 다시 확인할지 정해야 한다. 장기 작업에는 실행 주체의 식별 정보를 명시적으로 기록하고 재검증·감사·취소 정책을 설계하는 편이 안전하다.",
+    "explanationMarkdown": "요청 때 캡처한 인증 정보는 10분 뒤에도 같은 권한을 가진다는 보장이 없다. 환불 실행 시점에 계정 상태와 작업 권한을 다시 확인할지 정책으로 정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.async-context.q4",
+    "promptMarkdown": "Spring MVC 요청 스레드에서 `@Async` 메서드를 호출했더니, 비동기 워커 스레드 안에서 `SecurityContextHolder.getContext().getAuthentication()`이 `null`이 되어 인가가 실패했다. 원인과 가장 안전한 해결책은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.async-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`SecurityContextHolder`의 기본 전략은 `ThreadLocal`이므로 새 워커 스레드에 자동 전파되지 않는다. `DelegatingSecurityContextAsyncTaskExecutor`로 컨텍스트를 안전하게 전파(작업 종료 시 자동 clear)하거나, 아예 요청 스레드에서 필요한 `memberId`·권한 값만 명시적 인자로 전달한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "스레드 풀 워커에 수동으로 `SecurityContext`를 복사하고 비우지 않으면 다음 작업에 이전 사용자 신원이 남는 심각한 교차 오염이 생긴다. 전용 Delegating Executor나 명시적 값 전달이 안전하다."
+      },
+      {
+        "key": "B",
+        "content": "`SecurityContextHolder.MODE_GLOBAL`로 바꾸면 모든 멀티 사용자 요청이 안전하게 공유된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`MODE_GLOBAL`은 JVM 전체가 단일 컨텍스트를 공유하는 데스크톱 앱용 모드다. 웹 서버에서 쓰면 모든 사용자의 인증 정보가 뒤섞이는 대형 사고가 난다."
+      },
+      {
+        "key": "C",
+        "content": "`MODE_INHERITABLETHREADLOCAL`을 쓰면 고정 크기 스레드 풀(ThreadPoolTaskExecutor)에서도 매 요청마다 최신 사용자가 정확히 전파된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`InheritableThreadLocal`은 스레드가 '최초 생성'될 때만 부모 값을 복사하므로, 스레드를 재사용하는 스레드 풀에서는 이전 사용자의 컨텍스트가 남아 치명적인 보안 사고를 낸다."
+      },
+      {
+        "key": "D",
+        "content": "비동기 메서드에서는 보안을 적용할 수 없으므로 `@Async`를 전부 제거해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Delegating Executor나 필요한 식별자·권한을 명시적 파라미터로 넘기면 비동기 작업도 안전하게 처리할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "스레드 풀 기반 비동기 실행에서는 `InheritableThreadLocal`을 쓰면 안 되며, `DelegatingSecurityContextAsyncTaskExecutor`를 사용하거나 요청 스레드에서 추출한 불변 식별자(`memberId`)를 명시적으로 전달해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.async-context.q5",
+    "promptMarkdown": "스레드 풀에서 실행되는 비동기 작업이나 백그라운드 배치에서 `SecurityContext` 전파보다 '호출 시점에 검증된 `actorId`를 명시적 파라미터로 넘기는 방식'이 선호되는 대표 경우는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.async-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "HTTP 요청이 끝난 뒤 별도 큐/스케줄러에서 비동기 실행되는 작업은 요청 스레드 생명주기와 분리되므로, 요청 경계에서 인증·인가를 완료하고 불변 작업 페이로드에 `actorId`를 명시적으로 담아 전달하는 편이 스레드 오염 위험 없이 명확하다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "요청 수명주기를 벗어나는 큐·Outbox·배치 작업은 `ThreadLocal` 기반 컨텍스트에 의존하면 안 되며, 실행 주체 ID를 명시적 데이터로 전달해야 안전하고 추적 가능하다."
+      },
+      {
+        "key": "B",
+        "content": "파라미터로 넘기면 인가 검사를 아예 하지 않아도 되기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "요청 진입 시점에 인증·인가를 반드시 완료한 뒤 신뢰할 수 있는 작업으로 발행해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "Java에서는 `SecurityContext` 객체를 메서드 인자로 넘기는 것이 문법적으로 금지되어 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "문법적 금지가 아니라 스레드 재사용 오염 방지와 도메인 결합도 감소를 위한 설계 선택이다."
+      },
+      {
+        "key": "D",
+        "content": "명시적 파라미터를 쓰면 메모리 사용량이 항상 0 바이트가 된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "메모리 0 바이트가 아니라 스레드 간 컨텍스트 누출 방지와 명확한 계약이 핵심 이유다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "요청 내 단기 병렬화는 `DelegatingSecurityContextExecutor`로, 요청 밖 비동기/큐 작업은 진입점 인가 후 명시적 `actorId` 전달로 경계를 분명히 나눈다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.context-holder.q4",
+    "promptMarkdown": "서블릿 컨테이너(Tomcat)가 워커 스레드를 재사용하는 환경에서, 요청 처리 종료 시 `SecurityContextHolder.clearContext()`가 반드시 실행되어야 하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.context-holder"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JVM 가비지 컬렉터가 매 HTTP 응답마다 `ThreadLocal`을 자동으로 비워주므로 `clearContext()`는 불필요하다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "스레드 풀의 스레드는 살아 있으므로 `ThreadLocal` 값이 자동 해제되지 않고 다음 요청으로 그대로 누출된다."
+      },
+      {
+        "key": "B",
+        "content": "`SecurityContext`가 `ThreadLocal`에 저장되므로 요청 종료 시 비우지 않으면 같은 스레드가 다음 사용자의 요청을 처리할 때 이전 사용자의 인증·권한 정보가 그대로 남아 치명적인 계정 교차 노출이 발생한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Tomcat 스레드 풀은 스레드를 계속 재사용한다. Spring Security의 `SecurityContextHolderFilter`는 `try/finally`에서 `clearContext()`를 호출해 스레드 오염을 원천 차단한다."
+      },
+      {
+        "key": "C",
+        "content": "`clearContext()`를 호출하지 않으면 DB 테이블의 사용자 행이 자동 삭제된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`SecurityContextHolder`는 요청 스레드 메모리(`ThreadLocal`) 상태일 뿐 DB 데이터를 삭제하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "`clearContext()`를 호출하면 사용자의 브라우저 쿠키까지 즉시 삭제되어 매 요청마다 재로그인해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "현재 요청 스레드의 `ThreadLocal`만 비우며, 세션/쿠키나 JWT는 다음 요청에서 다시 인증 컨텍스트를 복원한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`SecurityContextHolder`는 `ThreadLocal` 기반이므로, 요청 경계(`try/finally`)에서 `clearContext()`를 보장해야 스레드 재사용으로 인한 사용자 신원 오염을 막을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.context-holder.q5",
+    "promptMarkdown": "Spring Security에서 커스텀 인증 필터가 `SecurityContextHolder`에 새 인증 정보를 설정할 때 `SecurityContextHolder.getContext().setAuthentication(auth)` 대신 권장되는 안전한 패턴은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.context-holder"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`SecurityContext context = SecurityContextHolder.createEmptyContext(); context.setAuthentication(auth); SecurityContextHolder.setContext(context);`로 새 빈 컨텍스트를 만들어 교체해 다중 스레드 간 기존 컨텍스트 공유 race condition을 방지한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Spring Security 공식 문서가 권장하는 패턴으로, 기존 컨텍스트 인스턴스를 직접 변이(mutate)하지 않고 새 빈 컨텍스트를 생성·설정함으로써 동시성 경합을 예방한다."
+      },
+      {
+        "key": "B",
+        "content": "전역 `static SecurityContext` 싱글톤을 하나 만들어 모든 요청이 공유한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "싱글톤 컨텍스트 공유는 모든 사용자의 인증 정보가 뒤섞이는 최악의 보안 사고다."
+      },
+      {
+        "key": "C",
+        "content": "컨트롤러 메서드 끝에서 `SecurityContextHolder.setContext(null)`을 직접 호출한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`setContext(null)`은 `IllegalArgumentException`을 발생시키며 정리는 `clearContext()`로 수행해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "`Authentication`을 `HttpServletRequest` 속성 대신 시스템 환경 변수(`System.setProperty`)에 저장한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "시스템 프로퍼티는 JVM 전역 공유 상태이므로 요청별 인증 정보 저장소로 절대 쓸 수 없다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "공식 권장 패턴은 `createEmptyContext() -> setAuthentication(auth) -> setContext(context)`로 새 컨텍스트를 할당하는 것이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.method-security.q4",
+    "promptMarkdown": "아래 Spring Security 메서드 보안 설정에서 `@PreAuthorize`와 `@PostAuthorize`의 실행 시점과 활용 차이로 가장 정확한 것은?\n\n```java\n@PreAuthorize(\"hasRole('ADMIN') or #memberId == authentication.principal.memberId\")\npublic Profile getProfile(long memberId) { ... }\n\n@PostAuthorize(\"returnObject.ownerId == authentication.principal.memberId\")\npublic Document loadDocument(long docId) { ... }\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.method-security"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`@PreAuthorize`는 메서드 실행 전에 파라미터·권한을 검사해 무단 실행 자체를 차단하고, `@PostAuthorize`는 메서드 실행 후 반환 객체의 소유자를 검사해 권한이 없으면 `AccessDeniedException`을 던진다(따라서 상태 변경 메서드에는 `@PostAuthorize`를 쓰면 안 된다).",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`@PostAuthorize`는 메서드가 이미 실행된 뒤에 검사하므로, 수정/삭제 메서드에 쓰면 DB 변경이 이미 일어난 뒤 예외가 나거나 외부 부수 효과가 발생한다. 조회 시 반환 객체 소유권 확인 등에 제한적으로 사용한다."
+      },
+      {
+        "key": "B",
+        "content": "`@PostAuthorize`는 메서드 실행 전에 DB를 미리 조회해 차단한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`@PostAuthorize`는 이름 그대로 메서드 실행 후(`returnObject` 생성 후)에 표현식을 평가한다."
+      },
+      {
+        "key": "C",
+        "content": "`@PreAuthorize`는 컨트롤러에만 붙일 수 있고 `@Service` 빈에는 붙일 수 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`@EnableMethodSecurity`가 켜져 있으면 `@Service` 등 Spring 관리 빈의 유스케이스 메서드에서 가장 많이 활용된다."
+      },
+      {
+        "key": "D",
+        "content": "`@PreAuthorize` 표현식이 `false`를 반환하면 예외 없이 `null`을 조용히 반환한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "표현식이 `false`이면 `AuthorizationDeniedException`/`AccessDeniedException`을 던져 `403 Forbidden`으로 차단한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`@PreAuthorize`는 진입 전 차단(기본 선택), `@PostAuthorize`는 반환 객체 기반 검사(읽기 전용에 제한 사용)로 역할을 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.context-authz.method-security.q5",
+    "promptMarkdown": "Spring Security 6/7(Spring Boot 4)에서 메서드 보안을 활성화하고 테스트할 때, 반드시 확인해야 할 핵심 사항은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.context-authz.method-security"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "구버전 `@EnableGlobalMethodSecurity`만 사용해야 Spring Boot 4에서 동작한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`@EnableGlobalMethodSecurity`는 Spring Security 6에서 deprecated되었고 `@EnableMethodSecurity`가 현재 표준이다."
+      },
+      {
+        "key": "B",
+        "content": "단위 테스트에서 `new OrderService()`로 직접 생성해 호출해도 `@PreAuthorize`가 정상 작동한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`new`로 직접 생성한 객체는 Spring AOP 프록시가 감싸지 않으므로 `@PreAuthorize`가 전혀 실행되지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "허용 케이스 1개만 성공하면 거부 케이스는 테스트하지 않아도 안전하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "보안 설정 누락은 허용 케이스가 항상 성공하므로 거부 케이스 테스트가 없으면 운영 배포 전까지 탐지할 수 없다."
+      },
+      {
+        "key": "D",
+        "content": "`@EnableMethodSecurity` 설정이 활성화되어 있고, 대상 빈이 Spring 프록시를 통해 호출되며, 허용 사용자(성공)뿐 아니라 비인가 사용자(403 거부)와 미인증 사용자(401 거부) 테스트를 모두 검증해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "권한이 있는 테스트만 통과시키면 `@EnableMethodSecurity` 누락이나 프록시 우회로 모든 사용자가 통과하는 버그를 절대 발견할 수 없다. 반드시 거부(negative) 테스트를 작성해야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "메서드 보안은 `@EnableMethodSecurity` + 프록시 경유 + 미인증/비인가 거부 테스트 3박자가 맞아야 실제 보호 효과를 신뢰할 수 있다."
+  }
 ]

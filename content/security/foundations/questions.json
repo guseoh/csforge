@@ -1,8 +1,344 @@
 [
-  {"kind":"question","contentKey":"security.core.foundations.assets-threats.q1","promptMarkdown":"`GET /orders/{id}`가 로그인만 확인하고 주문 소유권을 확인하지 않는다. 이 문제를 자산·위협·취약점으로 나눠 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.foundations.assets-threats"],"modelAnswer":"자산은 다른 회원의 주문 정보, 위협은 로그인 사용자가 타인 주문 ID로 조회하는 것, 취약점은 서버의 리소스 소유권 인가 누락이다. ID 난독화만으로는 취약점이 제거되지 않는다.","explanationMarkdown":"보호할 자산은 주문 정보이고, 공격 상황은 로그인 사용자가 타인의 주문 ID를 조회하는 것이다. 이를 가능하게 하는 취약점은 서버가 주문 소유권을 검사하지 않는 데 있다."},
-  {"kind":"question","contentKey":"security.core.foundations.trust-boundary.q1","promptMarkdown":"프런트엔드 검증 뒤에도 백엔드 검증이 필요한 핵심 신뢰 경계 원칙을 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["security.core.foundations.trust-boundary"],"acceptedAnswers":["클라이언트 요청은 신뢰할 수 없으므로 서버에서 검증해야 한다","브라우저 검증은 우회할 수 있으므로 서버에서 다시 검증한다","클라이언트는 신뢰 경계 밖이며 서버 측 검증이 필요하다"],"explanationMarkdown":"브라우저의 검증은 공격자가 직접 HTTP 요청을 보내 우회할 수 있다. 서버는 신뢰 경계 밖에서 들어온 값을 다시 검증해야 한다."},
-  {"kind":"question","contentKey":"security.core.foundations.cia-least.q1","promptMarkdown":"애플리케이션 DB 계정이 실제로는 CRUD만 필요하지만 최고 관리자 권한을 갖고 있다. 최소 권한 관점의 위험을 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.foundations.cia-least"],"modelAnswer":"애플리케이션이 SQL 인젝션/원격 코드 실행(RCE) 등으로 침해되면 공격자가 필요 이상의 스키마와 DB 전체 권한까지 얻게 되어 피해 범위가 커진다. 실제 기능에 필요한 최소 DB 권한으로 제한해야 한다.","explanationMarkdown":"애플리케이션이 침해되면 공격자는 그 DB 계정의 권한을 사용할 수 있다. 실제 작업에 필요하지 않은 관리자 권한까지 주면 침해 범위가 전체 DB로 넓어진다."},
-  {"kind":"question","contentKey":"security.core.foundations.assets-threats.q2","promptMarkdown":"고객 주문 데이터가 공개 객체 저장소에 노출되었다. 이 사건을 자산·위협·취약점으로 나누어 설명하고 첫 방어 검토 지점을 제시하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.foundations.assets-threats"],"modelAnswer":"자산은 고객 주문과 개인정보이고, 위협은 이를 무단 열람·수집하려는 사건이나 행위이며, 위협 행위자는 그 접근을 시도하는 공격자다. 취약점은 저장소 ACL이나 공개 URL 정책이 의도치 않게 열려 있는 것이다. 접근 정책·자격 증명 범위·노출 경로를 확인하고 최소 권한과 비공개 기본값을 적용하는 것이 첫 방어 지점이다.","explanationMarkdown":"노출된 주문 데이터가 자산, 무단 열람·수집이 위협, 이를 시도하는 공격자가 위협 행위자다. 공개 ACL이나 URL 설정이 취약점이므로 저장소 접근 정책과 자격 증명 범위를 먼저 확인해야 한다."},
-  {"kind":"question","contentKey":"security.core.foundations.trust-boundary.q2","promptMarkdown":"브라우저가 `quantity`를 1~10으로 검증했지만 공격자가 직접 `quantity=100000` 요청을 보냈다. 어느 경계에서 무엇을 다시 검증해야 하는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.foundations.trust-boundary"],"modelAnswer":"브라우저는 신뢰 경계 밖이므로 API가 요청 파싱 후 범위와 권한을 다시 검증해야 한다. 애플리케이션·도메인 불변식과 DB 제약도 필요한 경우 방어적으로 두고, 실패는 상태 변경 전에 4xx로 끝내야 한다.","explanationMarkdown":"`quantity=100000`은 프런트엔드 제한을 건너뛴 요청이다. 서버의 요청 검증과 도메인 규칙이 허용 범위를 확인하고 상태를 바꾸기 전에 거부해야 한다."},
-  {"kind":"question","contentKey":"security.core.foundations.cia-least.q2","promptMarkdown":"주문 DB의 금액이 공격자에 의해 바뀌었고, 이어서 장애로 주문 조회가 중단됐다. 차례로 손상된 보안 목표는 무엇인가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.foundations.cia-least"],"choices":[{"key":"A","content":"기밀성, 무결성","displayOrder":0,"rationaleMarkdown":"금액 변경은 데이터가 정확하게 유지되는 무결성을 해친다. 조회 중단은 서비스를 사용할 수 있는 가용성 문제다."},{"key":"B","content":"무결성, 가용성","displayOrder":1,"rationaleMarkdown":"금액의 무단 변경은 무결성 침해이고, 주문 조회 중단은 필요한 시점에 서비스를 이용할 수 없는 가용성 침해다."},{"key":"C","content":"가용성, 기밀성","displayOrder":2,"rationaleMarkdown":"조회 중단이 가용성 문제인 것은 맞지만 먼저 일어난 금액 변경은 가용성이 아니라 무결성 문제다. 데이터가 외부에 노출된 정황도 없다."},{"key":"D","content":"기밀성, 가용성","displayOrder":3,"rationaleMarkdown":"조회 중단은 가용성 문제지만 금액 변경은 비밀 정보의 노출이 아니라 데이터 무결성 침해다."}],"correctChoiceKey":"B","explanationMarkdown":"기밀성은 무단 열람, 무결성은 무단 변경, 가용성은 필요한 때 이용할 수 있는 상태와 관련된다. 이 사례에는 변경과 이용 중단이 차례로 나타났다."}
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.assets-threats.q1",
+    "promptMarkdown": "`GET /orders/{id}`가 로그인만 확인하고 주문 소유권을 확인하지 않는다. 이 문제를 자산·위협·취약점으로 나눠 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.assets-threats"
+    ],
+    "modelAnswer": "자산은 다른 회원의 주문 정보, 위협은 로그인 사용자가 타인 주문 ID로 조회하는 것, 취약점은 서버의 리소스 소유권 인가 누락이다. ID 난독화만으로는 취약점이 제거되지 않는다.",
+    "explanationMarkdown": "보호할 자산은 주문 정보이고, 공격 상황은 로그인 사용자가 타인의 주문 ID를 조회하는 것이다. 이를 가능하게 하는 취약점은 서버가 주문 소유권을 검사하지 않는 데 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.trust-boundary.q1",
+    "promptMarkdown": "프런트엔드 검증 뒤에도 백엔드 검증이 필요한 핵심 신뢰 경계 원칙을 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.trust-boundary"
+    ],
+    "acceptedAnswers": [
+      "클라이언트 요청은 신뢰할 수 없으므로 서버에서 검증해야 한다",
+      "브라우저 검증은 우회할 수 있으므로 서버에서 다시 검증한다",
+      "클라이언트는 신뢰 경계 밖이며 서버 측 검증이 필요하다"
+    ],
+    "explanationMarkdown": "브라우저의 검증은 공격자가 직접 HTTP 요청을 보내 우회할 수 있다. 서버는 신뢰 경계 밖에서 들어온 값을 다시 검증해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.cia-least.q1",
+    "promptMarkdown": "애플리케이션 DB 계정이 실제로는 CRUD만 필요하지만 최고 관리자 권한을 갖고 있다. 최소 권한 관점의 위험을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.cia-least"
+    ],
+    "modelAnswer": "애플리케이션이 SQL 인젝션/원격 코드 실행(RCE) 등으로 침해되면 공격자가 필요 이상의 스키마와 DB 전체 권한까지 얻게 되어 피해 범위가 커진다. 실제 기능에 필요한 최소 DB 권한으로 제한해야 한다.",
+    "explanationMarkdown": "애플리케이션이 침해되면 공격자는 그 DB 계정의 권한을 사용할 수 있다. 실제 작업에 필요하지 않은 관리자 권한까지 주면 침해 범위가 전체 DB로 넓어진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.assets-threats.q2",
+    "promptMarkdown": "고객 주문 데이터가 공개 객체 저장소에 노출되었다. 이 사건을 자산·위협·취약점으로 나누어 설명하고 첫 방어 검토 지점을 제시하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.assets-threats"
+    ],
+    "modelAnswer": "자산은 고객 주문과 개인정보이고, 위협은 이를 무단 열람·수집하려는 사건이나 행위이며, 위협 행위자는 그 접근을 시도하는 공격자다. 취약점은 저장소 ACL이나 공개 URL 정책이 의도치 않게 열려 있는 것이다. 접근 정책·자격 증명 범위·노출 경로를 확인하고 최소 권한과 비공개 기본값을 적용하는 것이 첫 방어 지점이다.",
+    "explanationMarkdown": "노출된 주문 데이터가 자산, 무단 열람·수집이 위협, 이를 시도하는 공격자가 위협 행위자다. 공개 ACL이나 URL 설정이 취약점이므로 저장소 접근 정책과 자격 증명 범위를 먼저 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.trust-boundary.q2",
+    "promptMarkdown": "브라우저가 `quantity`를 1~10으로 검증했지만 공격자가 직접 `quantity=100000` 요청을 보냈다. 어느 경계에서 무엇을 다시 검증해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.trust-boundary"
+    ],
+    "modelAnswer": "브라우저는 신뢰 경계 밖이므로 API가 요청 파싱 후 범위와 권한을 다시 검증해야 한다. 애플리케이션·도메인 불변식과 DB 제약도 필요한 경우 방어적으로 두고, 실패는 상태 변경 전에 4xx로 끝내야 한다.",
+    "explanationMarkdown": "`quantity=100000`은 프런트엔드 제한을 건너뛴 요청이다. 서버의 요청 검증과 도메인 규칙이 허용 범위를 확인하고 상태를 바꾸기 전에 거부해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.cia-least.q2",
+    "promptMarkdown": "주문 DB의 금액이 공격자에 의해 바뀌었고, 이어서 장애로 주문 조회가 중단됐다. 차례로 손상된 보안 목표는 무엇인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.cia-least"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "기밀성, 무결성",
+        "displayOrder": 0,
+        "rationaleMarkdown": "금액 변경은 데이터가 정확하게 유지되는 무결성을 해친다. 조회 중단은 서비스를 사용할 수 있는 가용성 문제다."
+      },
+      {
+        "key": "B",
+        "content": "무결성, 가용성",
+        "displayOrder": 1,
+        "rationaleMarkdown": "금액의 무단 변경은 무결성 침해이고, 주문 조회 중단은 필요한 시점에 서비스를 이용할 수 없는 가용성 침해다."
+      },
+      {
+        "key": "C",
+        "content": "가용성, 기밀성",
+        "displayOrder": 2,
+        "rationaleMarkdown": "조회 중단이 가용성 문제인 것은 맞지만 먼저 일어난 금액 변경은 가용성이 아니라 무결성 문제다. 데이터가 외부에 노출된 정황도 없다."
+      },
+      {
+        "key": "D",
+        "content": "기밀성, 가용성",
+        "displayOrder": 3,
+        "rationaleMarkdown": "조회 중단은 가용성 문제지만 금액 변경은 비밀 정보의 노출이 아니라 데이터 무결성 침해다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "기밀성은 무단 열람, 무결성은 무단 변경, 가용성은 필요한 때 이용할 수 있는 상태와 관련된다. 이 사례에는 변경과 이용 중단이 차례로 나타났다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.assets-threats.q4",
+    "promptMarkdown": "보안 위협 모델링에서 '자산(Asset)', '취약점(Vulnerability)', '위협(Threat)', '위험(Risk)'의 구분이 가장 올바르게 짝지어진 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.assets-threats"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "자산: 보호해야 할 고객 결제 정보·계정 | 취약점: 소유권 검증 누락(BOLA) | 위협: 공격자가 ID를 변조해 타인 정보를 탈취하려는 행위 | 위험: 그 취약점이 악용될 가능성과 피해 영향의 결합",
+        "displayOrder": 0,
+        "rationaleMarkdown": "무엇을 지킬지(자산), 어떤 약점이 있는지(취약점), 누가 어떻게 공격할지(위협), 발생 가능성×영향(위험)을 구분해야 한정된 보안 리소스를 우선순위에 맞게 투입할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "자산: 방화벽 장비 | 취약점: 공격자 본인 | 위협: 비밀번호 길이 16자",
+        "displayOrder": 1,
+        "rationaleMarkdown": "개념들이 서로 잘못 매핑되었다. 공격자는 위협 주체이고 취약점은 시스템 내부의 약점이다."
+      },
+      {
+        "key": "C",
+        "content": "취약점이 없어도 자산이 존재하면 항상 최고 수준의 위험이 발생한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "위험은 자산 가치, 위협 주체, 악용 가능한 취약점과 통제 수준을 종합해 평가한다."
+      },
+      {
+        "key": "D",
+        "content": "위협 모델링은 해킹 사고가 이미 터진 뒤에 사후 보고서로만 작성하는 문서다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "설계·구현 단계에서 미리 자산과 신뢰 경계, 위협을 식별해야 수정 비용이 가장 적다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "자산·취약점·위협·위험을 명확히 구분하면 막연한 불안이 아니라 구체적인 통제 우선순위로 보안 설계를 이끌 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.assets-threats.q5",
+    "promptMarkdown": "신규 파일 업로드·공유 기능을 설계할 때 위협 모델링의 출발점으로 가장 효과적인 질문 순서는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.assets-threats"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "1) 보호할 자산(비공개 파일·서버 디스크·사용자 세션) 식별 → 2) 신뢰 경계(외부 업로드·다운로드 URL) 표시 → 3) 경로 순회·BOLA·악성 HTML·용량 DoS 같은 위협 도출 → 4) 통제와 거부 테스트 설계",
+        "displayOrder": 0,
+        "rationaleMarkdown": "자산과 신뢰 경계를 먼저 그리면 어떤 입력이 위험한지, 어디서 인가·검증·격리를 수행해야 하는지 빠짐없이 도출된다."
+      },
+      {
+        "key": "B",
+        "content": "보안 라이브러리 10개를 먼저 `build.gradle`에 전부 추가하고 자산 정의는 생략한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "자산과 위협 분석 없이 도구만 추가하면 정작 핵심 취약점(예: BOLA, Path Traversal)은 그대로 남는다."
+      },
+      {
+        "key": "C",
+        "content": "내부 관리자만 쓰는 기능이면 위협이 전혀 없으므로 인가와 검증을 모두 생략한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "관리자 계정 탈취나 내부 오남용, CSRF/SSRF를 고려해 내부 기능에도 최소 권한과 검증을 적용해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "운영 배포 후 실제 침해가 발생할 때마다 하나씩 막는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "사후 대응만으로는 이미 발생한 데이터 유출과 신뢰 훼손을 되돌릴 수 없으므로 설계 단계 위협 모델링이 필수다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "체계적인 보안 설계는 '자산 → 신뢰 경계 → 위협(STRIDE 등) → 방어 통제 및 검증 테스트' 순서로 진행한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.cia-least.q4",
+    "promptMarkdown": "운영 백엔드 애플리케이션이 사용하는 PostgreSQL DB 계정에 `SUPERUSER` 권한 대신 최소 권한 원칙(Principle of Least Privilege)을 적용하는 가장 올바른 구성은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.cia-least"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "최소 권한 원칙은 사용자 화면에만 적용되고 서버 간 API 키나 클라우드 IAM 역할에는 적용되지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "IAM 역할, DB 계정, API 토큰, 컨테이너 권한(non-root) 모두 최소 권한 원칙의 핵심 대상이다."
+      },
+      {
+        "key": "B",
+        "content": "런타임 앱 계정에는 필요한 테이블의 `SELECT/INSERT/UPDATE/DELETE`만 부여하고, DDL(`CREATE/DROP/ALTER`)은 마이그레이션 전용 계정으로 분리한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "런타임 앱에 SQL 인젝션이나 침해가 발생하더라도 최소 권한 계정은 테이블 삭제·OS 명령 실행(`COPY ... PROGRAM`)·타 스키마 접근으로 피해가 확산되는 것을 크게 제한한다."
+      },
+      {
+        "key": "C",
+        "content": "개발과 운영 모두 `postgres` 슈퍼유저 계정을 공유하면 권한 오류가 없어 가장 안정적이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "슈퍼유저 계정이 탈취되면 DB 서버 전체와 호스트 파일시스템까지 즉시 장악당한다."
+      },
+      {
+        "key": "D",
+        "content": "읽기 전용 리포팅 배치에도 모든 테이블의 `DELETE`와 `DROP` 권한을 기본 부여한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "읽기 전용 작업에는 `SELECT` 권한만 부여해야 버그나 침해 시 데이터 파괴(무결성 훼손)를 막을 수 있다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "최소 권한 원칙은 사용자 권한뿐 아니라 앱 DB 계정·클라우드 IAM·컨테이너 실행 계정에도 적용해 침해 시 폭발 반경(Blast Radius)을 최소화한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.cia-least.q5",
+    "promptMarkdown": "보안의 3대 속성 CIA(기밀성·무결성·가용성) 중, '공격자가 네트워크 패킷을 변조해 송금 금액을 10,000원에서 1,000,000원으로 바꾼 사건'이 직접적으로 침해한 속성과 이를 방어하는 메커니즘은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.cia-least"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "가용성(Availability) 침해 — 로드밸런서 오토스케일링으로 변조를 막는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "가용성은 정상 사용자가 제때 서비스에 접근할 수 있는 속성(DoS 대응 등)이며 데이터 변조와는 다르다."
+      },
+      {
+        "key": "B",
+        "content": "기밀성(Confidentiality) 침해만 해당하며 무결성과는 무관하다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "기밀성은 비인가 열람 방지이고, 금액 값을 바꾼 행위는 무결성 침해다."
+      },
+      {
+        "key": "C",
+        "content": "Base64 인코딩을 적용하면 변조가 불가능해져 무결성이 보장된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Base64는 누구나 디코딩·재인코딩할 수 있는 단순 인코딩으로 기밀성도 무결성도 제공하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "무결성(Integrity) 침해 — TLS(AEAD 암호화·MAC)와 디지털 서명/HMAC으로 전송 중 변조를 감지·차단한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "데이터가 권한 없이 수정·변조되지 않았음을 보장하는 속성이 무결성(Integrity)이며, TLS와 서명/MAC이 이를 보호한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "기밀성(비인가 열람 방지), 무결성(비인가 변조 방지), 가용성(정상 접근 유지)의 차이를 구분해 각 위협에 맞는 암호·인가·가용성 통제를 선택한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.trust-boundary.q4",
+    "promptMarkdown": "쇼핑몰 결제 요청 API에서 클라이언트가 전송한 `totalPrice`를 그대로 결제 승인 금액으로 사용했다가 공격자가 100,000원 상품을 100원에 결제했다. 어떤 보안 원칙을 위반했는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.trust-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "HTTP 요청을 JSON 대신 XML로 바꾸면 금액 변조가 불가능해진다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "포맷과 무관하게 클라이언트 입력 자체를 신뢰한 것이 근본 결함이다."
+      },
+      {
+        "key": "B",
+        "content": "클라이언트가 보낸 금액이 양수(`> 0`)인지만 검증하면 충분하다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`100원`도 양수이므로 단순 양수 검증으로는 가격 변조를 전혀 막지 못한다."
+      },
+      {
+        "key": "C",
+        "content": "신뢰 경계(Trust Boundary) 위반 — 브라우저/앱에서 넘어오는 모든 입력은 변조 가능한 비신뢰 데이터이므로, 서버는 `productId`와 `quantity`만 받고 가격·할인·최종 결제 금액은 반드시 서버 DB 원본 데이터로 재계산해야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "클라이언트 UI에서 계산된 금액·권한·할인율은 공격자가 개발자 도구나 프록시로 얼마든지 바꿀 수 있다. 서버 신뢰 경계 안에서 핵심 비즈니스 값을 직접 산출해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "프론트엔드 JavaScript 코드를 난독화(minify)하지 않아서 생긴 문제다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "프론트엔드 코드를 아무리 난독화해도 HTTP 요청 패킷의 JSON 금액은 프록시로 즉시 수정할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "신뢰 경계 밖(클라이언트·외부 웹훅)에서 들어온 값은 '요청 의도'로만 취급하고, 가격·권한·소유권 같은 신뢰 데이터는 반드시 서버 원본에서 계산·검증해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.foundations.trust-boundary.q5",
+    "promptMarkdown": "외부 결제사(PG)가 결제 완료를 알리기 위해 우리 서버의 Webhook 엔드포인트(`POST /webhooks/pg`)를 호출한다. 이 신뢰 경계에서 반드시 수행해야 할 검증은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.foundations.trust-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "요청 헤더 `User-Agent: PG-Bot`만 확인하면 위조를 막을 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`User-Agent`는 아무 클라이언트나 임의 문자열로 설정할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "Webhook은 외부 서버가 보내므로 `Idempotency` 없이 중복 수신 시 매번 주문을 새로 확정한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Webhook은 네트워크 재시도로 같은 이벤트가 여러 번 도착할 수 있으므로 이벤트 ID 기반 멱등 처리가 필수다."
+      },
+      {
+        "key": "C",
+        "content": "공유 시크릿 기반 HMAC 서명(상수 시간 비교)과 타임스탬프(리플레이 방지)를 검증하고, 필요 시 PG사 API로 실제 결제 상태를 재조회한 뒤 멱등하게 반영한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "공개된 Webhook URL은 누구나 가짜 `status: PAID` JSON을 보낼 수 있다. 서명 검증과 리플레이 방지·멱등 처리 없이는 무료 결제 사기에 노출된다."
+      },
+      {
+        "key": "D",
+        "content": "Webhook URL 경로를 `/webhooks/pg-secret-9921`처럼 길게 지어두면 서명 검증 없이도 안전하다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "URL 은닉(Security through Obscurity)은 로그·설정 유출 시 즉시 무력화되므로 암호학적 서명 검증을 대체할 수 없다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "외부 Webhook 역시 비신뢰 인터넷 경계이므로 HMAC 서명 검증(상수 시간 비교), 타임스탬프 허용 창, 멱등성 보장이 필수다."
+  }
 ]

@@ -26,19 +26,7 @@ references:
 
 비밀번호 로그인에 필요한 책임을 나누면 흐름이 명확해집니다.
 
-```text
-제출된 사용자 이름과 비밀번호
-       │
-       ▼
-DaoAuthenticationProvider
-       │
-       ├─ UserDetailsService.loadUserByUsername()
-       │        └─ 저장된 비밀번호 해시 + 계정 상태 + 권한
-       │
-       └─ PasswordEncoder.matches(입력, 저장된 해시)
-                │
-                └─ 성공 / 실패
-```
+![DaoAuthenticationProvider와 UserDetailsService·PasswordEncoder 협력 경계](/learning/security/user-details-password-encoder-boundary.svg)
 
 `UserDetailsService`는 **저장된 사용자 인증 정보를 조회**하고, `PasswordEncoder`는 입력 비밀번호와 저장된 해시를 비교합니다.
 
