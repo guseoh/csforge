@@ -24,13 +24,9 @@ references:
 
 다단계 페이지 테이블은 가상 페이지 번호를 여러 인덱스로 나누고 **필요한 하위 테이블만 생성할 수 있도록 계층으로 구성**한다.
 
-```text
-VPN part A → root entry
-               ↓
-VPN part B → next-level table
-               ↓
-VPN part C → leaf entry → physical frame
-```
+![사용하지 않는 두 root entry 아래에는 테이블 자체가 없습니다.](/learning/computer-architecture/sparse-page-table.svg)
+
+*사용하지 않는 두 root entry 아래에는 테이블 자체가 없습니다.*
 
 ### 희소 주소 공간에서 페이지 테이블 메모리를 아낄 수 있다
 
@@ -38,7 +34,7 @@ VPN part C → leaf entry → physical frame
 
 ### 메모리 절약의 대가는 더 긴 순회다
 
-TLB miss가 나면 여러 단계의 엔트리를 차례로 읽어야 하므로 평면 테이블보다 주소 변환 경로가 길어진다. 각 엔트리도 메모리에 있으므로 추가 조회가 필요하다.
+하드웨어 walker가 있는 모델에서 TLB miss가 나면 필요한 단계의 엔트리를 따라가므로 평면 테이블보다 주소 변환 경로가 길어진다. 각 엔트리도 메모리에 있으므로 추가 조회가 필요하다.
 
 현대 CPU는 캐시와 page-walk cache를 이용해 이 비용을 줄일 수 있고, TLB hit이면 계층 자체를 다시 걷지 않아도 된다. 따라서 다단계 구조의 메모리 절약과 순회 비용 사이의 절충을 TLB가 완화한다.
 

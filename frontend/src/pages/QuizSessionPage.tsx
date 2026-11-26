@@ -39,6 +39,17 @@ export function canEditQuizAnswerByShortcut(status: string | undefined, expired:
   return status === 'IN_PROGRESS' && !expired
 }
 
+/** Allow quiz shortcuts when focus rests on a choice button, while keeping text inputs and other controls safe. */
+export function shouldIgnoreQuizShortcutTarget(target: EventTarget | null, key: string) {
+  const element = target instanceof HTMLElement ? target : null
+  if (!element) return false
+  if (element.closest('input, textarea, select, a, summary, [contenteditable="true"]')) return true
+  const button = element.closest('button')
+  if (!button) return false
+  if (key === 'Enter' || key === ' ') return true
+  return !button.classList.contains('choice-button')
+}
+
 export function QuizSessionPage() {
   const { quizId: quizIdParam } = useParams({ from: '/quiz/$quizId' })
   const quizId = Number(quizIdParam)
@@ -49,6 +60,7 @@ export function QuizSessionPage() {
     enabled: Number.isSafeInteger(quizId) && quizId > 0,
   })
   const [now, setNow] = useState(() => Date.now())
+  const [confirmingUnansweredSubmit, setConfirmingUnansweredSubmit] = useState(false)
 
   useEffect(() => {
     document.body.classList.add('quiz-focus-mode')
@@ -108,10 +120,13 @@ export function QuizSessionPage() {
   }, [quizId, submitMutation.isPending])
 
   useEffect(() => {
+    setConfirmingUnansweredSubmit(false)
+  }, [position])
+
+  useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
       if (submitMutation.isPending || event.ctrlKey || event.metaKey || event.altKey || event.isComposing) return
-      const target = event.target as HTMLElement | null
-      if (target?.closest('input, textarea, select, button, a, summary, [contenteditable="true"]')) return
+      if (shouldIgnoreQuizShortcutTarget(event.target, event.key)) return
       if (event.key === 'ArrowRight' || event.key === 'Enter') {
         event.preventDefault()
         moveTo(position + 1)
@@ -152,8 +167,18 @@ export function QuizSessionPage() {
   const answeredCount = Object.values(drafts)
     .filter((answer) => answer.selectedChoiceKey || answer.answerText?.trim())
     .length
+  const unansweredCount = Math.max(0, session.questions.length - answeredCount)
   const saveState = saveStates[question.questionId] ?? 'saved'
   const failedQuestionIndex = session.questions.findIndex((item) => failedQuestionIds.includes(item.questionId))
+
+  const requestSubmit = () => {
+    if (unansweredCount > 0 && !confirmingUnansweredSubmit) {
+      setConfirmingUnansweredSubmit(true)
+      return
+    }
+    setConfirmingUnansweredSubmit(false)
+    submitMutation.mutate()
+  }
 
   return (
     <section className="quiz-focus-page">
@@ -275,12 +300,26 @@ export function QuizSessionPage() {
               className="primary-button"
               type="button"
               disabled={submitMutation.isPending}
-              onClick={() => submitMutation.mutate()}
+              onClick={requestSubmit}
             >
               {submitMutation.isPending ? '저장 및 제출 중…' : '제출하기'}
             </button>
           )}
         </div>
+
+        {confirmingUnansweredSubmit && unansweredCount > 0 && (
+          <div className="state-card" role="alert">
+            <span>미답변 문항이 {unansweredCount}개 남아 있습니다. 그대로 제출할까요?</span>
+            <div className="chip-row">
+              <button className="primary-button" type="button" disabled={submitMutation.isPending} onClick={() => { setConfirmingUnansweredSubmit(false); submitMutation.mutate() }}>
+                미답변 포함 제출
+              </button>
+              <button className="secondary-button" type="button" onClick={() => setConfirmingUnansweredSubmit(false)}>
+                계속 풀기
+              </button>
+            </div>
+          </div>
+        )}
 
         {positionSaveError && (
           <p className="helper-text error-text">재개 위치를 저장하지 못했습니다. 다음 이동 때 다시 시도합니다.</p>

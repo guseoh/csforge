@@ -1,0 +1,61 @@
+name: operating-systems G1 isolated Reader QA
+on:
+  push:
+    branches: [viz/os-g1]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  isolated-reader:
+    runs-on: ubuntu-latest
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Backend isolated Import, exact reimport and API fixtures
+        working-directory: backend
+        run: |
+          chmod +x gradlew
+          ./gradlew test --tests '*.OperatingSystemsG1FullPackIntegrationTest' --no-daemon --stacktrace
+      - name: Backend full validation
+        working-directory: backend
+        run: ./gradlew build --no-daemon --stacktrace
+      - name: Frontend tests and build
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run lint
+          npm test
+          npm run build
+      - name: Chromium Reader fixture replay
+        working-directory: frontend
+        run: |
+          npm install --no-save --ignore-scripts playwright@1.65.1
+          npx playwright install --with-deps chromium
+          (npm run dev -- --host 127.0.0.1 --port 5173 > ../artifacts/operating-systems-g1-vite.log 2>&1) &
+          for i in $(seq 1 40); do
+            if curl --fail --silent http://127.0.0.1:5173/ >/dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/operating-systems-g1-reader-qa.mjs
+      - name: Upload isolated Reader evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: operating-systems-g1-reader-qa
+          path: |
+            artifacts/operating-systems-g1-reader/
+            artifacts/operating-systems-g1-api-fixtures.json
+            artifacts/operating-systems-g1-vite.log
+            backend/build/reports/tests/
+          retention-days: 14
+          if-no-files-found: warn

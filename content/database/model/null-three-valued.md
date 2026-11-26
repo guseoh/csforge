@@ -76,7 +76,7 @@ FROM member
 WHERE id NOT IN (1, 2, NULL);
 ```
 
-직관적으로는 1과 2를 제외한 값이 나올 것 같지만 NULL 때문에 비교 전체가 UNKNOWN으로 흘러 예상과 다른 결과가 나올 수 있습니다. nullable subquery를 `NOT IN`에 연결할 때 특히 주의해야 하고, 의미에 따라 `NOT EXISTS`를 검토합니다.
+직관적으로는 1과 2를 제외한 값이 나올 것 같지만 NULL 때문에 비교 전체가 UNKNOWN으로 흘러 예상과 다른 결과가 나올 수 있습니다. nullable subquery를 `NOT IN`에 연결할 때 특히 주의해야 합니다. 예를 들어 `id=3`이면 `3 <> 1 AND 3 <> 2 AND 3 <> NULL`은 UNKNOWN이므로 WHERE에서 제외됩니다. 반면 id=1은 FALSE입니다. 일치하는 행이 없는 회원을 찾으려면 `WHERE NOT EXISTS (SELECT 1 FROM excluded_member e WHERE e.member_id = member.id)`처럼 상관 조건을 정의합니다. 외부 비교 컬럼이 nullable한 경우에는 NULL인 외부 행을 포함할지도 별도로 결정해야 합니다.
 
 ### NULL을 없애기 위해 임의의 기본값을 넣는 것도 문제다
 

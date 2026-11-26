@@ -39,27 +39,9 @@ class OrderService {
 
 외부 Bean이 이 메서드를 호출할 때의 큰 흐름은 다음과 같습니다.
 
-```text
-호출자
-  │
-  ▼
-OrderService Proxy
-  │
-  ▼
-TransactionInterceptor
-  │
-  ├─ 트랜잭션 속성 읽기
-  ├─ TransactionManager에 기존 트랜잭션 확인·시작 요청
-  │
-  ▼
-실제 OrderService.place()
-  │
-  ├─ 정상 반환 -> commit 판단
-  └─ 예외       -> rollback 규칙 판단
-  │
-  ▼
-TransactionManager commit / rollback
-```
+![트랜잭션 프록시 · REQUIRED의 두 경로](/learning/spring/transaction-required-boundary.svg)
+
+동기 proxy 방식과 기본 REQUIRED를 가정합니다. 참여하는 내부 호출마다 물리적 commit을 하는 것은 아니며, 기존 트랜잭션의 완료는 외부 경계에서 결정됩니다.
 
 ### `@Transactional`이 붙었다고 매번 새 트랜잭션을 만드는 것은 아니다
 

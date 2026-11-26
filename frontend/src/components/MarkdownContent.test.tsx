@@ -187,4 +187,23 @@ describe('MarkdownContent shared learning media', () => {
     expect(html).not.toContain('markdown-image-trigger')
     expect(html).not.toContain('<script>')
   })
+
+  it('highlights Java text blocks and modern keywords without breaking subsequent tokens', () => {
+    const html = renderMarkdown('```java\nsealed interface Event permits Created {\n  String sql = """\n    SELECT * FROM orders\n    """;\n  return sql;\n}\n```')
+    expect(html).toContain('<span class="code-keyword">permits</span>')
+    expect(html).toContain('<span class="code-string">&quot;&quot;&quot;\n    SELECT * FROM orders\n    &quot;&quot;&quot;</span>')
+    expect(html).toContain('<span class="code-keyword">return</span>')
+  })
+
+  it('labels and highlights backend config languages such as properties and dockerfile', () => {
+    const propsHtml = renderMarkdown('```properties\n# HikariCP pool\nspring.datasource.hikari.maximum-pool-size=10\n```')
+    expect(propsHtml).toContain('Properties')
+    expect(propsHtml).toContain('<span class="code-comment"># HikariCP pool</span>')
+    expect(propsHtml).toContain('<span class="code-type">spring.datasource.hikari.maximum-pool-size</span>')
+
+    const dockerHtml = renderMarkdown('```dockerfile\nFROM eclipse-temurin:25-jre\nENTRYPOINT ["java", "-jar", "app.jar"]\n```')
+    expect(dockerHtml).toContain('Dockerfile')
+    expect(dockerHtml).toContain('<span class="code-keyword">FROM</span>')
+    expect(dockerHtml).toContain('<span class="code-keyword">ENTRYPOINT</span>')
+  })
 })

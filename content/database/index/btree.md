@@ -38,14 +38,9 @@ ORDER BY created_at;
 
 단순화하면 다음처럼 볼 수 있습니다.
 
-```text
-B-tree index
-        [2026-08-15]
-        /          \
-   earlier        later
-      │              │
-      └── key + row 위치 정보 ──► table page
-```
+![PostgreSQL B-tree 페이지 탐색](/learning/database/index-btree.svg)
+
+*PostgreSQL 16의 B-tree 내부·리프 페이지 연결을 단순화한 예시입니다. 실제 페이지 크기와 분할은 다를 수 있습니다.*
 
 실제 PostgreSQL B-tree는 페이지 단위의 균형 트리 구조이며 동등 비교와 범위 비교, 정렬에 활용될 수 있습니다. 하지만 쿼리가 반환하는 컬럼이 테이블에만 있다면 인덱스로 후보를 찾은 뒤 힙(heap) 페이지를 방문해야 할 수 있습니다.
 

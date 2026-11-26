@@ -50,18 +50,9 @@ Kafka publish 없음
 
 트랜잭셔널 아웃박스는 브로커 발행 자체를 DB 트랜잭션에 넣는 대신 **나중에 발행해야 한다는 내구성 있는 레코드를 같은 DB에 저장**합니다.
 
-```text
-BEGIN
-  orders INSERT/UPDATE
-  outbox INSERT
-COMMIT
-       │
-       ▼
-relay / CDC
-       │
-       ▼
-Kafka publish
-```
+![Outbox · 내구성 있는 전달 의도와 중복 처리](/learning/messaging-async/outbox-relay-idempotency.svg)
+
+폴링 릴레이의 완료 기록을 가정한 예입니다. CDC 구현에서는 자체 재개 위치와 전달 계약이 적용됩니다. Consumer의 로컬 DB 중복 제거와 외부 API 부수 효과는 서로 다른 경계입니다.
 
 DB 커밋이 성공했다면 업무 상태와 아웃박스 레코드가 함께 남고, 릴레이가 일시적으로 실패해도 다시 발행을 시도할 근거가 있습니다. DB와 브로커를 하나의 분산 트랜잭션으로 묶지 않고도 이중 쓰기 구간을 줄이는 이유입니다.
 

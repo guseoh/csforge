@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 489" role="img" aria-labelledby="query-keyset-title query-keyset-desc">
+<title id="query-keyset-title">Keyset 페이지네이션의 복합 커서 경계</title>
+<desc id="query-keyset-desc">같은 10시 시각의 id 내림차순. 첫 페이지에서 803, 802, 801, 800을 읽고 커서 10시, id 800을 저장한다. 다음 페이지는 799, 798부터 읽는다.</desc>
+<defs><style>
+.bg{fill:#fff}.title{font:700 27px system-ui,sans-serif;fill:#191d22}.label{font:600 19px system-ui,sans-serif;fill:#20262d}.small{font:15px system-ui,sans-serif;fill:#4c5560}.note{font:16px system-ui,sans-serif;fill:#343d47}
+.taken{fill:#e1e6ea;stroke:#374450;stroke-width:2}.next{fill:#f6f7f9;stroke:#818a94;stroke-width:1.8;stroke-dasharray:6 3}.boundary{stroke:#5e6772;stroke-width:2.5;stroke-dasharray:7 5}
+@media(prefers-color-scheme:dark){.bg{fill:#151719}.title,.label{fill:#f4f4f5}.small,.note{fill:#d0d4d9}.taken{fill:#303941;stroke:#f4f5f6}.next{fill:#22272d;stroke:#88919c}.boundary{stroke:#cbd2d9}}
+</style></defs>
+<rect class="bg" width="1100" height="489"/>
+<text class="title" x="42" y="49">Keyset: 마지막 복합 키 이후부터 조회</text>
+<text class="small" x="42" y="89">정렬: created_at DESC, id DESC · 모든 행 created_at = 10:00</text>
+<text class="label" x="45" y="138">첫 페이지 (LIMIT 4)</text><text class="label" x="748" y="138">다음 페이지 후보</text>
+<rect class="taken" x="45" y="169" width="160" height="100" rx="4"/><text class="label" x="125" y="205" text-anchor="middle">10:00</text><text class="small" x="125" y="239" text-anchor="middle">id 803</text><rect class="taken" x="219" y="169" width="160" height="100" rx="4"/><text class="label" x="299" y="205" text-anchor="middle">10:00</text><text class="small" x="299" y="239" text-anchor="middle">id 802</text><rect class="taken" x="393" y="169" width="160" height="100" rx="4"/><text class="label" x="473" y="205" text-anchor="middle">10:00</text><text class="small" x="473" y="239" text-anchor="middle">id 801</text><rect class="taken" x="567" y="169" width="160" height="100" rx="4"/><text class="label" x="647" y="205" text-anchor="middle">10:00</text><text class="small" x="647" y="239" text-anchor="middle">id 800</text><rect class="next" x="741" y="169" width="160" height="100" rx="4"/><text class="label" x="821" y="205" text-anchor="middle">10:00</text><text class="small" x="821" y="239" text-anchor="middle">id 799</text><rect class="next" x="915" y="169" width="160" height="100" rx="4"/><text class="label" x="995" y="205" text-anchor="middle">10:00</text><text class="small" x="995" y="239" text-anchor="middle">id 798</text>
+<path class="boundary" d="M736 153V310"/>
+<text class="label" x="736" y="344" text-anchor="middle">cursor = (10:00, 800)</text>
+<text class="note" x="550" y="405" text-anchor="middle">다음 조회: WHERE (created_at, id) &lt; (:lastTime, :lastId)</text>
+<text class="note" x="550" y="447" text-anchor="middle">정렬 키가 같은 시각이면 id까지 비교해 799를 다음 페이지에 포함합니다.</text>
+</svg>

@@ -34,6 +34,26 @@ function quizStatus(status: string) {
   return status
 }
 
+function quizSourceLabel(source: string) {
+  return ({ STANDARD: '일반 문제', WRONG_RETRY: '오답 다시 풀기', REVIEW: '복습' } as Record<string, string>)[source] ?? source
+}
+
+/** 롤링 365일 히트맵의 실제 날짜를 기준으로 2개월 간격의 월 레이블을 계산한다. */
+export function deriveHeatmapMonths(heatmap: DashboardHeatmapDay[]): string[] {
+  if (heatmap.length === 0) return []
+  const months: string[] = []
+  let lastMonth = ''
+  for (const day of heatmap) {
+    const monthPart = day.date.slice(5, 7)
+    if (monthPart && monthPart !== lastMonth) {
+      lastMonth = monthPart
+      months.push(`${Number(monthPart)}월`)
+    }
+  }
+  if (months.length <= 6) return months
+  return months.filter((_, index) => index % 2 === 0).slice(0, 6)
+}
+
 function recentQuizPerformanceLabel(quiz: Dashboard['recentQuizzes'][number]) {
   if (quiz.pendingSelfCheckCount > 0) {
     return `확정 ${quiz.finalizedCount}문항 중 ${quiz.correctCount}개 정답 · 자기채점 ${quiz.pendingSelfCheckCount}개 대기`
@@ -241,7 +261,7 @@ export function DashboardPage() {
       <div className="dashboard-lower-grid home-history-grid">
         <section className="dashboard-section">
           <div className="dashboard-section-heading"><div><p className="eyebrow">학습 이력</p><h2>최근 문제 풀이</h2></div><Link className="text-link" to="/quiz" search={defaultQuizSearch}>새 문제 →</Link></div>
-          {dashboard.recentQuizzes.length === 0 ? <EmptyState message="제출된 문제가 아직 없습니다." /> : <div className="dashboard-list">{dashboard.recentQuizzes.map((quiz) => <Link className="dashboard-list-item" key={quiz.quizId} to="/quiz/$quizId/result" params={{ quizId: String(quiz.quizId) }}><div><strong>#{quiz.quizId} · {quiz.source.replace('_', ' ')}</strong><span>{quizStatus(quiz.status)} · {formatDate(quiz.startedAt)}</span></div><div className="dashboard-list-metric"><strong>{percent(quiz.accuracyPercent)}</strong><span>{recentQuizPerformanceLabel(quiz)}</span></div></Link>)}</div>}
+          {dashboard.recentQuizzes.length === 0 ? <EmptyState message="제출된 문제가 아직 없습니다." /> : <div className="dashboard-list">{dashboard.recentQuizzes.map((quiz) => <Link className="dashboard-list-item" key={quiz.quizId} to="/quiz/$quizId/result" params={{ quizId: String(quiz.quizId) }}><div><strong>#{quiz.quizId} · {quizSourceLabel(quiz.source)}</strong><span>{quizStatus(quiz.status)} · {formatDate(quiz.startedAt)}</span></div><div className="dashboard-list-metric"><strong>{percent(quiz.accuracyPercent)}</strong><span>{recentQuizPerformanceLabel(quiz)}</span></div></Link>)}</div>}
         </section>
 
         <section className="dashboard-section">
@@ -263,7 +283,7 @@ export function DashboardPage() {
           </section>
           <div className="home-heatmap-heading"><strong>최근 365일 학습 활동</strong><span>개념 열람과 문제 풀이 기록</span></div>
           <div className="heatmap-shell">
-            <div className="heatmap-months" aria-hidden="true"><span>1월</span><span>3월</span><span>5월</span><span>7월</span><span>9월</span><span>11월</span></div>
+            <div className="heatmap-months" aria-hidden="true">{deriveHeatmapMonths(dashboard.heatmap).map((label, index) => <span key={`${label}-${index}`}>{label}</span>)}</div>
             <div className="heatmap" aria-label="최근 365일 학습 활동">
               {dashboard.heatmap.map((day) => <span className={heatmapLevel(day)} key={day.date} title={`${day.date}: ${day.activityCount}회 활동`} aria-label={`${day.date}: ${day.activityCount}회 활동`} />)}
             </div>

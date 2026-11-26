@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 350" role="img" aria-labelledby="title desc">
+<title id="title">TCP RTO 만료와 재전송</title><desc id="desc">1000~1499 바이트가 손실되어 ACK가 없고 RTO 만료 시 같은 범위를 재전송한다. 수신 측의 누적 ACK는 1500이다.</desc>
+<style>
+svg{--bg:#fff;--fg:#222;--muted:#595959;--line:#858585;--surface:#f5f5f5;--selected:#e5e5e5}
+@media(prefers-color-scheme:dark){svg{--bg:#181818;--fg:#ededed;--muted:#b5b5b5;--line:#a1a1a1;--surface:#242424;--selected:#393939}}
+text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--fg);font-size:17px}
+.small{font-size:15px;fill:var(--muted)}.head{font-size:19px;font-weight:600}
+.box,.selected,.missing{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.selected{fill:var(--selected);stroke:var(--fg);stroke-width:2}.missing{fill:var(--bg);stroke-dasharray:5 4}
+.line{stroke:var(--line);stroke-width:1.5;fill:none}.bg{fill:var(--bg)}.tip{fill:var(--line)}
+</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" class="tip"/></marker></defs>
+<rect width="900" height="350" class="bg"/>
+<text x="450" y="30" class="head" text-anchor="middle">송신 측 RTO에 의한 손실 복구</text><text x="150" y="69" class="txt" text-anchor="middle">송신 TCP</text><text x="750" y="69" class="txt" text-anchor="middle">수신 TCP</text><line x1="150" y1="85" x2="150" y2="310" class="line" stroke-dasharray="5 5"/><line x1="750" y1="85" x2="750" y2="310" class="line" stroke-dasharray="5 5"/><line x1="150" y1="115" x2="440" y2="115" class="line" marker-end="url(#arrow)"/><text x="300" y="104" class="small" text-anchor="middle">SEQ 1000 · LEN 500B</text><text x="455" y="120" class="head" text-anchor="middle">×</text><text x="540" y="120" class="small" text-anchor="middle">데이터 손실</text><line x1="102" y1="115" x2="102" y2="205" class="line"/><line x1="92" y1="115" x2="112" y2="115" class="line"/><line x1="92" y1="205" x2="112" y2="205" class="line"/><text x="20" y="165" class="small" text-anchor="start">RTO</text><line x1="150" y1="205" x2="750" y2="205" class="line" marker-end="url(#arrow)"/><text x="450" y="192" class="txt" text-anchor="middle">RTO 만료 → 1000~1499 재전송</text><line x1="750" y1="260" x2="150" y2="260" class="line" marker-end="url(#arrow)"/><text x="450" y="249" class="txt" text-anchor="middle">ACK 1500 · 연속 수신 확인</text><text x="450" y="329" class="small" text-anchor="middle">타이머 만료 예시 · 빠른 재전송 등 다른 손실 복구 방식은 별도</text>
+</svg>

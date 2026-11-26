@@ -26,14 +26,9 @@ references:
 
 캐시 적중률이 높아도 캐시 자체가 병목이 될 수 있습니다. 요청 대부분이 하나의 인기 키에 몰리면 그 키가 위치한 노드와 네트워크 경로, 연결에 트래픽이 집중되기 때문입니다.
 
-```text
-10,000 requests
-        │
-        └─ featured:today
-               │
-               ▼
-          Redis shard A
-```
+![핫 키 · 적중률과 노드별 부하 편향](/learning/cache/hot-key-shard-skew.svg)
+
+모든 요청이 히트하는 가상의 분포 예입니다. Redis Cluster의 동일 키는 동일 hash slot에 매핑됩니다. replica 읽기, L1, 복제 키는 별도 전략이며 최신성 비용이 따릅니다.
 
 ### 샤드를 늘려도 같은 키는 한 위치에 남을 수 있다
 

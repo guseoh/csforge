@@ -17,74 +17,21 @@ references:
 ---
 # Content-Type 헤더
 
-`Content-Type`은 **지금 이 HTTP 메시지에 들어 있는 콘텐츠를 어떤 미디어 유형으로 해석해야 하는지** 알려 주는 필드다.
-
-예를 들어 클라이언트가 JSON 요청 본문을 보낸다면 다음처럼 표현할 수 있다.
+Content-Type은 현재 메시지 콘텐츠의 미디어 유형을 나타냅니다. 수신자는 이를 기준으로 어떤 형식으로 데이터를 해석할지 결정할 수 있습니다.
 
 ```http
 POST /users HTTP/1.1
+Host: api.example.com
 Content-Type: application/json
+Content-Length: 14
 
 {"name":"kim"}
 ```
 
-수신 측은 `Content-Type: application/json`을 보고 콘텐츠 바이트를 JSON 형식으로 해석할 파서를 선택할 수 있다.
+위 예는 ASCII JSON 14바이트를 전송하는 HTTP/1.1 요청입니다. JSON 형식을 선언했다고 실제 콘텐츠가 유효한 JSON인 것은 아닙니다. 파서가 문법을 확인하고 애플리케이션은 필드와 업무 규칙을 별도로 검증합니다.
 
-### Content-Type과 Accept는 방향이 다르다
+### 다른 필드와 구분합니다
 
-두 필드는 자주 함께 보이지만 질문이 다르다.
+Accept는 받을 응답 표현의 선호도를 나타냅니다. Content-Encoding은 표현 데이터에 적용된 코딩을 설명합니다. Content-Length 또는 전송 프레이밍은 콘텐츠가 어디까지인지 판단하는 책임을 가집니다.
 
-```text
-Content-Type
-→ 지금 보내는 콘텐츠는 무슨 형식인가?
-
-Accept
-→ 응답으로 어떤 형식을 받을 수 있거나 선호하는가?
-```
-
-예를 들어 다음 요청은 JSON 데이터를 보내면서 JSON 응답을 선호한다는 의미를 각각 다른 필드로 표현한다.
-
-```http
-Content-Type: application/json
-Accept: application/json
-```
-
-둘 다 값이 `application/json`일 수 있지만 같은 필드는 아니고, 항상 같은 값이어야 하는 것도 아니다.
-
-### Content-Type 선언과 실제 바이트는 일치해야 한다
-
-헤더에 `application/json`이라고 적었다고 콘텐츠가 자동으로 올바른 JSON이 되는 것은 아니다.
-
-```text
-Content-Type: application/json
-        ↓
-실제 콘텐츠 바이트
-        ↓
-JSON 파싱 성공?
-        ↓
-DTO 구조·필드 검증 성공?
-        ↓
-업무 규칙 만족?
-```
-
-잘못된 JSON 문법이면 파싱 단계에서 실패할 수 있고, JSON 자체는 유효하지만 필수 필드가 없으면 애플리케이션 검증에서 실패할 수 있다.
-
-따라서 `Content-Type이 맞다 = 요청 데이터가 유효하다`고 볼 수 없다.
-
-### Content-Type은 메시지 길이를 정하지 않는다
-
-`Content-Type`은 콘텐츠의 **의미와 형식**을 설명하는 필드이지 메시지의 바이트 경계를 정하는 필드가 아니다.
-
-HTTP/1.1에서 콘텐츠가 어디까지인지 판단할 때는 `Content-Length`, `Transfer-Encoding`과 메시지 길이 결정 규칙을 사용한다. HTTP/2·3은 각 버전의 프레임·스트림 구조를 사용한다.
-
-```text
-Content-Type
-→ 이 콘텐츠를 무엇으로 해석할까?
-
-HTTP 프레이밍
-→ 이 콘텐츠가 어디에서 끝날까?
-```
-
-이 둘을 섞으면 `Content-Type: application/json`을 보고 소켓에서 JSON 괄호가 닫힐 때까지 읽는 식의 잘못된 구현으로 이어질 수 있다.
-
-핵심은 **Content-Type이 현재 콘텐츠의 표현 형식을 설명하고, 응답 선호를 나타내는 Accept나 메시지 경계를 결정하는 프레이밍, 실제 데이터 유효성 검증과는 서로 다른 책임이라는 점**이다.
+Spring MVC에서는 지원되는 메시지 컨버터와 선언된 타입을 바탕으로 역직렬화할 수 있습니다. 지원하지 않는 미디어 유형은 415, 잘못된 JSON 문법은 일반적으로 400에 해당할 수 있습니다. DTO 검증 및 업무 오류의 응답 계약은 별도로 정의합니다.

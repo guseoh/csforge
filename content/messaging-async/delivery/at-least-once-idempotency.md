@@ -38,15 +38,9 @@ references:
 
 ### 처리 위치를 먼저 확정하면 작업을 잃을 수 있다
 
-```text
-M42 읽음
-  │
-  ├─ offset commit
-  │
-  X 프로세스 종료
-  │
-  └─ 업무 상태 변경 미실행
-```
+![전달 보장 · 커밋 순서에 따른 유실과 중복](/learning/messaging-async/delivery-crash-windows.svg)
+
+M42의 오프셋이 42이고 로그가 보존되어 있으며 정상적인 수동 확정 위치에서 재개한다고 가정합니다. at-most-once/at-least-once의 실패 구간을 비교하는 그림이지 모든 장애에서의 절대 보장은 아닙니다.
 
 재시작 시 확정 위치가 M42 뒤를 가리키면 해당 메시지를 다시 읽지 않을 수 있습니다. 이런 선택은 중복을 줄이는 대신 일부 작업이 유실될 수 있는 최대 1회(at-most-once) 성격을 가집니다.
 
@@ -76,24 +70,16 @@ BEGIN
 COMMIT
 ```
 
-처리 기록과 같은 DB 안의 업무 상태 변경을 하나의 트랜잭션에 넣어야 “처리했다고 기록했지만 실제 상태는 안 바뀐” 틈을 줄일 수 있습니다.
+처리 기록에는 메시지 또는 논리 작업 식별자에 대한 유일 제약을 두고, 원자적으로 처리 소유권을 확보한 요청만 업무 상태를 바꾸어야 합니다. 단순 사전 조회 후 INSERT는 동시 중복 전달을 안전하게 막지 못합니다. PostgreSQL에서는 `INSERT ... ON CONFLICT DO NOTHING`의 영향받은 행 수를 판단하는 방식이 한 가지 예입니다. 처리 기록과 같은 DB 안의 업무 상태 변경을 하나의 트랜잭션에 넣어야 “처리했다고 기록했지만 실제 상태는 안 바뀐” 틈을 줄일 수 있습니다.
 
 외부 결제나 이메일처럼 로컬 DB 트랜잭션 밖의 외부 효과는 별도 문제입니다. 컨슈머가 중복 메시지를 받지 않는다고 가정하기보다 제공자의 멱등 키(idempotency key)나 결과 조회·대사(reconciliation) 같은 계약이 필요할 수 있습니다.
 
 ### Exactly-once라는 표현은 보장 경계를 확인한다
 
-Kafka 트랜잭션을 사용하면 Kafka 입력을 처리해 Kafka 출력을 쓰는 흐름에서 출력 레코드와 소비한 오프셋을 같은 Kafka 트랜잭션으로 묶는 구성이 가능합니다. 하지만 그 트랜잭션에 PostgreSQL, 결제 API, 이메일 시스템이 자동으로 참여하는 것은 아닙니다.
+Kafka 트랜잭션을 사용하면 Kafka 입력을 처리해 Kafka 출력을 쓰는 흐름에서 출력 레코드와 소비한 오프셋을 같은 Kafka 트랜잭션으로 묶는 구성이 가능합니다. 출력을 읽는 다운스트림 컨슈머는 `isolation.level=read_committed`로 중단된 트랜잭션의 출력을 제외해야 하며, 재처리·오프셋과 transactional producer의 수명도 올바르게 관리해야 합니다. 하지만 그 트랜잭션에 PostgreSQL, 결제 API, 이메일 시스템이 자동으로 참여하는 것은 아닙니다.
 
-```text
-Kafka input
-   │
-   ▼
-Kafka transaction
-  ├─ output records
-  └─ consumed offsets
+![Kafka 트랜잭션 · 출력과 오프셋의 원자적 확정](/learning/messaging-async/kafka-transaction-output-offset.svg)
 
-외부 DB/API 효과
-→ 별도 transaction / idempotency 경계
-```
+연속 오프셋 42를 처리하고 43을 다음 위치로 확정하는 예입니다. 트랜잭션이 abort되면 중단된 출력은 read_committed 소비자에게 노출되지 않으며 확정 위치 변경도 적용되지 않습니다.
 
 따라서 exactly-once는 “전체 시스템에서 모든 업무 효과가 물리적으로 한 번만 실행된다”는 문장이 아니라 **어느 자원과 트랜잭션 경계 안에서 중복을 제거하는지**를 구체적으로 설명해야 합니다.

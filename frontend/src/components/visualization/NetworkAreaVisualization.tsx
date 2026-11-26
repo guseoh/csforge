@@ -3,6 +3,8 @@ import type { VisualizationOf } from '../../lib/learning-visualization'
 import type { AreaDiagram } from '../../lib/network-area-types'
 import { networkAreaSpecs } from '../../lib/network-area-model'
 import './network-area-editorial.css'
+import { drawNetworkG2 } from './NetworkG2Diagrams'
+import { drawNetworkG2Boundary } from './NetworkG2BoundaryDiagrams'
 
 function displayLength(value: string): number {
   return Array.from(value).reduce((n, c) => n + (c.charCodeAt(0) > 255 ? 1.75 : 1), 0)
@@ -23,7 +25,7 @@ function wrap(value: string, limit: number): string[] {
     }
   }
   if (line) lines.push(line)
-  return lines.slice(0, 3)
+  return lines
 }
 
 function Copy({ value, x, y, color = 'text', size = 'body', anchor = 'middle', limit = 38 }: {
@@ -49,6 +51,14 @@ function TextBox({ x, y, width, height, head, detail, selected=false }: {
 
 function draw(spec: AreaDiagram, marker: string) {
   switch (spec.layout) {
+    case 'boundary':
+      return drawNetworkG2Boundary(spec, marker)
+    case 'packet-envelope':
+    case 'ipv4-prefix':
+    case 'frame-interleave':
+    case 'byte-gap':
+    case 'cookie-conditions':
+      return drawNetworkG2(spec, marker)
     case 'stack': {
       const height = 65 + spec.layers.length * 92
       return { height, content: <g>
@@ -72,7 +82,7 @@ function draw(spec: AreaDiagram, marker: string) {
       </g> }
     }
     case 'compare': {
-      const height=308
+      const height=330
       return { height, content:<g>
         <TextBox x={20} y={20} width={417} height={56} head={spec.left.heading} selected/>
         <TextBox x={463} y={20} width={417} height={56} head={spec.right.heading} />
@@ -81,7 +91,7 @@ function draw(spec: AreaDiagram, marker: string) {
           {side.lines.map((line,i)=><g key={i}>
             <circle cx={sideNo===0?43:486} cy={112+i*60} r={3} className="network-area__dot"/>
             <Copy value={line} x={sideNo===0?60:503} y={117+i*60}
-              color="text" size="small" anchor="start" limit={42}/>
+              color="text" size="small" anchor="start" limit={35}/>
           </g>)}
         </g>)}
       </g>}
@@ -120,14 +130,14 @@ function draw(spec: AreaDiagram, marker: string) {
       </g>}
     }
     case 'sequence': {
-      const height=145+spec.messages.length*108
+      const height=145+spec.messages.length*120
       return {height, content:<g>
         <Copy value={spec.parties[0]} x={152} y={37} color="text" size="heading"/>
         <Copy value={spec.parties[1]} x={748} y={37} color="text" size="heading"/>
         <line className="network-area__lifeline" x1={152} x2={152} y1={66} y2={height-22}/>
         <line className="network-area__lifeline" x1={748} x2={748} y1={66} y2={height-22}/>
         {spec.messages.map((msg,i)=>{
-          const y=121+i*108,from=msg.from==='left'?165:735,to=msg.from==='left'?735:165
+          const y=121+i*120,from=msg.from==='left'?165:735,to=msg.from==='left'?735:165
           return <g key={i}>
             <Copy value={msg.text} x={450} y={y-23} color="text" size="body" limit={52}/>
             <line className="network-area__arrow" x1={from} x2={to} y1={y} y2={y}
@@ -153,7 +163,7 @@ export function NetworkAreaVisualization({ data }: {data:VisualizationOf<'networ
       <svg className="network-area__svg" viewBox={'0 0 900 '+figure.height} role="img"
         aria-labelledby={titleId+' '+descId}>
         <title id={titleId}>{title}</title>
-        <desc id={descId}>{lead} {note}</desc>
+        <desc id={descId}>{lead + ' ' + note}</desc>
         <defs>
           <marker id={marker} viewBox="0 0 10 10" refX="9" refY="5"
             markerWidth="7" markerHeight="7" orient="auto-start-reverse">

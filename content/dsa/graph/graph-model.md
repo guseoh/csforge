@@ -23,11 +23,9 @@ references:
 
 Undirected 그래프의 간선 `u-v`는 양방향 관계를 나타내고, directed 그래프의 `u -> v`는 방향이 있는 관계를 나타낸다. Weighted 그래프는 간선에 거리·시간·비용 같은 값을 추가한다.
 
-```text
-vertex: A, B, C
-edge  : A -> B
-weight: 5
-```
+![그래프 · 간선의 방향과 가중치](/learning/dsa/graph-edge-semantics.svg)
+
+세 그림은 서로 다른 그래프 모델입니다. C는 간선이 없는 정점이며, 가중치가 5라는 표시는 예시 비용입니다.
 
 경로는 간선을 따라 이어지는 정점 sequence다. Directed 그래프에서는 방향을 따라가야 하므로 A에서 B로 갈 수 있다고 B에서 A로도 갈 수 있는 것은 아니다.
 

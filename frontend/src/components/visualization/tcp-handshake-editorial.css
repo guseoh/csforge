@@ -87,11 +87,18 @@
   font-size: 17px;
   font-weight: 650;
 }
-.tcp-handshake-editorial__controls .diagram-controls {
+.learning-visualization .tcp-handshake-editorial__controls .diagram-controls {
   margin: 12px 0 14px;
+  gap: 8px;
 }
-.tcp-handshake-editorial__controls .diagram-controls button {
+.learning-visualization .tcp-handshake-editorial__controls .diagram-controls button {
+  min-height: 34px;
+  padding: 4px 10px;
+  font-size: 13px;
   border-radius: 0;
+}
+.learning-visualization .tcp-handshake-editorial__controls .diagram-controls > span {
+  font-size: 13px;
 }
 .tcp-handshake-editorial__note {
   color: var(--diagram-muted);

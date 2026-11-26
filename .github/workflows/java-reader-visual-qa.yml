@@ -29,7 +29,7 @@ jobs:
         working-directory: frontend
         run: |
           npm ci
-          npm install --no-save --ignore-scripts playwright@1.56.1
+          npm install --no-save --ignore-scripts playwright@1.65.1
           npx playwright install --with-deps chromium
       - name: Build exact refactor HEAD
         working-directory: frontend

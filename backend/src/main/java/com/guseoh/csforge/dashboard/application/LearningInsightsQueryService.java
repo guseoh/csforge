@@ -11,8 +11,9 @@ import java.util.stream.Collectors;
 
 import com.guseoh.csforge.dashboard.infrastructure.LearningInsightsQueryRepository;
 import com.guseoh.csforge.learning.application.ConceptUnderstandingPolicy;
-import com.guseoh.csforge.learning.application.LearningQueryService;
+import com.guseoh.csforge.learning.application.LearningNotFoundException;
 import com.guseoh.csforge.learning.infrastructure.ConceptUnderstandingBatchRepository;
+import com.guseoh.csforge.learning.infrastructure.LearningAreaQueryRepository;
 import jakarta.persistence.Tuple;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,12 +26,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class LearningInsightsQueryService {
 
     private static final int MIN_COMPARABLE_QUESTIONS = 3;
-    private static final int MAX_CANDIDATES = 10;
     private static final int MAX_WEAK_CONCEPTS = 5;
 
     private final LearningInsightsQueryRepository repository;
     private final ConceptUnderstandingBatchRepository understandingRepository;
-    private final LearningQueryService learningQueryService;
+    private final LearningAreaQueryRepository learningAreaQueryRepository;
     private final Clock clock;
     private final ZoneId studyZoneId;
 
@@ -41,7 +41,9 @@ public class LearningInsightsQueryService {
             default -> throw new IllegalArgumentException("range must be 7d or 30d");
         };
         String area = areaSlug == null || areaSlug.isBlank() ? null : areaSlug;
-        if (area != null) learningQueryService.getArea(area);
+        if (area != null && !learningAreaQueryRepository.existsActiveArea(area)) {
+            throw new LearningNotFoundException("Learning area not found: " + area);
+        }
 
         Instant asOf = Instant.now(clock);
         LocalDate today = asOf.atZone(studyZoneId).toLocalDate();
@@ -60,7 +62,7 @@ public class LearningInsightsQueryService {
                 : "각 기간에 서로 다른 확정 문제 3개 이상이 필요하므로 추세를 판단하기 어렵습니다.";
 
         Tuple reviews = repository.reviewDue(asOf, today.atStartOfDay(studyZoneId).toInstant(), area);
-        List<Tuple> candidates = repository.weakCandidates(from, until, area, MAX_CANDIDATES);
+        List<Tuple> candidates = repository.weakCandidates(from, until, area, MAX_WEAK_CONCEPTS);
         List<Long> ids = candidates.stream().map(row -> row.get("conceptId", Long.class)).toList();
         Map<Long, Object[]> evidence = (ids.isEmpty() ? java.util.List.<Object[]>of() : understandingRepository.summarizeConceptIds(ids)).stream()
                 .collect(Collectors.toMap(row -> ((Number) row[0]).longValue(), Function.identity()));

@@ -30,19 +30,9 @@ references:
 
 개념적으로 balance가 100인 행을 200으로 UPDATE하면 다음처럼 생각할 수 있습니다.
 
-```text
-논리 row: account #1
+![MVCC: 하나의 행과 두 튜플 버전](/learning/database/mvcc-versions.svg)
 
-이전 version
-┌──────────────┐
-│ balance=100  │  ← 오래된 snapshot에서는 아직 visible할 수 있음
-└──────────────┘
-
-새 version
-┌──────────────┐
-│ balance=200  │  ← UPDATE commit 이후 새 snapshot에서 visible할 수 있음
-└──────────────┘
-```
+*PostgreSQL 16의 UPDATE를 단순화했습니다. 오래된 버전과 새 버전의 가시성은 스냅샷과 커밋 상태에 따라 달라집니다.*
 
 실제 PostgreSQL 튜플에는 트랜잭션 가시성을 판단하기 위한 메타데이터가 있고, 스냅샷 규칙에 따라 어떤 튜플 버전이 보이는지 결정됩니다. 여기서 중요한 것은 내부 필드 이름을 외우는 것보다 **읽기 트랜잭션이 쓰기 트랜잭션의 미완료 상태를 그대로 읽지 않으면서도 과도하게 기다리지 않는 구조**입니다.
 

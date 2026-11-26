@@ -26,17 +26,9 @@ references:
 
 JPA Entity는 Java 객체이지만 `EntityManager`와 영속성 컨텍스트의 관리 대상이 되면 **JPA provider가 객체 정체성과 변경을 추적하는 상태**가 생깁니다. 같은 Java 클래스의 객체라도 현재 영속성 컨텍스트가 관리하는지에 따라 필드 변경이 DB와 연결되는 방식이 달라집니다.
 
-```text
-new / transient
-   │ persist
-   ▼
-managed
-   │ detach/clear/context close
-   ▼
-detached
+![JPA Entity · 관리 상태와 merge 반환 객체](/learning/spring/entity-states.svg)
 
-managed ── remove ──► removed
-```
+대표 생명주기 전이만 표시했습니다. merge는 상태를 관리 객체로 복사하는 연산이며, SQL 실행 및 commit 시점과 관리 상태는 별개입니다.
 
 ### managed 상태에서는 변경 감지(dirty checking)가 동작한다
 

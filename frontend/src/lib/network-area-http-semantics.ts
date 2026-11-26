@@ -3,8 +3,8 @@ import type { AreaDiagram } from './network-area-types'
 export const httpSemanticsDiagrams = {
 'url-components': {
  layout:'matrix',title:'URL 요소와 전송 위치의 차이',lead:'하나의 URL 문자열도 연결 대상과 HTTP 메시지에서 서로 다른 역할을 합니다.',
- columns:['구성 요소','예시','사용 목적'],rows:[['scheme','https','보호 전송 규칙'],['authority','api.example.com:8443','호스트·포트'],['path','/users/42','HTTP 요청 대상'],['query','detail=true','요청 대상의 조건'],['fragment','#profile','클라이언트 측 위치']],
- note:'프래그먼트는 HTTP 요청 대상에 보내지 않습니다. DNS는 host를 주소 후보로 해석할 수 있습니다.'
+ columns:['구성 요소','예시','사용 목적'],rows:[['scheme','https','보호 전송 규칙'],['authority','api.example.com:8443','연결 대상 host·port'],['path','/users/42','HTTP 요청 대상'],['query','detail=true','요청 대상의 조건'],['fragment','#profile','서버로 보내지 않음']],
+ note:'예: https://api.example.com:8443/users/42?detail=true#profile. 일반 origin-form 요청 대상은 /users/42?detail=true이며 fragment는 제외됩니다.'
 },
 'dns-to-route': {
  layout:'path',title:'DNS 주소 후보와 IP 라우팅의 독립 경계',lead:'DNS에서 IP 주소를 알아낸 뒤에도 해당 목적지로 전송할 경로가 필요합니다.',
@@ -13,9 +13,9 @@ export const httpSemanticsDiagrams = {
 },
 'tls-before-http': {
  layout:'compare',title:'HTTPS 전송 준비: TCP/TLS와 QUIC',lead:'보호된 HTTP 데이터에는 인증과 암호 상태가 필요하지만 HTTP 버전에 따라 전송 경로가 다릅니다.',
- left:{heading:'HTTP/1.1·2',lines:['TCP 연결 수립','TLS 1.3 핸드셰이크','보호된 HTTP 데이터']},
- right:{heading:'HTTP/3',lines:['UDP 위 QUIC 연결','QUIC에 통합된 TLS 1.3 키 협상','HTTP/3 스트림 전송']},
- note:'기존 보안 연결 재사용 시 모든 핸드셰이크를 반복하지 않습니다. TLS 0-RTT는 replay 위험이 있는 예외입니다.'
+ left:{heading:'HTTP/1.1·2',lines:['TCP 연결 수립','TCP 위 TLS 핸드셰이크','TLS 레코드로 HTTP 전송']},
+ right:{heading:'HTTP/3',lines:['UDP 데이터그램 위 QUIC','QUIC CRYPTO 프레임으로 TLS 협상','QUIC STREAM 프레임으로 HTTP/3']},
+ note:'QUIC은 TLS 레코드 계층을 사용하지 않습니다. 기존 연결 재사용 시 협상 반복은 필요하지 않으며 0-RTT는 replay 위험을 따로 고려합니다.'
 },
 'http-request-delivery': {
  layout:'branch',title:'HTTP 중개자가 만드는 응답 경로',lead:'클라이언트 요청이 항상 원본 애플리케이션 서버에 전달되는 것은 아닙니다.',
@@ -48,9 +48,9 @@ put: {
 },
 'protocol-idempotency-boundary': {
  layout:'compare',title:'HTTP 멱등성 vs 업무 중복 방지',lead:'프로토콜이 정의한 의도된 HTTP 효과와 실제 업무의 중복 처리 방지는 별개의 계약입니다.',
- left:{heading:'HTTP 메서드 의미',lines:['PUT / DELETE 등 의도된 효과가 멱등','네트워크는 요청을 중복 전달할 수 있음','부수 효과 실행 횟수까지 보장하지 않음']},
- right:{heading:'애플리케이션 멱등성',lines:['POST + Idempotency-Key 등 작업 식별','동일 작업의 저장 상태·결과 확인','결제·주문·외부 효과 중복 제어']},
- note:'키 범위·TTL·서로 다른 payload 처리·동시 실행 정책이 필요합니다. 정확히 한 번 실행 보장을 뜻하지 않습니다.'
+ left:{heading:'HTTP 메서드 의미',lines:['PUT / DELETE 등 의도된 효과가 멱등','응답 유실 시 클라이언트가 재시도 가능','부수 효과 실행 횟수까지 보장하지 않음']},
+ right:{heading:'애플리케이션 멱등성',lines:['POST + Idempotency-Key 등 작업 식별','동일 키와 요청 지문을 원자적으로 확인','결제·주문·외부 효과 중복 제어']},
+ note:'HTTP 멱등성은 동일 요청의 의도된 효과에 관한 계약입니다. 업무 중복 방지는 키 범위·만료·요청 지문·동시 실행 및 외부 효과의 별도 설계가 필요합니다.'
 },
 'redirect-status': {
  layout:'matrix',title:'리다이렉트의 메서드 유지 규칙',lead:'Location을 따라갈 때 상태 코드별 후속 HTTP 요청 의미가 달라질 수 있습니다.',

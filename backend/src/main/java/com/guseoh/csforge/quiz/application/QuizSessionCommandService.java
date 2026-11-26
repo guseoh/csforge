@@ -88,7 +88,7 @@ public class QuizSessionCommandService {
                         now);
             }
             attemptRepository.saveAllAndFlush(data.attemptsByQuestionId().values());
-            data.attemptsByQuestionId().values().forEach(outcomeCoordinator::process);
+            outcomeCoordinator.processAll(data.attemptsByQuestionId().values());
             if (selfCheckPending(data) == 0) {
                 data.session().complete(now);
             }

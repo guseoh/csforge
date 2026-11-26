@@ -22,30 +22,9 @@ references:
 
 Spring Bean 생명주기를 아주 단순화하면 다음 흐름으로 볼 수 있습니다.
 
-```text
-객체 생성
-   │
-   ▼
-의존성 설정
-   │
-   ▼
-BeanPostProcessor 초기화 전 처리
-   │
-   ▼
-@PostConstruct / init method
-   │
-   ▼
-BeanPostProcessor 초기화 후 처리
-   │
-   ▼
-사용 가능한 Bean
-   │
-   ▼
-컨텍스트 종료
-   │
-   ▼
-@PreDestroy / destroy method
-```
+![Bean 생명주기 · 초기화와 종료의 경계](/learning/spring/bean-lifecycle-phases.svg)
+
+일반적인 singleton 생명주기를 단순화했습니다. @PostConstruct는 초기화 전 BeanPostProcessor 처리에 포함되며, 이후 InitializingBean과 별도 init 메서드가 호출될 수 있습니다. 모든 프록시 생성 시점이 동일하다는 보장은 아닙니다.
 
 실제 생명주기에는 더 많은 확장 지점이 있지만 이 순서를 이해하면 “생성자에서 해야 할 일”과 “모든 의존성이 준비된 뒤 해야 할 일”을 나누기 쉽습니다.
 

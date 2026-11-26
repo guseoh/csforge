@@ -28,16 +28,9 @@ references:
 
 그래서 business state마다 canonical owner를 명시하고, 다른 저장소는 필요한 경우 그 상태에서 파생된 read model이나 cache로 둡니다.
 
-```text
-canonical owner
-   │ local transaction
-   ▼
-source of truth
-   │
-   ├─ event → search projection
-   └─ cache / analytics view
-             └─ 필요하면 재생성 가능
-```
+![기준 데이터와 파생 읽기 상태](/learning/system-design/canonical-owner-derived-views.svg)
+
+점선은 파생 상태로 전달되는 변경 정보이며 자동 동기화나 원자적 커밋을 의미하지 않습니다. 같은 물리 DB에서도 논리적 쓰기 소유권을 구분할 수 있습니다.
 
 이 경계는 단순히 DB 테이블의 위치를 정하는 문제가 아닙니다. 어떤 invariant를 같은 transaction 안에서 지킬지, 누가 schema migration과 recovery를 담당할지, 외부에는 어떤 API를 통해 변경을 허용할지도 함께 정합니다.
 

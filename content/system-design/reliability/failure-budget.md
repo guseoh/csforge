@@ -28,11 +28,9 @@ references:
 
 학습 결과 저장은 기준 데이터의 상태이므로 실패를 숨기면 안 됩니다. 반면 추천 콘텐츠나 통계 보강은 장애 중 잠시 생략해도 핵심 학습 흐름을 이어 갈 수 있습니다.
 
-```text
-dependency failure
-  ├─ core workflow     → correctness 우선, 명확한 성공/실패
-  └─ optional feature → omit / stale / delayed 같은 제한적 대체
-```
+![핵심 흐름과 선택 기능의 장애 시 정책](/learning/system-design/core-optional-degradation.svg)
+
+핵심 흐름이 추천 의존성과 격리돼 있고 필요한 자원이 남아 있는 예입니다. 핵심 기능도 실패할 수 있으며 실패 시에는 정확한 상태를 반환해야 합니다.
 
 Graceful degradation은 오류를 성공처럼 감추는 것이 아닙니다. 일부 데이터를 생략했다면 사용자가 어떤 결과를 받았는지 알 수 있어야 하고, 권한·금전·canonical write 같은 invariant는 대체 처리 때문에 우회되어서는 안 됩니다.
 

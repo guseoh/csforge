@@ -22,12 +22,9 @@ references:
 
 재귀 호출은 같은 함수 이름을 반복해서 실행하지만, 각 호출은 자신의 parameter, local 상태와 return point를 가진 독립된 호출 상태다.
 
-```text
-factorial(4)
- └─ factorial(3)
-     └─ factorial(2)
-         └─ factorial(1)
-```
+![재귀 · 호출 상태와 반환값](/learning/dsa/factorial-call-return.svg)
+
+factorial(n)이 n × factorial(n-1)을 반환하고 n=1에서 1을 반환한다고 가정합니다. 하위 호출이 반환될 때 상위 호출의 n을 사용해 결과를 계산합니다.
 
 가장 깊은 호출이 반환되면 바로 위 호출은 자신이 저장해 둔 상태에서 계산을 이어 간다. 따라서 재귀를 추적할 때는 내려가는 호출 경로와 반환되며 결과를 결합하는 경로를 함께 봐야 한다.
 

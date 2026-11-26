@@ -14,6 +14,7 @@ import com.guseoh.csforge.learning.domain.ConceptRepository;
 import com.guseoh.csforge.learning.domain.ConceptProgressRepository;
 import com.guseoh.csforge.learning.domain.LearningStatus;
 import com.guseoh.csforge.learning.infrastructure.ConceptUnderstandingEvidenceRepository;
+import com.guseoh.csforge.learning.infrastructure.LearningAreaQueryRepository;
 import com.guseoh.csforge.quiz.domain.AttemptGradingStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -30,6 +31,7 @@ public class ConceptUnderstandingQueryService {
     private final ConceptProgressRepository progressRepository;
     private final ConceptUnderstandingEvidenceRepository evidenceRepository;
     private final ConceptUnderstandingBatchRepository batchRepository;
+    private final LearningAreaQueryRepository learningAreaQueryRepository;
     private final LearningQueryService learningQueryService;
 
     public ConceptUnderstandingView getUnderstanding(long conceptId) {
@@ -67,7 +69,9 @@ public class ConceptUnderstandingQueryService {
 
     public ConceptUnderstandingPageView getAreaUnderstanding(String areaSlug, Long topicId, int page, int size) {
         if (size > 50) throw new LearningBadRequestException("size must be between 1 and 50");
-        learningQueryService.getArea(areaSlug);
+        if (!learningAreaQueryRepository.existsActiveArea(areaSlug)) {
+            throw new LearningNotFoundException("Learning area not found: " + areaSlug);
+        }
         ConceptPageView concepts = learningQueryService.listConcepts(new ConceptSearchCriteria(
                 areaSlug, topicId, null, null, null, null, page, size, ConceptSort.CURRICULUM));
         List<Long> ids = concepts.items().stream().map(ConceptSearchItem::id).toList();

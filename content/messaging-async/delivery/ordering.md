@@ -43,14 +43,9 @@ order-8: Placed → Cancelled
 
 컨슈머가 파티션에서 `Placed`, `Paid`를 순서대로 읽어도 각각을 별도 작업자에게 넘기면 실제 완료 순서는 뒤집힐 수 있습니다.
 
-```text
-poll order
-1. Placed → Worker A ───── 느림
-2. Paid   → Worker B ─ 빠르게 완료
+![파티션 읽기 순서와 업무 완료 순서](/learning/messaging-async/poll-vs-effect-order.svg)
 
-DB apply order
-Paid → Placed  // 역전 가능
-```
+두 작업을 독립적으로 실행하고 적용 시 순서 검증이 없는 경우입니다. 같은 파티션의 읽기 순서가 외부 효과 완료 순서까지 보장하지 않습니다.
 
 따라서 순서가 중요한 키는 컨슈머 내부에서도 처리 순서를 보존해야 합니다. 파티션 단위로 직렬 처리하거나, 키별 대기열을 두거나, 이벤트 버전·순번을 확인해 예상하지 않은 역순 적용을 거부할 수 있습니다.
 

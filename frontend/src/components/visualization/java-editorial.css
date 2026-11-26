@@ -820,3 +820,48 @@
 .learning-visualization.java-visualization .java-ed-static-flow .java-ed-legacy-flow code {
   color: var(--java-editorial-muted);
 }
+
+
+/* Post-merge Java G3 P2: read relationships as compact editorial typography instead
+   of legacy boxed SVG or three nested equal-weight cards. Desktop-first only. */
+.learning-visualization .java-ed-object { min-width:0; color:var(--java-editorial-ink); }
+.learning-visualization .java-ed-object-central { display:grid; gap:6px; align-content:start; border-block:1px solid var(--java-editorial-rule); padding:14px 0; margin:12px 0; }
+.learning-visualization .java-ed-object-central > strong { font-size:1rem; font-weight:640; }
+.learning-visualization .java-ed-object-central > span:last-child { color:var(--java-editorial-muted); font-size:.86rem; line-height:1.6; }
+.learning-visualization .java-ed-object-pair,
+.learning-visualization .java-ed-object-comparison { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:clamp(14px,3vw,28px); margin:13px 0; }
+.learning-visualization .java-ed-object-pair > div,
+.learning-visualization .java-ed-object-comparison > div { min-width:0; display:grid; align-content:start; gap:9px; border-top:2px solid var(--java-editorial-rule); border-bottom:1px solid var(--java-editorial-rule); padding:13px 0; }
+.learning-visualization .java-ed-object-pair strong,
+.learning-visualization .java-ed-object-comparison strong { font-weight:620; font-size:.95rem; line-height:1.5; overflow-wrap:anywhere; }
+.learning-visualization .java-ed-object-pair span:last-child,
+.learning-visualization .java-ed-object-comparison span:last-child,
+.learning-visualization .java-ed-object-pair small { color:var(--java-editorial-muted); font-size:.83rem; line-height:1.65; }
+.learning-visualization .java-ed-object-pair > div > strong > small { font-weight:450; }
+.learning-visualization .java-ed-object .java-editorial-qualification { margin:12px 0; color:var(--java-editorial-muted); font-size:.84rem; line-height:1.7; }
+.learning-visualization .java-ed-object-code { margin:14px 0 8px; padding:11px 0; border-block:1px solid var(--java-editorial-rule); overflow-wrap:anywhere; white-space:pre-wrap; }
+.learning-visualization .java-ed-object-code code { white-space:pre-wrap; overflow-wrap:anywhere; font-size:.85rem; }
+.learning-visualization .java-ed-object-output { margin:12px 0; font-size:.84rem; }
+.learning-visualization .java-ed-object-output summary { cursor:pointer; padding:7px 0; }
+.learning-visualization .java-ed-object-output ol { padding-inline-start:22px; }
+.learning-visualization .java-ed-value-contract > .java-ed-object-central + .java-ed-object-pair { margin-top:15px; }
+.learning-visualization .java-ed-object code,
+.learning-visualization .java-ed-value-contract code { padding:0; border:0; border-radius:0; background:transparent; box-shadow:none; color:inherit; font-family:var(--font-mono,monospace); font-size:.86rem; white-space:normal; overflow-wrap:anywhere; }
+.learning-visualization .java-ed-map-compare,
+.learning-visualization .java-ed-reference-compare { display:grid; margin:12px 0 16px; border-top:1px solid var(--java-editorial-rule); }
+.learning-visualization .java-ed-map-compare > div,
+.learning-visualization .java-ed-reference-compare > div { display:grid; grid-template-columns:minmax(125px,1.05fr) minmax(0,1fr) minmax(0,1fr); gap:10px; padding:11px 0; align-items:baseline; border-bottom:1px solid var(--java-editorial-rule); }
+.learning-visualization .java-ed-map-compare-header,
+.learning-visualization .java-ed-reference-compare-header { color:var(--java-editorial-muted); font-size:.79rem; }
+.learning-visualization .java-ed-map-compare > div > strong { display:grid; gap:3px; }
+.learning-visualization .java-ed-map-compare small { font-size:.77rem; color:var(--java-editorial-muted); font-weight:400; }
+.learning-visualization .java-ed-map-compare code,
+.learning-visualization .java-ed-reference-compare code { padding:0; border:0; background:none; font-size:.85rem; white-space:normal; overflow-wrap:anywhere; }
+.learning-visualization .java-ed-map-compare > div:not(:first-child) > span:last-child { font-weight:600; }
+.learning-visualization .java-ed-reference-compare > div { grid-template-columns:minmax(85px,.8fr) minmax(0,1.4fr) minmax(0,2fr); }
+.learning-visualization .java-ed-reference-compare > div > span:last-child { font-size:.83rem; line-height:1.6; color:var(--java-editorial-muted); }
+.learning-visualization .java-ed-ref-queue { border-top:2px solid var(--java-editorial-rule); padding:14px 0; }
+.learning-visualization .java-ed-memory-compare { display:grid; grid-template-columns:minmax(0,1fr); margin:12px 0; border-top:1px solid var(--java-editorial-rule); }
+.learning-visualization .java-ed-memory-compare > div { display:grid; grid-template-columns:minmax(145px,.85fr) minmax(0,2fr); gap:14px; align-items:baseline; border-bottom:1px solid var(--java-editorial-rule); padding:12px 0; }
+.learning-visualization .java-ed-memory-compare > div > strong { font-size:.9rem; font-weight:620; }
+.learning-visualization .java-ed-memory-compare > div > span { font-size:.85rem; line-height:1.65; color:var(--java-editorial-muted); }

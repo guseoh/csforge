@@ -59,7 +59,7 @@ export function DnsIterativeEditorial() {
     { name: '권한 서버', reply: 'A = 192.0.2.10' },
   ]
   return <div className="network-core-editorial" data-network-core="dns-iterative">
-    <p className="network-core-editorial__intro">캐시에 최종 응답이 없으면 재귀 리졸버가 위임 정보를 따라 권한 서버를 찾습니다.</p>
+    <p className="network-core-editorial__intro">스텁은 재귀 질의를 요청하고 재귀 리졸버는 캐시 미스 시 필요한 서버에 반복 질의를 보냅니다.</p>
     <svg className="network-core-editorial__svg" viewBox="0 0 840 464" role="img" aria-labelledby={titleId + ' ' + descId}>
       <title id={titleId}>DNS 반복 조회: 재귀 리졸버와 루트·TLD·권한 서버</title>
       <desc id={descId}>애플리케이션 스텁 리졸버는 재귀 리졸버에 질의합니다. 캐시 적중이면 즉시 반환하고, 캐시 미스이면 재귀 리졸버가 루트와 TLD 권한 서버의 위임 정보를 따라 최종 권한 서버에서 A 레코드를 얻습니다.</desc>
@@ -75,7 +75,7 @@ export function DnsIterativeEditorial() {
       <rect className="network-core-editorial__segment" x="314" y="122" width="501" height="59" />
       <text className="network-core-editorial__text" x="562" y="145" textAnchor="middle">캐시 적중 → 최종 응답 즉시 반환</text>
       <text className="network-core-editorial__minor" x="562" y="167" textAnchor="middle">루트·TLD·권한 서버로 다시 질의할 필요 없음</text>
-      <text className="network-core-editorial__section-label" x="24" y="221">캐시 미스 → 위임을 따라 반복 조회</text>
+      <text className="network-core-editorial__section-label" x="24" y="221">캐시 미스 → 재귀 리졸버가 반복 질의</text>
       <line className="network-core-editorial__lifeline" x1="141" y1="238" x2="141" y2="429" />
       {servers.map((server, i) => {
         const y = 251 + i * 68
@@ -105,8 +105,8 @@ export function TcpTeardownEditorial() {
     <p className="network-core-editorial__intro">TCP의 두 송신 방향은 독립적으로 종료됩니다. FIN의 송신과 수신을 구분해 상태를 읽습니다.</p>
     <div className="network-core-editorial__scroll" role="region" aria-label="TCP FIN 종료 시퀀스" tabIndex={0}>
       <svg className="network-core-editorial__svg" viewBox="0 0 840 504" role="img" aria-labelledby={titleId + ' ' + descId}>
-        <title id={titleId}>TCP 정상 종료 {step + 1} / {frames.length}</title>
-        <desc id={descId}>{frame.title}. 클라이언트 {frame.client}, 서버 {frame.server}. {frame.explanation}</desc>
+        <title id={titleId}>{`TCP 정상 종료 ${step + 1} / ${frames.length}`}</title>
+        <desc id={descId}>{`${frame.title}. 클라이언트 ${frame.client}, 서버 ${frame.server}. ${frame.explanation}`}</desc>
         <text className="network-core-editorial__party" x="141" y="36" textAnchor="middle">클라이언트 · 능동 종료</text>
         <text className="network-core-editorial__party" x="698" y="36" textAnchor="middle">서버 · 수동 종료</text>
         <text className="network-core-editorial__state" x="141" y="67" textAnchor="middle" data-teardown-party="client">{frame.client}</text>

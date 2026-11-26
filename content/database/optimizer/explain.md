@@ -22,11 +22,9 @@ references:
 
 예를 들어 다음과 같은 출력이 있다고 해 봅시다.
 
-```text
-Nested Loop  (cost=... rows=20 ...) (actual ... rows=20000 loops=1)
-  -> Index Scan on member ...
-  -> Index Scan on orders ... (actual ... rows=1000 loops=20)
-```
+![EXPLAIN: 실행 계획 트리와 loops](/learning/database/optimizer-explain.svg)
+
+*PostgreSQL EXPLAIN ANALYZE의 예시 수치입니다. 실제 행 수를 읽을 때는 노드의 반복 실행 횟수(loops)를 함께 봅니다.*
 
 ### plan은 tree다
 

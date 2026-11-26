@@ -28,15 +28,11 @@ references:
 
 먼저 같은 단위로 바꿔 봅니다. 하루 8,640만 건이면 하루 평균은 약 1,000 QPS지만 실제 traffic은 특정 시간에 몰릴 수 있으므로 peak 배수를 따로 잡아야 합니다. 한 요청이 DB query 여러 개나 downstream fan-out을 만든다면 외부 요청 수와 내부 작업량도 같지 않습니다.
 
-```text
-user requests
-   ↓
-peak QPS
-   ↓
-queries / messages / bytes
-   ↓
-storage growth + downstream load
-```
+![API 요청률에서 DB 부하와 저장량 추산](/learning/system-design/request-capacity-worked-example.svg)
+
+100만 건은 전체 일일 요청, peak는 일시적 유입률의 10배로 가정합니다. 초당 DB 질의 추산은 반올림 전 값으로 계산하고, 저장량은 1KB=1,000B의 십진 단위입니다.
+
+위 예에서 평균 요청률은 `1,000,000 / 86,400 ≈ 11.57 QPS`, 최대 요청률은 `11.574… × 10 ≈ 115.74 QPS`, DB 질의율은 `115.740… × 3 ≈ 347.22 queries/s`입니다. 모든 요청이 2 KB씩 실제로 저장한다면 원본 증가량은 하루 약 2 GB입니다. 쓰기 비율이 f라면 요청 기반 원본 증가량은 `2 GB × f`로 조정합니다. peak 지속 시간과 실제 일일 총량을 별도로 확인하며, peak 배수를 하루 저장량에 무조건 다시 곱하지 않습니다.
 
 데이터 규모도 record 수만으로 결정되지 않습니다. Record 평균 크기, index, history·audit 보존, replica와 backup까지 포함하면 실제 storage는 원본 데이터보다 커집니다. 반대로 모든 숫자를 처음부터 매우 정밀하게 계산할 필요는 없습니다. 초기 설계에서는 10GB인지 10TB인지처럼 order of magnitude가 선택을 바꾸는 경우가 더 중요합니다.
 

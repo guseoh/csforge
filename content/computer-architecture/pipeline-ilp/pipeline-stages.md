@@ -33,12 +33,9 @@ fetch decode execute memory write-back
 
 ### 여러 명령어가 겹쳐 진행된다
 
-```text
-cycle     1    2    3    4    5    6    7
-I1       IF   ID   EX  MEM   WB
-I2            IF   ID   EX  MEM   WB
-I3                 IF   ID   EX  MEM   WB
-```
+![같은 열의 명령어는 동시에 서로 다른 단계를 사용합니다.](/learning/computer-architecture/pipeline-stages.svg)
+
+*같은 열의 명령어는 동시에 서로 다른 단계를 사용합니다.*
 
 I1이 EX 단계에 있을 때 I2는 ID, I3는 IF 단계에 있을 수 있다. 따라서 첫 명령어의 결과가 나오는 시간 자체가 크게 줄어드는 것이 아니라, 파이프라인이 채워진 뒤 **명령어가 완료되는 간격**을 줄여 처리량을 높이는 것이 핵심이다.
 

@@ -29,10 +29,9 @@ speedup  = 1 / ((1 - p) + p / s)
 
 개선 전후의 실행 시간은 다음처럼 나뉜다.
 
-```text
-baseline: | unchanged (1-p) | improvable (p)   | total 1
-improved: | unchanged (1-p) | improvable (p/s) | total (1-p) + p/s
-```
+![개선하지 않은 구간의 길이를 유지해 전체 효과의 한계를 표현합니다.](/learning/computer-architecture/amdahl-bars.svg)
+
+*개선하지 않은 구간의 길이를 유지해 전체 효과의 한계를 표현합니다.*
 
 개선하지 않은 `(1-p)` 부분은 그대로 남는다는 점이 핵심이다.
 

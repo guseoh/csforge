@@ -21,14 +21,9 @@ references:
 
 Binary heap은 **complete binary tree shape**와 **parent-child priority 불변식**을 함께 사용하는 자료구조다. Min-heap에서는 모든 parent가 자신의 자식보다 작거나 같고, max-heap에서는 반대다. 이 조건 때문에 루트에는 전체 원소 중 최소값 또는 최대값이 위치한다.
 
-```text
-min-heap
-        2
-      /   \
-     5     4
-    / \   /
-   9   7 8
-```
+![최소 힙 · 트리와 배열의 인덱스 대응](/learning/dsa/min-heap-array-index.svg)
+
+트리의 레벨 순서가 배열 인덱스와 일치합니다. 부모 인덱스 공식은 i > 0인 노드에 적용하며 자식 인덱스는 배열 길이보다 작을 때만 존재합니다.
 
 Heap은 전체를 정렬하지 않는다. 위 예에서 5와 4의 상대 순서는 문제가 되지 않는다. 서로 parent-child 관계가 아니기 때문이다. 따라서 루트의 최우선 값을 빠르게 얻을 수 있지만 arbitrary key를 이진 탐색처럼 찾을 수는 없다.
 

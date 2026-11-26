@@ -23,19 +23,9 @@ references:
 
 입문 단계에서는 다음 흐름으로 생각할 수 있다.
 
-```text
-PC
- ↓
-Fetch instruction
- ↓
-Decode opcode / operands
- ↓
-Execute operation
- ↓
-필요하면 memory access / result write
- ↓
-다음 PC 결정
-```
+![RV32I의 32비트 ADD로 인출부터 결과 기록까지 추적합니다.](/learning/computer-architecture/instruction-cycle.svg)
+
+*RV32I의 32비트 ADD로 인출부터 결과 기록까지 추적합니다.*
 
 예를 들어 덧셈 명령어는 원본 레지스터를 읽어 ALU에서 계산하고 목적지 레지스터에 결과를 기록한다. Load 명령어는 레지스터와 오프셋으로 주소를 계산한 뒤 메모리에서 값을 읽어 레지스터에 넣는다.
 

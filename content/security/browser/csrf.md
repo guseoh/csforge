@@ -26,18 +26,9 @@ references:
 
 사용자가 `bank.example`에 로그인해 세션 쿠키를 가진 상태에서 `evil.example`을 방문했다고 해 봅시다. 여기서는 세션 쿠키가 `SameSite=None; Secure`로 설정되어 교차 사이트 요청에도 전송된다고 가정합니다. 공격자 페이지가 은행의 송금 엔드포인트로 폼을 제출하면 **브라우저가 은행 사이트의 쿠키를 자동으로 붙인다는 점**이 CSRF의 출발점입니다.
 
-```text
-피해자가 evil.example 방문
-        │
-        ▼
-HTML 폼: <form action="https://bank.example/transfer" method="POST">
-        │
-        ▼
-브라우저가 bank.example에 요청 전송
-        │ Cookie: SESSION=valid
-        ▼
-서버가 인증된 세션으로 처리
-```
+![CSRF · 쿠키 전송과 토큰 검증](/learning/security/csrf-cookie-token-boundary.svg)
+
+교차 사이트 쿠키가 전송되는 조건을 가정한 방어 학습 모델입니다. 구체적 공격 입력 대신 서버 검증 위치를 보여 줍니다.
 
 공격자가 응답을 읽을 필요가 없습니다. 송금 상태가 바뀌기만 하면 공격은 성공합니다. 그래서 SOP만으로는 충분하지 않습니다.
 

@@ -18,7 +18,7 @@ import com.guseoh.csforge.question.domain.QuestionConceptSummary;
 import com.guseoh.csforge.question.domain.QuestionConceptRepository;
 import com.guseoh.csforge.review.domain.ReviewSchedule;
 import com.guseoh.csforge.review.domain.ReviewScheduleRepository;
-import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
+import com.guseoh.csforge.review.domain.ReviewSummaryCounts;
 import com.guseoh.csforge.review.infrastructure.ReviewScheduleSearchRepository;
 import com.guseoh.csforge.wrongnote.domain.WrongNoteRepository;
 
@@ -39,15 +39,17 @@ public class ReviewQueryService {
     @Transactional(readOnly = true)
     public ReviewSummaryView summary() {
         ReviewTimeWindow timeWindow = ReviewTimeWindow.from(Instant.now(clock), studyZoneId);
-        long overdue = scheduleRepository.countByStatusAndDueAtBefore(ReviewScheduleStatus.SCHEDULED, timeWindow.startOfToday());
-        long actionable = scheduleRepository.countScheduledDueBefore(ReviewScheduleStatus.SCHEDULED, timeWindow.now());
-        long dueNow = actionable - overdue;
-        long next24 = scheduleRepository.countScheduledDueBetweenExclusiveInclusive(
-                ReviewScheduleStatus.SCHEDULED, timeWindow.now(), timeWindow.next24Hours());
-        long next7 = scheduleRepository.countScheduledDueBetweenExclusiveInclusive(
-                ReviewScheduleStatus.SCHEDULED, timeWindow.next24Hours(), timeWindow.next7Days());
-        return new ReviewSummaryView(overdue, dueNow, next24, next7,
-                scheduleRepository.countByStatus(ReviewScheduleStatus.MASTERED));
+        ReviewSummaryCounts counts = scheduleRepository.summarizeVisible(
+                timeWindow.startOfToday(),
+                timeWindow.now(),
+                timeWindow.next24Hours(),
+                timeWindow.next7Days());
+        return new ReviewSummaryView(
+                counts.overdue(),
+                counts.dueNow(),
+                counts.next24Hours(),
+                counts.next7Days(),
+                counts.mastered());
     }
 
     @Transactional(readOnly = true)

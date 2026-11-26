@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 365" role="img" aria-labelledby="cache-write-title cache-write-desc"><title id="cache-write-title">쓰기 적중 · 하위 계층에 반영하는 시점</title><desc id="cache-write-desc">초기 값10, CPU가20으로 변경. write-through는 전달 완료 후 하위20, write-back은 dirty20/하위10, write-back 시 하위20.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="365"/><text x="28" y="43" class="h" text-anchor="start">쓰기 적중 · 하위 계층에 반영하는 시점</text><text x="28" y="81" class="s" text-anchor="start">초기 cache=10, 하위 계층=10 · CPU가 20을 기록</text>
+<text x="28" y="120" class="b" text-anchor="start">Write-through</text>
+<rect x="28" y="137" width="230" height="56" class="v"/><text x="143" y="173" class="m" text-anchor="middle">cache: 20</text>
+<rect x="365" y="137" width="230" height="56" class="v"/><text x="480" y="173" class="s" text-anchor="middle">하위: 20</text>
+<path d="M258 165H357" class="e"/>
+<text x="480" y="214" class="s" text-anchor="middle">하위 쓰기 완료 후</text>
+<text x="28" y="238" class="b" text-anchor="start">Write-back</text>
+<rect x="28" y="255" width="230" height="56" class="v"/><text x="143" y="291" class="m" text-anchor="middle">cache: 20</text>
+<rect x="365" y="255" width="230" height="56" class="p"/><text x="480" y="291" class="s" text-anchor="middle">하위: 10</text>
+<text x="143" y="332" class="s" text-anchor="middle">dirty</text>
+<path d="M595 283H695" class="e"/>
+<rect x="703" y="255" width="229" height="56" class="v"/><text x="817.5" y="291" class="s" text-anchor="middle">하위: 20</text>
+<text x="817" y="332" class="s" text-anchor="middle">write-back 이후</text></svg>

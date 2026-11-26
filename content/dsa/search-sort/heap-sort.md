@@ -23,9 +23,9 @@ Ascending heap sort는 먼저 전체 배열을 max-heap으로 만든다. 그러�
 
 이후 heap 범위를 한 칸 줄이고 루트에서 sift-down을 수행해 남은 prefix의 max-heap 불변식을 복구한다.
 
-```text
-[ max-heap prefix | sorted suffix ]
-```
+![힙 정렬 · 확정 구간 확대](/learning/dsa/heap-sort-extraction.svg)
+
+교환 직후에는 남은 구간이 아직 최대 힙이 아닐 수 있습니다. sift-down을 완료한 뒤 다음 추출을 진행하며, 굵은 칸은 이미 최종 위치가 확정된 구간입니다.
 
 반복 중에는 왼쪽 prefix가 max-heap이고, 오른쪽 suffix는 이미 최종 위치가 확정된 ascending 영역이라는 두 불변식을 함께 유지한다. 매 iteration마다 suffix가 한 칸씩 커진다.
 

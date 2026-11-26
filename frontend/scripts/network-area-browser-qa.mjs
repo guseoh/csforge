@@ -7,7 +7,7 @@ const dir=resolve(process.cwd(),'..','artifacts','network-area-audit')
 mkdirSync(dir,{recursive:true})
 const browser=await chromium.launch({headless:true})
 const checks=[], errors=[]
-const layouts=new Set(['stack','path','compare','branch','matrix','sequence'])
+const layouts=new Set(['stack','path','compare','branch','matrix','sequence','boundary','packet-envelope','ipv4-prefix','frame-interleave','byte-gap','cookie-conditions'])
 const widthVariants=[1280,1440], themes=['dark','light']
 
 try {

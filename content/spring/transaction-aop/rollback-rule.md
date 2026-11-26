@@ -96,14 +96,8 @@ DB INSERT --------┐
 
 내부 트랜잭션 작업이 참여 중인 트랜잭션을 rollback-only로 표시한 뒤 바깥 코드가 예외를 잡고 계속 진행할 수 있습니다. 바깥 메서드가 정상 종료해 commit을 요청해도 transaction manager는 이미 rollback-only인 상태를 보고 실제 rollback할 수 있습니다.
 
-```text
-T1 시작
-  -> 내부 작업 실패
-  -> T1 rollback-only
-  -> 바깥 코드가 예외를 잡고 계속
-  -> 바깥 메서드 정상 반환
-  -> commit 요청
-  -> 실제 rollback / UnexpectedRollbackException 가능
-```
+![rollback-only · 예외를 잡아도 commit할 수 없는 이유](/learning/spring/rollback-only-timeline.svg)
+
+서로 다른 proxy 경계를 통해 REQUIRED로 참여하고 내부 interceptor가 기본 rollback 규칙으로 표시한 경우입니다. 예외를 잡는 것만으로 rollback-only가 설정되는 것은 아닙니다.
 
 rollback 규칙을 이해할 때는 “예외가 났는가?”뿐 아니라 **transaction interceptor가 어떤 예외를 보았고 현재 트랜잭션 상태가 무엇인지**를 함께 추적해야 합니다.

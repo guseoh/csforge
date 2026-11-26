@@ -18,4 +18,12 @@
   <rect class="writer" x="785" y="260" width="245" height="90" rx="11"/><text class="label" x="831" y="296">Exclusive write</text><text class="small" x="825" y="322">reader/writer 모두 배제</text>
   <path class="line" d="M907 217V260"/>
   <text class="small" x="48" y="406">waiting writer가 있을 때 새 reader를 허용할지 등 fairness/admission 정책은 구현 계약을 확인해야 한다.</text>
+
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+.bg{fill:#f9fafb}.title{fill:#202632;font:700 25px Inter,Arial,sans-serif}.label{fill:#242b38;font:650 17px Inter,Arial,sans-serif}.small{fill:#596075;font:500 14px Inter,Arial,sans-serif}.reader{fill:#e4f3ea;stroke:#167249;stroke-width:2}.writer{fill:#e9e4f0;stroke:#6643a7;stroke-width:2}.wait{fill:#fff4db;stroke:#936200;stroke-width:2}.line{stroke:#6643a7;stroke-width:2;fill:none;marker-end:url(#arrow)}
+[fill="#a56df4"]{fill:#6643a7}
+[stroke="#a56df4"]{stroke:#6643a7}
+}
+]]></style>
 </svg>

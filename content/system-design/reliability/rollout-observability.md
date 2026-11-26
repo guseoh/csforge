@@ -26,15 +26,9 @@ references:
 
 설계 변경이 논리적으로 맞아 보여도 production workload에서 같은 결과가 나온다는 보장은 없습니다. 새 version, schema, routing 또는 infrastructure 변경은 작은 범위에서 먼저 노출하고 실제 telemetry를 확인한 뒤 점진적으로 확대하는 편이 안전합니다.
 
-```text
-새 변경 배포
-   ↓
-작은 canary traffic
-   ↓
-error / latency / SLO / business correctness 비교
-   ├─ 정상 → traffic 확대
-   └─ 악화 → 중단·rollback·forward fix
-```
+![Canary · 트래픽 비율과 진행 조건](/learning/system-design/canary-traffic-gates.svg)
+
+5%와 25%는 예시 비율이지 권장 고정값이 아닙니다. 표본 수·트래픽 편향과 데이터 호환성에 따라 확대 및 복구 조건을 정합니다.
 
 Canary는 “새 process가 살아 있다”만 확인하는 단계가 아닙니다. Control과 비교했을 때 error rate, p95·p99, saturation, backlog 같은 운영 지표와 실제 business correctness가 유지되는지 봐야 합니다. 특정 tenant나 data shape에서만 문제가 난다면 전체 평균은 정상처럼 보일 수도 있습니다.
 

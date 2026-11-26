@@ -44,11 +44,9 @@ Order order = Order.place(customerId, items);
 
 ### 생명주기는 상태 이름보다 허용된 전이가 중요하다
 
-```text
-CREATED ──pay()──► PAID ──ship()──► SHIPPING ──complete()──► COMPLETED
-   │                 │
-   └──cancel()───────┴──cancel()──► CANCELLED
-```
+![주문 생명주기 · 허용된 전이](/learning/backend-engineering/order-lifecycle-transitions.svg)
+
+이 Concept의 간략화된 주문 정책을 나타냅니다. 결제 완료 후 취소에 필요한 외부 환불과 동시성 보호는 별도의 유스케이스 계약이며 상태 전이 화살표만으로 원자성을 보장하지 않습니다.
 
 `OrderStatus` enum이 있다는 사실만으로 생명주기가 모델링된 것은 아닙니다. 어떤 상태에서 어떤 동작을 호출할 수 있는지, 허용되지 않은 호출은 어떻게 실패하는지가 실제 계약입니다.
 

@@ -45,16 +45,9 @@ SecurityContextHolder
 
 Tomcat 작업 스레드는 다음 요청에 재사용됩니다. 이전 요청의 `Authentication`이 스레드 로컬에 남으면 다른 사용자의 인증 정보가 섞일 수 있으므로 요청이 끝날 때 문맥을 정리해야 합니다.
 
-```text
-스레드-7
-요청 A: 회원 42
-   │ 문맥 설정
-   │ 요청 처리
-   └ 문맥 정리
+![SecurityContext와 스레드 재사용](/learning/security/context-thread-reuse.svg)
 
-같은 스레드-7 재사용
-요청 B: 회원 77
-```
+정상적으로 Spring Security 필터가 정리하는 경우와 정리 책임이 누락된 경우를 비교합니다.
 
 사용자 정의 필터가 문맥을 직접 바꾼다면 요청 실패 경로에서도 저장·정리 규칙이 지켜지는지 확인해야 합니다.
 

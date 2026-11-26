@@ -24,6 +24,7 @@ import com.guseoh.csforge.learning.domain.ContentStatus;
 import com.guseoh.csforge.ai.domain.WrongAnswerAnalysis;
 import com.guseoh.csforge.ai.domain.WrongAnswerAnalysisStatus;
 import com.guseoh.csforge.question.domain.Question;
+import com.guseoh.csforge.question.domain.QuestionStatus;
 import com.guseoh.csforge.review.domain.ReviewSchedule;
 import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
 import com.guseoh.csforge.wrongnote.application.WrongNoteListCriteria;
@@ -49,7 +50,7 @@ public class WrongNoteSearchRepository {
         root.fetch("lastWrongAttempt", JoinType.LEFT);
         Join<WrongNote, Question> question = root.join("question", JoinType.INNER);
         query.select(root).distinct(true)
-                .where(predicates(builder, query, root, criteria))
+                .where(predicates(builder, query, root, question, criteria))
                 .orderBy(order(builder, query, root, question, criteria.sort()));
         TypedQuery<WrongNote> typedQuery = entityManager.createQuery(query)
                 .setFirstResult(Math.toIntExact(pageable.getOffset()))
@@ -62,8 +63,9 @@ public class WrongNoteSearchRepository {
         CriteriaBuilder builder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Long> query = builder.createQuery(Long.class);
         Root<WrongNote> root = query.from(WrongNote.class);
+        Join<WrongNote, Question> question = root.join("question", JoinType.INNER);
         query.select(builder.countDistinct(root.get("id")))
-                .where(predicates(builder, query, root, criteria));
+                .where(predicates(builder, query, root, question, criteria));
         return entityManager.createQuery(query).getSingleResult();
     }
 
@@ -71,14 +73,17 @@ public class WrongNoteSearchRepository {
             CriteriaBuilder builder,
             CriteriaQuery<?> query,
             Root<WrongNote> root,
+            Join<WrongNote, Question> question,
             WrongNoteListCriteria criteria) {
-        Join<WrongNote, Question> question = root.join("question", JoinType.INNER);
         Join<?, ?> link = question.join("conceptLinks", JoinType.INNER);
         Join<?, ?> concept = link.join("concept", JoinType.INNER);
         Join<?, ?> topic = concept.join("topic", JoinType.INNER);
         Join<?, ?> area = topic.join("learningArea", JoinType.INNER);
         List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(question.get("status"), QuestionStatus.PUBLISHED));
         predicates.add(builder.equal(concept.get("status"), ContentStatus.PUBLISHED));
+        predicates.add(builder.isTrue(topic.get("active")));
+        predicates.add(builder.isTrue(area.get("active")));
         if (criteria.areaSlug() != null) predicates.add(builder.equal(area.get("slug"), criteria.areaSlug()));
         if (criteria.topicId() != null) predicates.add(builder.equal(topic.get("id"), criteria.topicId()));
         if (criteria.level() != null) predicates.add(builder.equal(concept.get("level"), criteria.level()));

@@ -8,6 +8,13 @@ import { defaultSearchSearch, questionSuggestionSearch } from '../lib/search-sea
 
 const RECENT_KEY = 'csforge.search.recent.v1'
 const SUGGESTION_DEBOUNCE_MS = 180
+const LISTBOX_ID = 'search-palette-listbox'
+
+function shortcutHintLabel() {
+  if (typeof navigator === 'undefined') return 'Ctrl K'
+  const platform = navigator.platform || navigator.userAgent || ''
+  return /(Mac|iPhone|iPad|iPod)/i.test(platform) ? '⌘K' : 'Ctrl K'
+}
 
 function loadRecent(publicOnly: boolean): string[] {
   try {
@@ -56,6 +63,7 @@ export function SearchPalette() {
 
   const openPalette = () => {
     previousFocusRef.current = document.activeElement instanceof HTMLElement ? document.activeElement : null
+    setRecent(loadRecent(publicOnly))
     setOpen(true)
   }
 
@@ -168,7 +176,7 @@ export function SearchPalette() {
           <svg viewBox="0 0 24 24" fill="none"><circle cx="11" cy="11" r="6.5" strokeWidth="1.8" /><path d="m16 16 4 4" strokeWidth="1.8" strokeLinecap="round" /></svg>
         </span>
         <span className="search-trigger-placeholder">{publicOnly ? '개념, 참고 자료를 검색하세요' : '개념, 문제, 오답을 검색하세요'}</span>
-        <kbd>Ctrl K</kbd>
+        <kbd>{shortcutHintLabel()}</kbd>
       </button>
       <dialog
         ref={dialogRef}
@@ -181,6 +189,10 @@ export function SearchPalette() {
             <form className="search-palette-form" onSubmit={(event) => { event.preventDefault(); if (!composingRef.current) submitSearch(query) }}>
               <input
                 ref={inputRef}
+                role="combobox"
+                aria-autocomplete="list"
+                aria-expanded={open && actionableCount > 0}
+                aria-controls={actionableCount > 0 ? LISTBOX_ID : undefined}
                 value={query}
                 maxLength={200}
                 onChange={(event) => setQuery(event.target.value)}
@@ -201,7 +213,7 @@ export function SearchPalette() {
                     <button className="text-button" type="button" onClick={openSearchWorkspace}>전체 검색 열기 →</button>
                   </div>
                   {visibleRecent.length === 0 ? <p className="palette-muted">최근 검색어가 없습니다. 전체 검색에서 영역과 주제를 조합해 탐색할 수 있습니다.</p> : (
-                    <div className="palette-list" role="listbox">
+                    <div id={LISTBOX_ID} className="palette-list" role="listbox">
                       {visibleRecent.map((item, index) => (
                         <button
                           id={`search-palette-option-${index}`}
@@ -224,7 +236,7 @@ export function SearchPalette() {
               {normalized.length >= 2 && debouncedQuery === normalized && suggestions.data && (
                 <div>
                   <p className="palette-section-title">제목 바로가기 · 전체 검색 결과는 Enter 또는 검색 버튼</p>
-                  <div className="palette-list" role="listbox">
+                  <div id={LISTBOX_ID} className="palette-list" role="listbox">
                     {actionableSuggestions.length === 0 ? <p className="palette-muted">바로 이동할 수 있는 제목 제안이 없습니다. Enter로 전체 검색을 할 수 있습니다.</p> : actionableSuggestions.map((item, index) => (
                       <button
                         id={`search-palette-option-${index}`}
