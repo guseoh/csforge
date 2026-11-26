@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 420" width="840" height="420" role="img" aria-labelledby="title desc">
+  <title id="title">금액 모델링·반올림 시점과 합계 보존 분배 정책</title>
+  <desc id="desc">통화 단위와 정밀도를 묶은 Money 값 객체, 항목별 vs 합산 반올림 시점 차이, 10000원 3분할 시 잔여 1원 합계 보존 분배를 보여주는 도식</desc>
+  <style>
+    :root { --bg:#f8fafc; --card:#ffffff; --muted:#f1f5f9; --bd:#cbd5e1; --tx:#0f172a; --sub:#475569; --blue-bg:#eff6ff; --blue-bd:#3b82f6; --blue-tx:#1d4ed8; --amber-bg:#fffbeb; --amber-bd:#f59e0b; --amber-tx:#b45309; --green-bg:#ecfdf5; --green-bd:#10b981; --green-tx:#047857; --red-bg:#fef2f2; --red-bd:#ef4444; --red-tx:#b91c1c; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#0f172a; --card:#1e293b; --muted:#0b1220; --bd:#334155; --tx:#f1f5f9; --sub:#94a3b8; --blue-bg:#172554; --blue-bd:#60a5fa; --blue-tx:#93c5fd; --amber-bg:#451a03; --amber-bd:#fbbf24; --amber-tx:#fcd34d; --green-bg:#064e3b; --green-bd:#34d399; --green-tx:#6ee7b7; --red-bg:#450a0a; --red-bd:#f87171; --red-tx:#fca5a5; } }
+    text { font-family: "Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .h1 { font-size:17px; font-weight:700; fill:var(--tx); }
+    .h2 { font-size:13.5px; font-weight:700; }
+    .b { font-size:12px; fill:var(--tx); }
+    .s { font-size:11px; fill:var(--sub); }
+    .k { font-size:11.5px; font-weight:700; }
+  </style>
+  <rect x="0" y="0" width="840" height="420" rx="14" fill="var(--bg)"/>
+  <text x="28" y="34" class="h1">금액 표현(Money) · 반올림 시점 · 합계 보존 분배(Allocation)</text>
+  <text x="28" y="54" class="s">double 금지뿐 아니라 통화 단위, 반올림 시점·모드, 잔여 금액 배정 규칙을 하나의 계약으로 통일한다.</text>
+
+  <!-- Card 1: Money Value Object -->
+  <rect x="28" y="76" width="246" height="202" rx="10" fill="var(--card)" stroke="var(--blue-bd)" stroke-width="1.6"/>
+  <rect x="28" y="76" width="246" height="32" rx="10" fill="var(--blue-bg)"/>
+  <text x="42" y="97" class="h2" fill="var(--blue-tx)">1. 값 + 통화 단위 결합</text>
+  <rect x="42" y="122" width="218" height="72" rx="8" fill="var(--muted)" stroke="var(--bd)" stroke-width="1"/>
+  <text x="54" y="144" class="k" fill="var(--tx)">Money(amount, currency)</text>
+  <text x="54" y="164" class="b">• KRW: scale 0 (10,000원)</text>
+  <text x="54" y="182" class="b">• USD: scale 2 ($10.00)</text>
+  <text x="42" y="216" class="s">• new BigDecimal("0.1") 문자열 생성</text>
+  <text x="42" y="234" class="s">• 서로 다른 통화 덧셈 즉시 차단</text>
+  <text x="42" y="254" class="k" fill="var(--red-tx)">✗ new BigDecimal(0.1) 이진 오차</text>
+
+  <!-- Card 2: Rounding Point -->
+  <rect x="296" y="76" width="248" height="202" rx="10" fill="var(--card)" stroke="var(--amber-bd)" stroke-width="1.6"/>
+  <rect x="296" y="76" width="248" height="32" rx="10" fill="var(--amber-bg)"/>
+  <text x="310" y="97" class="h2" fill="var(--amber-tx)">2. 반올림 시점·모드 통일</text>
+  <rect x="310" y="122" width="220" height="58" rx="8" fill="var(--muted)" stroke="var(--bd)" stroke-width="1"/>
+  <text x="322" y="143" class="k" fill="var(--tx)">A. 항목별 할인 후 즉시 반올림</text>
+  <text x="322" y="163" class="s">각 줄 금액을 먼저 반올림 → 합산</text>
+  <rect x="310" y="190" width="220" height="58" rx="8" fill="var(--muted)" stroke="var(--bd)" stroke-width="1"/>
+  <text x="322" y="211" class="k" fill="var(--tx)">B. 전체 합산 후 마지막 반올림</text>
+  <text x="322" y="231" class="s">같은 할인율이어도 최종 합계 다름</text>
+  <text x="310" y="266" class="s">→ scale·HALF_UP/FLOOR는 업무 정책</text>
+
+  <!-- Card 3: Remainder Allocation -->
+  <rect x="566" y="76" width="246" height="202" rx="10" fill="var(--card)" stroke="var(--green-bd)" stroke-width="1.6"/>
+  <rect x="566" y="76" width="246" height="32" rx="10" fill="var(--green-bg)"/>
+  <text x="580" y="97" class="h2" fill="var(--green-tx)">3. 합계 보존 분배 (10,000 ÷ 3)</text>
+  <rect x="580" y="122" width="218" height="48" rx="8" fill="var(--red-bg)" stroke="var(--red-bd)" stroke-width="1.2"/>
+  <text x="592" y="142" class="k" fill="var(--red-tx)">✗ 단순 나눗셈: 3,333 × 3 = 9,999</text>
+  <text x="592" y="160" class="s">1원 증발 → 정산·환불 대사 불일치</text>
+  <rect x="580" y="182" width="218" height="74" rx="8" fill="var(--green-bg)" stroke="var(--green-bd)" stroke-width="1.2"/>
+  <text x="592" y="203" class="k" fill="var(--green-tx)">✓ 잔여 1원 결정적 배정</text>
+  <text x="592" y="223" class="b">3,334 + 3,333 + 3,333 (3항목)</text>
+  <text x="592" y="243" class="k" fill="var(--green-tx)">합계 = 10,000원 (영속 저장)</text>
+
+  <!-- Bottom Boundary Consistency -->
+  <rect x="28" y="298" width="784" height="98" rx="10" fill="var(--card)" stroke="var(--bd)" stroke-width="1.4"/>
+  <text x="46" y="324" class="h2" fill="var(--tx)">경계 간 일관성: Domain ↔ PostgreSQL(NUMERIC) ↔ API JSON ↔ 외부 PG Adapter</text>
+  <text x="46" y="348" class="b">• DB 컬럼 precision/scale, JSON 표현(문자열 또는 정수 minor unit), 외부 PG 단위가 다르면 어댑터에서 명시적으로 변환·검증한다.</text>
+  <text x="46" y="370" class="s">• 부분 환불 시 다시 나눗셈하지 않고 주문 확정 시점에 배정·저장해 둔 항목별 금액을 그대로 사용해 1원 오차를 원천 차단한다.</text>
+</svg>

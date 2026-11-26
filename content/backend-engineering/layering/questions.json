@@ -6,12 +6,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.layering.dependency-direction"],
+    "conceptKeys": [
+      "backend.core.layering.dependency-direction"
+    ],
     "choices": [
-      {"key": "A", "content": "도메인이 ResponseEntity와 JpaRepository를 직접 사용하면 계층이 명확해진다.", "displayOrder": 0, "rationaleMarkdown": "도메인이 `ResponseEntity`나 `JpaRepository`를 알면 HTTP·영속성 구현의 변경이 핵심 정책까지 전파된다. 바깥 어댑터가 안쪽 정책을 호출할 수는 있어도 도메인이 그 구체 구현에 의존할 필요는 없다."},
-      {"key": "B", "content": "실행 중 바깥 계층이 안쪽 정책을 호출할 수 있어도, 안쪽 정책은 HTTP/JPA 같은 구현 세부의 변경 이유에 끌려가지 않게 한다.", "displayOrder": 1, "rationaleMarkdown": "실행 흐름에서는 API가 애플리케이션과 도메인을 사용하지만 소스 의존성은 안쪽 정책이 바깥 프레임워크 세부를 향하지 않도록 제한한다. 이 구분으로 교체 가능한 구현과 독립된 업무 규칙을 지킨다."},
-      {"key": "C", "content": "모든 클래스에 인터페이스를 만들면 자동으로 의존성 역전이 된다.", "displayOrder": 2, "rationaleMarkdown": "인터페이스를 기계적으로 추가한다고 의존성 방향이 바뀌지는 않는다. 고수준 정책이 필요한 추상 계약을 소유하고 바깥 구현이 그 계약을 구현할 때 변경 방향을 분리할 수 있다."},
-      {"key": "D", "content": "Controller와 Repository만 분리하면 도메인 계층은 필요 없다.", "displayOrder": 3, "rationaleMarkdown": "Controller와 Repository 폴더만 나눠도 그 사이에서 여러 협력자와 상태 규칙을 조정하는 애플리케이션·도메인 책임은 남는다. 필요한 도메인 모델이 없으면 규칙이 어댑터나 서비스 곳곳에 흩어질 수 있다."}
+      {
+        "key": "A",
+        "content": "도메인이 ResponseEntity와 JpaRepository를 직접 사용하면 계층이 명확해진다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "도메인이 `ResponseEntity`나 `JpaRepository`를 알면 HTTP·영속성 구현의 변경이 핵심 정책까지 전파된다. 바깥 어댑터가 안쪽 정책을 호출할 수는 있어도 도메인이 그 구체 구현에 의존할 필요는 없다."
+      },
+      {
+        "key": "B",
+        "content": "실행 중 바깥 계층이 안쪽 정책을 호출할 수 있어도, 안쪽 정책은 HTTP/JPA 같은 구현 세부의 변경 이유에 끌려가지 않게 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "실행 흐름에서는 API가 애플리케이션과 도메인을 사용하지만 소스 의존성은 안쪽 정책이 바깥 프레임워크 세부를 향하지 않도록 제한한다. 이 구분으로 교체 가능한 구현과 독립된 업무 규칙을 지킨다."
+      },
+      {
+        "key": "C",
+        "content": "모든 클래스에 인터페이스를 만들면 자동으로 의존성 역전이 된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "인터페이스를 기계적으로 추가한다고 의존성 방향이 바뀌지는 않는다. 고수준 정책이 필요한 추상 계약을 소유하고 바깥 구현이 그 계약을 구현할 때 변경 방향을 분리할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "Controller와 Repository만 분리하면 도메인 계층은 필요 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Controller와 Repository 폴더만 나눠도 그 사이에서 여러 협력자와 상태 규칙을 조정하는 애플리케이션·도메인 책임은 남는다. 필요한 도메인 모델이 없으면 규칙이 어댑터나 서비스 곳곳에 흩어질 수 있다."
+      }
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "계층화의 핵심은 폴더 이름이 아니라 API·애플리케이션·도메인·인프라 사이에서 어떤 변경 이유와 구현 세부가 어느 방향으로 의존하는지를 제한하는 것이다. 호출 순서상 API가 애플리케이션을 거쳐 도메인을 사용하더라도 안쪽 정책은 `ResponseEntity`나 `JpaRepository` 같은 바깥 구현 세부를 알 필요가 없어야 한다. 인터페이스 개수나 폴더 분리 자체가 이 의존성 규칙을 보장하지는 않는다."
@@ -23,7 +45,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.layering.dependency-direction"],
+    "conceptKeys": [
+      "backend.core.layering.dependency-direction"
+    ],
     "modelAnswer": "HTTP 표현 변경과 도메인·영속성 변경의 전파 범위를 제한하고 각 경계가 허용하는 입력·출력을 명확히 하기 위해서다.",
     "explanationMarkdown": "API DTO는 HTTP 필드와 상태 코드 같은 외부 표현이 바뀌는 경계이고, 애플리케이션 명령은 유스케이스 입력, 도메인 객체는 생명주기와 불변식을 소유하는 경계다. 하나의 타입을 모든 계층에 그대로 흘리면 HTTP 필드나 영속성 변경이 핵심 정책까지 전파되므로 서로 다른 변경 이유가 생기는 지점에서 필요한 의미만 번역한다."
   },
@@ -34,7 +58,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.layering.dependency-direction"],
+    "conceptKeys": [
+      "backend.core.layering.dependency-direction"
+    ],
     "modelAnswer": "API가 영속성 모델을 직접 노출한 문제다. 요청 DTO에서 클라이언트가 바꿀 수 있는 필드만 받고 애플리케이션 입력으로 변환한 뒤 도메인의 의도 있는 상태 전이를 호출한다.",
     "explanationMarkdown": "`status`가 외부에서 수정된 것은 API 입력 모델과 JPA 영속성 상태가 같은 타입으로 합쳐진 사례다. 허용된 입력 필드만 요청 DTO로 받고 애플리케이션 입력으로 변환한 다음 도메인 동작을 호출한다. `createdAt`, `status`처럼 서버가 소유해야 하는 값은 도메인·애플리케이션이 결정해야 한다."
   },
@@ -45,12 +71,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.layering.orchestration-rule"],
+    "conceptKeys": [
+      "backend.core.layering.orchestration-rule"
+    ],
     "choices": [
-      {"key": "A", "content": "상태 전이의 허용 여부는 도메인이, 여러 협력자 호출·트랜잭션·복구 순서는 애플리케이션이 주로 소유한다.", "displayOrder": 0, "rationaleMarkdown": "허용 가능한 상태 전이는 현재 도메인 상태와 불변식을 함께 알아야 엔티티나 값 객체가 일관되게 지키기 좋다. 애플리케이션은 여러 어댑터 호출과 트랜잭션 경계를 순서화하고 실패 복구를 조정한다."},
-      {"key": "B", "content": "여러 repository 호출 순서는 도메인 엔티티가 결정해야 한다.", "displayOrder": 1, "rationaleMarkdown": "엔티티가 저장소 조회와 여러 저장 호출 순서를 알면 도메인이 영속성 흐름에 결합된다. 상태 전이 규칙은 엔티티에 두되 저장소 협력은 애플리케이션 유스케이스가 조정한다."},
-      {"key": "C", "content": "모든 비즈니스 조건은 Controller에 있어야 중복이 없다.", "displayOrder": 2, "rationaleMarkdown": "Controller에 업무 규칙을 몰아두면 API가 아닌 다른 진입점에서 같은 규칙을 복제하거나 우회하기 쉽다. HTTP 처리는 애플리케이션·도메인 규칙과 분리해야 한다."},
-      {"key": "D", "content": "도메인 객체는 상태만 저장하고 규칙은 Service에 두는 것이 항상 좋다.", "displayOrder": 3, "rationaleMarkdown": "애플리케이션 서비스가 여러 유스케이스를 조정하는 것은 필요하지만 엔티티가 스스로 보호할 수 있는 불변식까지 항상 바깥 서비스에 두면 변경 경로마다 같은 검사가 흩어진다."}
+      {
+        "key": "A",
+        "content": "상태 전이의 허용 여부는 도메인이, 여러 협력자 호출·트랜잭션·복구 순서는 애플리케이션이 주로 소유한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "허용 가능한 상태 전이는 현재 도메인 상태와 불변식을 함께 알아야 엔티티나 값 객체가 일관되게 지키기 좋다. 애플리케이션은 여러 어댑터 호출과 트랜잭션 경계를 순서화하고 실패 복구를 조정한다."
+      },
+      {
+        "key": "B",
+        "content": "여러 repository 호출 순서는 도메인 엔티티가 결정해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "엔티티가 저장소 조회와 여러 저장 호출 순서를 알면 도메인이 영속성 흐름에 결합된다. 상태 전이 규칙은 엔티티에 두되 저장소 협력은 애플리케이션 유스케이스가 조정한다."
+      },
+      {
+        "key": "C",
+        "content": "모든 비즈니스 조건은 Controller에 있어야 중복이 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Controller에 업무 규칙을 몰아두면 API가 아닌 다른 진입점에서 같은 규칙을 복제하거나 우회하기 쉽다. HTTP 처리는 애플리케이션·도메인 규칙과 분리해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "도메인 객체는 상태만 저장하고 규칙은 Service에 두는 것이 항상 좋다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "애플리케이션 서비스가 여러 유스케이스를 조정하는 것은 필요하지만 엔티티가 스스로 보호할 수 있는 불변식까지 항상 바깥 서비스에 두면 변경 경로마다 같은 검사가 흩어진다."
+      }
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "애플리케이션은 협력자 호출 순서와 로컬 트랜잭션을 조정하고, 도메인은 엔티티·값 객체가 항상 지켜야 하는 상태 불변식을 소유한다. 상태 전이 가능성은 객체가 현재 상태를 보고 보호해야 여러 진입 경로에서 일관되지만 저장소 조회·외부 호출·커밋 순서는 유스케이스가 조정해야 한다. 모든 조건을 Controller나 빈 서비스로 옮기면 책임 경계가 흐려진다."
@@ -62,7 +110,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.layering.orchestration-rule"],
+    "conceptKeys": [
+      "backend.core.layering.orchestration-rule"
+    ],
     "modelAnswer": "전자는 객체가 항상 지켜야 할 불변식이고 후자는 유스케이스의 협력 순서이므로 변경 이유와 재사용 범위가 다르다.",
     "explanationMarkdown": "배송 시작 후 취소 금지는 `Order`가 어떤 호출 경로에서도 지켜야 하는 불변식이고, 조회→취소 동작→저장은 해당 유스케이스가 협력자를 호출하는 순서다. 전자를 애플리케이션 한 곳에만 두면 배치나 다른 진입점이 우회할 수 있고, 후자를 엔티티에 넣으면 영속성·외부 흐름 책임이 섞인다."
   },
@@ -73,7 +123,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.layering.orchestration-rule"],
+    "conceptKeys": [
+      "backend.core.layering.orchestration-rule"
+    ],
     "modelAnswer": "애플리케이션이 로컬 트랜잭션과 외부 부수 효과의 실패 경계를 충분히 조정하지 못했다. 외부 멱등성, durable handoff, 보상, 상태 대조 같은 방식으로 순서와 복구를 다시 설계해야 한다.",
     "explanationMarkdown": "환불 API 성공 뒤 로컬 커밋이 실패하면 외부 금전 상태와 내부 주문 상태가 갈라져 로컬 트랜잭션의 원자성만으로는 복구되지 않는다. 애플리케이션 계층이 호출 순서·멱등성·보상·상태 대조를 설계해야 하며 outbox 같은 특정 기술은 실제 책임과 조건이 있을 때 선택한다."
   },
@@ -84,12 +136,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.layering.infrastructure-boundary"],
+    "conceptKeys": [
+      "backend.core.layering.infrastructure-boundary"
+    ],
     "choices": [
-      {"key": "A", "content": "공급자 클래스 이름을 더 짧게 만들기 위해서", "displayOrder": 0, "rationaleMarkdown": "어댑터의 가치는 이름을 줄이는 것이 아니라 외부 프로토콜과 내부 정책 사이의 변경 경계를 세우는 데 있다. 이름만 감싼다고 공급자 결합이 줄어들지는 않는다."},
-      {"key": "B", "content": "외부 오류를 모두 같은 RuntimeException으로 바꾸기 위해서", "displayOrder": 1, "rationaleMarkdown": "모든 외부 오류를 하나로 뭉개면 timeout·rate limit·영구 거절처럼 재시도와 복구 판단에 필요한 의미가 사라질 수 있다. 내부 정책이 실제로 구분할 정보는 보존해야 한다."},
-      {"key": "C", "content": "모든 외부 호출을 비동기로 만들기 위해서", "displayOrder": 2, "rationaleMarkdown": "동기·비동기는 실행 모델 선택이다. 인프라 경계는 실행 방식과 별개로 공급자의 요청·응답·실패 표현을 내부 의미로 번역할 수 있다."},
-      {"key": "D", "content": "외부 타입·오류·프로토콜 변화가 내부 모델로 퍼지는 것을 막고 필요한 업무 의미로 번역하기 위해서", "displayOrder": 3, "rationaleMarkdown": "SDK 타입과 공급자 오류를 어댑터에서 내부 계약으로 번역하면 교체 가능한 외부 기술의 세부가 도메인에 퍼지지 않는다. 유지해야 할 업무 의미와 공급자 표현을 분리하는 경계다."}
+      {
+        "key": "A",
+        "content": "공급자 클래스 이름을 더 짧게 만들기 위해서",
+        "displayOrder": 0,
+        "rationaleMarkdown": "어댑터의 가치는 이름을 줄이는 것이 아니라 외부 프로토콜과 내부 정책 사이의 변경 경계를 세우는 데 있다. 이름만 감싼다고 공급자 결합이 줄어들지는 않는다."
+      },
+      {
+        "key": "B",
+        "content": "외부 오류를 모두 같은 RuntimeException으로 바꾸기 위해서",
+        "displayOrder": 1,
+        "rationaleMarkdown": "모든 외부 오류를 하나로 뭉개면 timeout·rate limit·영구 거절처럼 재시도와 복구 판단에 필요한 의미가 사라질 수 있다. 내부 정책이 실제로 구분할 정보는 보존해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "모든 외부 호출을 비동기로 만들기 위해서",
+        "displayOrder": 2,
+        "rationaleMarkdown": "동기·비동기는 실행 모델 선택이다. 인프라 경계는 실행 방식과 별개로 공급자의 요청·응답·실패 표현을 내부 의미로 번역할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "외부 타입·오류·프로토콜 변화가 내부 모델로 퍼지는 것을 막고 필요한 업무 의미로 번역하기 위해서",
+        "displayOrder": 3,
+        "rationaleMarkdown": "SDK 타입과 공급자 오류를 어댑터에서 내부 계약으로 번역하면 교체 가능한 외부 기술의 세부가 도메인에 퍼지지 않는다. 유지해야 할 업무 의미와 공급자 표현을 분리하는 경계다."
+      }
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "인프라 경계는 공급자의 프로토콜·오류·타입을 내부 유스케이스 계약으로 번역해 도메인 정책이 특정 외부 기술의 변경에 끌려가지 않게 한다. 모든 외부 오류를 같은 `RuntimeException`으로 뭉개면 재시도 가능성이나 결과 불명 상태처럼 필요한 의미까지 잃을 수 있으므로 내부 정책에 필요한 분류는 보존한다."
@@ -101,7 +175,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.layering.infrastructure-boundary"],
+    "conceptKeys": [
+      "backend.core.layering.infrastructure-boundary"
+    ],
     "modelAnswer": "429는 재시도 가능성 등을 판단할 내부 실패 의미로 번역하고 공급자 오류 코드는 필요한 의미만 보존하며, 요청 ID는 진단 메타데이터로 남기되 도메인 계약으로 누수시키지 않는다.",
     "explanationMarkdown": "429는 내부에서 rate limit과 재시도 후보로, 공급자 코드는 업무 판단에 필요한 의미만 내부 실패 유형으로, 요청 ID는 로그·추적의 상관관계 메타데이터로 보존한다. 이 값들을 도메인이 공급자 API나 HTTP 헤더 형태 그대로 알아야 한다는 뜻은 아니며 인프라 경계에서 내부 의미로 번역해야 한다."
   },
@@ -112,8 +188,127 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.layering.infrastructure-boundary"],
+    "conceptKeys": [
+      "backend.core.layering.infrastructure-boundary"
+    ],
     "modelAnswer": "인프라 어댑터에서 공급자 응답을 `PaymentResult` 같은 내부 모델로 번역하고 애플리케이션·도메인은 `PaymentGateway` 계약과 내부 타입만 알도록 한다.",
     "explanationMarkdown": "도메인이 `StripePaymentIntent`를 직접 받으면 공급자 스키마와 결제 정책이 같은 변경 이유가 되어 공급자 교체가 안쪽 코드까지 침투한다. 어댑터가 내부 `PaymentResult`와 `PaymentGateway` 계약으로 번역하고 애플리케이션·도메인은 그 내부 의미만 사용하도록 경계를 둔다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.dependency-direction.q4",
+    "promptMarkdown": "아래 `OrderService`(Application 계층) 코드에서 레이어 의존성 방향(`api -> application -> domain`)을 위반한 지점은?\n\n```java\n@Service\npublic class OrderService {\n    public OrderResponse createOrder(CreateOrderRequest request, HttpServletRequest httpReq) {\n        String ip = httpReq.getRemoteAddr();\n        ...\n        return new OrderResponse(order.getId(), \"CREATED\");\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.layering.dependency-direction"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`OrderService`는 반드시 `OrderServiceInterface`를 하나 더 만들어 구현해야만 레이어가 분리된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "구현체가 하나뿐인 서비스에 기계적으로 인터페이스를 추가하는 것은 불필요한 의식이며, 실제 의존성 방향 위반은 HTTP/API 타입 침투다."
+      },
+      {
+        "key": "B",
+        "content": "Application 서비스가 API 경계의 `CreateOrderRequest`/`OrderResponse`와 서블릿 `HttpServletRequest`에 직접 의존하고 있다. 컨트롤러에서 Command 입력과 클라이언트 IP를 추출해 넘기고, 서비스는 Application Result를 반환해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "애플리케이션 계층이 HTTP 서블릿과 API Request/Response에 묶이면 배치·메시지 컨슈머·단위 테스트에서 유스케이스를 재사용하기 어려워진다."
+      },
+      {
+        "key": "C",
+        "content": "`@Service` 어노테이션은 컨트롤러에만 붙여야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`@Service`는 애플리케이션 서비스에 붙이는 표준 Spring 스테레오타입이다."
+      },
+      {
+        "key": "D",
+        "content": "Application 서비스가 `Order` 도메인 객체를 사용하는 것이 의존성 역전 위반이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`application -> domain` 방향은 올바른 표준 의존성 방향이다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "API Request/Response와 `HttpServletRequest`는 API 경계에 머물러야 하며, Application 서비스는 HTTP에 무관한 Command/Result와 도메인 모델만 다뤄야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.infrastructure-boundary.q4",
+    "promptMarkdown": "외부 PG사의 SDK 모델(`StripeChargeResult`, `TossPaymentResponse`)을 도메인 엔티티나 애플리케이션 서비스 곳곳에서 직접 import해 사용하면 생기는 문제와 올바른 경계 설계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.layering.infrastructure-boundary"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "도메인 엔티티 메서드 안에서 직접 `RestClient`를 생성해 PG사를 호출하면 응집도가 높아진다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "도메인 엔티티가 HTTP 클라이언트를 직접 호출하면 단위 테스트와 트랜잭션 경계 제어가 불가능해진다."
+      },
+      {
+        "key": "B",
+        "content": "외부 SDK는 항상 하위 호환되므로 별도 어댑터 경계가 필요 없다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "외부 결제·인증·배송 SDK는 메이저 버전 변경이나 필드 정책 변경이 잦다."
+      },
+      {
+        "key": "C",
+        "content": "PG사 스펙 변경이나 결제사 교체 시 핵심 도메인 코드 전체가 수정되어야 하므로, 인프라 어댑터(Anti-Corruption Layer)에서 외부 SDK 모델을 우리 도메인의 `PaymentApproval` 값 객체로 번역해 넘겨야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "인프라 경계에서 외부 벤더 모델을 내부 도메인 모델로 번역하면 외부 API 변경·교체·테스트 대역(Stub/Fake) 교체가 어댑터 내부로 격리된다."
+      },
+      {
+        "key": "D",
+        "content": "외부 PG사 JSON 응답을 그대로 DB 테이블 스키마로 복제하면 번역 코드가 없어져 가장 깔끔하다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "외부 벤더 스키마에 내부 DB와 도메인을 종속시키면 벤더 버전 업그레이드나 멀티 PG 지원 시 전면 재작성이 필요해진다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "외부 시스템 모델은 인프라 어댑터 경계에서 내부 도메인 언어로 번역(Anti-Corruption Layer)해야 벤더 종속성과 변경 전파를 막을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.layering.orchestration-rule.q4",
+    "promptMarkdown": "주문 취소 유스케이스에서 `OrderService`(Application)와 `Order`(Domain)의 책임 분배로 가장 올바른 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.layering.orchestration-rule"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Order`는 'CREATED/PAID 상태에서만 취소 가능하며 취소 시각을 기록한다'는 상태 전이 불변식을 소유하고, `OrderService`는 주문 조회·트랜잭션 경계·Outbox 환불 의도 기록 등 협력 순서를 조정한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "객체 자체의 유효 상태와 전이 규칙은 도메인이, 여러 저장소·트랜잭션·외부 협력 순서는 애플리케이션 서비스가 소유하는 것이 가장 응집도 높은 책임 분배다."
+      },
+      {
+        "key": "B",
+        "content": "`Order`는 순수 getter/setter만 두고, 모든 `if (order.getStatus() == ...)` 상태 규칙을 컨트롤러와 서비스에 분산 작성한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "빈약한 도메인 모델(Anemic Domain Model)은 진입점이 늘어날수록 규칙 중복과 누락 버그를 유발한다."
+      },
+      {
+        "key": "C",
+        "content": "`Order.cancel()` 내부에 `@Transactional`과 `RefundOutboxRepository.save()`를 모두 넣는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "도메인 엔티티가 스프링 트랜잭션과 저장소 리포지토리를 직접 호출하면 인프라에 강결합된다."
+      },
+      {
+        "key": "D",
+        "content": "Outbox 기록은 주문 취소 DB 트랜잭션이 커밋된 뒤 별도 트랜잭션으로 저장해야 성능이 좋다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Outbox를 별도 트랜잭션으로 미루면 주문 취소 커밋 직후 장애 시 환불 의도가 영구 유실되므로 반드시 동일 로컬 DB 트랜잭션에 묶어야 한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "도메인은 '상태 불변식과 전이 규칙', 애플리케이션은 '협력자 호출 순서·트랜잭션·Outbox/복구 경계'를 담당한다."
   }
 ]

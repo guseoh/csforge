@@ -31,18 +31,7 @@ public record CreateOrderRequest(
 
 여기에는 JSON 필드 이름, nullable 여부, 문자열 형식 같은 API 계약이 들어갑니다. 애플리케이션 계층으로 넘어갈 때는 현재 유스케이스에 필요한 의미로 변환할 수 있습니다.
 
-```text
-JSON
- │
- ▼
-CreateOrderRequest
- │ 요청 형식 검증 + 변환
- ▼
-CreateOrderCommand
- │
- ▼
-Order.place(...)
-```
+![요청·응답 DTO 번역 경계와 내부 모델 보호](/learning/backend-engineering/dto-validation-error-boundary.svg)
 
 API Request 타입을 애플리케이션 서비스가 그대로 받지 않으면 HTTP 표현이 바뀌었을 때 유스케이스 내부까지 수정되는 범위를 줄일 수 있습니다.
 
