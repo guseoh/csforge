@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import { Fragment, isValidElement } from 'react'
+import { Fragment, isValidElement, useMemo } from 'react'
 import ReactMarkdown, { type Components } from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { removeDuplicateLeadingHeading } from '../lib/markdown'
@@ -185,65 +185,82 @@ function tokenizeJava(source: string): ReactNode[] {
   return tokens
 }
 
+// Renderers passed to react-markdown must keep a stable identity across parent re-renders.
+// A renderer recreated on every render is a new component type, so React would remount the
+// rendered image/code/table subtree and reset its state (e.g. an open image dialog).
+const MarkdownCode: Components['code'] = ({ className: codeClassName, children: codeChildren }) => {
+  const language = codeClassName?.match(/language-([\w-]+)/)?.[1]?.toLowerCase()
+  const source = String(codeChildren).replace(/\n$/, '')
+  return (
+    <code className={codeClassName} data-language={language}>
+      {language === 'java' ? tokenizeJava(source) : language ? highlightSimpleCode(source, language) : codeChildren}
+    </code>
+  )
+}
+
+const MarkdownTable: Components['table'] = ({ node: _node, ...props }) => (
+  <div className="markdown-table-scroll" role="region" aria-label="비교 표, 가로 스크롤 가능" tabIndex={0}>
+    <table {...props} />
+  </div>
+)
+
+const MarkdownImg: Components['img'] = ({ node: _node, ...props }) => <MarkdownImage {...props} />
+
+const REMARK_PLUGINS = [remarkGfm, remarkKoreanStrong]
+
+// The link renderer reads the raw source to keep Korean particles outside autolinks,
+// so it is recreated only when the Markdown source itself changes.
+function createMarkdownLink(sourceMarkdown: string): Components['a'] {
+  return function MarkdownLink({ href, children: linkChildren, node, ...props }) {
+    const start = node?.position?.start.offset
+    const end = node?.position?.end.offset
+    const source = typeof start === 'number' && typeof end === 'number'
+      ? sourceMarkdown.slice(start, end)
+      : ''
+    const linkedText = typeof linkChildren === 'string' && isLiteralAutolink(source)
+      ? splitKoreanParticle(source)
+      : null
+
+    // react-markdown may wrap a custom img renderer in its own element type.
+    // Identify linked images from the HAST structure, never by comparing component identity.
+    const linkedImageNode = node?.children.length === 1 && node.children[0]?.type === 'element'
+      && node.children[0]?.tagName === 'img'
+    const soleChild = Array.isArray(linkChildren) ? (linkChildren.length === 1 ? linkChildren[0] : null) : linkChildren
+    if (linkedImageNode && isValidElement<{ src?: string; alt?: string; title?: string }>(soleChild)) {
+      const { src, alt, title } = soleChild.props
+      return <a href={href} {...props}><img src={src} alt={alt} title={title} loading="lazy" /></a>
+    }
+    if (!linkedText) return <a href={href} {...props}>{linkChildren}</a>
+
+    return (
+      <Fragment>
+        <a href={removeHrefParticle(href, linkedText.particle)} {...props}>{linkedText.linkedText}</a>
+        {linkedText.particle}
+      </Fragment>
+    )
+  }
+}
+
 /** Canonical Markdown을 화면 맥락에 맞게 일관된 GFM 콘텐츠로 렌더링한다. */
 export function MarkdownContent({ children, className, fallback, dedupeLeadingHeading }: MarkdownContentProps) {
   const markdown = dedupeLeadingHeading ? removeDuplicateLeadingHeading(children, dedupeLeadingHeading) : children
   const content = markdown.trim() ? markdown : fallback
-  if (!content) return null
   const sourceMarkdown = typeof content === 'string' ? content : null
-
-  const components: Components = {
-    a: ({ href, children: linkChildren, node, ...props }) => {
-      const start = node?.position?.start.offset
-      const end = node?.position?.end.offset
-      const source = sourceMarkdown !== null && typeof start === 'number' && typeof end === 'number'
-        ? sourceMarkdown.slice(start, end)
-        : ''
-      const linkedText = typeof linkChildren === 'string' && isLiteralAutolink(source)
-        ? splitKoreanParticle(source)
-        : null
-
-      // react-markdown may wrap a custom img renderer in its own element type.
-      // Identify linked images from the HAST structure, never by comparing component identity.
-      const linkedImageNode = node?.children.length === 1 && node.children[0]?.type === 'element'
-        && node.children[0]?.tagName === 'img'
-      const soleChild = Array.isArray(linkChildren) ? (linkChildren.length === 1 ? linkChildren[0] : null) : linkChildren
-      if (linkedImageNode && isValidElement<{ src?: string; alt?: string; title?: string }>(soleChild)) {
-        const { src, alt, title } = soleChild.props
-        return <a href={href} {...props}><img src={src} alt={alt} title={title} loading="lazy" /></a>
-      }
-      if (!linkedText) return <a href={href} {...props}>{linkChildren}</a>
-
-      return (
-        <Fragment>
-          <a href={removeHrefParticle(href, linkedText.particle)} {...props}>{linkedText.linkedText}</a>
-          {linkedText.particle}
-        </Fragment>
-      )
-    },
-    code: ({ className: codeClassName, children: codeChildren }) => {
-      const language = codeClassName?.match(/language-([\w-]+)/)?.[1]?.toLowerCase()
-      const source = String(codeChildren).replace(/\n$/, '')
-      return (
-        <code className={codeClassName} data-language={language}>
-          {language === 'java' ? tokenizeJava(source) : language ? highlightSimpleCode(source, language) : codeChildren}
-        </code>
-      )
-    },
+  const components = useMemo<Components>(() => ({
+    a: createMarkdownLink(sourceMarkdown ?? ''),
+    code: MarkdownCode,
     pre: MarkdownPre,
-    table: ({ node: _node, ...props }) => (
-      <div className="markdown-table-scroll" role="region" aria-label="비교 표, 가로 스크롤 가능" tabIndex={0}>
-        <table {...props} />
-      </div>
-    ),
-    img: ({ node: _node, ...props }) => <MarkdownImage {...props} />,
-  }
+    table: MarkdownTable,
+    img: MarkdownImg,
+  }), [sourceMarkdown])
+
+  if (!content) return null
 
   return (
     <div className={['markdown-content', className].filter(Boolean).join(' ')}>
       {sourceMarkdown !== null
         ? <ReactMarkdown
-            remarkPlugins={[remarkGfm, remarkKoreanStrong]}
+            remarkPlugins={REMARK_PLUGINS}
             components={components}
           >{sourceMarkdown}</ReactMarkdown>
         : content}
