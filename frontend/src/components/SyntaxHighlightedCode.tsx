@@ -1,17 +1,24 @@
 import type { ReactNode } from 'react'
 
 const KEYWORDS: Record<string, Set<string>> = {
-  sql: new Set('SELECT FROM WHERE INSERT INTO VALUES UPDATE SET DELETE JOIN LEFT RIGHT INNER OUTER ON AS AND OR NOT NULL IS IN EXISTS GROUP BY ORDER HAVING LIMIT OFFSET DISTINCT COUNT SUM AVG MIN MAX CREATE TABLE PRIMARY KEY REFERENCES BEGIN COMMIT ROLLBACK WITH UNION CASE WHEN THEN ELSE END TRUE FALSE'.split(' ')),
+  sql: new Set('SELECT FROM WHERE INSERT INTO VALUES UPDATE SET DELETE JOIN LEFT RIGHT INNER OUTER ON AS AND OR NOT NULL IS IN EXISTS GROUP BY ORDER HAVING LIMIT OFFSET DISTINCT COUNT SUM AVG MIN MAX CREATE TABLE PRIMARY KEY REFERENCES BEGIN COMMIT ROLLBACK WITH UNION CASE WHEN THEN ELSE END TRUE FALSE EXPLAIN ANALYZE BUFFERS INDEX CONCURRENTLY FOR UPDATE SKIP LOCKED'.split(' ')),
   bash: new Set('if then else elif fi for while do done in case esac function export local return echo cd pwd set exit trap source'.split(' ')),
   yaml: new Set('true false null yes no on off'.split(' ')),
   json: new Set('true false null'.split(' ')),
   http: new Set('GET POST PUT PATCH DELETE HEAD OPTIONS CONNECT TRACE HTTP'.split(' ')),
   xml: new Set(),
+  properties: new Set('true false null'.split(' ')),
+  dockerfile: new Set('FROM RUN CMD LABEL EXPOSE ENV ADD COPY ENTRYPOINT VOLUME USER WORKDIR ARG ONBUILD STOPSIGNAL HEALTHCHECK SHELL AS'.split(' ')),
+  kotlin: new Set('fun val var class object interface data sealed enum override private protected public internal import package return if else when for while try catch finally throw suspend true false null'.split(' ')),
+  gradle: new Set('plugins id dependencies implementation runtimeOnly compileOnly testImplementation annotationProcessor tasks named register def val var true false null'.split(' ')),
 }
 
 function languageKey(language: string) {
   if (language === 'sh' || language === 'shell') return 'bash'
   if (language === 'yml') return 'yaml'
+  if (language === 'kt') return 'kotlin'
+  if (language === 'groovy') return 'gradle'
+  if (language === 'docker') return 'dockerfile'
   return language
 }
 
@@ -32,7 +39,9 @@ export function highlightSimpleCode(source: string, language: string): ReactNode
   while (i < source.length) {
     const rest = source.slice(i)
     const comment = key === 'sql' && rest.startsWith('--')
-      || (key === 'bash' || key === 'yaml') && rest.startsWith('#')
+      || (key === 'bash' || key === 'yaml' || key === 'dockerfile' || key === 'properties') && rest.startsWith('#')
+      || key === 'properties' && rest.startsWith('!')
+      || (key === 'kotlin' || key === 'gradle') && rest.startsWith('//')
       || key === 'xml' && rest.startsWith('<!--')
     if (comment) {
       const stop = key === 'xml' ? source.indexOf('-->', i + 4) : source.indexOf('\n', i)
@@ -83,11 +92,12 @@ export function highlightSimpleCode(source: string, language: string): ReactNode
       continue
     }
 
-    const word = rest.match(/^[A-Za-z_][\w-]*/)?.[0]
+    const word = rest.match(/^[A-Za-z_][\w.-]*/)?.[0]
     if (word) {
       const upper = word.toUpperCase()
-      const isKeyword = keywords.has(key === 'sql' || key === 'http' ? upper : word)
+      const isKeyword = keywords.has(key === 'sql' || key === 'http' || key === 'dockerfile' ? upper : word)
       const isKey = (key === 'yaml' || key === 'http') && /^\s*:/.test(source.slice(i + word.length))
+        || key === 'properties' && /^\s*[=:]/.test(source.slice(i + word.length))
       push(word, isKeyword ? 'code-keyword' : isKey ? 'code-type' : undefined)
       i += word.length
       continue

@@ -14,7 +14,6 @@ import {
 import { compactMarkdownPreview } from '../lib/markdown'
 import { csvSearchValues, toggleCsvValue, type SearchSearch } from '../lib/search-search'
 import { addRecentSearch, primarySearchDestination, relatedConceptDestination, segmentSearchHighlight } from '../lib/search-ui'
-import '../search.css'
 
 const DOCUMENT_TYPES: { value: SearchDocumentType; label: string }[] = [
   { value: 'CONCEPT', label: '개념' },

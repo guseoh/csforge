@@ -1,7 +1,10 @@
 import { useState } from 'react'
+import { Link } from '@tanstack/react-router'
+import { useQueryClient } from '@tanstack/react-query'
 import { ApiRequestError } from '../lib/http'
 import { clearAppUpdateSafetySignal, setAppUpdateSafetySignal } from '../lib/app-update-safety'
 import { applyImports, previewImports, type ImportApply, type ImportItem, type ImportPreview } from '../lib/import-api'
+import { defaultLearningSearch } from '../lib/learning-search'
 
 function mergeFiles(current: File[], incoming: File[]) {
   const seen = new Set(current.map((file) => `${file.name}:${file.size}:${file.lastModified}`))
@@ -53,17 +56,25 @@ function WorkflowSteps({ current }: { current: number }) {
 }
 
 export function ImportPage() {
+  const queryClient = useQueryClient()
   const [files, setFiles] = useState<File[]>([])
   const [preview, setPreview] = useState<ImportPreview | null>(null)
   const [result, setResult] = useState<ImportApply | null>(null)
   const [pending, setPending] = useState(false)
+  const [dragging, setDragging] = useState(false)
   const [message, setMessage] = useState<string | null>(null)
 
   const choose = (selected: File[]) => {
-    setFiles((current) => mergeFiles(current, selected))
+    const supported = selected.filter((file) => /\.(md|json)$/i.test(file.name))
+    if (supported.length < selected.length) {
+      setMessage('지원되는 형식(.md, .json) 파일만 추가했습니다.')
+    } else {
+      setMessage(null)
+    }
+    if (supported.length === 0) return
+    setFiles((current) => mergeFiles(current, supported))
     setPreview(null)
     setResult(null)
-    setMessage(null)
   }
 
   const runPreview = async () => {
@@ -89,6 +100,15 @@ export function ImportPage() {
     try {
       setResult(await applyImports(files, preview.previewDigest))
       setPreview(null)
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['learning-areas'] }),
+        queryClient.invalidateQueries({ queryKey: ['learning-area'] }),
+        queryClient.invalidateQueries({ queryKey: ['concepts'] }),
+        queryClient.invalidateQueries({ queryKey: ['dashboard'] }),
+        queryClient.invalidateQueries({ queryKey: ['search-status'] }),
+        queryClient.invalidateQueries({ queryKey: ['search-filter-options'] }),
+        queryClient.invalidateQueries({ queryKey: ['canonical-bootstrap-status'] }),
+      ])
     } catch (error) {
       if (error instanceof ApiRequestError && error.status === 409) {
         setPreview(null)
@@ -116,11 +136,26 @@ export function ImportPage() {
 
       <WorkflowSteps current={currentStep} />
 
-      <label className="import-dropzone" onDragOver={(event) => event.preventDefault()} onDrop={(event) => { event.preventDefault(); choose(Array.from(event.dataTransfer.files)) }}>
+      <label
+        className={`import-dropzone${dragging ? ' dragging' : ''}`}
+        onDragOver={(event) => { event.preventDefault(); setDragging(true) }}
+        onDragLeave={() => setDragging(false)}
+        onDrop={(event) => { event.preventDefault(); setDragging(false); choose(Array.from(event.dataTransfer.files)) }}
+      >
         <strong>파일을 끌어 놓거나 선택하세요</strong>
         <span>.md / .json · 여러 파일 가능</span>
         <span className="import-file-picker-trigger" aria-hidden="true">파일 선택</span>
-        <input className="import-file-input" type="file" accept=".md,.json" multiple aria-label="파일 선택" onChange={(event) => choose(Array.from(event.target.files ?? []))} />
+        <input
+          className="import-file-input"
+          type="file"
+          accept=".md,.json"
+          multiple
+          aria-label="파일 선택"
+          onChange={(event) => {
+            choose(Array.from(event.target.files ?? []))
+            event.target.value = ''
+          }}
+        />
       </label>
 
       {files.length > 0 && (
@@ -134,7 +169,7 @@ export function ImportPage() {
         </section>
       )}
 
-      {message && <div className="state-card error-text" role="alert">{message}<button className="secondary-button" type="button" onClick={() => void runPreview()}>다시 미리보기</button></div>}
+      {message && <div className="state-card error-text" role="alert">{message}<button className="secondary-button" type="button" disabled={pending || files.length === 0} onClick={() => void runPreview()}>다시 미리보기</button></div>}
 
       {preview && (
         <section className="import-stage import-result" aria-labelledby="preview-heading">
@@ -150,6 +185,10 @@ export function ImportPage() {
           <div className="section-heading"><div><p className="eyebrow">완료</p><h2 id="import-complete-heading">가져오기 완료</h2></div><span className="chip state-active">저장됨</span></div>
           <Summary totals={result.totals} />
           <p>기본 학습 콘텐츠가 저장되었습니다. 같은 파일을 다시 미리보기하면 변경 없음으로 표시됩니다.</p>
+          <div className="chip-row">
+            <Link className="primary-button" to="/learning" search={defaultLearningSearch}>학습 영역 보기</Link>
+            <button className="secondary-button" type="button" onClick={() => { setFiles([]); setPreview(null); setResult(null); setMessage(null) }}>새 파일 가져오기</button>
+          </div>
         </section>
       )}
     </section>

@@ -7,7 +7,7 @@ import { remarkKoreanStrong } from '../lib/remark-korean-strong'
 import { MarkdownCodeBlock } from './MarkdownCodeBlock'
 import { MarkdownImage } from './MarkdownImage'
 import { highlightSimpleCode } from './SyntaxHighlightedCode'
-import { LearningVisualization } from './visualization/LearningVisualization'
+import { LearningVisualization } from './visualization/LazyLearningVisualization'
 import { parseVisualization } from '../lib/learning-visualization'
 
 // Keep this component identity stable so owner note/progress updates do not reset an interactive diagram.
@@ -38,10 +38,11 @@ interface MarkdownContentProps {
 
 const JAVA_KEYWORDS = new Set([
   'abstract', 'assert', 'boolean', 'break', 'byte', 'case', 'catch', 'char', 'class', 'const', 'continue',
-  'default', 'do', 'double', 'else', 'enum', 'extends', 'final', 'finally', 'float', 'for', 'if', 'implements',
-  'import', 'instanceof', 'int', 'interface', 'long', 'native', 'new', 'package', 'private', 'protected', 'public',
-  'record', 'return', 'sealed', 'short', 'static', 'strictfp', 'super', 'switch', 'synchronized', 'this', 'throw',
-  'throws', 'transient', 'try', 'var', 'void', 'volatile', 'while', 'yield', 'true', 'false', 'null',
+  'default', 'do', 'double', 'else', 'enum', 'exports', 'extends', 'final', 'finally', 'float', 'for', 'if',
+  'implements', 'import', 'instanceof', 'int', 'interface', 'long', 'module', 'native', 'new', 'non-sealed',
+  'opens', 'package', 'permits', 'private', 'protected', 'provides', 'public', 'record', 'requires', 'return',
+  'sealed', 'short', 'static', 'strictfp', 'super', 'switch', 'synchronized', 'this', 'throw', 'throws',
+  'transient', 'try', 'uses', 'var', 'void', 'volatile', 'when', 'while', 'yield', 'true', 'false', 'null',
 ])
 
 const JAVA_TYPES = new Set([
@@ -108,6 +109,24 @@ function tokenizeJava(source: string): ReactNode[] {
       const commentEnd = source.indexOf('*/', index + 2)
       const end = commentEnd === -1 ? source.length : commentEnd + 2
       push(source.slice(index, end), 'code-comment')
+      index = end
+      continue
+    }
+
+    if (remainder.startsWith('"""')) {
+      let end = index + 3
+      while (end < source.length) {
+        if (source[end] === '\\') {
+          end += 2
+          continue
+        }
+        if (source.startsWith('"""', end)) {
+          end += 3
+          break
+        }
+        end += 1
+      }
+      push(source.slice(index, end), 'code-string')
       index = end
       continue
     }

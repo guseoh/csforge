@@ -35,7 +35,7 @@ vi.mock('@tanstack/react-query', () => ({
   useMutation: () => ({ isPending: false, isError: false, mutate: vi.fn() }),
 }))
 
-import { DashboardPage } from './DashboardPage'
+import { DashboardPage, deriveHeatmapMonths } from './DashboardPage'
 
 function dashboard(overrides: Partial<Dashboard> = {}): Dashboard {
   return {
@@ -263,5 +263,34 @@ describe('DashboardPage', () => {
     expect(html).toContain('오늘의 학습')
     expect(html).toContain('최근 본 개념을 불러오지 못했습니다.')
     expect(html).toContain('다시 시도')
+  })
+
+  it('derives rolling heatmap month labels from actual heatmap dates and renders Korean quiz source labels', () => {
+    const rollingHeatmap = [
+      '2025-12-01', '2026-01-01', '2026-02-01', '2026-03-01',
+      '2026-04-01', '2026-05-01', '2026-06-01', '2026-07-01',
+      '2026-08-01', '2026-09-01', '2026-10-01', '2026-11-01',
+    ].map((date) => ({ date, conceptsViewed: 0, questionsSolved: 0, activityCount: 0 }))
+    expect(deriveHeatmapMonths(rollingHeatmap)).toEqual(['12월', '2월', '4월', '6월', '8월', '10월'])
+
+    const html = render(dashboard({
+      recentQuizzes: [{
+        quizId: 7,
+        source: 'WRONG_RETRY',
+        status: 'COMPLETED',
+        startedAt: '2026-09-03T10:00:00Z',
+        submittedAt: '2026-09-03T10:10:00Z',
+        completedAt: '2026-09-03T10:10:00Z',
+        totalCount: 5,
+        finalizedCount: 5,
+        correctCount: 4,
+        wrongCount: 1,
+        unansweredCount: 0,
+        pendingSelfCheckCount: 0,
+        accuracyPercent: 80,
+      }],
+    }))
+    expect(html).toContain('#7 · 오답 다시 풀기')
+    expect(html).not.toContain('WRONG RETRY')
   })
 })

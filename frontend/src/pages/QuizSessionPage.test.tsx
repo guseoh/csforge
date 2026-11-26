@@ -38,7 +38,7 @@ vi.mock('../components/MarkdownContent', () => ({
   MarkdownContent: ({ children }: { children: ReactNode }) => <div>{children}</div>,
 }))
 
-import { canEditQuizAnswerByShortcut, QuizSessionPage } from './QuizSessionPage'
+import { canEditQuizAnswerByShortcut, QuizSessionPage, shouldIgnoreQuizShortcutTarget } from './QuizSessionPage'
 
 describe('QuizSessionPage submit recovery', () => {
   beforeEach(() => {
@@ -144,5 +144,31 @@ describe('QuizSessionPage submit recovery', () => {
     expect(html).toContain('저장 실패 · 다시 저장')
     expect(html).not.toContain('정답 선택지')
     expect(html).not.toContain('왜 이렇게 판단하나')
+  })
+
+  it('keeps shortcuts active on focused choice buttons while blocking text inputs and Enter on buttons', () => {
+    const fakeElement = (tag: string, className = '') => ({
+      closest: (selector: string) => {
+        if (selector.includes(tag)) return { classList: { contains: (name: string) => className.split(' ').includes(name) } }
+        return null
+      },
+    })
+    const prevHTMLElement = globalThis.HTMLElement
+    // Provide a lightweight constructor guard in node test environment
+    globalThis.HTMLElement = Object as unknown as typeof HTMLElement
+    try {
+      const choiceBtn = fakeElement('button', 'choice-button selected')
+      const submitBtn = fakeElement('button', 'primary-button')
+      const editor = fakeElement('textarea')
+
+      expect(shouldIgnoreQuizShortcutTarget(choiceBtn as unknown as EventTarget, 'ArrowRight')).toBe(false)
+      expect(shouldIgnoreQuizShortcutTarget(choiceBtn as unknown as EventTarget, 'r')).toBe(false)
+      expect(shouldIgnoreQuizShortcutTarget(choiceBtn as unknown as EventTarget, '2')).toBe(false)
+      expect(shouldIgnoreQuizShortcutTarget(choiceBtn as unknown as EventTarget, 'Enter')).toBe(true)
+      expect(shouldIgnoreQuizShortcutTarget(submitBtn as unknown as EventTarget, 'ArrowRight')).toBe(true)
+      expect(shouldIgnoreQuizShortcutTarget(editor as unknown as EventTarget, 'ArrowRight')).toBe(true)
+    } finally {
+      globalThis.HTMLElement = prevHTMLElement
+    }
   })
 })
