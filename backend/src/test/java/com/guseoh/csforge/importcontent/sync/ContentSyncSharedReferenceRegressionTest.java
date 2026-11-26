@@ -59,15 +59,14 @@ class ContentSyncSharedReferenceRegressionTest {
         var files = packaged.load();
         var topic = files.stream().filter(f -> f.path().equals("network-http/topics.json"))
                 .findFirst().orElseThrow();
-        var current = files.stream().filter(f -> List.of(PREFIX + "cookie.md",
+        var templates = files.stream().filter(f -> List.of(PREFIX + "cookie.md",
                 PREFIX + "cookie-scope.md", PREFIX + "set-cookie.md").contains(f.path())).toList();
-        assertEquals(3, current.size());
-        // 실제 두 소스 SHA에서 확인한 recommendation 변경만 재현한다.
-        // 전체 운영 DB/manifest의 복사본이 아닌 세 Concept의 축소 fixture이다.
-        var previous = current.stream().map(f -> {
-            assertTrue(text(f).contains(NEW), f.path());
-            return file(f, text(f).replace(NEW, OLD));
-        }).toList();
+        assertEquals(3, templates.size());
+        // 실제 두 소스 SHA의 recommendation 값을 양쪽 fixture에 명시한다.
+        // 현재 checkout이 이전 값 또는 변경된 값을 포함하더라도 동일한 사고 후보를 재현한다.
+        // 운영 DB/manifest의 복사본이 아닌 세 Concept의 축소 fixture이다.
+        var previous = templates.stream().map(f -> withRecommendation(f, OLD)).toList();
+        var current = templates.stream().map(f -> withRecommendation(f, NEW)).toList();
         seed(List.of(topic));
         seed(previous);
         input.set(previous);
@@ -107,6 +106,27 @@ class ContentSyncSharedReferenceRegressionTest {
         assertEquals(refs, jdbc.queryForList("select * from reference order by id"));
         assertEquals(links, jdbc.queryForList("select * from concept_reference order by concept_id, reference_id"));
         System.out.println("SHARED_REFERENCE_POLICY_REPRODUCED; rollback and reviewed body-only retry verified");
+    }
+
+    private static CanonicalContentFile withRecommendation(CanonicalContentFile template, String value) {
+        String source = text(template);
+        String oldLine = "    recommendation: \"" + OLD + "\"";
+        String newLine = "    recommendation: \"" + NEW + "\"";
+        String targetLine = "    recommendation: \"" + value + "\"";
+        // URL의 공유 recommendation만 교체하고 나머지 메타데이터와 본문은 유지한다.
+        int urlStart = source.indexOf("  - url: \"" + URL + "\"");
+        assertTrue(urlStart >= 0, template.path());
+        int nextReference = source.indexOf("\n  - url:", urlStart + 1);
+        int frontmatterEnd = source.indexOf("\n---", urlStart);
+        assertTrue(frontmatterEnd > urlStart, template.path());
+        int end = nextReference >= 0 ? Math.min(nextReference, frontmatterEnd) : frontmatterEnd;
+        String reference = source.substring(urlStart, end);
+        boolean hasOld = reference.contains(oldLine);
+        boolean hasNew = reference.contains(newLine);
+        assertTrue(hasOld ^ hasNew, "Unexpected shared recommendation: " + template.path());
+        String originalLine = hasOld ? oldLine : newLine;
+        return file(template, source.substring(0, urlStart)
+                + reference.replace(originalLine, targetLine) + source.substring(end));
     }
 
     private void seed(List<CanonicalContentFile> files) {
