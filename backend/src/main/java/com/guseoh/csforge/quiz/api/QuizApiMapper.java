@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.springframework.stereotype.Component;
 
+import com.guseoh.csforge.learning.api.PageMetadataResponse;
 import com.guseoh.csforge.question.domain.QuestionAnswer;
 import com.guseoh.csforge.question.domain.QuestionAnswerKind;
 import com.guseoh.csforge.question.domain.QuestionConceptSummary;
@@ -12,6 +13,8 @@ import com.guseoh.csforge.quiz.application.QuizActiveView;
 import com.guseoh.csforge.quiz.application.QuizAnswerSavedResult;
 import com.guseoh.csforge.quiz.application.QuizBreakdownView;
 import com.guseoh.csforge.quiz.application.QuizCreatedResult;
+import com.guseoh.csforge.quiz.application.QuizHistoryItemView;
+import com.guseoh.csforge.quiz.application.QuizHistoryPageView;
 import com.guseoh.csforge.quiz.application.QuizQuestionOutcomeView;
 import com.guseoh.csforge.quiz.application.QuizResultView;
 import com.guseoh.csforge.quiz.application.QuizSelfCheckResult;
@@ -26,6 +29,35 @@ import com.guseoh.csforge.quiz.domain.QuizQuestion;
  */
 @Component
 public class QuizApiMapper {
+
+    public QuizHistoryPageResponse toResponse(QuizHistoryPageView view) {
+        int totalPages = (int) Math.ceil((double) view.totalElements() / view.size());
+        return new QuizHistoryPageResponse(
+                view.items().stream().map(this::toHistoryItemResponse).toList(),
+                new PageMetadataResponse(
+                        view.page(),
+                        view.size(),
+                        view.totalElements(),
+                        totalPages,
+                        (view.page() + 1L) * view.size() < view.totalElements(),
+                        view.page() > 0));
+    }
+
+    private QuizHistoryItemResponse toHistoryItemResponse(QuizHistoryItemView item) {
+        return new QuizHistoryItemResponse(
+                item.quizId(),
+                item.status(),
+                item.source(),
+                item.total(),
+                item.correct(),
+                item.wrong(),
+                item.unanswered(),
+                item.selfCheckPending(),
+                item.accuracy(),
+                item.startedAt(),
+                item.submittedAt(),
+                item.completedAt());
+    }
 
     public QuizActiveResponse toResponse(QuizActiveView view) {
         return new QuizActiveResponse(

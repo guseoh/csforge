@@ -28,6 +28,21 @@ class ShortAnswerGradingStrategyTest {
         assertFalse(grade(question, "Exact answer with extra text"));
     }
 
+    @Test
+    void normalizesSurroundingBackticksHyphensUnderscoresAndRepeatedSpaces() {
+        Question question = Question.createDraft("grading-normalized", "Prompt", QuestionType.SHORT_ANSWER,
+                QuestionDifficulty.EASY, "Explanation");
+        question.addAcceptedAnswer("REPEATABLE READ");
+
+        assertTrue(grade(question, "`REPEATABLE READ`"));
+        assertTrue(grade(question, "repeatable_read"));
+        assertTrue(grade(question, "repeatable-read"));
+        assertTrue(grade(question, "  `repeatable   read`  "));
+        assertFalse(grade(question, "READ COMMITTED"));
+        assertFalse(grade(question, "   "));
+        assertFalse(grade(question, null));
+    }
+
     private boolean grade(Question question, String answer) {
         Attempt attempt = mock(Attempt.class);
         when(attempt.getAnswerText()).thenReturn(answer);

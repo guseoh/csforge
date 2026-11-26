@@ -22,6 +22,7 @@ import com.guseoh.csforge.ai.application.WrongAnswerAnalysisCommandService;
 import com.guseoh.csforge.ai.application.WrongAnswerAnalysisQueryService;
 import com.guseoh.csforge.quiz.api.QuizApiMapper;
 import com.guseoh.csforge.quiz.api.QuizCreatedResponse;
+import com.guseoh.csforge.wrongnote.application.WrongNoteBulkRetryCommand;
 import com.guseoh.csforge.wrongnote.application.WrongNoteCommandService;
 import com.guseoh.csforge.wrongnote.application.WrongNoteAnalysisFilter;
 import com.guseoh.csforge.wrongnote.application.WrongNoteListCriteria;
@@ -102,6 +103,22 @@ public class WrongNoteController {
     @PutMapping("/{questionId}/note")
     public WrongNoteNoteResponse note(@PathVariable long questionId, @Valid @RequestBody WrongNoteNoteRequest request) {
         return apiMapper.toResponse(commandService.saveNote(questionId, request.content()));
+    }
+
+    @PostMapping("/retry")
+    public ResponseEntity<QuizCreatedResponse> retryFiltered(
+            @Valid @RequestBody(required = false) WrongNoteBulkRetryRequest request,
+            @RequestHeader(name = "Idempotency-Key", required = false) UUID requestId) {
+        int count = request == null || request.count() == null ? 10 : request.count();
+        WrongNoteBulkRetryCommand command = new WrongNoteBulkRetryCommand(
+                request == null ? null : request.area(),
+                request == null ? null : request.topic(),
+                request == null ? null : request.level(),
+                request == null ? null : request.difficulty(),
+                request == null ? null : request.status(),
+                count);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(quizApiMapper.toCreatedResponse(commandService.retryFiltered(command, requestId)));
     }
 
     @PostMapping("/{questionId}/retry")

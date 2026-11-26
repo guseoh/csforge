@@ -6,5 +6,10 @@ import jakarta.validation.constraints.Min;
 /**
  * REVIEW source 퀴즈 생성 요청이다.
  */
-public record ReviewQuizRequest(@Min(1) @Max(50) Integer count) {
+public record ReviewQuizRequest(
+        @Min(1) @Max(50) Integer count,
+        String area,
+        Long topic,
+        @Min(1) @Max(3) Short level,
+        Boolean includeUpcoming) {
 }

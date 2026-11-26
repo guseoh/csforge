@@ -54,4 +54,29 @@ public interface AttemptRepository extends JpaRepository<Attempt, Long> {
             @Param("cursorAt") Instant cursorAt,
             @Param("cursorId") long cursorId,
             Pageable pageable);
+
+    @Query("""
+            select new com.guseoh.csforge.quiz.domain.QuizSessionAttemptSummary(
+                attempt.quizSession.id,
+                count(attempt.id),
+                count(case when attempt.gradingStatus in (
+                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
+                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
+                    and attempt.correct = true then 1 end),
+                count(case when attempt.gradingStatus in (
+                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
+                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
+                    and attempt.correct = false and attempt.answeredAt is not null then 1 end),
+                count(case when attempt.gradingStatus in (
+                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
+                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
+                    and attempt.correct = false and attempt.answeredAt is null then 1 end),
+                count(case when attempt.gradingStatus =
+                    com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECK_REQUIRED then 1 end)
+            )
+            from Attempt attempt
+            where attempt.quizSession.id in :quizIds
+            group by attempt.quizSession.id
+            """)
+    List<QuizSessionAttemptSummary> summarizeByQuizSessionIds(@Param("quizIds") Collection<Long> quizIds);
 }

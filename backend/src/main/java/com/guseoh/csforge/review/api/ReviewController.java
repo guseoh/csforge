@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.guseoh.csforge.review.application.ReviewCommandService;
 import com.guseoh.csforge.review.application.ReviewDueWindow;
+import com.guseoh.csforge.review.application.ReviewHistoryQueryService;
 import com.guseoh.csforge.review.application.ReviewListCriteria;
 import com.guseoh.csforge.review.application.ReviewQuizSetupCommand;
 import com.guseoh.csforge.review.application.ReviewQueryService;
@@ -23,7 +24,7 @@ import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
 import jakarta.validation.Valid;
 
 /**
- * 복습 요약, 일정, 퀴즈 시작 HTTP API이다.
+ * 복습 요약, 일정, 이력, 퀴즈 시작 HTTP API이다.
  */
 @RestController
 @RequestMapping("/api/reviews")
@@ -31,6 +32,7 @@ import jakarta.validation.Valid;
 public class ReviewController {
 
     private final ReviewQueryService queryService;
+    private final ReviewHistoryQueryService historyQueryService;
     private final ReviewCommandService commandService;
     private final ReviewApiMapper apiMapper;
 
@@ -53,13 +55,28 @@ public class ReviewController {
         return apiMapper.toResponse(queryService.list(new ReviewListCriteria(due, status, area, topic, level), page, boundedSize));
     }
 
+    @GetMapping("/history")
+    public ReviewHistoryPageResponse history(
+            @RequestParam(required = false) Long questionId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        if (page < 0) throw new IllegalArgumentException("page must not be negative");
+        return apiMapper.toResponse(historyQueryService.history(questionId, page, bounded(size)));
+    }
+
     @PostMapping("/quizzes")
     public ResponseEntity<ReviewQuizCreatedResponse> createQuiz(
             @Valid @RequestBody(required = false) ReviewQuizRequest request,
             @RequestHeader(name = "Idempotency-Key", required = false) UUID requestId) {
         int count = request == null || request.count() == null ? 10 : request.count();
+        ReviewQuizSetupCommand command = new ReviewQuizSetupCommand(
+                count,
+                request == null ? null : request.area(),
+                request == null ? null : request.topic(),
+                request == null ? null : request.level(),
+                request != null && Boolean.TRUE.equals(request.includeUpcoming()));
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(apiMapper.toResponse(commandService.createQuiz(new ReviewQuizSetupCommand(count), requestId)));
+                .body(apiMapper.toResponse(commandService.createQuiz(command, requestId)));
     }
 
     @PostMapping("/questions/{questionId}/schedule")
