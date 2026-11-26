@@ -19,6 +19,7 @@ import org.springframework.stereotype.Repository;
 
 import com.guseoh.csforge.learning.domain.ContentStatus;
 import com.guseoh.csforge.question.domain.Question;
+import com.guseoh.csforge.question.domain.QuestionStatus;
 import com.guseoh.csforge.review.application.ReviewListCriteria;
 import com.guseoh.csforge.review.domain.ReviewSchedule;
 
@@ -61,7 +62,10 @@ public class ReviewScheduleSearchRepository {
         Join<?, ?> topic = concept.join("topic", JoinType.INNER);
         Join<?, ?> area = topic.join("learningArea", JoinType.INNER);
         List<Predicate> predicates = new ArrayList<>();
+        predicates.add(builder.equal(question.get("status"), QuestionStatus.PUBLISHED));
         predicates.add(builder.equal(concept.get("status"), ContentStatus.PUBLISHED));
+        predicates.add(builder.isTrue(topic.get("active")));
+        predicates.add(builder.isTrue(area.get("active")));
         if (criteria.status() != null) predicates.add(builder.equal(root.get("status"), criteria.status()));
         if (criteria.areaSlug() != null) predicates.add(builder.equal(area.get("slug"), criteria.areaSlug()));
         if (criteria.topicId() != null) predicates.add(builder.equal(topic.get("id"), criteria.topicId()));
