@@ -29,16 +29,9 @@ post.changeViewCount(post.getViewCount() + 1);
 
 두 요청이 겹치면 다음 순서가 가능합니다.
 
-```text
-T1: READ  100
-T2: READ  100
-T1: 계산  101
-T2: 계산  101
-T1: WRITE 101
-T2: WRITE 101
+![갱신 손실 · 절대값 덮어쓰기와 DB 증감](/learning/backend-engineering/lost-update-comparison.svg)
 
-두 요청은 성공했지만 최종값은 102가 아니라 101
-```
+첫 그림은 version 비교 없이 읽은 값에서 계산한 절대값을 저장하는 가능한 실행입니다. 오른쪽은 PostgreSQL Read Committed에서 두 UPDATE가 모두 성공한 경우이며, 다른 격리 수준이나 충돌 정책에서는 재시도가 필요할 수 있습니다.
 
 문제는 Java 연산 자체가 느려서가 아니라 **읽기와 계산과 쓰기가 하나의 원자적인 상태 전이가 아니었다는 것**입니다.
 

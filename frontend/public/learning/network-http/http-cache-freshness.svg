@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" role="img" aria-labelledby="title desc">
+<title id="title">HTTP 응답의 신선도와 제한적 stale 재사용</title><desc id="desc">max-age=60과 stale-while-revalidate=30 예시. 현재 나이 60초 미만은 fresh, 60~90초 미만은 조건부 stale 허용, 90초부터 해당 허용 기간 종료.</desc>
+<style>
+svg{--bg:#fff;--fg:#222;--muted:#595959;--line:#858585;--surface:#f5f5f5;--selected:#e5e5e5}
+@media(prefers-color-scheme:dark){svg{--bg:#181818;--fg:#ededed;--muted:#b5b5b5;--line:#a1a1a1;--surface:#242424;--selected:#393939}}
+text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--fg);font-size:17px}
+.small{font-size:15px;fill:var(--muted)}.head{font-size:19px;font-weight:600}
+.box,.selected,.missing{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.selected{fill:var(--selected);stroke:var(--fg);stroke-width:2}.missing{fill:var(--bg);stroke-dasharray:5 4}
+.line{stroke:var(--line);stroke-width:1.5;fill:none}.bg{fill:var(--bg)}.tip{fill:var(--line)}
+</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" class="tip"/></marker></defs>
+<rect width="900" height="360" class="bg"/>
+<text x="450" y="30" class="head" text-anchor="middle">Cache-Control: max-age=60, stale-while-revalidate=30</text><text x="20" y="72" class="txt" text-anchor="start">응답의 현재 나이 (초)</text><rect x="30" y="96" width="510" height="66" class="selected"/><text x="285" y="134" class="txt" text-anchor="middle">fresh · 0 ≤ age &lt; 60</text><rect x="540" y="96" width="255" height="66" class="box"/><text x="667.5" y="134" class="txt" text-anchor="middle">stale · 60 ≤ age &lt; 90</text><rect x="795" y="96" width="75" height="66" class="missing"/><text x="832.5" y="134" class="txt" text-anchor="middle">종료</text><line x1="30" y1="190" x2="870" y2="190" class="line" marker-end="url(#arrow)"/><line x1="30" y1="182" x2="30" y2="198" class="line"/><text x="30" y="218" class="small" text-anchor="middle">0</text><line x1="540" y1="182" x2="540" y2="198" class="line"/><text x="540" y="218" class="small" text-anchor="middle">60</text><line x1="795" y1="182" x2="795" y2="198" class="line"/><text x="795" y="218" class="small" text-anchor="middle">90</text><text x="280" y="251" class="txt" text-anchor="middle">다른 조건이 허용하면 원본 검증 없이 재사용</text><text x="670" y="251" class="small" text-anchor="middle">제한적 stale 재사용</text><text x="670" y="276" class="small" text-anchor="middle">백그라운드 재검증 가능</text><text x="450" y="316" class="small" text-anchor="middle">현재 나이 기준 · 90초부터 이 확장 지시어의 허용 기간 종료</text><text x="450" y="340" class="small" text-anchor="middle">다른 캐시 조건 및 stale 허용·금지 정책은 별도로 평가</text>
+</svg>

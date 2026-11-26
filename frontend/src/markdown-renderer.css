@@ -232,6 +232,17 @@
   margin: 0 auto;
 }
 
+@media (min-width: 721px) {
+  .concept-reading-content .markdown-image-trigger:has(> img[src^="/learning/"][src$=".svg"]) {
+    width: min(100%, 760px);
+  }
+
+  .markdown-image-dialog .markdown-image-dialog-pan img[src^="/learning/"][src$=".svg"] {
+    width: 100%;
+    height: auto;
+  }
+}
+
 .markdown-image-pan-hint {
   display: none;
 }

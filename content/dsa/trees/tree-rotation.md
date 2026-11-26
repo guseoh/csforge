@@ -23,13 +23,9 @@ Rotation은 BST의 key ordering을 유지한 채 local 부분 트리의 모양�
 
 예를 들어 `y`를 기준으로 right rotation하면 다음처럼 바뀐다.
 
-```text
-        y                  x
-       / \                / \
-      x   C      →       A   y
-     / \                    / \
-    A   B                  B   C
-```
+![BST · 오른쪽 회전](/learning/dsa/bst-right-rotation.svg)
+
+A·B·C는 각각 부분 트리입니다. x가 새 루트가 되고 B가 y의 왼쪽으로 연결되어도 중위 순서가 보존됩니다.
 
 Rotation 전후 inorder sequence는 모두 `A, x, B, y, C`다. 즉 key의 정렬 관계는 그대로이고 parent-child 구조와 부분 트리 높이만 달라진다.
 

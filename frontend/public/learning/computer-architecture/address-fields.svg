@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 303" role="img" aria-labelledby="address-fields-title address-fields-desc"><title id="address-fields-title">32비트 주소 · tag/index/offset</title><desc id="address-fields-desc">32KiB, 64B, 4-way, 128set. 19+7+6비트.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="303"/><text x="28" y="43" class="h" text-anchor="start">32비트 주소 · tag/index/offset</text><text x="28" y="80" class="s" text-anchor="start">32KiB ÷ 64B = 512 line · 512 ÷ 4 = 128 set</text>
+<rect x="32" y="112" width="532" height="90" class="p"/>
+<text x="298" y="148" class="b" text-anchor="middle">tag 19bit</text>
+<text x="298" y="181" class="m" text-anchor="middle">31–13</text>
+<path d="M298 202V229" class="e"/>
+<rect x="564" y="112" width="196" height="90" class="v"/>
+<text x="662" y="148" class="b" text-anchor="middle">index 7bit</text>
+<text x="662" y="181" class="m" text-anchor="middle">12–6</text>
+<path d="M662 202V229" class="e"/>
+<rect x="760" y="112" width="168" height="90" class="p"/>
+<text x="844" y="148" class="b" text-anchor="middle">offset 6bit</text>
+<text x="844" y="181" class="m" text-anchor="middle">5–0</text>
+<path d="M844 202V229" class="e"/>
+<text x="298" y="260" class="s" text-anchor="middle">유효 라인의 tag 비교</text>
+<text x="662" y="260" class="s" text-anchor="middle">128개 set 선택</text>
+<text x="844" y="286" class="s" text-anchor="middle">64B 내 위치</text></svg>

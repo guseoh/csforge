@@ -32,16 +32,9 @@ class PaymentService {
 
 객체 생성 순서를 따라가 보면 막히는 이유가 바로 드러납니다.
 
-```text
-OrderService 생성 시작
-    │ PaymentService 필요
-    ▼
-PaymentService 생성 시작
-    │ OrderService 필요
-    ▼
-아직 OrderService가 완성되지 않음
-    └────────────── 순환
-```
+![생성자 주입 · 객체 그래프가 완성되지 않는 이유](/learning/spring/constructor-cycle.svg)
+
+화살표는 생성·사용에 필요한 의존 방향입니다. 왼쪽은 직접 생성자 주입을 가정한 실패 사례이며, 오른쪽은 책임 분리의 한 가지 예입니다.
 
 생성자 주입에서는 필요한 의존 객체가 객체 생성 전에 모두 준비되어 있어야 하므로 이런 순환을 그대로 완성할 수 없습니다.
 

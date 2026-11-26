@@ -68,14 +68,14 @@ topics:
     level: 1
     objective: 자격 증명을 검증해 요청 주체에 대한 신뢰 수준을 세우는 과정과 실패 상태를 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.authn-authz.authorization
     title: 인가(authorization)
     order: 30
     level: 1
     objective: 인증된 주체도 리소스와 작업마다 권한을 다시 판단해야 하는 이유를 소유권과 역할 사례로 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: security.core.password
   title: 비밀번호의 안전한 저장
   order: 30
@@ -95,7 +95,7 @@ topics:
     level: 1
     objective: 사용자별 솔트가 같은 비밀번호의 저장 값을 다르게 만들고 사전 계산 공격의 재사용을 어렵게 하는 원리를 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.password.work-factor
     title: 비밀번호 검증 비용과 work factor
     order: 30
@@ -122,7 +122,7 @@ topics:
     level: 2
     objective: 쿠키 속성이 HTTPS 전송, 스크립트 접근, 교차 사이트 전송에 미치는 효과와 한계를 구분한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.session-cookie.fixation-expiration
     title: 세션 고정과 ID 교체·만료
     order: 30
@@ -142,7 +142,7 @@ topics:
     level: 2
     objective: 스킴·호스트·포트로 정하는 출처와 브라우저가 교차 출처 응답 읽기를 제한하는 이유를 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.browser.cors-preflight
     title: 교차 출처 리소스 공유(CORS)와 사전 요청
     order: 20
@@ -176,7 +176,7 @@ topics:
     level: 2
     objective: 사용자 입력을 SQL 문법에 직접 붙일 때 데이터가 쿼리 구조를 바꾸는 위험과 매개변수 바인딩을 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.injection.jpql-native
     title: JPQL·네이티브 쿼리의 동적 구조
     order: 20
@@ -203,14 +203,14 @@ topics:
     level: 2
     objective: 리소스 ID의 존재뿐 아니라 현재 인증 주체가 그 리소스에 접근할 권한이 있는지 서버에서 검사한다.
     density: CORE
-    visualization: NONE
+    visualization: DIAGRAM
   - key: security.core.access.bola-idor
     title: 객체 수준 인가 실패(BOLA/IDOR)
     order: 20
     level: 2
     objective: URL·경로·본문의 객체 식별자를 바꿔 다른 사용자의 리소스에 접근하는 수평 권한 상승을 엔드포인트 흐름에서 진단한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.access.vertical
     title: 수직 권한 상승
     order: 30
@@ -244,7 +244,7 @@ topics:
     level: 2
     objective: AuthenticationException과 AccessDeniedException이 인증 시작점 또는 접근 거부 응답으로 바뀌는 흐름을 구분한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: security.core.auth-architecture
   title: 인증 구조
   order: 90
@@ -257,7 +257,7 @@ topics:
     level: 2
     objective: 인증 전 요청 토큰과 인증 성공 결과의 principal·credentials·authorities·authenticated 상태 차이를 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.auth-architecture.manager-provider
     title: 인증 관리자와 제공자 위임
     order: 20
@@ -284,14 +284,14 @@ topics:
     level: 3
     objective: 현재 요청 스레드에서 SecurityContext를 조회·설정·정리하는 수명과 자격 증명 누출 위험을 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.context-authz.method-security
     title: 메서드 보안과 유스케이스 인가
     order: 20
     level: 3
     objective: URL 인가 규칙과 서비스 메서드의 인가·소유권 검사가 제공하는 경계와 프록시를 통한 호출 조건을 설명한다.
     density: CORE
-    visualization: NONE
+    visualization: DIAGRAM
   - key: security.core.context-authz.async-context
     title: 비동기 작업에 인증 컨텍스트 전달
     order: 30
@@ -311,14 +311,14 @@ topics:
     level: 3
     objective: JWS 서명이 무결성과 발급 주체 확인에 도움을 주지만 일반적인 서명 JWT는 페이로드를 숨기지 않는다는 점을 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.tokens-oauth.jwt-lifecycle
     title: JWT 만료·발급자·대상·폐기
     order: 20
     level: 3
     objective: exp·iss·aud 등의 클레임 검증과 이미 발급한 토큰을 즉시 폐기하기 어려운 문제를 판단한다.
     density: CORE
-    visualization: NONE
+    visualization: DIAGRAM
   - key: security.core.tokens-oauth.oauth-oidc
     title: 권한 위임(OAuth 2.0)과 사용자 인증(OpenID Connect)
     order: 30
@@ -345,18 +345,18 @@ topics:
     level: 3
     objective: 사용자 파일 이름·경로·콘텐츠 유형을 신뢰하지 않고 저장 이름·위치·권한·크기·파일 내용 검사와 다운로드 인가를 구분한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.abuse.rate-limit
     title: 요청 속도 제한과 남용 대응
     order: 30
     level: 3
     objective: 로그인과 API 남용에 대응할 때 계정·IP·기기 등 제한 기준, 시간 구간과 순간 요청량, 분산 상태와 정상 사용자 오탐의 상충 관계를 판단한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: security.core.abuse.secret-logging
     title: 로그의 비밀정보·토큰 노출
     order: 40
     level: 3
     objective: 비밀번호·인가 헤더·세션·토큰·API 키가 로그·추적 정보·오류 응답에 노출되는 경로와 민감정보 제거·허용 목록 기반 로깅을 설계한다.
     density: CORE
-    visualization: NONE
+    visualization: DIAGRAM

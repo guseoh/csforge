@@ -31,12 +31,12 @@ public void cancel(long orderId) {
 }
 ```
 
-애플리케이션 서비스는 주문을 조회하고, 도메인 동작을 호출하고, 저장소 변경을 하나의 트랜잭션 경계 안에서 조정합니다. 반면 "배송이 시작된 주문은 취소할 수 없다"는 규칙은 `Order`가 소유하는 편이 자연스럽습니다.
+애플리케이션 서비스는 주문을 조회하고, 도메인 동작을 호출하고, 저장소 변경을 하나의 트랜잭션 경계 안에서 조정합니다. 반면 이 예시에서는 CREATED 또는 PAID 상태에서만 취소할 수 있다는 규칙을 `Order`가 소유하는 편이 자연스럽습니다. 결제 완료 주문의 외부 환불은 별도의 협력·복구 경계가 필요합니다.
 
 ```java
 public void cancel(Instant cancelledAt) {
-    if (status == OrderStatus.SHIPPING) {
-        throw new IllegalStateException("배송 시작 후에는 취소할 수 없습니다.");
+    if (status != OrderStatus.CREATED && status != OrderStatus.PAID) {
+        throw new IllegalStateException("현재 상태에서는 취소할 수 없습니다.");
     }
     status = OrderStatus.CANCELLED;
     this.cancelledAt = cancelledAt;

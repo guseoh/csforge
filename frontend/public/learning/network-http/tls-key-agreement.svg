@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 438" role="img" aria-labelledby="title desc">
+<title id="title">ECDHE 키 합의</title><desc id="desc">공개점 A=aG와 B=bG를 교환하고 양 끝에서 aB=bA=abG라는 동일한 점을 얻는다. 개인 스칼라와 공통 비밀을 전송하지 않는다.</desc>
+<style>
+svg{--bg:#fff;--fg:#222;--muted:#595959;--line:#858585;--surface:#f5f5f5;--selected:#e5e5e5}
+@media(prefers-color-scheme:dark){svg{--bg:#181818;--fg:#ededed;--muted:#b5b5b5;--line:#a1a1a1;--surface:#242424;--selected:#393939}}
+text{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;fill:var(--fg);font-size:17px}
+.small{font-size:15px;fill:var(--muted)}.head{font-size:19px;font-weight:600}
+.box,.selected,.missing{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.selected{fill:var(--selected);stroke:var(--fg);stroke-width:2}.missing{fill:var(--bg);stroke-dasharray:5 4}
+.line{stroke:var(--line);stroke-width:1.5;fill:none}.bg{fill:var(--bg)}.tip{fill:var(--line)}
+</style>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 L10 5 L0 10 Z" class="tip"/></marker></defs>
+<rect width="900" height="438" class="bg"/>
+<text x="450" y="28" class="head" text-anchor="middle">ECDHE: 공개점 교환과 각자의 공통 비밀 계산</text><text x="230" y="64" class="txt" text-anchor="middle">클라이언트</text><text x="670" y="64" class="txt" text-anchor="middle">서버</text><rect x="40" y="80" width="380" height="44" class="box"/><text x="230" y="107" class="txt" text-anchor="middle">개인 스칼라 a · 공개점 A = aG</text><rect x="480" y="80" width="380" height="44" class="box"/><text x="670" y="107" class="txt" text-anchor="middle">개인 스칼라 b · 공개점 B = bG</text><line x1="230" y1="158" x2="670" y2="158" class="line" marker-end="url(#arrow)"/><text x="450" y="148" class="small" text-anchor="middle">공개점 A 전송</text><line x1="670" y1="208" x2="230" y2="208" class="line" marker-end="url(#arrow)"/><text x="450" y="198" class="small" text-anchor="middle">공개점 B 전송</text><rect x="40" y="240" width="380" height="52" class="selected"/><text x="230" y="271" class="txt" text-anchor="middle">aB = a(bG)</text><rect x="480" y="240" width="380" height="52" class="selected"/><text x="670" y="271" class="txt" text-anchor="middle">bA = b(aG)</text><line x1="230" y1="293" x2="230" y2="316" class="line"/><line x1="230" y1="316" x2="450" y2="316" class="line"/><line x1="670" y1="293" x2="670" y2="316" class="line"/><line x1="670" y1="316" x2="450" y2="316" class="line"/><line x1="450" y1="316" x2="450" y2="332" class="line" marker-end="url(#arrow)"/><rect x="180" y="338" width="540" height="48" class="selected"/><text x="450" y="367" class="txt" text-anchor="middle">동일한 점 abG → 공유 비밀 도출</text><text x="450" y="414" class="small" text-anchor="middle">타원곡선 스칼라 곱 예시 · TLS 키 스케줄은 별도 · 서버 인증 필요</text>
+</svg>

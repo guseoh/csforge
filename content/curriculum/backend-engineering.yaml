@@ -156,7 +156,7 @@ topics:
     level: 2
     objective: 불투명한 cursor가 마지막 정렬 위치를 표현하고 데이터 변화 중 페이지 이동과 큰 OFFSET 비용을 줄이는 조건을 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
 - key: backend.core.idempotency
   title: 멱등성
   order: 60
@@ -203,7 +203,7 @@ topics:
     level: 2
     objective: 읽었던 version을 UPDATE 조건에 포함해 오래된 쓰기를 0-row update나 충돌로 감지하고 재시도·사용자 충돌 처리를 선택한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: backend.core.concurrency-transaction.usecase-transaction
     title: 유스케이스와 트랜잭션 경계
     order: 30
@@ -257,7 +257,7 @@ topics:
     level: 2
     objective: 재시도 간격을 늘리고 무작위성을 섞어 동기화된 재시도 폭주를 완화하는 이유와 최대 지연·시도 횟수를 판단한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: backend.core.retry.deadline
     title: Deadline과 재시도 예산
     order: 30
@@ -304,7 +304,7 @@ topics:
     level: 3
     objective: 절대 시점 저장과 지역 달력 규칙을 분리하고 DST·offset 변화가 예약·마감 계산에 미치는 영향을 설명한다.
     density: CORE
-    visualization: TEXT
+    visualization: DIAGRAM
   - key: backend.core.time-money.clock-expiry
     title: Clock과 만료 정책
     order: 20

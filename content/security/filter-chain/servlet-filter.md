@@ -20,24 +20,9 @@ references:
 
 Spring MVC 컨트롤러가 요청을 처음 처리한다고 생각하기 쉽지만 서블릿 필터가 그보다 앞에서 실행될 수 있습니다.
 
-```text
-HTTP 요청
-    │
-    ▼
-서블릿 컨테이너
-    │
-    ▼
-필터 1
-    │
-    ▼
-필터 2
-    │
-    ▼
-DispatcherServlet
-    │
-    ▼
-컨트롤러
-```
+![서블릿 필터의 요청·응답 경계](/learning/security/servlet-filter-nested-boundary.svg)
+
+일반적인 동기 dispatch 예입니다. 비동기 dispatch 등에서는 실제 등록 조건을 확인합니다.
 
 필터는 `chain.doFilter(request, response)` 호출 전후에 로직을 실행할 수 있어 인증, 로그 수집, CORS, 압축처럼 여러 요청에 공통으로 적용할 처리에 적합합니다.
 

@@ -21,11 +21,9 @@ references:
 
 Topological sort는 directed 간선 `u -> v`를 "u가 v보다 먼저 와야 한다"는 선행 관계로 보고, 모든 간선의 조건을 만족하도록 정점을 한 줄로 나열하는 방법이다.
 
-```text
-A -> C
-B -> C
-C -> D
-```
+![위상 정렬 · 진입 차수 변화](/learning/dsa/kahn-indegree-states.svg)
+
+진입 차수가 0인 정점 A와 B 중 A를 먼저 선택한 예입니다. A와 B가 모두 제거되어야 C를 선택할 수 있습니다.
 
 가능한 순서는 `A, B, C, D` 또는 `B, A, C, D`처럼 여러 개일 수 있다. 직접 선행 관계가 없는 정점 사이의 상대 순서는 유일하지 않을 수 있다.
 

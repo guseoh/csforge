@@ -22,34 +22,9 @@ Authentication은 “로그인 화면을 보여 주는 기능”이 아니라 **
 
 비밀번호 로그인 흐름을 단순화하면 다음과 같습니다.
 
-```text
-POST /login
-이메일 + 비밀번호
-      │
-      ▼
-Authentication 필터
-      │ 인증 전 토큰(authenticated=false)
-      ▼
-AuthenticationManager
-      │
-      ▼
-UserDetailsService / 사용자 조회
-      │
-      ▼
-계정·자격 증명 상태 검사 (잠김/비활성/만료 등)
-      │ 실패 → 인증 실패
-      ▼
-PasswordEncoder.matches(원문, 저장된 해시)
-      │ 불일치 → 인증 실패
-      ▼
-비밀번호 외 필수 인증 검사 완료 (자격 증명 만료 등)
-      │ 실패 → 인증 실패
-      ▼
-AuthenticationManager가 완료된 Authentication 반환
-      │
-      ▼
-인증 성공 처리를 담당하는 필터가 SecurityContext에 설정
-```
+![비밀번호 인증의 검증 경계](/learning/security/password-authentication-checks.svg)
+
+DaoAuthenticationProvider 기반의 단순 모델입니다. 비밀번호 일치만으로 인증 성공이 확정되지 않습니다.
 
 서버는 저장된 비밀번호 해시를 복호화하지 않습니다. `PasswordEncoder.matches(raw, encoded)`는 입력 비밀번호가 저장된 해시와 일치하는지를 검사하지만, **일치했다는 사실만으로 인증 성공이 확정되지는 않습니다.** 예를 들어 `DaoAuthenticationProvider` 기반 흐름에서는 계정 잠금·비활성화·계정 만료를 사전에, 자격 증명 만료 등을 별도로 검사할 수 있습니다. 프레임워크와 설정에 따라 검사 경계는 달라지며, 모든 필수 검사를 통과해 `AuthenticationManager`가 인증 완료 결과를 반환한 뒤에야 인증 성공 처리자가 이를 `SecurityContext`에 반영합니다.
 

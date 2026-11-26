@@ -40,18 +40,9 @@ class OrderService {
 
 ### Spring 컨테이너가 하는 일
 
-```text
-설정 / 컴포넌트 등록 정보
-              │
-              ▼
-      ApplicationContext
-       ├─ Repository 생성
-       ├─ Gateway 생성
-       └─ OrderService 생성
-              │
-              ▼
-      완성된 객체 그래프
-```
+![IoC와 DI · 조립 책임의 이동](/learning/spring/di-composition-responsibility.svg)
+
+생성자 DI는 의존 객체의 사용 관계를 없애는 것이 아니라 구현 선택·생성·조립 책임을 밖으로 이동시킵니다. 이 예시의 외부 조립자는 Spring 컨테이너입니다.
 
 Spring은 classpath scan이나 `@Bean` 메서드 등으로 등록 정보를 수집하고 필요한 Bean을 만들며, 생성자 매개변수 같은 의존성 정보를 보고 적절한 Bean을 연결합니다. 애플리케이션 객체는 컨테이너 API를 직접 호출하지 않아도 됩니다.
 

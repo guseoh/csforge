@@ -36,16 +36,9 @@ profile.innerHTML = "<div>" + nickname + "</div>";
 
 ### 저장형·반사형·DOM XSS는 값이 도착하는 경로가 다르다
 
-```text
-저장형 XSS
-공격자 입력 → DB 저장 → 다른 사용자의 페이지 렌더링 → 실행
+![XSS · 데이터와 실행 문맥](/learning/security/xss-output-sink-comparison.svg)
 
-반사형 XSS
-요청 매개변수 → 응답에 즉시 삽입 → 실행
-
-DOM 기반 XSS
-클라이언트 측 JavaScript가 URL/DOM 값을 안전하지 않은 출력 지점(innerHTML 등)에 삽입 → 실행
-```
+일반 DOM 텍스트 출력 사례입니다. 서식 있는 HTML이 필요하면 검증된 정화 정책과 문맥별 처리가 필요합니다.
 
 공통 원칙은 **신뢰할 수 없는 값을 출력 위치의 문법에 맞게 처리해 코드로 실행되지 않도록 하는 것**입니다.
 

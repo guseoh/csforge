@@ -1,0 +1,78 @@
+name: Network G1 refactor integration QA
+
+on:
+  pull_request:
+    branches: [refactor]
+    paths:
+      - 'content/network-http/**'
+      - 'frontend/src/components/visualization/*Network*'
+      - 'frontend/src/components/visualization/*Tcp*'
+      - 'frontend/src/components/visualization/network-*'
+      - 'frontend/src/components/visualization/tcp-*'
+      - 'frontend/src/components/visualization/study-visual-pilots.css'
+      - 'frontend/src/components/visualization/LearningVisualization.tsx'
+      - 'frontend/src/components/visualization/StepDiagram.tsx'
+      - 'frontend/src/lib/network-*'
+      - 'frontend/src/lib/learning-visualization.ts'
+      - 'frontend/scripts/network-reader-route-browser-qa.mjs'
+      - 'backend/src/main/java/com/guseoh/csforge/importcontent/validation/LearningVisualizationValidator.java'
+      - 'backend/src/test/java/com/guseoh/csforge/importcontent/NetworkDiagramFullPackIntegrationTest.java'
+      - 'contracts/learning-visualization-cases.json'
+      - '.github/workflows/network-g1-integration-qa.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  integration:
+    runs-on: ubuntu-24.04 # Playwright 1.56.1 supported runner
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '25'
+          cache: gradle
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Validate frontend and Network diagram cases
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run lint
+          npm run test
+          npm run build
+      - name: Validate backend and isolated content import
+        working-directory: backend
+        run: |
+          chmod +x gradlew
+          ./gradlew test --no-daemon --stacktrace
+      - name: Install Chromium for Reader QA
+        working-directory: frontend
+        run: |
+          npm install --no-save --ignore-scripts playwright@1.56.1
+          npx playwright install --with-deps chromium
+      - name: Validate 53 Network Reader diagrams
+        working-directory: frontend
+        run: |
+          (npm run dev -- --host 127.0.0.1 --port 5173 > ../network-g1-vite.log 2>&1) &
+          for i in $(seq 1 40); do
+            if curl --fail --silent http://127.0.0.1:5173/ > /dev/null; then break; fi
+            sleep 1
+          done
+          node scripts/network-reader-route-browser-qa.mjs
+      - name: Upload Reader evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: network-g1-reader-qa
+          path: |
+            artifacts/network-reader-route-audit/
+            network-g1-vite.log
+          retention-days: 14
+          if-no-files-found: warn

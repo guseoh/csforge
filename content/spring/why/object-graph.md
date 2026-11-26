@@ -20,14 +20,9 @@ references:
 
 백엔드 기능 하나는 보통 객체 하나로 끝나지 않습니다. 주문을 생성한다고 해도 `OrderService`는 주문을 저장할 Repository가 필요하고, 결제를 요청할 Gateway가 필요하며, 정책을 검사할 협력 객체가 필요할 수 있습니다. 결국 실행 중인 애플리케이션은 독립된 클래스의 모음이 아니라 **서로 참조하며 협력하는 객체들의 연결 구조**, 즉 객체 그래프를 이룹니다.
 
-```text
-OrderController
-      │
-      ▼
-OrderService ──────► OrderRepository
-      │
-      └────────────► PaymentGateway
-```
+![실행 중 객체 그래프 · 참조와 협력](/learning/spring/object-graph-references.svg)
+
+화살표는 객체 참조이며 생성 순서나 HTTP 호출 순서가 아닙니다. 사용할 협력 객체를 선택하고 연결하는 조립 책임은 별도로 존재합니다.
 
 여기서 `OrderService`가 일을 하려면 먼저 세 객체가 실제로 만들어져 있어야 하고, `OrderService`가 어떤 `OrderRepository`와 `PaymentGateway`를 사용할지도 정해져 있어야 합니다. 클래스를 정의하는 것과 **실행 가능한 객체 그래프를 완성하는 것**은 다른 문제입니다.
 

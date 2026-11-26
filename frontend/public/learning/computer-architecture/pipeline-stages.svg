@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 325" role="img" aria-labelledby="pipeline-stages-title pipeline-stages-desc"><title id="pipeline-stages-title">5단계 파이프라인 · 겹쳐 실행되는 명령어</title><desc id="pipeline-stages-desc">3개 명령어가 각 5단계를 1cycle씩 진행하며 5,6,7cycle에 완료.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="325"/><text x="28" y="43" class="h" text-anchor="start">5단계 파이프라인 · 겹쳐 실행되는 명령어</text><text x="28" y="80" class="s" text-anchor="start">이상적인 5-stage · 각 단계 1 cycle · 해저드 없음</text>
+<text x="168" y="120" class="m" text-anchor="middle">1</text>
+<text x="268" y="120" class="m" text-anchor="middle">2</text>
+<text x="368" y="120" class="m" text-anchor="middle">3</text>
+<text x="468" y="120" class="m" text-anchor="middle">4</text>
+<text x="568" y="120" class="m" text-anchor="middle">5</text>
+<text x="668" y="120" class="m" text-anchor="middle">6</text>
+<text x="768" y="120" class="m" text-anchor="middle">7</text>
+<text x="28" y="166" class="b" text-anchor="start">I1</text>
+<rect x="119" y="133" width="98" height="46" class="p"/><text x="168" y="164" class="m" text-anchor="middle">IF</text>
+<rect x="219" y="133" width="98" height="46" class="p"/><text x="268" y="164" class="m" text-anchor="middle">ID</text>
+<rect x="319" y="133" width="98" height="46" class="v"/><text x="368" y="164" class="m" text-anchor="middle">EX</text>
+<rect x="419" y="133" width="98" height="46" class="p"/><text x="468" y="164" class="m" text-anchor="middle">MEM</text>
+<rect x="519" y="133" width="98" height="46" class="p"/><text x="568" y="164" class="m" text-anchor="middle">WB</text>
+<text x="28" y="217" class="b" text-anchor="start">I2</text>
+
+<rect x="219" y="184" width="98" height="46" class="p"/><text x="268" y="215" class="m" text-anchor="middle">IF</text>
+<rect x="319" y="184" width="98" height="46" class="p"/><text x="368" y="215" class="m" text-anchor="middle">ID</text>
+<rect x="419" y="184" width="98" height="46" class="v"/><text x="468" y="215" class="m" text-anchor="middle">EX</text>
+<rect x="519" y="184" width="98" height="46" class="p"/><text x="568" y="215" class="m" text-anchor="middle">MEM</text>
+<rect x="619" y="184" width="98" height="46" class="p"/><text x="668" y="215" class="m" text-anchor="middle">WB</text>
+<text x="28" y="268" class="b" text-anchor="start">I3</text>
+
+
+<rect x="319" y="235" width="98" height="46" class="p"/><text x="368" y="266" class="m" text-anchor="middle">IF</text>
+<rect x="419" y="235" width="98" height="46" class="p"/><text x="468" y="266" class="m" text-anchor="middle">ID</text>
+<rect x="519" y="235" width="98" height="46" class="v"/><text x="568" y="266" class="m" text-anchor="middle">EX</text>
+<rect x="619" y="235" width="98" height="46" class="p"/><text x="668" y="266" class="m" text-anchor="middle">MEM</text>
+<rect x="719" y="235" width="98" height="46" class="p"/><text x="768" y="266" class="m" text-anchor="middle">WB</text>
+<text x="28" y="310" class="s" text-anchor="start">첫 결과는 cycle 5, 이후 cycle 6·7에 완료 → 처리량 증가</text></svg>

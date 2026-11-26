@@ -27,12 +27,9 @@ next = (index + 1) % capacity
 
 물리 배열의 인덱스 순서와 logical FIFO 순서는 달라질 수 있다. Front가 3이라면 배열 앞쪽 슬롯에 더 나중 원소가 저장되어 있어도 logical 순회는 front부터 modulo 순서로 진행해야 한다.
 
-```text
-index : 0 1 2 3 4
-value : D E _ B C
-front = 3
-logical order = B → C → D → E
-```
+![front부터 modulo 순서로 읽으면 B, C, D, E이며 다음 enqueue 위치는 2입니다.](/learning/dsa/circular-queue-wrap.svg)
+
+*front부터 modulo 순서로 읽으면 B, C, D, E이며 다음 enqueue 위치는 2입니다.*
 
 `front == rear`만으로 empty와 full을 모두 표현하려 하면 상태가 모호해진다. 그래서 `size`를 별도로 유지하거나, 항상 한 슬롯을 비워 두고 `nextRear == front`를 full로 정의하는 식의 불변식이 필요하다.
 

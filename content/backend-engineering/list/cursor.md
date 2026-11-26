@@ -28,16 +28,9 @@ Cursor pagination을 "offset보다 무조건 빠른 최신 방식"으로 선택�
 
 ### Offset은 앞쪽 삽입 때문에 다음 페이지 경계가 이동할 수 있다
 
-```text
-첫 요청
-[10, 9, 8, 7, 6] [5, 4, 3, 2, 1]
+![페이지 경계 · 앞쪽 삽입에 따른 OFFSET과 Keyset 차이](/learning/backend-engineering/offset-keyset-insertion.svg)
 
-새 11 삽입
-[11, 10, 9, 8, 7] [6, 5, 4, 3, 2] ...
-
-OFFSET 5
-→ 두 번째 요청에서 6을 다시 볼 수 있음
-```
+ID 내림차순만 사용하는 단순 예입니다. 실제 `(created_at, id)` 정렬은 두 값을 함께 경계로 사용하며, 요청 사이의 완전한 snapshot을 보장하지는 않습니다.
 
 Offset은 "현재 결과 집합에서 앞의 N개를 건너뛴다"는 의미이므로 요청 사이에 앞부분이 바뀌면 같은 숫자가 다른 경계를 가리킬 수 있습니다.
 

@@ -20,17 +20,9 @@ references:
 
 Spring Security에서 `SecurityFilterChain` 빈을 여러 개 정의해도 모든 필터가 매 요청에 실행되지는 않습니다. `FilterChainProxy`는 순서대로 체인을 확인하고 **요청에 처음 일치하는 체인 하나의 필터만 실행**합니다.
 
-```text
-요청 /api/admin/report
-       │
-       ▼
-FilterChainProxy
-       │
-       ├─ 체인 A: /api/**          ✓ 먼저 일치
-       │      └─ permitAll 규칙 적용
-       │
-       └─ 체인 B: /api/admin/**   선택되지 않음
-```
+![보안 체인의 첫 일치와 미일치](/learning/security/first-matching-security-chain.svg)
+
+예시 두 체인만 등록한 경우입니다. 보다 구체적인 체인을 먼저 두고 필요하면 마지막 catch-all 체인을 배치합니다.
 
 두 경로가 겹치므로 체인 A를 먼저 두면 관리자 요청도 A에서 처리됩니다. 관리자 요청에 별도 인증·인가가 필요하다면 `/api/admin/**` 체인을 먼저 배치하고, 일반 `/api/**` 체인을 그 뒤에 둬야 합니다. 등록 순서만 믿지 말고 실제 요청이 어느 체인에 일치하는지도 확인해야 합니다.
 

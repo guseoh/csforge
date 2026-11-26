@@ -28,7 +28,7 @@ references:
 ---
 # Producer 발행 확인과 레코드 내구성
 
-주문 이벤트를 Kafka에 보냈을 때 Producer가 성공 콜백을 받았다고 해서 주문의 후속 처리까지 끝난 것은 아닙니다. 성공 콜백은 **Kafka가 해당 레코드 쓰기 요청을 설정된 수준으로 확인했다**는 뜻이며, Consumer가 이를 읽어 업무 DB를 변경했다거나 외부 결제를 실행했다는 뜻이 아닙니다. 발행 성공의 의미를 이해하려면 Producer, 파티션 리더와 복제본 사이의 확인 흐름부터 구분해야 합니다.
+주문 이벤트를 Kafka에 보냈을 때 Producer가 성공 콜백을 받았다고 해서 주문의 후속 처리까지 끝난 것은 아닙니다. 브로커 응답을 기다리는 `acks=1` 또는 `acks=all` 구성에서 성공 콜백은 **Kafka가 해당 레코드 쓰기 요청을 설정된 수준으로 확인했다**는 뜻입니다. `acks=0`은 브로커 확인을 받지 않으므로 성공 콜백만으로 브로커 기록을 증명할 수 없습니다. 어느 설정이든 Consumer가 이를 읽어 업무 DB를 변경했다거나 외부 결제를 실행했다는 뜻이 아닙니다. 발행 성공의 의미를 이해하려면 Producer, 파티션 리더와 복제본 사이의 확인 흐름부터 구분해야 합니다.
 
 ```text
 주문 서비스 Producer
@@ -54,14 +54,9 @@ ISR(in-sync replicas)은 해당 파티션에서 복제 진행 상태를 기준�
 
 `acks=all`은 설정 가능한 가장 강한 Producer 확인 수준입니다. 다만 ISR에 리더 하나만 남아 있다면 `acks=all`이 자동으로 둘 이상의 복제를 보장하는 것은 아닙니다. 이를 막기 위해 쓰는 것이 토픽의 `min.insync.replicas`입니다. Kafka 4.2 기본 구성에 관한 공식 문서는 `acks=all`의 성공에 필요한 최소 ISR 수를 이 값으로 설명하고, 그 수가 부족하면 `NotEnoughReplicas` 계열의 오류가 발생할 수 있다고 명시합니다. 버전별 Eligible Leader Replicas(ELR) 기능을 사용하는 구성에서는 세부 의미가 달라질 수 있으므로 실제 클러스터 설정을 따로 확인해야 합니다.
 
-```text
-replication.factor=3, min.insync.replicas=2
-리더 A + ISR follower B + ISR follower C
+![Producer ACK · ISR과 최소 복제 조건](/learning/messaging-async/acks-isr-minimum.svg)
 
-현재 ISR {A,B,C} → acks=all은 셋의 확인을 기다림
-현재 ISR {A,B}   → acks=all은 둘의 확인을 기다림
-현재 ISR {A}     → 최솟값 2 미만 → 발행 실패 가능
-```
+Kafka 4.2의 ELR 미사용 조건과 각 행에서 ISR이 안정적인 동안의 쓰기를 가정합니다. ISR 개수 조건을 만족해도 타임아웃 등 다른 오류로 발행이 실패할 수 있습니다.
 
 여기서 `min.insync.replicas=2`는 모든 성공 쓰기에 **정확히 두 복제본만 확인받는다**는 뜻이 아닙니다. ISR이 셋이면 `acks=all`은 현재 ISR 셋 전체의 확인을 기다립니다. 반대로 `acks=1`은 같은 최솟값을 두었다는 이유만으로 `acks=all`의 성공 조건을 얻지 않습니다.
 

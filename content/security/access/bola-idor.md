@@ -22,22 +22,14 @@ API가 다음처럼 동작한다고 해 봅시다.
 
 ```http
 GET /api/orders/1001
-Authorization: session of member 42
+Cookie: SESSION=S123
 ```
 
-사용자가 URL의 `1001`을 `1002`로 바꿨더니 다른 회원 주문이 보인다면 전형적인 객체별 인가 실패입니다.
+서버에서 세션 S123을 회원 42의 인증 상태와 연결했다고 가정합니다. 사용자가 URL의 `1001`을 `1002`로 바꿨더니 다른 회원 주문이 보인다면 전형적인 객체별 인가 실패입니다.
 
-```text
-공격자(회원 42)
-   │ GET /orders/1002
-   ▼
-서버
-   │ findById(1002)
-   ▼
-주문(소유자=77)
-   │
-   └─ 소유권 검사 없음 → 다른 회원의 주문 노출
-```
+![객체 수준 인가 · 소유권 조회 조건](/learning/security/object-owner-query-boundary.svg)
+
+일반 사용자 소유권 정책의 예입니다. 권한 있는 관리자·공유 리소스는 별도 정책에 따라 처리해야 합니다.
 
 IDOR(Insecure Direct Object Reference)라는 표현은 객체 식별자를 직접 참조하는 취약점을 강조하고, OWASP API Security에서는 BOLA(Broken Object Level Authorization)라는 더 넓은 이름으로 다룹니다.
 

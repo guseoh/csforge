@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 477" role="img" aria-labelledby="load-use-stall-title load-use-stall-desc"><title id="load-use-stall-title">ALU forwarding과 load-use stall</title><desc id="load-use-stall-desc">고전 5단계 in-order, MEM 1cycle, EX forwarding 가정. ALU 연산 결과는 다음 EX로, load-use는 ID 1cycle 대기.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="477"/><text x="28" y="43" class="h" text-anchor="start">ALU forwarding과 load-use stall</text><text x="28" y="82" class="s" text-anchor="start">고전적 5-stage · MEM 1 cycle · EX forwarding</text>
+<text x="28" y="121" class="b" text-anchor="start">ALU → ALU</text>
+<text x="168" y="150" class="m" text-anchor="middle">1</text>
+<text x="268" y="150" class="m" text-anchor="middle">2</text>
+<text x="368" y="150" class="m" text-anchor="middle">3</text>
+<text x="468" y="150" class="m" text-anchor="middle">4</text>
+<text x="568" y="150" class="m" text-anchor="middle">5</text>
+<text x="668" y="150" class="m" text-anchor="middle">6</text>
+<text x="768" y="150" class="m" text-anchor="middle">7</text>
+<text x="28" y="196" class="b" text-anchor="start">ADD</text>
+<rect x="119" y="163" width="98" height="46" class="p"/><text x="168" y="194" class="m" text-anchor="middle">IF</text>
+<rect x="219" y="163" width="98" height="46" class="p"/><text x="268" y="194" class="m" text-anchor="middle">ID</text>
+<rect x="319" y="163" width="98" height="46" class="v"/><text x="368" y="194" class="m" text-anchor="middle">EX</text>
+<rect x="419" y="163" width="98" height="46" class="p"/><text x="468" y="194" class="m" text-anchor="middle">MEM</text>
+<rect x="519" y="163" width="98" height="46" class="p"/><text x="568" y="194" class="m" text-anchor="middle">WB</text>
+<text x="28" y="247" class="b" text-anchor="start">SUB</text>
+
+<rect x="219" y="214" width="98" height="46" class="p"/><text x="268" y="245" class="m" text-anchor="middle">IF</text>
+<rect x="319" y="214" width="98" height="46" class="p"/><text x="368" y="245" class="m" text-anchor="middle">ID</text>
+<rect x="419" y="214" width="98" height="46" class="v"/><text x="468" y="245" class="m" text-anchor="middle">EX</text>
+<rect x="519" y="214" width="98" height="46" class="p"/><text x="568" y="245" class="m" text-anchor="middle">MEM</text>
+<rect x="619" y="214" width="98" height="46" class="p"/><text x="668" y="245" class="m" text-anchor="middle">WB</text>
+<text x="28" y="280" class="b" text-anchor="start">LOAD → ALU</text>
+<text x="168" y="312" class="m" text-anchor="middle">1</text>
+<text x="268" y="312" class="m" text-anchor="middle">2</text>
+<text x="368" y="312" class="m" text-anchor="middle">3</text>
+<text x="468" y="312" class="m" text-anchor="middle">4</text>
+<text x="568" y="312" class="m" text-anchor="middle">5</text>
+<text x="668" y="312" class="m" text-anchor="middle">6</text>
+<text x="768" y="312" class="m" text-anchor="middle">7</text>
+<text x="28" y="358" class="b" text-anchor="start">LW</text>
+<rect x="119" y="325" width="98" height="46" class="p"/><text x="168" y="356" class="m" text-anchor="middle">IF</text>
+<rect x="219" y="325" width="98" height="46" class="p"/><text x="268" y="356" class="m" text-anchor="middle">ID</text>
+<rect x="319" y="325" width="98" height="46" class="v"/><text x="368" y="356" class="m" text-anchor="middle">EX</text>
+<rect x="419" y="325" width="98" height="46" class="p"/><text x="468" y="356" class="m" text-anchor="middle">MEM</text>
+<rect x="519" y="325" width="98" height="46" class="p"/><text x="568" y="356" class="m" text-anchor="middle">WB</text>
+<text x="28" y="409" class="b" text-anchor="start">ADD</text>
+
+<rect x="219" y="376" width="98" height="46" class="p"/><text x="268" y="407" class="m" text-anchor="middle">IF</text>
+<rect x="319" y="376" width="98" height="46" class="p"/><text x="368" y="407" class="m" text-anchor="middle">ID</text>
+<rect x="419" y="376" width="98" height="46" class="v"/><text x="468" y="407" class="s" text-anchor="middle">대기</text>
+<rect x="519" y="376" width="98" height="46" class="v"/><text x="568" y="407" class="m" text-anchor="middle">EX</text>
+<rect x="619" y="376" width="98" height="46" class="p"/><text x="668" y="407" class="m" text-anchor="middle">MEM</text>
+<rect x="719" y="376" width="98" height="46" class="p"/><text x="768" y="407" class="m" text-anchor="middle">WB</text>
+<text x="28" y="459" class="s" text-anchor="start">cycle 4: 소비자는 ID 유지, EX에는 bubble. cycle 5: 준비된 값을 전달.</text></svg>

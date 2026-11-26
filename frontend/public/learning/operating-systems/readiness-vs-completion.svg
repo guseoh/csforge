@@ -1,1 +1,27 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="960" height="430" viewBox="0 0 960 430"><rect width="960" height="430" rx="24" fill="#111827"/><text x="48" y="52" fill="#f9fafb" font-size="24" font-family="sans-serif" font-weight="700">Readiness vs Completion</text><text x="70" y="105" fill="#bfdbfe" font-size="20" font-family="sans-serif" font-weight="700">Readiness</text><rect x="70" y="130" width="180" height="70" rx="12" fill="#1f2937" stroke="#60a5fa"/><text x="100" y="173" fill="#f9fafb" font-size="17" font-family="sans-serif">ready event</text><rect x="320" y="130" width="180" height="70" rx="12" fill="#1f2937" stroke="#60a5fa"/><text x="363" y="173" fill="#f9fafb" font-size="17" font-family="sans-serif">read/write</text><rect x="570" y="130" width="230" height="70" rx="12" fill="#1f2937" stroke="#60a5fa"/><text x="605" y="173" fill="#f9fafb" font-size="17" font-family="sans-serif">partial result / EAGAIN</text><path d="M250 165 L320 165" stroke="#93c5fd" stroke-width="4"/><path d="M500 165 L570 165" stroke="#93c5fd" stroke-width="4"/><text x="70" y="270" fill="#bbf7d0" font-size="20" font-family="sans-serif" font-weight="700">Completion</text><rect x="70" y="295" width="200" height="70" rx="12" fill="#1f2937" stroke="#34d399"/><text x="111" y="338" fill="#f9fafb" font-size="17" font-family="sans-serif">submit operation</text><rect x="350" y="295" width="180" height="70" rx="12" fill="#1f2937" stroke="#34d399"/><text x="397" y="338" fill="#f9fafb" font-size="17" font-family="sans-serif">kernel work</text><rect x="610" y="295" width="220" height="70" rx="12" fill="#1f2937" stroke="#34d399"/><text x="648" y="338" fill="#f9fafb" font-size="17" font-family="sans-serif">completion result</text><path d="M270 330 L350 330" stroke="#6ee7b7" stroke-width="4"/><path d="M530 330 L610 330" stroke="#6ee7b7" stroke-width="4"/><text x="70" y="407" fill="#9ca3af" font-size="15" font-family="sans-serif">Neither event by itself means the whole application message or business operation is complete.</text></svg>
+<svg role="img" aria-labelledby="os-a11y-title os-a11y-desc" xmlns="http://www.w3.org/2000/svg" width="960" height="430" viewBox="0 0 960 430"><title id="os-a11y-title">준비 알림과 완료 통지</title><desc id="os-a11y-desc">읽을 준비가 되었음과 커널 작업 자체가 완료되었음을 구분한 도식</desc><rect width="960" height="430" rx="24" fill="#111827"/><text x="48" y="52" fill="#f9fafb" font-size="24" font-family="sans-serif" font-weight="700">Readiness vs Completion</text><text x="70" y="105" fill="#bfdbfe" font-size="20" font-family="sans-serif" font-weight="700">Readiness</text><rect x="70" y="130" width="180" height="70" rx="12" fill="#1f2937" stroke="#60a5fa"/><text x="100" y="173" fill="#f9fafb" font-size="17" font-family="sans-serif">ready event</text><rect x="320" y="130" width="180" height="70" rx="12" fill="#1f2937" stroke="#60a5fa"/><text x="363" y="173" fill="#f9fafb" font-size="17" font-family="sans-serif">read/write</text><rect x="570" y="130" width="230" height="70" rx="12" fill="#1f2937" stroke="#60a5fa"/><text x="605" y="173" fill="#f9fafb" font-size="17" font-family="sans-serif">partial result / EAGAIN</text><path d="M250 165 L320 165" stroke="#93c5fd" stroke-width="4"/><path d="M500 165 L570 165" stroke="#93c5fd" stroke-width="4"/><text x="70" y="270" fill="#bbf7d0" font-size="20" font-family="sans-serif" font-weight="700">Completion</text><rect x="70" y="295" width="200" height="70" rx="12" fill="#1f2937" stroke="#34d399"/><text x="111" y="338" fill="#f9fafb" font-size="17" font-family="sans-serif">submit operation</text><rect x="350" y="295" width="180" height="70" rx="12" fill="#1f2937" stroke="#34d399"/><text x="397" y="338" fill="#f9fafb" font-size="17" font-family="sans-serif">kernel work</text><rect x="610" y="295" width="220" height="70" rx="12" fill="#1f2937" stroke="#34d399"/><text x="648" y="338" fill="#f9fafb" font-size="17" font-family="sans-serif">completion result</text><path d="M270 330 L350 330" stroke="#6ee7b7" stroke-width="4"/><path d="M530 330 L610 330" stroke="#6ee7b7" stroke-width="4"/><text x="70" y="407" fill="#9ca3af" font-size="15" font-family="sans-serif">Neither event by itself means the whole application message or business operation is complete.</text>
+<style id="os-prefers-light"><![CDATA[
+@media (prefers-color-scheme: light){
+
+[fill="#111827"]{fill:#f9fafb}
+[stroke="#111827"]{stroke:#f9fafb}
+[fill="#f9fafb"]{fill:#202632}
+[stroke="#f9fafb"]{stroke:#202632}
+[fill="#bfdbfe"]{fill:#245bb0}
+[stroke="#bfdbfe"]{stroke:#245bb0}
+[fill="#1f2937"]{fill:#edf0f4}
+[stroke="#1f2937"]{stroke:#edf0f4}
+[fill="#60a5fa"]{fill:#245bb0}
+[stroke="#60a5fa"]{stroke:#245bb0}
+[fill="#93c5fd"]{fill:#245bb0}
+[stroke="#93c5fd"]{stroke:#245bb0}
+[fill="#bbf7d0"]{fill:#165a3d}
+[stroke="#bbf7d0"]{stroke:#165a3d}
+[fill="#34d399"]{fill:#167249}
+[stroke="#34d399"]{stroke:#167249}
+[fill="#6ee7b7"]{fill:#167249}
+[stroke="#6ee7b7"]{stroke:#167249}
+[fill="#9ca3af"]{fill:#475569}
+[stroke="#9ca3af"]{stroke:#475569}
+}
+]]></style>
+</svg>

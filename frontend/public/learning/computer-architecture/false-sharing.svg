@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 380" role="img" aria-labelledby="false-sharing-title false-sharing-desc"><title id="false-sharing-title">서로 다른 변수 · 같은 캐시 라인</title><desc id="false-sharing-desc">코어 A/B가 동일 라인의 서로 다른 카운터를 쓰면 소유권이 반복 이동. 별도 라인 배치 시 이 충돌 감소.</desc><defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" class="a"/></marker><style>.bg{fill:#fff}.h{fill:#171717;font:700 27px system-ui,sans-serif}.b{fill:#222;font:600 23px system-ui,sans-serif}.s{fill:#444;font:20px system-ui,sans-serif}.m{fill:#222;font:600 23px monospace}.p{fill:#fafafa;stroke:#888;stroke-width:1.5}.v{fill:#e0e0e0;stroke:#333;stroke-width:2}.z{fill:none;stroke:#999;stroke-dasharray:5 5}.l,.e{fill:none;stroke:#666;stroke-width:2}.e{marker-end:url(#arrow)}.a{fill:#666}@media(prefers-color-scheme:dark){.bg{fill:#171717}.h,.b,.m{fill:#eee}.s{fill:#ccc}.p{fill:#242424;stroke:#aaa}.v{fill:#383838;stroke:#eee}.l,.e{stroke:#bbb}.a{fill:#bbb}}</style></defs><rect class="bg" width="960" height="380"/><text x="28" y="43" class="h" text-anchor="start">서로 다른 변수 · 같은 캐시 라인</text><text x="28" y="82" class="s" text-anchor="start">write-invalidate 일관성 모델 · 각 코어는 자기 변수만 갱신</text>
+<text x="28" y="123" class="b" text-anchor="start">같은 라인</text>
+<rect x="28" y="142" width="190" height="56" class="p"/><text x="123" y="178" class="b" text-anchor="middle">Core A</text>
+<rect x="742" y="142" width="190" height="56" class="p"/><text x="837" y="178" class="b" text-anchor="middle">Core B</text>
+<rect x="338" y="142" width="142" height="56" class="v"/><text x="409" y="178" class="m" text-anchor="middle">A</text>
+<rect x="480" y="142" width="142" height="56" class="v"/><text x="551" y="178" class="m" text-anchor="middle">B</text>
+<path d="M218 170H330" class="e"/>
+<path d="M742 170H630" class="e"/>
+<text x="480" y="228" class="b" text-anchor="middle">한 라인 쓰기 소유권이 A ↔ B 사이 이동</text>
+<path d="M28 249H932" class="l"/>
+<text x="28" y="282" class="b" text-anchor="start">라인 분리</text>
+<rect x="28" y="300" width="190" height="54" class="p"/><text x="123" y="335" class="b" text-anchor="middle">Core A</text>
+<rect x="742" y="300" width="190" height="54" class="p"/><text x="837" y="335" class="b" text-anchor="middle">Core B</text>
+<rect x="280" y="300" width="160" height="54" class="v"/><text x="360" y="335" class="m" text-anchor="middle">line A</text>
+<rect x="520" y="300" width="160" height="54" class="v"/><text x="600" y="335" class="m" text-anchor="middle">line B</text>
+<path d="M218 327H272" class="e"/>
+<path d="M742 327H688" class="e"/></svg>

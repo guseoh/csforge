@@ -29,17 +29,9 @@ public void publishProduct(long productId) {
 
 Spring Security 메서드 보안은 Spring AOP 인터셉터가 메서드 호출 전후에 인가를 수행하는 방식입니다.
 
-```text
-호출자
-  │
-  ▼
-메서드 보안 프록시/인터셉터
-  │ 현재 Authentication + 표현식/정책
-  ├─ 거부 → 예외
-  └─ 허용
-       ▼
-    대상 메서드
-```
+![메서드 보안의 프록시 경계](/learning/security/method-security-proxy-boundary.svg)
+
+기본 proxy 기반 AOP의 예입니다. 실제 거부 테스트가 필요합니다.
 
 다음처럼 설정에서 `@EnableMethodSecurity`를 활성화해야 애너테이션 기반 메서드 보안의 인터셉터가 구성됩니다.
 

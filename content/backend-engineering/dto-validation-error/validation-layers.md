@@ -34,14 +34,9 @@ references:
 
 ### 사전 조회와 DB UNIQUE는 같은 역할이 아니다
 
-```text
-Request A                    Request B
-SELECT email → 없음          SELECT email → 없음
-        │                           │
-        ├──────── INSERT            ├──────── INSERT
-        │                           │
-      성공                    UNIQUE constraint violation
-```
+![사전 검증과 UNIQUE · 경쟁을 닫는 경계](/learning/backend-engineering/unique-constraint-race.svg)
+
+같은 유일 키를 삽입하고 A가 커밋에 성공하는 실행을 가정했습니다. PostgreSQL의 일반적인 즉시 검사 UNIQUE 제약에서는 B가 기다린 뒤 충돌할 수 있습니다. A가 롤백하면 B가 성공할 수도 있습니다.
 
 애플리케이션의 사전 조회는 이미 사용 중인 이메일을 빠르게 알려 주는 UX에 도움이 됩니다. 하지만 확인과 INSERT 사이의 경쟁까지 원자적으로 닫지는 못합니다. 최종 중복 금지는 DB의 UNIQUE constraint가 담당하고, 애플리케이션은 그 위반도 정상적인 경쟁 결과로 번역할 수 있어야 합니다.
 

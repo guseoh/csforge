@@ -45,19 +45,9 @@ class OrderService {
 
 하지만 proxy 방식의 핵심은 **외부 호출자가 proxy를 통해 실제 객체로 들어갈 때 advice가 실행된다**는 점입니다. `place()` 메서드 안에서 `this.saveOrder()`에 해당하는 내부 호출은 같은 실제 객체의 메서드를 직접 호출합니다.
 
-```text
-외부 호출자
-    │
-    ▼
-OrderService Proxy
-    │ place()에는 트랜잭션 advice 없음
-    ▼
-실제 객체의 place()
-    │ this.saveOrder()
-    └──────────────► 실제 객체의 saveOrder()
-                     ▲
-                     └ proxy를 다시 통과하지 않음
-```
+![Self-invocation · 같은 객체 내부 호출과 외부 호출](/learning/spring/self-invocation-proxy.svg)
+
+기본 proxy 모드에서 같은 객체의 this 호출은 내부 메서드의 트랜잭션 속성을 별도로 적용하지 않습니다. 바깥 메서드가 이미 트랜잭션 안에 있다면 그 기존 트랜잭션에서 실행될 수 있습니다.
 
 따라서 내부 `saveOrder()`에 붙은 `@Transactional` 설정이 별도의 새로운 트랜잭션 경계로 적용되지 않을 수 있습니다.
 

@@ -33,6 +33,7 @@ describe('N-01 TCP textbook handshake', () => {
     expect((html.match(/data-tcp-message=/g) ?? [])).toHaveLength(3)
     expect((html.match(/data-tcp-phase="future"/g) ?? [])).toHaveLength(3)
     expect(html).toContain('role="img"')
+    expect(html).toMatch(/<title id="[^"]+">TCP 3방향 핸드셰이크 1 \/ 5단계<\/title>/)
     expect(html).toContain('aria-live="polite"')
     expect(html).toContain('데이터 없는 마지막 ACK는 소비하지 않습니다.')
     expect(html).toContain('TLS/HTTP')

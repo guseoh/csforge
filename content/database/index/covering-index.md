@@ -46,9 +46,13 @@ Index entry
 └───────────────────────────────┘
 ```
 
+![PostgreSQL Index-only scan: 인덱스 값과 가시성 확인](/learning/database/index-covering.svg)
+
+*PostgreSQL 16 B-tree 예시입니다. 필요한 컬럼이 인덱스에 있어도 힙 페이지의 all-visible 비트에 따라 힙 접근 여부가 달라집니다.*
+
 ### 모든 쿼리가 바로 Index-only scan이 되는 것은 아니다
 
-PostgreSQL의 MVCC 때문에 현재 트랜잭션에서 행이 보이는지 확인해야 합니다. 힙 페이지의 가시성 정보를 visibility map에서 확인할 수 있을 때 힙 접근을 피할 수 있습니다. 자주 수정되는 테이블은 all-visible 페이지 비율이 낮아 기대한 이득이 줄 수 있습니다.
+PostgreSQL의 MVCC 때문에 현재 트랜잭션에서 행이 보이는지 확인해야 합니다. 힙 페이지의 가시성 정보를 visibility map에서 확인할 수 있을 때 힙 접근을 피할 수 있습니다. 자주 수정되는 테이블은 all-visible 페이지 비율이 낮아 기대한 이득이 줄 수 있습니다. 그림처럼 페이지 7의 비트가 설정돼 있다면 인덱스 값만 반환할 수 있지만, 페이지 8의 비트가 설정돼 있지 않으면 실제 튜플의 가시성을 확인해야 합니다. 실행 계획에 `Index Only Scan`이 표시돼도 `Heap Fetches`가 0이라는 보장은 아닙니다. `INCLUDE` 컬럼은 탐색 키가 아니며 UNIQUE 인덱스의 유일성 검사 대상에도 포함되지 않습니다.
 
 ### 커버링 인덱스는 인덱스 크기를 키운다
 

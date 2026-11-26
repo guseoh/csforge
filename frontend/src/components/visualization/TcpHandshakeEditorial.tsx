@@ -35,7 +35,7 @@ export function TcpHandshakeDiagram({ data }: { data: VisualizationOf<'tcp-hands
     </p>
     <div className="tcp-handshake-editorial__scroll" role="region" tabIndex={0} aria-label="TCP 메시지 교환 시퀀스 도식, 좁은 화면에서 가로 스크롤 가능">
       <svg className="tcp-handshake-editorial__canvas" viewBox="0 0 800 406" role="img" aria-labelledby={`${titleId} ${descriptionId}`}>
-        <title id={titleId}>TCP 3방향 핸드셰이크 {step + 1} / {frames.length}단계</title>
+        <title id={titleId}>{`TCP 3방향 핸드셰이크 ${step + 1} / ${frames.length}단계`}</title>
         <desc id={descriptionId}>
           {phaseNames[step]}. 클라이언트 {frame.client}, 서버 {frame.server}.
           {frame.active >= 0 ? '현재 메시지는 전송 중이며 아직 상대 종단점에 도착하지 않았습니다.' : ''}

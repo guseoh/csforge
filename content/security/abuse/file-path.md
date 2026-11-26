@@ -39,6 +39,10 @@ resolve 결과가 기준 디렉터리 밖으로 벗어날 수 있음
 
 ### 저장 이름과 사용자 표시 이름을 분리한다
 
+![파일 이름과 저장 위치 분리](/learning/security/file-storage-identity.svg)
+
+표시 이름을 저장 경로로 사용하지 않는 예입니다. 경로 정규화, 링크, 파일 내용 검사, 다운로드 인가를 별도로 확인합니다.
+
 ```text
 originalName: "resume.pdf"   ← 화면에 표시할 메타데이터
 storageKey  : UUID/무작위 값     ← 실제 저장 키

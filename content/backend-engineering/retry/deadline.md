@@ -32,15 +32,9 @@ Deadline은 **이 유스케이스가 언제까지 완료되어야 결과에 의�
 
 ### 남은 시간을 기준으로 다음 시도를 결정한다
 
-```text
-request deadline: 2000ms
+![Deadline · 전체 시간 예산과 다음 시도](/learning/backend-engineering/deadline-budget-timeline.svg)
 
-DB 조회에 300ms 사용
-        ↓
-remaining 1700ms
-        ↓
-remote call + 필요 시 retry + response 작성
-```
+위 예시는 첫 시도가 timeout된 뒤 재실행이 안전하다는 전제에서 계산한 최대 예산입니다. 실제 첫 시도가 빨리 끝나면 남은 예산은 달라집니다. 2,000ms의 상위 deadline에서 응답 작성 여유를 빼고 하위 timeout을 정합니다.
 
 하위 호출의 timeout이 상위 요청의 남은 시간보다 길면 사용자는 이미 결과를 포기했는데 서버 worker는 계속 기다릴 수 있습니다. gRPC처럼 deadline propagation을 지원하는 시스템에서는 이미 경과한 시간을 제외한 남은 budget을 하위 RPC에 전달할 수 있습니다.
 
