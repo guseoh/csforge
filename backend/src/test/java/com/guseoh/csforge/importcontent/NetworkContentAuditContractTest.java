@@ -117,8 +117,8 @@ class NetworkContentAuditContractTest {
                 }
             }
         }
-        assertEquals(383, questionCount);
-        assertEquals(129, multipleChoice);
+        assertEquals(413, questionCount);
+        assertEquals(159, multipleChoice);
         assertEquals(127, descriptive);
         assertEquals(127, scenario);
     }
