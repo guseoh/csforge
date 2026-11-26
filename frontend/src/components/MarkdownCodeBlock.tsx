@@ -1,4 +1,4 @@
-import { isValidElement, useState, type ReactNode } from 'react'
+import { isValidElement, useEffect, useRef, useState, type ReactNode } from 'react'
 
 interface MarkdownCodeBlockProps {
   children: ReactNode
@@ -7,6 +7,15 @@ interface MarkdownCodeBlockProps {
 const LANGUAGE_LABELS: Record<string, string> = {
   asm: 'Assembly',
   java: 'Java',
+  kotlin: 'Kotlin',
+  kt: 'Kotlin',
+  gradle: 'Gradle',
+  groovy: 'Groovy',
+  properties: 'Properties',
+  dockerfile: 'Dockerfile',
+  docker: 'Dockerfile',
+  protobuf: 'Protobuf',
+  proto: 'Protobuf',
   sql: 'SQL',
   bash: 'Bash',
   shell: 'Shell',
@@ -16,6 +25,12 @@ const LANGUAGE_LABELS: Record<string, string> = {
   yml: 'YAML',
   http: 'HTTP',
   xml: 'XML',
+  ts: 'TypeScript',
+  typescript: 'TypeScript',
+  js: 'JavaScript',
+  javascript: 'JavaScript',
+  c: 'C',
+  cpp: 'C++',
   text: '텍스트',
   plaintext: '텍스트',
 }
@@ -31,16 +46,26 @@ function plainText(value: ReactNode): string {
 export function MarkdownCodeBlock({ children }: MarkdownCodeBlockProps) {
   const [wrapped, setWrapped] = useState(false)
   const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle')
+  const resetTimerRef = useRef<number | null>(null)
   const code = Array.isArray(children) ? children[0] : children
   const codeClassName = isValidElement<{ className?: string }>(code) ? code.props.className : undefined
   const language = codeClassName?.match(/(?:^|\s)language-([\w-]+)/)?.[1]?.toLowerCase() ?? 'text'
   const label = LANGUAGE_LABELS[language] ?? '텍스트'
   const source = plainText(children).replace(/\n$/, '')
 
+  useEffect(() => () => {
+    if (resetTimerRef.current !== null) window.clearTimeout(resetTimerRef.current)
+  }, [])
+
   async function copyCode() {
+    if (resetTimerRef.current !== null) window.clearTimeout(resetTimerRef.current)
     try {
       await navigator.clipboard.writeText(source)
       setCopyState('copied')
+      resetTimerRef.current = window.setTimeout(() => {
+        setCopyState('idle')
+        resetTimerRef.current = null
+      }, 2000)
     } catch {
       setCopyState('error')
     }

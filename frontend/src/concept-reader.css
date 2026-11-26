@@ -76,8 +76,8 @@
 
 .concept-reading-content .markdown-content {
   color: var(--text-default);
-  font-size: 17.5px;
-  line-height: 1.8;
+  font-size: 1rem;
+  line-height: 1.78;
   overflow-wrap: anywhere;
   word-break: keep-all;
 }
@@ -105,23 +105,35 @@
 }
 
 .concept-reading-content h2 {
-  margin-top: 2.8em;
-  margin-bottom: 0.8em;
+  margin-top: 2.6em;
+  margin-bottom: 0.75em;
   padding: 0;
   border: 0;
   color: var(--text-strong);
-  font-size: 1.5rem;
+  font-size: 1.45rem;
   letter-spacing: -0.025em;
-  line-height: 1.4;
+  line-height: 1.38;
 }
 
 .concept-reading-content h3 {
-  margin-top: 2.1em;
-  margin-bottom: 0.7em;
+  margin-top: 2em;
+  margin-bottom: 0.65em;
   color: var(--text-strong);
-  font-size: 1.16rem;
+  font-size: 1.15rem;
   letter-spacing: -0.015em;
-  line-height: 1.5;
+  line-height: 1.46;
+}
+
+/* Issue #294: keep inline code legible inside Korean prose without heavy accent pill styling. */
+.concept-reading-content .markdown-content :not(pre) > code {
+  padding: 0.08em 0.36em;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-strong);
+  background: var(--surface-elevated);
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  font-weight: 500;
 }
 
 .concept-reading-content li + li {
@@ -899,6 +911,4 @@
 }
 
 .concept-page .breadcrumb { flex-wrap: wrap; }
-.concept-reading-content .markdown-content strong { color: inherit; font-weight: 650; }
-.concept-reading-content .markdown-content h2 { font-size: 25px; }
-.concept-reading-content .markdown-content h3 { font-size: 20px; }
+.concept-reading-content .markdown-content strong { color: var(--text-strong); font-weight: 650; }
