@@ -1,8 +1,366 @@
 [
-  {"kind":"question","contentKey":"spring.core.registration.configuration-bean.q1","promptMarkdown":"외부 SDK의 `PaymentClient`를 Spring Bean으로 등록하려 한다. `@Bean`이 특히 자연스러운 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.registration.configuration-bean"],"choices":[{"key":"A","content":"외부 SDK 소스를 수정하지 않고도 생성자 인자와 설정을 명시한 factory 메서드로 컨테이너 관리 객체를 조립할 수 있다.","displayOrder":0,"rationaleMarkdown":"외부 SDK 구현은 애플리케이션이 소유한 소스가 아니므로 stereotype을 붙이기 어렵다. 대신 `@Bean` factory 메서드에서 생성자 인자와 설정을 조립하고 반환 객체를 Spring Bean으로 관리할 수 있다."},{"key":"B","content":"외부 클래스가 컴포넌트 스캔 대상이 아니면 Spring 컨테이너에는 등록할 수 없으므로 `@Bean`만이 유일한 방법이다.","displayOrder":1,"rationaleMarkdown":"`@Bean`은 외부 객체를 등록하는 대표적인 방법이지만 유일한 방법은 아니다. programmatic registration이나 다른 등록 방식도 상황에 따라 사용할 수 있다."},{"key":"C","content":"`@Bean` factory 메서드는 Bean scope와 관계없이 호출될 때마다 반드시 새 객체를 반환한다.","displayOrder":2,"rationaleMarkdown":"기본 Bean scope는 singleton이며 컨테이너가 해당 Bean 정의의 객체를 공유한다. prototype 같은 다른 scope를 지정할 수 있지만 일반 Java 메서드 호출 횟수와 Bean 생성 횟수를 같은 개념으로 보면 안 된다."},{"key":"D","content":"`@Bean`으로 등록하면 SDK가 가진 모든 자원의 생명주기와 종료 순서를 Spring이 자동으로 추론해 보장한다.","displayOrder":3,"rationaleMarkdown":"Spring은 Bean 생명주기 콜백을 처리할 수 있지만 외부 SDK의 모든 자원 소유권과 종료 순서를 자동으로 알아내지는 못한다. 필요한 종료 동작과 의존 순서를 설정으로 명확히 해야 한다."}],"correctChoiceKey":"A","explanationMarkdown":"외부 SDK 클래스를 수정하지 못해도 `@Bean` factory 메서드에서 생성자 인자와 설정을 명시해 Spring이 관리할 객체를 등록할 수 있다. 이 메서드는 객체 조립 정책을 표현하는 경계이지 주문 업무 규칙을 실행하는 곳이 아니다."},
-  {"kind":"question","contentKey":"spring.core.registration.configuration-bean.q2","promptMarkdown":"`@Configuration` 클래스의 `@Bean` 메서드끼리 직접 호출하는 코드를 일반 Java 메서드 호출과 완전히 같다고 보면 위험한 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.registration.configuration-bean"],"modelAnswer":"전형적인 full `@Configuration`에서는 proxy 기반 Bean 메서드 가로채기가 적용되어 직접 호출처럼 보여도 컨테이너가 관리하는 Bean을 반환할 수 있다. 다만 `proxyBeanMethods`나 등록 방식에 따라 동작이 달라질 수 있으므로 실제 설정 방식을 확인해야 한다.","explanationMarkdown":"full `@Configuration`에서는 `@Bean` 메서드 호출이 설정 클래스 proxy를 거쳐 컨테이너가 관리하는 동일 Bean을 반환할 수 있다. 하지만 `proxyBeanMethods`와 등록 방식에 따라 일반 Java 호출과 다르게 동작할 수 있으므로, annotation 모양만 보고 새 객체 생성 여부나 singleton 공유를 단정하지 말고 실제 설정 방식을 확인해야 한다."},
-  {"kind":"question","contentKey":"spring.core.registration.component-scan.q1","promptMarkdown":"`com.shop.order.OrderService`에 `@Service`가 있지만 애플리케이션 시작 클래스가 `com.app` 아래에 있고 별도 scan 설정이 없다. 주입 실패 원인으로 가장 먼저 확인할 것은?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.registration.component-scan"],"modelAnswer":"`OrderService` 패키지가 실제 컴포넌트 스캔 기준 범위에 포함되는지 확인한다. stereotype이 있어도 스캔 범위 밖이면 BeanDefinition 후보로 발견되지 않을 수 있다.","explanationMarkdown":"`@Service`가 붙어 있어도 `com.shop.order`가 실제 스캔 범위에 포함되지 않으면 BeanDefinition 후보로 등록되지 않는다. 먼저 시작 클래스 위치와 scan base package를 확인해야 하며, 이 문제는 Bean 주입보다 앞선 등록 단계의 문제다."},
-  {"kind":"question","contentKey":"spring.core.registration.component-scan.q2","promptMarkdown":"컴포넌트 스캔의 기준 패키지를 지나치게 넓게 잡을 때 생길 수 있는 문제를 두 가지 적어라.","questionType":"DESCRIPTIVE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.registration.component-scan"],"explanationMarkdown":"스캔 범위가 너무 넓으면 원하지 않는 컴포넌트나 설정까지 후보로 등록되어 Bean 충돌이나 의도하지 않은 시작 동작이 생길 수 있다. 후보 집합과 생성 비용도 불필요하게 커져 어떤 Bean이 왜 등록되었는지 추적하기 어려워진다.","modelAnswer":"원하지 않는 컴포넌트·설정·테스트 객체까지 등록되어 Bean 충돌이나 시작 부작용이 생길 수 있다. 또한 객체 그래프의 후보 집합과 생성 비용이 커져 등록 이유를 추적하기 어려워질 수 있다."},
-  {"kind":"question","contentKey":"spring.core.registration.primary-qualifier.q1","promptMarkdown":"`PaymentGateway` 후보가 두 개이고 대부분의 주입 지점은 A를 사용하지만 특정 환불 기능만 B를 써야 한다. 가장 자연스러운 선택 조합은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.registration.primary-qualifier"],"choices":[{"key":"A","content":"Spring이 실행할 때마다 두 후보 중 하나를 임의로 선택하게 둔다.","displayOrder":0,"rationaleMarkdown":"후보가 여러 개라고 Spring이 무작위로 하나를 선택하지는 않는다. 주입 지점에 맞는 후보를 정하지 못하면 모호성 때문에 컨텍스트 생성이 실패할 수 있다."},{"key":"B","content":"A를 `@Primary`로 두고 환불 기능의 주입 지점에는 의미 있는 `@Qualifier`로 B를 선택한다.","displayOrder":1,"rationaleMarkdown":"기본 후보를 `@Primary`로 지정하면 대부분의 주입 지점에서 선택이 안정되고, 예외적으로 다른 구현이 필요한 곳은 `@Qualifier`로 의도를 드러낼 수 있다."},{"key":"C","content":"모든 호출 코드가 `ApplicationContext.getBean()`으로 직접 구현을 찾는다.","displayOrder":2,"rationaleMarkdown":"업무 코드가 `ApplicationContext`를 직접 조회하면 의존 객체가 메서드 안에 숨고 컨테이너 API와 결합된다. 조립 지점에서 선택해 주입하는 편이 변경과 테스트에 유리하다."},{"key":"D","content":"두 구현을 같은 Bean 이름으로 등록한다.","displayOrder":3,"rationaleMarkdown":"같은 이름은 두 후보를 명확히 구분해 주지 않는다. 오히려 이름 충돌이나 덮어쓰기 정책 문제가 생길 수 있으므로 서로 구별되는 식별자와 qualifier를 사용해야 한다."}],"correctChoiceKey":"B","explanationMarkdown":"대부분의 주입 지점에서 사용할 구현을 `@Primary`로 기본값으로 정하고, 환불 기능처럼 다른 구현이 필요한 지점에는 `@Qualifier`를 붙여 예외를 명시하는 방식이 자연스럽다. 임의 선택이나 모든 호출자의 직접 컨테이너 조회는 선택 의도를 코드 계약으로 드러내지 못한다."},
-  {"kind":"question","contentKey":"spring.core.registration.primary-qualifier.q2","promptMarkdown":"여러 서비스에 qualifier 문자열이 광범위하게 퍼져 있을 때, 단순히 qualifier를 더 추가하기 전에 검토할 설계 문제를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.registration.primary-qualifier"],"modelAnswer":"구현 선택 책임이 각 호출자에게 불필요하게 분산된 것은 아닌지 본다. 환경·제품 정책으로 한 번 선택할 수 있다면 설정/조립 경계에서 선택하거나 역할별 인터페이스를 분리하는 편이 의도를 더 잘 드러낼 수 있다.","explanationMarkdown":"qualifier 문자열을 모든 호출자가 알고 있으면 구현 선택 책임과 이름 변경 비용이 애플리케이션 곳곳에 퍼진다. 선택이 환경·제품 정책으로 한 번 결정될 수 있는지 조립 경계에서 확인하고, 역할 자체가 다르다면 별도 인터페이스로 의미를 표현하는 편이 낫다."}
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.configuration-bean.q1",
+    "promptMarkdown": "외부 SDK의 `PaymentClient`를 Spring Bean으로 등록하려 한다. `@Bean`이 특히 자연스러운 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.configuration-bean"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "외부 SDK 소스를 수정하지 않고도 생성자 인자와 설정을 명시한 factory 메서드로 컨테이너 관리 객체를 조립할 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "외부 SDK 구현은 애플리케이션이 소유한 소스가 아니므로 stereotype을 붙이기 어렵다. 대신 `@Bean` factory 메서드에서 생성자 인자와 설정을 조립하고 반환 객체를 Spring Bean으로 관리할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "외부 클래스가 컴포넌트 스캔 대상이 아니면 Spring 컨테이너에는 등록할 수 없으므로 `@Bean`만이 유일한 방법이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`@Bean`은 외부 객체를 등록하는 대표적인 방법이지만 유일한 방법은 아니다. programmatic registration이나 다른 등록 방식도 상황에 따라 사용할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "`@Bean` factory 메서드는 Bean scope와 관계없이 호출될 때마다 반드시 새 객체를 반환한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "기본 Bean scope는 singleton이며 컨테이너가 해당 Bean 정의의 객체를 공유한다. prototype 같은 다른 scope를 지정할 수 있지만 일반 Java 메서드 호출 횟수와 Bean 생성 횟수를 같은 개념으로 보면 안 된다."
+      },
+      {
+        "key": "D",
+        "content": "`@Bean`으로 등록하면 SDK가 가진 모든 자원의 생명주기와 종료 순서를 Spring이 자동으로 추론해 보장한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Spring은 Bean 생명주기 콜백을 처리할 수 있지만 외부 SDK의 모든 자원 소유권과 종료 순서를 자동으로 알아내지는 못한다. 필요한 종료 동작과 의존 순서를 설정으로 명확히 해야 한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "외부 SDK 클래스를 수정하지 못해도 `@Bean` factory 메서드에서 생성자 인자와 설정을 명시해 Spring이 관리할 객체를 등록할 수 있다. 이 메서드는 객체 조립 정책을 표현하는 경계이지 주문 업무 규칙을 실행하는 곳이 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.configuration-bean.q2",
+    "promptMarkdown": "`@Configuration` 클래스의 `@Bean` 메서드끼리 직접 호출하는 코드를 일반 Java 메서드 호출과 완전히 같다고 보면 위험한 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.configuration-bean"
+    ],
+    "modelAnswer": "전형적인 full `@Configuration`에서는 proxy 기반 Bean 메서드 가로채기가 적용되어 직접 호출처럼 보여도 컨테이너가 관리하는 Bean을 반환할 수 있다. 다만 `proxyBeanMethods`나 등록 방식에 따라 동작이 달라질 수 있으므로 실제 설정 방식을 확인해야 한다.",
+    "explanationMarkdown": "full `@Configuration`에서는 `@Bean` 메서드 호출이 설정 클래스 proxy를 거쳐 컨테이너가 관리하는 동일 Bean을 반환할 수 있다. 하지만 `proxyBeanMethods`와 등록 방식에 따라 일반 Java 호출과 다르게 동작할 수 있으므로, annotation 모양만 보고 새 객체 생성 여부나 singleton 공유를 단정하지 말고 실제 설정 방식을 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.component-scan.q1",
+    "promptMarkdown": "`com.shop.order.OrderService`에 `@Service`가 있지만 애플리케이션 시작 클래스가 `com.app` 아래에 있고 별도 scan 설정이 없다. 주입 실패 원인으로 가장 먼저 확인할 것은?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.component-scan"
+    ],
+    "modelAnswer": "`OrderService` 패키지가 실제 컴포넌트 스캔 기준 범위에 포함되는지 확인한다. stereotype이 있어도 스캔 범위 밖이면 BeanDefinition 후보로 발견되지 않을 수 있다.",
+    "explanationMarkdown": "`@Service`가 붙어 있어도 `com.shop.order`가 실제 스캔 범위에 포함되지 않으면 BeanDefinition 후보로 등록되지 않는다. 먼저 시작 클래스 위치와 scan base package를 확인해야 하며, 이 문제는 Bean 주입보다 앞선 등록 단계의 문제다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.component-scan.q2",
+    "promptMarkdown": "컴포넌트 스캔의 기준 패키지를 지나치게 넓게 잡을 때 생길 수 있는 문제를 두 가지 적어라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.component-scan"
+    ],
+    "explanationMarkdown": "스캔 범위가 너무 넓으면 원하지 않는 컴포넌트나 설정까지 후보로 등록되어 Bean 충돌이나 의도하지 않은 시작 동작이 생길 수 있다. 후보 집합과 생성 비용도 불필요하게 커져 어떤 Bean이 왜 등록되었는지 추적하기 어려워진다.",
+    "modelAnswer": "원하지 않는 컴포넌트·설정·테스트 객체까지 등록되어 Bean 충돌이나 시작 부작용이 생길 수 있다. 또한 객체 그래프의 후보 집합과 생성 비용이 커져 등록 이유를 추적하기 어려워질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.primary-qualifier.q1",
+    "promptMarkdown": "`PaymentGateway` 후보가 두 개이고 대부분의 주입 지점은 A를 사용하지만 특정 환불 기능만 B를 써야 한다. 가장 자연스러운 선택 조합은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.primary-qualifier"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Spring이 실행할 때마다 두 후보 중 하나를 임의로 선택하게 둔다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "후보가 여러 개라고 Spring이 무작위로 하나를 선택하지는 않는다. 주입 지점에 맞는 후보를 정하지 못하면 모호성 때문에 컨텍스트 생성이 실패할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "A를 `@Primary`로 두고 환불 기능의 주입 지점에는 의미 있는 `@Qualifier`로 B를 선택한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "기본 후보를 `@Primary`로 지정하면 대부분의 주입 지점에서 선택이 안정되고, 예외적으로 다른 구현이 필요한 곳은 `@Qualifier`로 의도를 드러낼 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "모든 호출 코드가 `ApplicationContext.getBean()`으로 직접 구현을 찾는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "업무 코드가 `ApplicationContext`를 직접 조회하면 의존 객체가 메서드 안에 숨고 컨테이너 API와 결합된다. 조립 지점에서 선택해 주입하는 편이 변경과 테스트에 유리하다."
+      },
+      {
+        "key": "D",
+        "content": "두 구현을 같은 Bean 이름으로 등록한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "같은 이름은 두 후보를 명확히 구분해 주지 않는다. 오히려 이름 충돌이나 덮어쓰기 정책 문제가 생길 수 있으므로 서로 구별되는 식별자와 qualifier를 사용해야 한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "대부분의 주입 지점에서 사용할 구현을 `@Primary`로 기본값으로 정하고, 환불 기능처럼 다른 구현이 필요한 지점에는 `@Qualifier`를 붙여 예외를 명시하는 방식이 자연스럽다. 임의 선택이나 모든 호출자의 직접 컨테이너 조회는 선택 의도를 코드 계약으로 드러내지 못한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.primary-qualifier.q2",
+    "promptMarkdown": "여러 서비스에 qualifier 문자열이 광범위하게 퍼져 있을 때, 단순히 qualifier를 더 추가하기 전에 검토할 설계 문제를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.primary-qualifier"
+    ],
+    "modelAnswer": "구현 선택 책임이 각 호출자에게 불필요하게 분산된 것은 아닌지 본다. 환경·제품 정책으로 한 번 선택할 수 있다면 설정/조립 경계에서 선택하거나 역할별 인터페이스를 분리하는 편이 의도를 더 잘 드러낼 수 있다.",
+    "explanationMarkdown": "qualifier 문자열을 모든 호출자가 알고 있으면 구현 선택 책임과 이름 변경 비용이 애플리케이션 곳곳에 퍼진다. 선택이 환경·제품 정책으로 한 번 결정될 수 있는지 조립 경계에서 확인하고, 역할 자체가 다르다면 별도 인터페이스로 의미를 표현하는 편이 낫다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.configuration-bean.q3",
+    "promptMarkdown": "다음 설정 클래스에서 `proxyBeanMethods = false`로 지정했을 때 `orderService()` 실행 중 `orderRepository()` 직접 호출이 일으키는 동작은?\n```java\n@Configuration(proxyBeanMethods = false)\npublic class AppConfig {\n    @Bean\n    OrderRepository orderRepository() {\n        return new InMemoryOrderRepository();\n    }\n\n    @Bean\n    OrderService orderService() {\n        return new OrderService(orderRepository());\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.configuration-bean"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "CGLIB 프록시가 호출을 가로채 컨테이너에 등록된 `orderRepository` 싱글톤 Bean을 반환한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`proxyBeanMethods = false`(Lite 모드)에서는 CGLIB 서브클래스 프록시를 만들지 않으므로 메서드 간 호출 가로채기가 일어나지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "프록시 가로채기가 꺼져 `orderRepository()`가 일반 Java 메서드로 실행되므로 컨테이너 관리 Bean과 다른 별도의 `InMemoryOrderRepository` 인스턴스가 새로 생성된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Lite 모드에서 다른 `@Bean`을 참조해야 한다면 직접 메서드 호출(`orderRepository()`) 대신 `orderService(OrderRepository orderRepository)`처럼 메서드 파라미터로 주입받아야 싱글톤 Bean이 공유된다."
+      },
+      {
+        "key": "C",
+        "content": "`proxyBeanMethods = false`에서는 `@Bean` 메서드를 1개만 선언할 수 있어 컴파일 오류가 난다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "여러 `@Bean` 메서드를 선언할 수 있으며, 단지 `@Bean` 간 직접 호출이 프록시 가로채기를 받지 않을 뿐이다."
+      },
+      {
+        "key": "D",
+        "content": "Spring이 `orderRepository()`를 무시하고 `null`을 전달한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "일반 Java 메서드 호출 그대로 `new InMemoryOrderRepository()`가 실행되어 새 인스턴스가 반환된다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`@Configuration` 기본값(`proxyBeanMethods = true`)은 CGLIB 프록시로 `@Bean` 간 직접 호출을 싱글톤 조회로 가로챈다. 반면 `proxyBeanMethods = false`나 `@Component` 안의 `@Bean`(Lite 모드)에서는 일반 Java 호출이 되므로, 의존 Bean은 반드시 `@Bean` 메서드 파라미터로 주입받아야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.configuration-bean.q4",
+    "promptMarkdown": "Spring Boot에서 `@Configuration(proxyBeanMethods = false)`를 사용하는 주된 이유와 올바른 작성 습관은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.configuration-bean"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 `@Bean`의 scope를 자동으로 `prototype`으로 바꾸기 위해 사용한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`proxyBeanMethods = false`로 등록된 `@Bean`도 컨테이너에서는 여전히 기본 `singleton` scope로 관리된다."
+      },
+      {
+        "key": "B",
+        "content": "`@Transactional` 프록시를 비활성화하기 위해 사용한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`proxyBeanMethods`는 `@Configuration` 클래스 자체의 `@Bean` 메서드 가로채기 여부이지, 서비스의 `@Transactional` AOP와는 무관하다."
+      },
+      {
+        "key": "C",
+        "content": "외부 라이브러리 클래스를 등록할 때만 필수적으로 지정해야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "외부 라이브러리 클래스는 `proxyBeanMethods = true`와 `false` 모두에서 정상 등록된다."
+      },
+      {
+        "key": "D",
+        "content": "CGLIB 프록시 생성 비용을 줄여 시작 속도와 메모리를 절약할 수 있으며, 다른 Bean 의존성은 메서드 직접 호출 대신 파라미터 주입으로 받는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Spring Boot 자동 설정 클래스들도 `proxyBeanMethods = false` + 파라미터 주입 조합을 표준으로 사용해 불필요한 CGLIB 프록시 생성을 피하면서도 안전한 싱글톤 공유를 유지한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`@Bean` 메서드 간 직접 호출 대신 파라미터 주입을 습관화하면 Full/Lite 모드 차이에 따른 버그를 원천 차단할 수 있고, `proxyBeanMethods = false`로 기동 비용도 줄일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.component-scan.q3",
+    "promptMarkdown": "다음 패키지 구조에서 `OrderController`가 `OrderService`를 주입받지 못하고 `NoSuchBeanDefinitionException`으로 기동에 실패했다. 가장 먼저 확인할 원인은?\n```text\ncom.myapp.web.Application          (@SpringBootApplication)\ncom.myapp.web.OrderController      (@RestController)\ncom.myapp.order.OrderService       (@Service)\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.component-scan"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`@RestController`는 같은 패키지에 있는 Bean만 주입받을 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "컨테이너에 등록된 Bean이라면 패키지가 달라도 생성자 주입이 가능하다."
+      },
+      {
+        "key": "B",
+        "content": "`OrderService` 클래스 이름이 `Impl`로 끝나지 않아 스캔에서 제외되었다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "컴포넌트 스캔은 클래스 이름 접미사가 아니라 스테레오타입 애노테이션과 패키지 범위를 기준으로 동작한다."
+      },
+      {
+        "key": "C",
+        "content": "`@Service`는 컴포넌트 스캔 대상이 아니라 `@Component`로 바꿔야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`@Service`는 `@Component`를 메타 애노테이션으로 포함하므로 스캔 범위 안에 있다면 정상 등록된다."
+      },
+      {
+        "key": "D",
+        "content": "`@SpringBootApplication`은 자신이 위치한 `com.myapp.web`과 그 하위 패키지만 기본 스캔하므로 형제 패키지인 `com.myapp.order`가 스캔 범위에서 빠졌다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`@SpringBootApplication`의 메인 클래스를 공통 루트 패키지(`com.myapp`)에 두어야 `web`과 `order` 하위 패키지가 모두 자연스럽게 스캔된다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`@SpringBootApplication` 내부의 `@ComponentScan`은 선언된 클래스의 패키지를 기준으로 하위만 스캔한다. 따라서 메인 애플리케이션 클래스는 프로젝트 루트 패키지에 두는 것이 표준 관례다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.component-scan.q4",
+    "promptMarkdown": "멀티 모듈 프로젝트에서 루트 패키지를 지나치게 넓게(예: `com`) 스캔하도록 `@ComponentScan(\"com\")`을 설정했을 때 발생하는 위험으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.component-scan"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "의도하지 않은 외부·타 모듈의 `@Component`/`@Configuration`까지 스캔되어 Bean 충돌이나 기동 지연이 발생할 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "클래스패스의 모든 `com.*` 클래스를 검사하므로 시작 시간이 늘어나고, 테스트·공유 모듈의 설정 클래스나 동명 Bean이 의도치 않게 등록되어 충돌을 일으킬 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "패키지가 넓을수록 Spring이 병렬 스캔하여 기동 시간이 더 빨라진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "스캔 대상 클래스 메타데이터(ASM 바이트코드 읽기)가 폭증해 기동 시간이 오히려 느려진다."
+      },
+      {
+        "key": "C",
+        "content": "`@Bean` 메서드가 모두 비활성화된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`@Bean` 메서드가 비활성화되는 것이 아니라 오히려 의도치 않은 `@Configuration`의 `@Bean`까지 함께 등록되는 것이 문제다."
+      },
+      {
+        "key": "D",
+        "content": "Java 모듈 시스템에서 컴파일 오류가 발생한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "컴파일은 통과하지만 런타임 스캔 범위 오염과 성능 저하로 이어진다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "컴포넌트 스캔 기준 패키지는 애플리케이션이 소유한 구체적 루트 패키지(예: `com.guseoh.csforge`)로 좁혀야 기동 속도와 Bean 등록 경계를 예측 가능하게 유지할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.primary-qualifier.q3",
+    "promptMarkdown": "다음 코드에서 `PaymentGateway` 구현체가 `StripeGateway`(`@Primary`)와 `KakaoPayGateway`(`@Qualifier(\"kakaoPay\")`) 두 개 등록되어 있다. `RefundService`에 주입되는 Bean은?\n```java\n@Service\npublic class RefundService {\n    private final PaymentGateway gateway;\n\n    public RefundService(@Qualifier(\"kakaoPay\") PaymentGateway gateway) {\n        this.gateway = gateway;\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.primary-qualifier"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`@Primary`와 `@Qualifier`를 함께 쓰면 무조건 `NoUniqueBeanDefinitionException`이 발생한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "두 애노테이션은 '기본 구현(`@Primary`) + 예외적 명시 선택(`@Qualifier`)' 조합으로 함께 쓰도록 설계되었다."
+      },
+      {
+        "key": "B",
+        "content": "두 구현체가 모두 주입되어 런타임에 무작위로 번갈아 실행된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "단일 타입 파라미터에는 정확히 하나의 Bean이 결정적으로 주입된다."
+      },
+      {
+        "key": "C",
+        "content": "`@Primary`가 항상 우선하므로 `StripeGateway`가 주입된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Spring DI 규칙에서 더 구체적인 지정자인 `@Qualifier`는 기본 후보 지정자인 `@Primary`보다 우선한다."
+      },
+      {
+        "key": "D",
+        "content": "명시적 `@Qualifier(\"kakaoPay\")`가 `@Primary`보다 우선하므로 `KakaoPayGateway`가 주입된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`@Primary`는 별도 지정이 없는 일반 주입 지점의 기본 선택이고, 특정 지점에서 `@Qualifier`로 대상을 명시하면 해당 후보가 우선 선택된다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`@Primary`는 다수 주입 지점의 기본값 역할을 하고, `@Qualifier`는 특정 지점의 명시적 오버라이드 역할을 하며 항상 `@Primary`보다 우선한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.registration.primary-qualifier.q4",
+    "promptMarkdown": "`PaymentGateway` 구현체가 3개(`CardGateway`, `BankTransferGateway`, `PointGateway`) 존재하고, 요청의 `PaymentMethod` enum 값에 따라 런타임에 동적으로 구현체를 골라야 한다. 가장 확장성 있는 Spring DI 패턴은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.registration.primary-qualifier"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "세 구현체 모두에 `@Primary`를 붙인다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "같은 타입에 `@Primary`가 2개 이상이면 기본 후보가 모호해져 `NoUniqueBeanDefinitionException`으로 기동이 실패한다."
+      },
+      {
+        "key": "B",
+        "content": "요청마다 `new ClassPathXmlApplicationContext()`를 생성해 구현체를 찾는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "요청마다 컨테이너를 새로 띄우는 것은 심각한 성능·메모리 낭비다."
+      },
+      {
+        "key": "C",
+        "content": "서비스 생성자마다 `@Qualifier` 3개를 각각 주입받고 긴 `if/else` 분기를 복사한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "새 결제 수단이 추가될 때마다 모든 호출 서비스의 생성자와 `if/else`를 수정해야 해 변경 비용이 커진다."
+      },
+      {
+        "key": "D",
+        "content": "`List<PaymentGateway>`를 전략 레지스트리/라우터에 주입받아 각 구현체의 `supports(PaymentMethod)` 또는 `method()` 키로 매핑해 선택한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Spring은 같은 인터페이스의 모든 Bean을 `List<T>`로 자동 주입해 준다. 라우터가 이를 `Map<PaymentMethod, PaymentGateway>`로 색인하면 새 구현체 추가 시 기존 서비스 코드를 수정하지 않아도 된다(OCP)."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Spring의 컬렉션 주입(`List<Strategy>`)을 활용하면 문자열 `@Qualifier`를 곳곳에 흩뿌리지 않고도 타입 안전한 전략 라우팅(OCP)을 깔끔하게 구현할 수 있다."
+  }
 ]

@@ -22,33 +22,7 @@ references:
 
 Spring Boot 애플리케이션이 시작될 때 세부 구현은 상황마다 달라도 큰 흐름은 다음처럼 볼 수 있습니다.
 
-```text
-설정 소스 읽기
-        │
-        ▼
-BeanDefinition 등록
-        │
-        ▼
-BeanFactoryPostProcessor 등 Bean 정의 단계 처리
-        │
-        ▼
-Bean 객체 생성 + 의존성 해결
-        │
-        ▼
-BeanPostProcessor 초기화 전 처리
-(@PostConstruct 등 일부 초기화 처리도 이 단계에 포함)
-        │
-        ▼
-InitializingBean.afterPropertiesSet()
-및 명시적으로 지정한 init 메서드
-        │
-        ▼
-BeanPostProcessor 초기화 후 처리
-(일반적인 AOP 자동 프록시 적용 단계)
-        │
-        ▼
-애플리케이션에서 사용할 수 있는 객체 그래프
-```
+![ApplicationContext 부트스트랩 및 Bean 초기화 순서](/learning/spring/application-context-bootstrap.svg)
 
 Spring의 `BeanPostProcessor`에는 **초기화 콜백 전**과 **초기화 콜백 후**에 호출되는 서로 다른 확장 지점이 있습니다. `@PostConstruct`는 관련 후처리기에 의해 초기화 전 처리 단계에서 실행될 수 있고, `InitializingBean.afterPropertiesSet()` 및 설정한 초기화 메서드 이후에 초기화 후 처리 단계가 이어집니다. 따라서 두 후처리 단계 모두 끝난 다음에 초기화 콜백이 실행된다고 이해하면 실제 순서를 거꾸로 추적하게 됩니다. 구체적인 Bean·후처리기 구성에 따라 단계별 참여 여부는 달라질 수 있습니다.
 
@@ -91,7 +65,7 @@ Spring 공식 문서에서 `ApplicationContext`는 `BeanFactory` 기능을 포�
 | 같은 인터페이스 Bean이 두 개라 주입 실패 | 의존성 해결            |
 | 생성자에서 DB 연결 검증이 실패           | 객체 생성·초기화       |
 
-이 구분은 stack trace를 읽을 때 매우 유용합니다. 컨테이너가 하나의 마법 단계가 아니라 **등록 → 생성 → 연결 → 후처리 → 초기화**라는 여러 단계로 움직인다는 것을 알고 있기 때문입니다.
+이 구분은 stack trace를 읽을 때 매우 유용합니다. 컨테이너가 하나의 마법 단계가 아니라 **등록 → 생성·의존성 주입 → 초기화 전 처리 → 초기화 콜백 → 초기화 후 처리(프록시)**라는 여러 단계로 움직인다는 것을 알고 있기 때문입니다.
 
 ### 모든 객체를 컨테이너에 넣는 것이 목적은 아니다
 

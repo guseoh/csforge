@@ -34,18 +34,7 @@ Controller가 `int page`를 요구한다면 `abc`를 정수로 바꾸는 과정�
 
 ### 입력 실패를 단계로 나누면 오류 응답이 더 정확해진다
 
-```text
-원본 HTTP 입력
-    │
-    ├─ 파싱 / 메시지 변환
-    │       └─ JSON 문법, 미디어 타입, 타입 변환 실패
-    │
-    ├─ 데이터 바인딩
-    │       └─ 필드 타입 불일치 / 필수 값 누락
-    │
-    └─ Bean Validation
-            └─ @NotBlank, @Min 같은 제약 위반
-```
+![HTTP 입력 바인딩과 Bean Validation 실패 단계](/learning/spring/binding-vs-validation-pipeline.svg)
 
 모든 오류를 `INVALID_REQUEST` 하나로 뭉칠 수는 있지만 클라이언트가 어느 필드를 고쳐야 하는지 알 수 있어야 하는 API에서는 필드 오류 정보를 구조화하는 편이 유용합니다.
 

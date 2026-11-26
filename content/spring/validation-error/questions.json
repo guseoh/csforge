@@ -1,8 +1,372 @@
 [
-  {"kind":"question","contentKey":"spring.core.validation-error.bean-validation.q1","promptMarkdown":"다음 중 요청 DTO의 Bean Validation과 도메인 불변식을 가장 올바르게 구분한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.validation-error.bean-validation"],"choices":[{"key":"A","content":"`@NotBlank`가 있으면 도메인의 상태 전이 검증은 필요 없다.","displayOrder":0,"rationaleMarkdown":"DTO 제약은 입력 값의 형식이나 범위를 검사하는 데 유용하지만, 도메인 객체의 현재 상태에 따라 허용되는 상태 전이를 대신 보호하지 않는다. 해당 불변식은 도메인 동작이 지켜야 한다."},{"key":"B","content":"Bean Validation은 권한 검사까지 자동으로 수행한다.","displayOrder":1,"rationaleMarkdown":"검증 annotation은 권한 정책을 실행하지 않는다. 누가 어떤 자원에 접근할 수 있는지는 Security와 애플리케이션 경계에서 별도로 판단해야 한다."},{"key":"C","content":"DB UNIQUE 제약은 검증 annotation으로 완전히 대체할 수 있다.","displayOrder":2,"rationaleMarkdown":"애플리케이션의 사전 검사는 동시에 들어온 두 요청의 중복 삽입을 원자적으로 막지 못한다. 최종 유일성은 DB UNIQUE 제약으로 보호해야 한다."},{"key":"D","content":"외부 입력의 형식·범위는 DTO 검증에 둘 수 있지만, HTTP와 무관한 상태 전이 규칙은 도메인이 보호해야 한다.","displayOrder":3,"rationaleMarkdown":"요청 DTO의 형식·범위는 API 경계에서 거부할 수 있다. 이미 저장된 객체의 상태 전이 규칙은 REST·배치 같은 진입 방식과 무관하게 도메인이 보호해야 한다."}],"correctChoiceKey":"D","explanationMarkdown":"DTO의 Bean Validation은 null·형식·범위 같은 외부 요청 계약을 검사하는 데 적합하지만, 주문 상태 전이 같은 도메인 불변식을 대신 보장하지는 않는다. DB UNIQUE도 동시 요청 사이의 최종 보장이므로 annotation만으로 대체하면 안 된다."},
-  {"kind":"question","contentKey":"spring.core.validation-error.bean-validation.q2","promptMarkdown":"회원가입에서 `existsByEmail=false`를 확인한 뒤 INSERT한다. 동시에 두 요청이 같은 email로 들어오면 애플리케이션 검증만으로 UNIQUE를 보장할 수 없는 이유와 보완책을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["spring.core.validation-error.bean-validation"],"modelAnswer":"두 트랜잭션이 사전 조회에서 모두 이메일이 없다고 볼 수 있으므로 둘 다 INSERT를 시도할 수 있다. 친절한 사전 검사는 유지할 수 있지만 최종 유일성 불변식은 DB UNIQUE 제약으로 보호하고 제약 위반을 애플리케이션 오류로 변환해야 한다.","explanationMarkdown":"두 요청이 동시에 `existsByEmail=false`를 읽으면 모두 INSERT를 시도할 수 있어 사전 애플리케이션 검증만으로 유일성을 보장하지 못한다. 사용자 친화적인 사전 검사는 유지하되 DB UNIQUE를 최종 방어선으로 두고 제약 위반을 안전한 애플리케이션 오류로 변환해야 한다."},
-  {"kind":"question","contentKey":"spring.core.validation-error.binding-errors.q1","promptMarkdown":"`page=abc`→`int page` 실패와 `page=0`→`@Min(1)` 실패의 유형을 순서대로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.validation-error.binding-errors"],"acceptedAnswers":["abc는 int로 변환하지 못하는 바인딩 또는 타입 변환 실패이고 0은 변환은 성공하지만 Bean Validation 제약 실패다","첫 번째는 Java 인자를 만들기 전 타입 변환 문제이고 두 번째는 값 생성 후 검증 규칙 위반이다","타입 변환 실패, Bean Validation 실패","binding/type conversion 실패, validation constraint 실패"],"explanationMarkdown":"`abc`는 `int` 인자를 만들 수 없어 바인딩·타입 변환 단계에서 실패하고, `0`은 정수 변환 뒤 `@Min(1)` 제약을 위반해 Bean Validation 단계에서 실패한다. 실패 위치가 다르므로 API 오류 코드와 필드 오류도 구분할 수 있다."},
-  {"kind":"question","contentKey":"spring.core.validation-error.binding-errors.q2","promptMarkdown":"바인딩 오류 응답에 사용자가 입력한 비밀번호 값을 그대로 포함하는 구현이 위험한 이유와 대안을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.validation-error.binding-errors"],"modelAnswer":"오류 응답과 로그가 비밀값·개인정보 유출 경로가 될 수 있다. 필드명·오류 코드·안전한 메시지만 제공하고 민감한 입력값은 제외하거나 마스킹하며 운영 진단에는 correlation ID와 안전한 메타데이터를 사용한다.","explanationMarkdown":"거부된 비밀번호 값을 응답이나 로그에 그대로 넣으면 검증 오류가 비밀값 유출 경로가 된다. 필드와 오류 코드, 안전한 메시지만 반환하고 민감한 입력값은 제외하거나 가려야 한다."},
-  {"kind":"question","contentKey":"spring.core.validation-error.exception-handler.q1","promptMarkdown":"`OrderNotFoundException`을 404로 변환하는 책임을 API 예외 처리기에 두는 장점은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.validation-error.exception-handler"],"choices":[{"key":"A","content":"도메인 예외가 HTTP 프레임워크에 직접 의존하지 않아도 API 어댑터가 상태 코드와 오류 코드를 결정할 수 있다.","displayOrder":0,"rationaleMarkdown":"도메인 예외는 HTTP 타입을 알 필요가 없고 API 어댑터가 이를 404와 외부 오류 코드로 변환한다. 그래서 HTTP 표현이 바뀌어도 도메인 규칙이 웹 프레임워크에 묶이지 않는다."},{"key":"B","content":"API 예외 처리기를 쓰려면 도메인 예외도 `HttpStatus`나 `ResponseEntity`를 직접 알아야 한다.","displayOrder":1,"rationaleMarkdown":"도메인 예외가 `HttpStatus`나 `ResponseEntity`를 직접 사용하면 도메인이 웹 프레임워크에 의존한다. 예외 처리기가 변환을 맡아 이 경계를 분리한다."},{"key":"C","content":"예외 처리기가 HTTP 상태 코드를 정하면 트랜잭션 rollback 여부도 같은 처리기가 결정한다.","displayOrder":2,"rationaleMarkdown":"트랜잭션 interceptor가 rollback 규칙에 따라 DB 트랜잭션 결과를 정하는 것과 MVC 예외 처리기가 HTTP 응답을 만드는 것은 별도 단계다."},{"key":"D","content":"예외 변환을 중앙화하면 서비스 메서드도 일관성을 위해 `ResponseEntity`를 반환해야 한다.","displayOrder":3,"rationaleMarkdown":"예외 처리기는 HTTP 응답 표현을 조정한다. 서비스가 `ResponseEntity`를 반환하게 만들면 웹 표현 타입이 애플리케이션 계층으로 역류한다."}],"correctChoiceKey":"A","explanationMarkdown":"API 예외 처리기가 도메인·애플리케이션 예외를 HTTP 404와 오류 코드로 변환하면 도메인이 HTTP 프레임워크에 의존하지 않아도 된다. HTTP 상태 코드 변환과 트랜잭션 rollback 판단은 서로 다른 책임이다."},
-  {"kind":"question","contentKey":"spring.core.validation-error.exception-handler.q2","promptMarkdown":"전역 `@ExceptionHandler(Exception.class)`가 모든 오류를 400 `INVALID_REQUEST`로 바꾼다. 운영상 어떤 문제가 생길 수 있는지 두 가지 이상 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.validation-error.exception-handler"],"modelAnswer":"프로그래밍 결함이나 DB 장애 같은 서버 오류가 사용자 입력 문제로 숨겨져 5xx 지표와 경보가 사라질 수 있고, 클라이언트가 재시도·수정 판단을 잘못할 수 있다. 예상 가능한 오류만 구체적으로 변환하고 예상하지 못한 예외는 5xx와 운영 관측으로 드러내야 한다.","explanationMarkdown":"모든 예외를 400으로 바꾸면 DB 장애나 프로그래밍 결함이 클라이언트 입력 오류처럼 보이므로 5xx 지표·경보가 사라지고 재시도 판단도 틀어질 수 있다. 예상 가능한 예외만 구체적으로 변환하고 예상하지 못한 서버 오류는 5xx와 로그·추적 정보로 드러내야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.bean-validation.q1",
+    "promptMarkdown": "다음 중 요청 DTO의 Bean Validation과 도메인 불변식을 가장 올바르게 구분한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.bean-validation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`@NotBlank`가 있으면 도메인의 상태 전이 검증은 필요 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "DTO 제약은 입력 값의 형식이나 범위를 검사하는 데 유용하지만, 도메인 객체의 현재 상태에 따라 허용되는 상태 전이를 대신 보호하지 않는다. 해당 불변식은 도메인 동작이 지켜야 한다."
+      },
+      {
+        "key": "B",
+        "content": "Bean Validation은 권한 검사까지 자동으로 수행한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "검증 annotation은 권한 정책을 실행하지 않는다. 누가 어떤 자원에 접근할 수 있는지는 Security와 애플리케이션 경계에서 별도로 판단해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "DB UNIQUE 제약은 검증 annotation으로 완전히 대체할 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "애플리케이션의 사전 검사는 동시에 들어온 두 요청의 중복 삽입을 원자적으로 막지 못한다. 최종 유일성은 DB UNIQUE 제약으로 보호해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "외부 입력의 형식·범위는 DTO 검증에 둘 수 있지만, HTTP와 무관한 상태 전이 규칙은 도메인이 보호해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "요청 DTO의 형식·범위는 API 경계에서 거부할 수 있다. 이미 저장된 객체의 상태 전이 규칙은 REST·배치 같은 진입 방식과 무관하게 도메인이 보호해야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "DTO의 Bean Validation은 null·형식·범위 같은 외부 요청 계약을 검사하는 데 적합하지만, 주문 상태 전이 같은 도메인 불변식을 대신 보장하지는 않는다. DB UNIQUE도 동시 요청 사이의 최종 보장이므로 annotation만으로 대체하면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.bean-validation.q2",
+    "promptMarkdown": "회원가입에서 `existsByEmail=false`를 확인한 뒤 INSERT한다. 동시에 두 요청이 같은 email로 들어오면 애플리케이션 검증만으로 UNIQUE를 보장할 수 없는 이유와 보완책을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.bean-validation"
+    ],
+    "modelAnswer": "두 트랜잭션이 사전 조회에서 모두 이메일이 없다고 볼 수 있으므로 둘 다 INSERT를 시도할 수 있다. 친절한 사전 검사는 유지할 수 있지만 최종 유일성 불변식은 DB UNIQUE 제약으로 보호하고 제약 위반을 애플리케이션 오류로 변환해야 한다.",
+    "explanationMarkdown": "두 요청이 동시에 `existsByEmail=false`를 읽으면 모두 INSERT를 시도할 수 있어 사전 애플리케이션 검증만으로 유일성을 보장하지 못한다. 사용자 친화적인 사전 검사는 유지하되 DB UNIQUE를 최종 방어선으로 두고 제약 위반을 안전한 애플리케이션 오류로 변환해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.binding-errors.q1",
+    "promptMarkdown": "`page=abc`→`int page` 실패와 `page=0`→`@Min(1)` 실패의 유형을 순서대로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.binding-errors"
+    ],
+    "acceptedAnswers": [
+      "abc는 int로 변환하지 못하는 바인딩 또는 타입 변환 실패이고 0은 변환은 성공하지만 Bean Validation 제약 실패다",
+      "첫 번째는 Java 인자를 만들기 전 타입 변환 문제이고 두 번째는 값 생성 후 검증 규칙 위반이다",
+      "타입 변환 실패, Bean Validation 실패",
+      "binding/type conversion 실패, validation constraint 실패"
+    ],
+    "explanationMarkdown": "`abc`는 `int` 인자를 만들 수 없어 바인딩·타입 변환 단계에서 실패하고, `0`은 정수 변환 뒤 `@Min(1)` 제약을 위반해 Bean Validation 단계에서 실패한다. 실패 위치가 다르므로 API 오류 코드와 필드 오류도 구분할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.binding-errors.q2",
+    "promptMarkdown": "바인딩 오류 응답에 사용자가 입력한 비밀번호 값을 그대로 포함하는 구현이 위험한 이유와 대안을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.binding-errors"
+    ],
+    "modelAnswer": "오류 응답과 로그가 비밀값·개인정보 유출 경로가 될 수 있다. 필드명·오류 코드·안전한 메시지만 제공하고 민감한 입력값은 제외하거나 마스킹하며 운영 진단에는 correlation ID와 안전한 메타데이터를 사용한다.",
+    "explanationMarkdown": "거부된 비밀번호 값을 응답이나 로그에 그대로 넣으면 검증 오류가 비밀값 유출 경로가 된다. 필드와 오류 코드, 안전한 메시지만 반환하고 민감한 입력값은 제외하거나 가려야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.exception-handler.q1",
+    "promptMarkdown": "`OrderNotFoundException`을 404로 변환하는 책임을 API 예외 처리기에 두는 장점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.exception-handler"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "도메인 예외가 HTTP 프레임워크에 직접 의존하지 않아도 API 어댑터가 상태 코드와 오류 코드를 결정할 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "도메인 예외는 HTTP 타입을 알 필요가 없고 API 어댑터가 이를 404와 외부 오류 코드로 변환한다. 그래서 HTTP 표현이 바뀌어도 도메인 규칙이 웹 프레임워크에 묶이지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "API 예외 처리기를 쓰려면 도메인 예외도 `HttpStatus`나 `ResponseEntity`를 직접 알아야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "도메인 예외가 `HttpStatus`나 `ResponseEntity`를 직접 사용하면 도메인이 웹 프레임워크에 의존한다. 예외 처리기가 변환을 맡아 이 경계를 분리한다."
+      },
+      {
+        "key": "C",
+        "content": "예외 처리기가 HTTP 상태 코드를 정하면 트랜잭션 rollback 여부도 같은 처리기가 결정한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "트랜잭션 interceptor가 rollback 규칙에 따라 DB 트랜잭션 결과를 정하는 것과 MVC 예외 처리기가 HTTP 응답을 만드는 것은 별도 단계다."
+      },
+      {
+        "key": "D",
+        "content": "예외 변환을 중앙화하면 서비스 메서드도 일관성을 위해 `ResponseEntity`를 반환해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "예외 처리기는 HTTP 응답 표현을 조정한다. 서비스가 `ResponseEntity`를 반환하게 만들면 웹 표현 타입이 애플리케이션 계층으로 역류한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "API 예외 처리기가 도메인·애플리케이션 예외를 HTTP 404와 오류 코드로 변환하면 도메인이 HTTP 프레임워크에 의존하지 않아도 된다. HTTP 상태 코드 변환과 트랜잭션 rollback 판단은 서로 다른 책임이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.exception-handler.q2",
+    "promptMarkdown": "전역 `@ExceptionHandler(Exception.class)`가 모든 오류를 400 `INVALID_REQUEST`로 바꾼다. 운영상 어떤 문제가 생길 수 있는지 두 가지 이상 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.exception-handler"
+    ],
+    "modelAnswer": "프로그래밍 결함이나 DB 장애 같은 서버 오류가 사용자 입력 문제로 숨겨져 5xx 지표와 경보가 사라질 수 있고, 클라이언트가 재시도·수정 판단을 잘못할 수 있다. 예상 가능한 오류만 구체적으로 변환하고 예상하지 못한 예외는 5xx와 운영 관측으로 드러내야 한다.",
+    "explanationMarkdown": "모든 예외를 400으로 바꾸면 DB 장애나 프로그래밍 결함이 클라이언트 입력 오류처럼 보이므로 5xx 지표·경보가 사라지고 재시도 판단도 틀어질 수 있다. 예상 가능한 예외만 구체적으로 변환하고 예상하지 못한 서버 오류는 5xx와 로그·추적 정보로 드러내야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.bean-validation.q3",
+    "promptMarkdown": "다음 컨트롤러에서 `request`의 `@NotBlank` 검증이 전혀 실행되지 않고 `title = \"\"`인 상태로 서비스가 호출되었다. 가장 직접적인 원인은?\n```java\npublic record CreatePostRequest(@NotBlank String title) { }\n\n@PostMapping(\"/api/posts\")\npublic PostResponse create(@RequestBody CreatePostRequest request) {\n    return postService.create(request.title());\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.bean-validation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Java `record` 타입에는 Bean Validation 애노테이션이 동작하지 않기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Spring Boot와 Hibernate Validator는 Java `record` 컴포넌트의 Bean Validation 애노테이션을 정상 지원한다."
+      },
+      {
+        "key": "B",
+        "content": "컨트롤러 매개변수에 `@Valid` 또는 `@Validated`를 붙이지 않아 MVC가 Validator를 호출하지 않았기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "DTO 필드에 `@NotBlank`를 선언하는 것만으로는 자동 검증되지 않는다. 컨트롤러 인자에 `@Valid`(또는 `@Validated`)를 명시해야 `RequestResponseBodyMethodProcessor`가 검증을 트리거한다."
+      },
+      {
+        "key": "C",
+        "content": "`@NotBlank`는 `null`만 검사하고 빈 문자열 `\"\"`은 허용하기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`@NotBlank`는 `null`, 빈 문자열 `\"\"`, 공백 문자열 `\"   \"`을 모두 거부한다(`@NotNull`과 구분)."
+      },
+      {
+        "key": "D",
+        "content": "`@PostMapping`에서는 `@RequestBody` 검증이 기본 비활성화되어 있기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "HTTP 메서드 종류와 관계없이 `@Valid`/`@Validated`가 선언되면 `@RequestBody` 검증이 동작한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Bean Validation 제약 선언(`@NotBlank`, `@Min`)과 검증 트리거(`@Valid` / `@Validated`)는 별개다. API 경계 인자에 `@Valid`를 빠뜨리면 요청 형태 검증이 통째로 건너뛰어질 수 있으므로 슬라이스 테스트(`@WebMvcTest`)로 400 응답을 반드시 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.bean-validation.q4",
+    "promptMarkdown": "주문 취소 규칙 중 “이미 배송 중(`SHIPPED`)인 주문은 취소할 수 없다”는 불변식을 어디에 두는 것이 가장 적절한가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.bean-validation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Order.cancel()` 도메인 상태 전이 메서드에서 현재 상태를 검사하고 예외를 던지며, 동시성 경쟁은 트랜잭션·낙관적 락 등으로 함께 보호한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "상태가 사는 `Order` 엔티티가 스스로 잘못된 전이를 거부해야 API·배치·메시지 등 어떤 진입점에서 호출해도 불변식이 깨지지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "프론트엔드에서 취소 버튼만 비활성화하면 백엔드 검사는 필요 없다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "클라이언트 UI 제어는 우회 가능하며 동시 요청도 막지 못하므로 백엔드 도메인 불변식을 대체할 수 없다."
+      },
+      {
+        "key": "C",
+        "content": "`@RestControllerAdvice` 안에서 `Order` 상태를 조회해 409를 반환한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`@RestControllerAdvice`는 이미 던져진 예외를 HTTP 응답으로 번역하는 어댑터이지, 도메인 상태를 검증하는 위치가 아니다."
+      },
+      {
+        "key": "D",
+        "content": "취소 요청 DTO의 `@NotNull`과 같은 Bean Validation 애노테이션에만 둔다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "배송 중 여부는 요청 JSON의 형태가 아니라 영속된 `Order`의 현재 상태에 의존하는 도메인 불변식이다. DTO 검증만으로 보호할 수 없다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Bean Validation은 요청 입력 형식(null, 길이, 숫자 범위)을 API 경계에서 거르는 도구이고, 엔티티 현재 상태에 따른 전이 규칙은 도메인 객체(`Order.cancel()`)와 DB 제약·동시성 제어가 책임진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.binding-errors.q3",
+    "promptMarkdown": "다음 엔드포인트에 `GET /api/orders?page=abc` 요청이 들어왔을 때 발생하는 예외와 단계로 가장 정확한 것은?\n```java\n@GetMapping(\"/api/orders\")\npublic PageResponse list(@RequestParam @Min(1) int page) { ... }\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.binding-errors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`page`가 `0`으로 대체된 뒤 컨트롤러가 정상 실행된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Spring MVC는 변환 불가능한 문자열을 조용히 `0`으로 치환하지 않고 예외를 발생시킨다."
+      },
+      {
+        "key": "B",
+        "content": "`MethodArgumentTypeMismatchException` — 쿼리 문자열 `\"abc\"`를 `int`로 변환하는 데이터 바인딩·타입 변환 단계에서 실패한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "문자열 `\"abc\"`는 정수 타입으로 바꿀 수 없으므로 Bean Validation(`@Min(1)`)에 도달하기 전 인자 타입 변환 단계에서 `MethodArgumentTypeMismatchException`이 발생한다."
+      },
+      {
+        "key": "C",
+        "content": "`ConstraintViolationException` — `@Min(1)` 검증이 먼저 실행되어 실패한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`int` 값이 먼저 생성되어야 `@Min(1)` 비교가 가능하다. 타입 변환 실패가 항상 앞선다."
+      },
+      {
+        "key": "D",
+        "content": "`HttpMessageNotReadableException` — HTTP 본문 JSON 파싱에 실패한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`GET` 쿼리 파라미터(`@RequestParam`)는 메시지 컨버터가 아니라 `WebDataBinder`/타입 변환기를 사용한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`page=abc`는 타입 변환 실패(`MethodArgumentTypeMismatchException`), `page=0`은 변환 성공 후 제약 위반이다. 두 실패 유형을 모두 전역 예외 처리기에서 일관된 400 API 오류 응답으로 변환해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.binding-errors.q4",
+    "promptMarkdown": "바인딩 오류 응답을 설계할 때 `FieldError.getRejectedValue()`를 그대로 JSON 응답과 INFO 로그에 남기지 말아야 하는 가장 중요한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.binding-errors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "비밀번호·토큰·개인정보 같은 민감 입력이 오류 응답이나 중앙 로그 시스템에 평문으로 유출될 수 있기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "오류 필드명과 수정 안내 메시지만으로도 클라이언트가 문제를 고칠 수 있으며, 거부된 원시 값을 그대로 기록하면 보안 사고로 이어질 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "Jackson이 `Object` 타입의 `rejectedValue`를 직렬화하면 무조건 무한 재귀가 발생하기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "단순 문자열이나 숫자 값의 직렬화 자체는 가능하지만 기밀성·개인정보 보호 관점에서 노출을 막아야 한다."
+      },
+      {
+        "key": "C",
+        "content": "HTTP 400 응답에는 JSON 본문을 포함할 수 없기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "HTTP 400 응답은 구조화된 JSON 오류 본문(예: `ProblemDetail` 또는 `ApiError`)을 포함하는 것이 표준적이다."
+      },
+      {
+        "key": "D",
+        "content": "`getRejectedValue()`는 항상 `null`만 반환하기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "바인딩 실패 시 거부된 실제 사용자 입력값이 그대로 들어 있는 경우가 많다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "바인딩/검증 오류 응답에는 클라이언트 수정에 필요한 필드명·오류 코드·메시지만 포함하고, 비밀번호나 토큰 같은 민감값이 섞일 수 있는 `rejectedValue`는 응답과 로그 모두에서 제외하거나 마스킹해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.exception-handler.q3",
+    "promptMarkdown": "다음 코드에서 `orderService.place()`가 DB INSERT 후 `OrderLimitExceededException`(Checked Exception)을 던졌고 `@RestControllerAdvice`가 이를 잡아 `409 Conflict`를 반환했다. 별도 `rollbackFor` 설정이 없을 때 DB 상태는?\n```java\n@Transactional\npublic void place(OrderCommand cmd) throws OrderLimitExceededException {\n    orderRepository.save(Order.from(cmd));\n    throw new OrderLimitExceededException();\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.exception-handler",
+      "spring.core.transaction-aop.rollback-rule"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "검사 예외는 `@RestControllerAdvice`가 잡을 수 없어 무조건 500이 반환된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`@ExceptionHandler`는 검사 예외와 비검사 예외 모두 정상적으로 매칭해 처리할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "`@RestControllerAdvice`가 409 오류 응답을 반환했으므로 DB 트랜잭션도 자동으로 롤백된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`@ExceptionHandler`는 HTTP 응답 변환만 담당한다. 트랜잭션 커밋·롤백은 이미 `place()` 프록시를 빠져나오는 시점에 결정되었다."
+      },
+      {
+        "key": "C",
+        "content": "`OrderLimitExceededException`이 검사 예외이고 `rollbackFor`가 없으므로 트랜잭션 프록시가 커밋을 수행한 뒤, API는 409 오류를 반환하는 불일치가 발생한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "트랜잭션 경계와 HTTP 예외 변환 경계는 분리되어 있다. 검사 예외는 기본 롤백 대상이 아니므로 DB에는 주문이 저장된 채 클라이언트에는 409 실패가 내려가는 심각한 데이터 불일치가 생긴다."
+      },
+      {
+        "key": "D",
+        "content": "4xx 응답은 커밋되고 5xx 응답만 롤백되도록 Spring MVC가 트랜잭션 매니저에 통보한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "HTTP 상태 코드와 Spring 트랜잭션 매니저의 롤백 규칙 사이에는 자동 연동이 없다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`@ExceptionHandler`가 오류 HTTP 응답을 만든다고 해서 DB가 롤백되는 것은 아니다. 트랜잭션 완료는 서비스 프록시 경계에서 먼저 끝나므로, 비즈니스 예외는 `RuntimeException`으로 설계하거나 `rollbackFor`를 명시해 DB 결과와 HTTP 계약을 일치시켜야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.validation-error.exception-handler.q4",
+    "promptMarkdown": "전역 예외 처리기에 `@ExceptionHandler(Exception.class)`를 둘 때 운영 관측성과 API 계약을 동시에 지키기 위한 가장 올바른 구현은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.validation-error.exception-handler"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`e.getMessage()`와 전체 `stackTrace`를 응답 JSON에 담아 클라이언트가 디버깅하게 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "SQL 문장, 클래스 경로, 내부 인프라 정보가 외부에 노출되는 보안 취약점이 된다."
+      },
+      {
+        "key": "B",
+        "content": "`400 Bad Request`로 통일해 5xx 알람이 울리지 않도록 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`NullPointerException`이나 DB 장애가 400으로 숨겨지면 실제 서버 장애를 모니터링으로 감지할 수 없다."
+      },
+      {
+        "key": "C",
+        "content": "`200 OK`와 `{\"success\": false}`를 반환해 클라이언트가 항상 본문만 파싱하게 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "실패에 `200 OK`를 반환하면 HTTP 모니터링·프록시·클라이언트 오류 처리가 장애를 정상 트래픽으로 오인한다."
+      },
+      {
+        "key": "D",
+        "content": "`500 Internal Server Error`와 일반적인 외부 오류 메시지를 반환하되, 스택 트레이스와 상관관계 정보는 서버 로그·트레이스에 기록하고 내부 세부 정보는 응답에 노출하지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "예상치 못한 서버 결함은 5xx 지표로 경보가 울리게 드러내고, 스택 트레이스는 서버 로그에 남겨 운영자가 추적하되 클라이언트에는 안전한 일반 메시지만 돌려주어야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "전역 fallback 핸들러는 예상 못한 결함을 500으로 명확히 드러내 5xx 지표와 알람이 동작하게 하고, 서버 로그에 원인을 기록하되 외부 응답에는 내부 구현 세부를 노출하지 않아야 한다."
+  }
 ]
