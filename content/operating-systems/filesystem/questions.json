@@ -714,5 +714,278 @@
     ],
     "modelAnswer": "각 레코드가 개별적인 영속 커밋을 요구하는지 먼저 확인하고, 허용된다면 묶음 처리나 group commit으로 여러 쓰기의 영속성 비용을 함께 지불할 수 있다. 대신 장애 시 잃을 수 있는 범위와 성공 응답 시점을 명시해야 한다.",
     "explanationMarkdown": "영속성 대기는 비싼 저장 장치 동기화와 쓰기 순서 보장을 만들 수 있다. Group commit은 비용을 묶을 수 있지만 **성공 응답 시점과 장애 시 잃을 수 있는 레코드 범위를 바꾸므로 정확성 계약을 먼저 정한 뒤** 적용해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.filesystem.allocation.q5",
+    "promptMarkdown": "파일 시스템의 블록 할당 방식 중 연속 할당(Contiguous), 연결 할당(Linked), 인덱스 할당(Indexed / Ext4 Extent)을 비교할 때, 인덱스/Extent 기반 할당이 현대 OS에서 표준인 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.filesystem.allocation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "인덱스 할당은 파일 크기를 최대 4KB로 제한한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "다중 간접 블록이나 Extent 트리를 통해 수 테라바이트 이상의 대용량 파일도 지원한다."
+      },
+      {
+        "key": "B",
+        "content": "연속 할당의 외부 단편화·파일 확장 어려움과 연결 할당의 느린 임의 접근(`O(N)` 포인터 추적)을 모두 피하면서, 메타데이터 블록/Extent 매핑으로 빠른 임의 접근과 효율적 공간 확장을 동시에 제공하기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Ext4의 Extent 기반 인덱스 구조는 연속 구간을 압축 표현해 대용량 파일의 메타데이터 오버헤드를 줄이면서도 임의 오프셋 접근(`lseek/pread`)을 빠르게 지원한다."
+      },
+      {
+        "key": "C",
+        "content": "연결 할당(Linked Allocation)은 파일의 1GB 오프셋을 포인터 추적 없이 `O(1)`에 바로 접근할 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "단순 연결 할당은 앞선 블록의 다음 포인터를 순차적으로 따라가야 하므로 임의 접근이 매우 느리다."
+      },
+      {
+        "key": "D",
+        "content": "연속 할당은 파일 크기가 수시로 커져도 디스크 조각화나 파일 이동이 전혀 생기지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "연속 할당은 뒤에 인접 빈 블록이 없으면 파일 전체를 다른 연속 공간으로 복사해야 하고 외부 단편화가 심해진다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "현대 파일 시스템(Ext4, XFS 등)은 인덱스/Extent 트리로 외부 단편화를 막고 임의 접근 성능과 대용량 파일 확장을 모두 확보한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.filesystem.buffering.q5",
+    "promptMarkdown": "애플리케이션이 `write()` 시스템 콜을 호출해 성공 반환을 받은 직후 서버 전원이 갑자기 차단되었다. 데이터가 디스크에 영구 보존되지 않았을 수 있는 이유와 PostgreSQL WAL 등이 이를 보장하는 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.filesystem.buffering"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Java `BufferedOutputStream.flush()`를 호출하면 디스크 물리 플래시까지 영구 기록된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "유저 공간 버퍼의 `flush()`는 커널 페이지 캐시로 `write()`를 보낼 뿐이며, 물리 디스크 동기화는 `FileChannel.force(true)`(`fsync`)가 필요하다."
+      },
+      {
+        "key": "B",
+        "content": "버퍼링을 끄고 1바이트씩 직접 디스크에 쓰면 항상 처리량(Throughput)이 가장 높다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "1바이트 단위 동기 쓰기는 매번 시스템 콜과 디스크 I/O 오버헤드가 발생해 처리량이 극도로 떨어진다."
+      },
+      {
+        "key": "C",
+        "content": "`write()`는 기본적으로 커널 페이지 캐시(버퍼)에 복사한 뒤 즉시 반환하고 실제 디스크 쓰기는 비동기 지연(write-back)되므로, 지속성(Durability)이 필요하면 `fsync()`/`fdatasync()`로 비휘발성 저장소 플러시를 명시적으로 기다려야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "버퍼링은 작은 쓰기를 모아 디스크 I/O 횟수를 획기적으로 줄여주지만, 커밋 지속성을 보장하려면 반드시 `fsync()` 호출이 완료된 뒤 성공을 응답해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "`write()`가 반환되면 OS가 항상 SSD 플래시 셀까지 물리적 기록을 100% 완료한 상태다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "일반 버퍼드 `write()`는 커널 메모리(페이지 캐시)에 기록된 시점에 반환되므로 정전 시 유실될 수 있다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "유저 버퍼(`flush`) → 커널 페이지 캐시(`write`) → 물리 디스크(`fsync`)의 3단계 경계를 구분해야 성능과 지속성(Durability)을 정확히 설계할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.filesystem.directory-path.q5",
+    "promptMarkdown": "유닉스/리눅스 파일 시스템에서 디렉터리 엔트리(dentry)와 inode의 관계, 그리고 하드 링크(Hard Link)와 심볼릭 링크(Symbolic Link)의 차이를 정확히 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.filesystem.directory-path"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "원본 파일을 `rm`으로 지우면 실행 중인 프로세스가 이미 열어 둔 파일 디스크립터에서도 즉시 읽기가 실패한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "링크 카운트가 0이 되어도 열린 파일 디스크립터 참조가 남아 있으면 프로세스가 닫을 때까지 inode와 데이터 블록이 유지된다."
+      },
+      {
+        "key": "B",
+        "content": "디렉터리는 `파일 이름 → inode 번호` 매핑 테이블이다. 하드 링크는 같은 inode를 직접 가리켜 링크 카운트를 늘리므로 원본 이름을 삭제해도 데이터가 남지만, 심볼릭 링크는 경로 문자열을 저장하는 별도 inode라 원본이 삭제되면 깨진 링크(dangling)가 된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "파일의 실제 데이터와 권한·크기 메타데이터는 inode가 소유하고, 파일 이름은 디렉터리 엔트리가 inode를 가리키는 참조일 뿐이다."
+      },
+      {
+        "key": "C",
+        "content": "파일 이름은 inode 구조체 내부의 필수 기본 키 필드다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "파일 이름은 inode가 아니라 디렉터리 엔트리에 저장되므로 하나의 inode가 여러 이름(하드 링크)을 가질 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "하드 링크는 서로 다른 파일 시스템(다른 파티션/마운트) 간에도 자유롭게 생성할 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "inode 번호는 단일 파일 시스템 내에서만 유효하므로 하드 링크는 같은 파일 시스템 안에서만 가능하고, 다른 파일 시스템 연결에는 심볼릭 링크를 쓴다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "리눅스 파일은 '디렉터리 엔트리(이름) → inode(메타데이터·블록 포인터) → 데이터 블록' 3계층으로 분리되어 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.filesystem.file-abstraction.q5",
+    "promptMarkdown": "유닉스/리눅스의 '모든 것은 파일이다(Everything is a file)' 추상화가 일반 디스크 파일뿐 아니라 파이프·소켓·장치(`/dev/null`, `/proc`)에도 적용될 때 얻는 핵심 이점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.filesystem.file-abstraction"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 파일 추상화 대상(파이프·소켓 포함)은 항상 `lseek()` 임의 위치 이동을 지원한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "일반 디스크 파일은 `lseek()`이 가능하지만 파이프·소켓 같은 스트림은 임의 탐색이 불가능(`ESPIPE`)하다."
+      },
+      {
+        "key": "B",
+        "content": "파일 추상화를 쓰면 권한 검사(rwx)가 자동으로 생략된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "VFS 경계에서 파일·장치·소켓 모두 일관된 소유자/권한 정책으로 통제된다."
+      },
+      {
+        "key": "C",
+        "content": "서로 다른 I/O 대상이라도 공통 파일 디스크립터와 통일된 시스템 콜 인터페이스(`read`, `write`, `close`, `epoll`)로 다룰 수 있어 입출력 리다이렉션·파이프라인·이벤트 다중화가 일관되게 동작한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "VFS(Virtual File System) 추상화 계층 덕분에 프로그램은 대상이 로컬 파일인지, 표준 입출력인지, 파이프/소켓인지 몰라도 동일한 스트림 연산과 이벤트 루프를 사용할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "네트워크 소켓 데이터도 반드시 로컬 SSD에 파일로 먼저 저장된 뒤 전송된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "인터페이스가 파일 추상화로 통일되어 있을 뿐, 소켓은 커널 네트워크 버퍼와 NIC를 통해 직접 통신한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "파일 추상화와 VFS는 다양한 저장소·IPC·네트워크 자원을 통일된 FD 기반 API(`read/write/close/epoll`)로 조합할 수 있게 해 준다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.filesystem.file-descriptor.q5",
+    "promptMarkdown": "운영 중인 Java 백엔드 서버에서 `java.io.IOException: Too many open files (EMFILE)` 오류가 발생했다. 가장 정확한 원인 진단과 해결 방향은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.filesystem.file-descriptor"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "GC가 돌 때까지 기다리면 FD 누수가 전혀 문제가 되지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "GC 시점은 비결정적이므로 힙 여유가 충분한 상태에서 FD 한도가 먼저 고갈되어 장애가 난다. 반드시 명시적 `close()`(`try-with-resources`)가 필요하다."
+      },
+      {
+        "key": "B",
+        "content": "파일뿐 아니라 TCP 소켓·파이프·epoll 인스턴스도 모두 파일 디스크립터(FD)를 소비한다. 스트림/소켓 미반환(FD 누수)을 `try-with-resources`로 수정하고, 동시 연결 규모에 맞게 프로세스 `ulimit -n`(`nofile`) 한도를 적절히 조정해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "백엔드 서버에서 `Too many open files`는 실제 디스크 파일보다 닫히지 않은 HTTP/DB 소켓이나 높은 동시 접속 수가 기본 `nofile`(예: 1024)을 초과해 발생하는 경우가 가장 많다."
+      },
+      {
+        "key": "C",
+        "content": "디스크 용량이 100% 찼다는 뜻이므로 로그 파일만 지우면 즉시 해결된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "디스크 공간 부족은 `ENOSPC`이며, `EMFILE`은 프로세스가 열 수 있는 파일 디스크립터 개수 제한 초과다."
+      },
+      {
+        "key": "D",
+        "content": "TCP 네트워크 소켓은 파일 디스크립터를 소비하지 않으므로 오직 `FileInputStream`만 점검하면 된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "리눅스에서 모든 TCP 소켓 연결 1개는 FD 1개를 소비한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "파일·소켓·파이프 모두 프로세스 FD 테이블 한도(`nofile`)를 공유하므로 명시적 자원 해제(`try-with-resources`)와 운영 `ulimit -n` 설정이 필수다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.filesystem.filesystem-block.q5",
+    "promptMarkdown": "파일 시스템 블록 크기가 `4 KB`일 때, `100 바이트`짜리 작은 설정 파일 `10,000개`를 저장하면 발생하는 공간 낭비 현상의 이름은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.filesystem.filesystem-block"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "블록 크기를 1바이트로 줄이면 메타데이터 오버헤드 없이 가장 빠르다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "블록 크기가 너무 작으면 블록 포인터 메타데이터가 폭증하고 디스크 탐색/I/O 횟수가 급증해 성능이 크게 떨어진다."
+      },
+      {
+        "key": "B",
+        "content": "내부 단편화(Internal Fragmentation) — 최소 할당 단위인 4KB 블록을 파일마다 차지해 실제 데이터는 약 1MB지만 디스크 점유는 약 40MB가 된다(별도 inline-data 최적화 제외).",
+        "displayOrder": 1,
+        "rationaleMarkdown": "할당된 고정 크기 블록 내부에서 쓰이지 못하고 남는 공간이 내부 단편화다. 블록 크기가 클수록 순차 처리량과 메타데이터 효율은 좋아지지만 작은 파일의 내부 단편화가 커진다."
+      },
+      {
+        "key": "C",
+        "content": "스래싱(Thrashing) — CPU 캐시가 부족해 발생하는 현상이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "스래싱은 물리 메모리 부족으로 페이지 폴트가 폭주하는 가상 메모리 현상이다."
+      },
+      {
+        "key": "D",
+        "content": "교착 상태(Deadlock) — 두 파일이 서로 블록을 기다린다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "저장 공간 할당 단위와 낭비의 문제이지 프로세스 락 교착 상태가 아니다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "파일 시스템 블록 크기는 '큰 블록(순차 I/O 효율·메타데이터 감소)'과 '작은 블록(내부 단편화 감소)' 사이의 트레이드오프다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.filesystem.page-cache.q5",
+    "promptMarkdown": "리눅스 서버에서 `free -h`를 확인했더니 `free` 메모리가 200MB뿐이고 `buff/cache`가 12GB를 차지하고 있다. 이때의 정확한 해석은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.filesystem.page-cache"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "페이지 캐시는 읽기 전용이므로 `write()`에는 전혀 관여하지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "일반 버퍼드 `write()`도 페이지 캐시에 dirty page로 먼저 기록된 뒤 백그라운드 또는 `fsync()` 시 디스크로 플러시된다."
+      },
+      {
+        "key": "B",
+        "content": "PostgreSQL은 자체 `shared_buffers`만 쓰므로 OS 페이지 캐시와 전혀 무관하다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "PostgreSQL은 기본적으로 버퍼드 I/O를 사용해 `shared_buffers`와 OS 페이지 캐시를 이중으로 적극 활용한다."
+      },
+      {
+        "key": "C",
+        "content": "OS가 유휴 RAM을 디스크 파일 읽기/쓰기 가속용 페이지 캐시로 적극 활용 중인 정상 상태다. 애플리케이션이 새 메모리를 요구하면 커널이 즉시 회수해 내어주므로, 실제 여유 메모리는 `free`가 아니라 `available` 항목으로 판단해야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "리눅스는 놀고 있는 RAM을 페이지 캐시로 써서 파일/DB I/O 성능을 높인다. `available`이 충분하다면 `free`가 작아도 메모리 부족 장애가 아니다."
+      },
+      {
+        "key": "D",
+        "content": "메모리 누수가 발생해 12GB가 영구 잠겼으므로 즉시 서버를 재부팅해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "페이지 캐시는 필요 시 커널이 즉시 회수 가능한 캐시 메모리이며 메모리 누수가 아니다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "OS 페이지 캐시는 유휴 RAM으로 디스크 I/O를 가속하며 필요 시 즉시 회수되므로, 리눅스 메모리 여유는 `free`가 아닌 `available` 지표로 봐야 한다."
   }
 ]
