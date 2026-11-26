@@ -1,10 +1,454 @@
 [
-  {"kind":"question","contentKey":"database.core.sql.select-order.q1","promptMarkdown":"`AVG(salary)` 같은 그룹 집계 결과를 조건으로 필터링할 때 사용하는 SQL 절은?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.sql.select-order"],"acceptedAnswers":["group aggregate 결과는 HAVING 단계에서 필터링해야 한다","그룹 집계 결과는 HAVING 단계에서 필터링해야 한다","HAVING"],"explanationMarkdown":"논리적으로 WHERE는 그룹을 만들기 전에 개별 행을 걸러 AVG가 계산될 그룹 결과가 아직 없다. GROUP BY로 그룹을 만든 뒤 계산한 AVG를 조건으로 사용할 때는 HAVING을 쓰며, 이 논리 순서는 옵티마이저의 물리 실행 순서와는 구분한다."},
-  {"kind":"question","contentKey":"database.core.sql.select-order.q2","promptMarkdown":"`SELECT department, COUNT(*) AS n FROM employee GROUP BY department ORDER BY n DESC`에서 SELECT 별칭 `n`을 ORDER BY에서 사용할 수 있는 이유를 논리 처리 순서로 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.sql.select-order"],"modelAnswer":"논리적으로 SELECT에서 결과 컬럼과 별칭이 만들어진 뒤 ORDER BY가 그 결과를 정렬하므로 별칭 n을 참조할 수 있다. 다만 DBMS별 허용 범위와 실제 물리 실행은 별도로 확인한다.","explanationMarkdown":"GROUP BY가 department별 결과 행을 만든 뒤 SELECT 목록에서 `COUNT(*)`에 별칭 `n`을 부여하고 ORDER BY가 그 결과 컬럼을 정렬하므로 `n`을 참조할 수 있다. 이는 쿼리 의미를 설명하는 논리 순서이며, 옵티마이저가 내부적으로 같은 순서를 그대로 실행한다는 뜻은 아니다."},
-  {"kind":"question","contentKey":"database.core.sql.join-semantics.q1","promptMarkdown":"`LEFT JOIN orders o ... WHERE o.status='PAID'`에서 주문이 없는 회원이 사라지는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.sql.join-semantics"],"modelAnswer":"LEFT JOIN 직후 주문이 없는 회원 행은 오른쪽 컬럼이 NULL인 채 남지만 이후 WHERE에서 `NULL = 'PAID'`가 TRUE가 아니므로 제거된다. PAID 주문만 연결하되 회원은 보존하려면 조건을 ON에 두는 의미를 검토한다.","explanationMarkdown":"LEFT JOIN은 주문이 없는 회원의 오른쪽 컬럼을 NULL로 채워 일단 보존하지만, WHERE의 `o.status='PAID'`는 그 NULL 행을 TRUE로 만들지 못해 제거한다. PAID 주문만 연결하면서 회원을 보존하려면 status 조건을 ON에 두는 결과와 비교해야 한다."},
-  {"kind":"question","contentKey":"database.core.sql.join-semantics.q2","promptMarkdown":"모든 회원을 표시하되 PAID 주문 금액만 합산하려 한다. `LEFT JOIN`의 status 조건을 WHERE에 둘 때와 ON에 둘 때 결과 의미가 어떻게 달라지는가?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.sql.join-semantics"],"modelAnswer":"WHERE에 두면 주문이 없는 회원의 오른쪽 status가 NULL이라 제거되어 사실상 일치하는 회원만 남을 수 있다. ON에 두면 JOIN 단계에서 PAID 주문만 연결하고 일치하지 않는 회원은 보존할 수 있다. 집계 결과가 NULL일 때 0으로 볼지는 COALESCE 등 별도 표현으로 결정한다.","explanationMarkdown":"status 조건을 WHERE에 두면 JOIN 뒤 오른쪽이 NULL로 채워진 회원 행이 필터링되어 주문이 없는 회원이 사라질 수 있다. ON에 두면 PAID 주문만 연결하고 일치하지 않는 회원은 남으므로, 합계가 NULL일 때 0으로 표시할지는 `COALESCE`로 별도 결정한다."},
-  {"kind":"question","contentKey":"database.core.sql.aggregate.q1","promptMarkdown":"전체 주문 행이 100개이고 coupon_id가 NULL이 아닌 주문이 30개라면 `COUNT(*)`와 `COUNT(coupon_id)`는 각각 얼마인가?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["database.core.sql.aggregate"],"acceptedAnswers":["100과 30","COUNT(*)는 100, COUNT(coupon_id)는 30"],"explanationMarkdown":"`COUNT(*)`는 NULL 컬럼 여부와 관계없이 그룹의 행 100개를 세지만 `COUNT(coupon_id)`는 표현식이 NULL인 70개를 제외한다. 따라서 결과는 각각 100과 30이다."},
-  {"kind":"question","contentKey":"database.core.sql.aggregate.q2","promptMarkdown":"회원별 총 주문액만 필요할 때와 주문별 행을 유지하면서 회원 총액도 함께 보여야 할 때 각각 GROUP BY 집계와 윈도 함수 중 무엇이 더 자연스러운가?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.sql.aggregate","database.core.sql.window-function"],"modelAnswer":"회원별 한 행으로 줄여도 되면 GROUP BY 집계가 자연스럽다. 각 주문 행을 유지하면서 회원별 총액을 붙여야 하면 `SUM(...) OVER (PARTITION BY member_id)` 같은 윈도 함수가 자연스럽다.","explanationMarkdown":"GROUP BY 집계는 회원별로 행을 줄이므로 회원당 총액만 필요할 때 자연스럽다. 윈도 함수는 파티션별 합계를 각 원래 주문 행에 붙여 결과 행 수를 유지하므로 상세 행과 총액을 함께 보여줄 때 적합하다."},
-  {"kind":"question","contentKey":"database.core.sql.window-function.q1","promptMarkdown":"회원별 최신 주문 한 건을 고르기 위해 `ROW_NUMBER() OVER (PARTITION BY member_id ORDER BY created_at DESC)`를 썼다. created_at이 같은 주문이 있을 수 있을 때 어떤 문제가 있고 어떻게 보완할 수 있는가? 또한 같은 회원의 주문 `(id, 시각, 금액)`이 `(101, 10:00, 1000)`, `(102, 10:00, 2000)`, `(103, 10:01, 500)`일 때 `SUM(amount) OVER (PARTITION BY member_id ORDER BY created_at)`의 누적합과 `ORDER BY created_at, id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`의 누적합을 id별로 비교하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.sql.window-function"],"modelAnswer":"동률 행의 순서가 결정되지 않으면 어떤 주문이 1번이 될지 안정적이지 않을 수 있다. `ORDER BY created_at DESC, id DESC`처럼 유일하거나 충분히 안정적인 동률 해소 기준을 추가한다. 기본 RANGE는 같은 정렬 값의 동료 행을 포함하므로 id 101·102·103의 누적합은 각각 3000, 3000, 3500이다. 고유한 정렬 기준과 ROWS를 지정하면 1000, 3000, 3500이다.","explanationMarkdown":"created_at이 같은 행끼리는 `ROW_NUMBER`의 순서가 완전히 정해지지 않아 매번 같은 주문이 1번이라고 보장하기 어렵다. 최신 주문의 선택을 결정적으로 만들려면 `ORDER BY created_at DESC, id DESC`처럼 유일한 동률 해소 기준과 그 의미를 명시해야 한다. 누적합에서 기본 RANGE는 같은 created_at의 동료 행을 포함한다. ROWS는 윈도 정렬에서 현재 행의 위치까지의 프레임을 지정하므로 고유한 id를 추가해야 행별 누적 순서가 결정된다. 윈도 내부 ORDER BY가 결과 출력 순서까지 보장하지는 않는다."},
-  {"kind":"question","contentKey":"database.core.sql.join-semantics.q3","promptMarkdown":"**결과 예측 — PostgreSQL 16, 초기 데이터만 존재하고 동시 쓰기는 없습니다.** 아래 두 테이블의 행을 읽은 후 `SELECT` 결과를 `id` 오름차순으로 예측하세요.\n\n**members**: `id` = `1`, `2`, `3`\n\n**orders(id, member_id, status)**: `(100,1,'PAID')`, `(101,1,'CANCELLED')`, `(102,2,'CANCELLED')`\n\n```sql\nSELECT m.id, COUNT(o.id) AS paid_count\nFROM members m\nLEFT JOIN orders o\n  ON o.member_id = m.id AND o.status = 'PAID'\nGROUP BY m.id\nORDER BY m.id;\n```\n\n`ON`에서 결제 완료 주문과 매칭되지 않은 회원도 결과 행이 남는지, `COUNT(o.id)`가 `NULL`을 세는지를 나눠 생각하세요.","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.sql.join-semantics"],"choices":[{"key":"A","content":"`(1,1)` 한 행만 반환한다","displayOrder":0,"rationaleMarkdown":"`PAID` 조건은 `ON`에 있어 `LEFT JOIN`의 회원 행을 제거하지 않는다. 주문이 없거나 조건에 맞지 않아도 회원 2·3은 남는다."},{"key":"B","content":"`(1,2)`, `(2,1)`, `(3,0)`","displayOrder":1,"rationaleMarkdown":"주문 상태 조건을 무시하고 모든 주문을 센 결과다. `CANCELLED` 주문은 `ON`의 매칭에서 제외된다."},{"key":"C","content":"`(1,1)`, `(2,0)`, `(3,0)`","displayOrder":2,"rationaleMarkdown":"회원 1의 `PAID` 주문만 매칭되고 나머지 회원은 NULL로 확장된다. `COUNT(o.id)`는 그 NULL을 세지 않으므로 0이다."},{"key":"D","content":"`(1,1)`, `(2,1)` 두 행만 반환한다","displayOrder":3,"rationaleMarkdown":"회원 2의 주문은 `CANCELLED`라 `PAID` 조인 조건과 일치하지 않으며 회원 3도 `LEFT JOIN`이므로 결과에서 제거되지 않는다."}],"correctChoiceKey":"C","explanationMarkdown":"1. `members`의 세 행을 기준으로 `LEFT JOIN`을 수행한다. `ON`에 있는 `o.status = 'PAID'`는 매칭할 오른쪽 주문 행만 제한하며 회원 행 자체를 걸러내지 않는다.\n\n2. 회원 1은 주문 100 한 건과 매칭된다. 회원 2는 `CANCELLED` 주문만 있으므로 매칭 행이 없어 `o.id = NULL`인 행이 남는다. 회원 3도 주문이 없으므로 NULL 확장 행이 남는다.\n\n3. `COUNT(o.id)`는 NULL이 아닌 주문 ID만 센다. `GROUP BY m.id`와 `ORDER BY m.id` 뒤 결과는 `(1,1), (2,0), (3,0)`이다. 같은 상태 조건을 `WHERE o.status = 'PAID'`에 옮기면 NULL 확장 행이 제거되어 회원 2·3이 결과에서 사라진다."}
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.select-order.q1",
+    "promptMarkdown": "`AVG(salary)` 같은 그룹 집계 결과를 조건으로 필터링할 때 사용하는 SQL 절은?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.select-order"
+    ],
+    "acceptedAnswers": [
+      "group aggregate 결과는 HAVING 단계에서 필터링해야 한다",
+      "그룹 집계 결과는 HAVING 단계에서 필터링해야 한다",
+      "HAVING"
+    ],
+    "explanationMarkdown": "논리적으로 WHERE는 그룹을 만들기 전에 개별 행을 걸러 AVG가 계산될 그룹 결과가 아직 없다. GROUP BY로 그룹을 만든 뒤 계산한 AVG를 조건으로 사용할 때는 HAVING을 쓰며, 이 논리 순서는 옵티마이저의 물리 실행 순서와는 구분한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.select-order.q2",
+    "promptMarkdown": "`SELECT department, COUNT(*) AS n FROM employee GROUP BY department ORDER BY n DESC`에서 SELECT 별칭 `n`을 ORDER BY에서 사용할 수 있는 이유를 논리 처리 순서로 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.select-order"
+    ],
+    "modelAnswer": "논리적으로 SELECT에서 결과 컬럼과 별칭이 만들어진 뒤 ORDER BY가 그 결과를 정렬하므로 별칭 n을 참조할 수 있다. 다만 DBMS별 허용 범위와 실제 물리 실행은 별도로 확인한다.",
+    "explanationMarkdown": "GROUP BY가 department별 결과 행을 만든 뒤 SELECT 목록에서 `COUNT(*)`에 별칭 `n`을 부여하고 ORDER BY가 그 결과 컬럼을 정렬하므로 `n`을 참조할 수 있다. 이는 쿼리 의미를 설명하는 논리 순서이며, 옵티마이저가 내부적으로 같은 순서를 그대로 실행한다는 뜻은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.join-semantics.q1",
+    "promptMarkdown": "`LEFT JOIN orders o ... WHERE o.status='PAID'`에서 주문이 없는 회원이 사라지는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.join-semantics"
+    ],
+    "modelAnswer": "LEFT JOIN 직후 주문이 없는 회원 행은 오른쪽 컬럼이 NULL인 채 남지만 이후 WHERE에서 `NULL = 'PAID'`가 TRUE가 아니므로 제거된다. PAID 주문만 연결하되 회원은 보존하려면 조건을 ON에 두는 의미를 검토한다.",
+    "explanationMarkdown": "LEFT JOIN은 주문이 없는 회원의 오른쪽 컬럼을 NULL로 채워 일단 보존하지만, WHERE의 `o.status='PAID'`는 그 NULL 행을 TRUE로 만들지 못해 제거한다. PAID 주문만 연결하면서 회원을 보존하려면 status 조건을 ON에 두는 결과와 비교해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.join-semantics.q2",
+    "promptMarkdown": "모든 회원을 표시하되 PAID 주문 금액만 합산하려 한다. `LEFT JOIN`의 status 조건을 WHERE에 둘 때와 ON에 둘 때 결과 의미가 어떻게 달라지는가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.join-semantics"
+    ],
+    "modelAnswer": "WHERE에 두면 주문이 없는 회원의 오른쪽 status가 NULL이라 제거되어 사실상 일치하는 회원만 남을 수 있다. ON에 두면 JOIN 단계에서 PAID 주문만 연결하고 일치하지 않는 회원은 보존할 수 있다. 집계 결과가 NULL일 때 0으로 볼지는 COALESCE 등 별도 표현으로 결정한다.",
+    "explanationMarkdown": "status 조건을 WHERE에 두면 JOIN 뒤 오른쪽이 NULL로 채워진 회원 행이 필터링되어 주문이 없는 회원이 사라질 수 있다. ON에 두면 PAID 주문만 연결하고 일치하지 않는 회원은 남으므로, 합계가 NULL일 때 0으로 표시할지는 `COALESCE`로 별도 결정한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.aggregate.q1",
+    "promptMarkdown": "전체 주문 행이 100개이고 coupon_id가 NULL이 아닌 주문이 30개라면 `COUNT(*)`와 `COUNT(coupon_id)`는 각각 얼마인가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.aggregate"
+    ],
+    "acceptedAnswers": [
+      "100과 30",
+      "COUNT(*)는 100, COUNT(coupon_id)는 30"
+    ],
+    "explanationMarkdown": "`COUNT(*)`는 NULL 컬럼 여부와 관계없이 그룹의 행 100개를 세지만 `COUNT(coupon_id)`는 표현식이 NULL인 70개를 제외한다. 따라서 결과는 각각 100과 30이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.aggregate.q2",
+    "promptMarkdown": "회원별 총 주문액만 필요할 때와 주문별 행을 유지하면서 회원 총액도 함께 보여야 할 때 각각 GROUP BY 집계와 윈도 함수 중 무엇이 더 자연스러운가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.aggregate",
+      "database.core.sql.window-function"
+    ],
+    "modelAnswer": "회원별 한 행으로 줄여도 되면 GROUP BY 집계가 자연스럽다. 각 주문 행을 유지하면서 회원별 총액을 붙여야 하면 `SUM(...) OVER (PARTITION BY member_id)` 같은 윈도 함수가 자연스럽다.",
+    "explanationMarkdown": "GROUP BY 집계는 회원별로 행을 줄이므로 회원당 총액만 필요할 때 자연스럽다. 윈도 함수는 파티션별 합계를 각 원래 주문 행에 붙여 결과 행 수를 유지하므로 상세 행과 총액을 함께 보여줄 때 적합하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.window-function.q1",
+    "promptMarkdown": "회원별 최신 주문 한 건을 고르기 위해 `ROW_NUMBER() OVER (PARTITION BY member_id ORDER BY created_at DESC)`를 썼다. created_at이 같은 주문이 있을 수 있을 때 어떤 문제가 있고 어떻게 보완할 수 있는가? 또한 같은 회원의 주문 `(id, 시각, 금액)`이 `(101, 10:00, 1000)`, `(102, 10:00, 2000)`, `(103, 10:01, 500)`일 때 `SUM(amount) OVER (PARTITION BY member_id ORDER BY created_at)`의 누적합과 `ORDER BY created_at, id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW`의 누적합을 id별로 비교하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.window-function"
+    ],
+    "modelAnswer": "동률 행의 순서가 결정되지 않으면 어떤 주문이 1번이 될지 안정적이지 않을 수 있다. `ORDER BY created_at DESC, id DESC`처럼 유일하거나 충분히 안정적인 동률 해소 기준을 추가한다. 기본 RANGE는 같은 정렬 값의 동료 행을 포함하므로 id 101·102·103의 누적합은 각각 3000, 3000, 3500이다. 고유한 정렬 기준과 ROWS를 지정하면 1000, 3000, 3500이다.",
+    "explanationMarkdown": "created_at이 같은 행끼리는 `ROW_NUMBER`의 순서가 완전히 정해지지 않아 매번 같은 주문이 1번이라고 보장하기 어렵다. 최신 주문의 선택을 결정적으로 만들려면 `ORDER BY created_at DESC, id DESC`처럼 유일한 동률 해소 기준과 그 의미를 명시해야 한다. 누적합에서 기본 RANGE는 같은 created_at의 동료 행을 포함한다. ROWS는 윈도 정렬에서 현재 행의 위치까지의 프레임을 지정하므로 고유한 id를 추가해야 행별 누적 순서가 결정된다. 윈도 내부 ORDER BY가 결과 출력 순서까지 보장하지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.join-semantics.q3",
+    "promptMarkdown": "**결과 예측 — PostgreSQL 16, 초기 데이터만 존재하고 동시 쓰기는 없습니다.** 아래 두 테이블의 행을 읽은 후 `SELECT` 결과를 `id` 오름차순으로 예측하세요.\n\n**members**: `id` = `1`, `2`, `3`\n\n**orders(id, member_id, status)**: `(100,1,'PAID')`, `(101,1,'CANCELLED')`, `(102,2,'CANCELLED')`\n\n```sql\nSELECT m.id, COUNT(o.id) AS paid_count\nFROM members m\nLEFT JOIN orders o\n  ON o.member_id = m.id AND o.status = 'PAID'\nGROUP BY m.id\nORDER BY m.id;\n```\n\n`ON`에서 결제 완료 주문과 매칭되지 않은 회원도 결과 행이 남는지, `COUNT(o.id)`가 `NULL`을 세는지를 나눠 생각하세요.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.join-semantics"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`(1,1)` 한 행만 반환한다",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`PAID` 조건은 `ON`에 있어 `LEFT JOIN`의 회원 행을 제거하지 않는다. 주문이 없거나 조건에 맞지 않아도 회원 2·3은 남는다."
+      },
+      {
+        "key": "B",
+        "content": "`(1,2)`, `(2,1)`, `(3,0)`",
+        "displayOrder": 1,
+        "rationaleMarkdown": "주문 상태 조건을 무시하고 모든 주문을 센 결과다. `CANCELLED` 주문은 `ON`의 매칭에서 제외된다."
+      },
+      {
+        "key": "C",
+        "content": "`(1,1)`, `(2,0)`, `(3,0)`",
+        "displayOrder": 2,
+        "rationaleMarkdown": "회원 1의 `PAID` 주문만 매칭되고 나머지 회원은 NULL로 확장된다. `COUNT(o.id)`는 그 NULL을 세지 않으므로 0이다."
+      },
+      {
+        "key": "D",
+        "content": "`(1,1)`, `(2,1)` 두 행만 반환한다",
+        "displayOrder": 3,
+        "rationaleMarkdown": "회원 2의 주문은 `CANCELLED`라 `PAID` 조인 조건과 일치하지 않으며 회원 3도 `LEFT JOIN`이므로 결과에서 제거되지 않는다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "1. `members`의 세 행을 기준으로 `LEFT JOIN`을 수행한다. `ON`에 있는 `o.status = 'PAID'`는 매칭할 오른쪽 주문 행만 제한하며 회원 행 자체를 걸러내지 않는다.\n\n2. 회원 1은 주문 100 한 건과 매칭된다. 회원 2는 `CANCELLED` 주문만 있으므로 매칭 행이 없어 `o.id = NULL`인 행이 남는다. 회원 3도 주문이 없으므로 NULL 확장 행이 남는다.\n\n3. `COUNT(o.id)`는 NULL이 아닌 주문 ID만 센다. `GROUP BY m.id`와 `ORDER BY m.id` 뒤 결과는 `(1,1), (2,0), (3,0)`이다. 같은 상태 조건을 `WHERE o.status = 'PAID'`에 옮기면 NULL 확장 행이 제거되어 회원 2·3이 결과에서 사라진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.select-order.q3",
+    "promptMarkdown": "다음 SQL이 PostgreSQL에서 구문/실행 오류(`column \"total_paid\" does not exist`)를 내는 이유는?\n```sql\nSELECT member_id, SUM(amount) AS total_paid\nFROM orders\nWHERE total_paid >= 100000\nGROUP BY member_id;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.select-order"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "PostgreSQL은 `SUM(amount)` 결과를 `>=` 연산자로 비교할 수 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`HAVING SUM(amount) >= 100000`처럼 `HAVING` 절에서는 정상 비교된다."
+      },
+      {
+        "key": "B",
+        "content": "`GROUP BY`가 `WHERE`보다 아래에 적혀 있어서 발생한 단순 줄 순서 오류다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "SQL 문법상 `WHERE`는 항상 `GROUP BY` 앞에 위치하며, 문제는 그룹 집계 조건을 `WHERE`에 넣은 것이다."
+      },
+      {
+        "key": "C",
+        "content": "`WHERE` 절은 `GROUP BY`와 `SELECT`보다 논리적으로 먼저 평가되므로, 그룹 집계 결과와 `SELECT` 별칭(`total_paid`)을 참조할 수 없고 `HAVING SUM(amount) >= 100000`을 써야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "논리 평가 순서는 `FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY`다. 그룹 집계 필터링은 `HAVING` 절에 원본 집계식(`SUM(amount)`)으로 작성해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "`AS` 키워드 없이 공백으로만 별칭을 써야 `WHERE`에서 인식된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`AS` 유무와 무관하게 `SELECT`에서 만든 별칭은 `WHERE` 단계에 존재하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`WHERE`는 그룹화 이전의 개별 행 필터, `HAVING`은 `GROUP BY` 이후의 그룹 필터, `SELECT`는 출력 식·별칭 생성, `ORDER BY`는 최종 정렬 단계다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.select-order.q4",
+    "promptMarkdown": "PostgreSQL에서 `SELECT` 절에 정의한 별칭(`AS avg_salary`)을 `ORDER BY avg_salary DESC`에서는 쓸 수 있지만 `HAVING avg_salary >= 5000`에서는 오류가 나는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.select-order"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "논리 순서상 `HAVING`은 `SELECT`보다 먼저 평가되어 `SELECT` 출력 별칭이 아직 정의되지 않았고, `ORDER BY`는 `SELECT` 이후 평가되어 출력 컬럼 이름을 참조할 수 있기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY` 순서 그대로 `SELECT` 뒤에 오는 `ORDER BY`만 출력 별칭을 자연스럽게 참조한다."
+      },
+      {
+        "key": "B",
+        "content": "`HAVING` 절은 `AVG()` 함수를 아예 사용할 수 없기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`HAVING AVG(salary) >= 5000`처럼 집계 함수 표현식 자체는 `HAVING`에서 정상 동작한다."
+      },
+      {
+        "key": "C",
+        "content": "`ORDER BY`는 내부적으로 `WHERE`보다 먼저 실행되기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`ORDER BY`는 `SELECT` 출력 생성 이후 마지막 정렬 단계다."
+      },
+      {
+        "key": "D",
+        "content": "PostgreSQL에서 별칭은 숫자가 아닌 문자열 컬럼에만 붙일 수 있기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "출력 별칭은 숫자·문자열·날짜 등 모든 데이터 타입의 `SELECT` 표현식에 자유롭게 붙일 수 있다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "논리 처리 순서를 정확히 기억하면 `WHERE`/`HAVING`에서 `SELECT` 별칭을 못 쓰는 이유와 `ORDER BY`에서 쓸 수 있는 이유를 암기 없이 추론할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.join-semantics.q4",
+    "promptMarkdown": "모든 회원(`members`)을 빠짐없이 보여 주면서 각 회원의 `'PAID'` 상태 주문만 연결하려 한다. 다음 두 쿼리의 결과 차이로 옳은 것은?\n```sql\n-- Q1\nSELECT m.id, o.id FROM members m\nLEFT JOIN orders o ON o.member_id = m.id AND o.status = 'PAID';\n\n-- Q2\nSELECT m.id, o.id FROM members m\nLEFT JOIN orders o ON o.member_id = m.id\nWHERE o.status = 'PAID';\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.join-semantics"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Q1에서는 `ON` 절에 상수 비교(`o.status = 'PAID'`)를 쓸 수 없어 문법 오류가 난다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`ON` 절에는 조인 키뿐 아니라 오른쪽 테이블 필터 조건도 정상적으로 작성할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "Q2가 주문이 없는 회원까지 더 많이 반환한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "반대다. Q2는 `WHERE` 조건 때문에 주문이 없는 회원이 모두 탈락한다."
+      },
+      {
+        "key": "C",
+        "content": "Q1은 `'PAID'` 주문이 없는 회원도 `o.id = NULL`로 유지하지만, Q2는 `WHERE o.status = 'PAID'`가 `NULL` 행을 걸러내 사실상 `INNER JOIN`과 같은 결과가 된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`LEFT JOIN`의 오른쪽 테이블 조건을 `ON`에 두면 조인 매칭 대상만 좁혀 왼쪽 행을 보존하지만, `WHERE`에 두면 매칭 실패로 생성된 `o.status IS NULL` 행이 `UNKNOWN`으로 탈락해 왼쪽 행이 사라진다."
+      },
+      {
+        "key": "D",
+        "content": "Q1과 Q2는 옵티마이저가 완전히 동일한 결과로 변환해 차이가 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "두 쿼리는 논리적 결과 집합 자체가 다르므로 옵티마이저가 같게 변환하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`LEFT JOIN`에서 오른쪽 테이블 조건의 위치(`ON` vs `WHERE`)는 결과 의미를 완전히 바꾼다. 왼쪽 행을 유지하면서 오른쪽만 필터링하려면 반드시 `ON` 절에 조건을 두어야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.aggregate.q3",
+    "promptMarkdown": "`orders` 테이블에 총 5행이 있고 `coupon_discount` 컬럼 값이 `(1000, 2000, NULL, NULL, 3000)`일 때, `COUNT(*)`, `COUNT(coupon_discount)`, `AVG(coupon_discount)`의 결과로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.aggregate",
+      "database.core.model.null-three-valued"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`COUNT(*) = 5`, `COUNT(coupon_discount) = 5`, `AVG(coupon_discount) = 1200`",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`COUNT(col)`과 `AVG(col)`은 `NULL`을 `0`으로 치환하지 않고 집계 대상에서 제외한다."
+      },
+      {
+        "key": "B",
+        "content": "`COUNT(*) = 3`, `COUNT(coupon_discount) = 3`, `AVG(coupon_discount) = NULL`",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`COUNT(*)`는 NULL 컬럼이 있는 행도 세며, `AVG`는 모든 행이 NULL일 때만 NULL을 반환한다."
+      },
+      {
+        "key": "C",
+        "content": "NULL이 포함되어 있으므로 세 함수 모두 `NULL`을 반환한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "산술 연산(`1000 + NULL`)과 달리 SQL 표준 집계 함수(`COUNT`, `SUM`, `AVG`)는 NULL 값을 무시하고 non-NULL 값만 집계한다."
+      },
+      {
+        "key": "D",
+        "content": "`COUNT(*) = 5`, `COUNT(coupon_discount) = 3`, `AVG(coupon_discount) = 2000`",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`COUNT(*)`는 NULL 포함 전체 행(5), `COUNT(col)`과 `AVG(col)`은 NULL을 제외한 3행(`(1000+2000+3000)/3 = 2000`)만 집계한다. NULL을 0으로 취급하려면 `AVG(COALESCE(coupon_discount, 0))`을 써야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`COUNT(*)`는 전체 행 수, `COUNT(col)`·`SUM(col)`·`AVG(col)`은 non-NULL 값만 대상으로 한다. '미적용(NULL)을 0원 할인으로 포함해 전체 평균'을 구하려면 반드시 `COALESCE(col, 0)`을 명시해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.aggregate.q4",
+    "promptMarkdown": "PostgreSQL에서 한 번의 테이블 스캔으로 상태별 주문 건수(`paid_cnt`, `cancelled_cnt`)를 동시에 집계하는 가장 간결하고 표준적인 SQL 구문은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.aggregate"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`SELECT COUNT(status = 'PAID') FROM orders;`",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`status = 'PAID'`는 `false`도 non-NULL 불리언 값이므로 `COUNT(...)`가 `false` 행까지 모두 세어 버리는 흔한 실수다!"
+      },
+      {
+        "key": "B",
+        "content": "`WHERE status = 'PAID' AND status = 'CANCELLED'`를 함께 쓴다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "한 행의 `status`가 동시에 두 값일 수 없으므로 0건이 된다."
+      },
+      {
+        "key": "C",
+        "content": "`SELECT COUNT(*) FILTER (WHERE status = 'PAID') AS paid_cnt, COUNT(*) FILTER (WHERE status = 'CANCELLED') AS cancelled_cnt FROM orders;`",
+        "displayOrder": 2,
+        "rationaleMarkdown": "PostgreSQL이 지원하는 SQL 표준 `FILTER (WHERE ...)` 절(또는 `COUNT(CASE WHEN ... THEN 1 END)`)을 쓰면 테이블을 한 번만 스캔하면서 여러 조건부 집계를 깔끔하게 구할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "상태마다 별도의 `SELECT COUNT(*)` 쿼리를 2번 이상 실행해야만 정확하다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "같은 테이블을 여러 번 반복 스캔하면 I/O와 왕복이 배로 늘어나고 스냅샷 시점도 달라질 수 있다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "조건부 집계는 PostgreSQL의 `COUNT(*) FILTER (WHERE ...)` 또는 JPQL/표준 SQL의 `COUNT(CASE WHEN ... THEN 1 END)`로 단일 스캔에서 처리하는 것이 빠르고 안전하다. `COUNT(bool_expr)`는 `false`도 non-NULL이라 세어지므로 주의해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.window-function.q2",
+    "promptMarkdown": "다음 두 점수가 동률(`100, 100, 90`)일 때 `ROW_NUMBER()`, `RANK()`, `DENSE_RANK()`가 `ORDER BY score DESC`로 부여하는 순위 결과로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.window-function"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`RANK`와 `DENSE_RANK`는 `PARTITION BY` 없이 사용할 수 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`PARTITION BY`를 생략하면 전체 결과 집합을 단일 파티션으로 간주해 정상 동작한다."
+      },
+      {
+        "key": "B",
+        "content": "`ROW_NUMBER`: `1, 2, 3` / `RANK`: `1, 1, 3` / `DENSE_RANK`: `1, 1, 2`",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`ROW_NUMBER`는 동률이어도 고유 순번(1,2,3), `RANK`는 동률 뒤 번호를 건너뛰며(1,1,3), `DENSE_RANK`는 건너뛰지 않고 이어서(1,1,2) 부여한다."
+      },
+      {
+        "key": "C",
+        "content": "`ROW_NUMBER`: `1, 1, 2` / `RANK`: `1, 2, 3` / `DENSE_RANK`: `1, 1, 3`",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`ROW_NUMBER`는 절대 중복 번호를 부여하지 않으며 세 함수의 정의가 뒤바뀌었다."
+      },
+      {
+        "key": "D",
+        "content": "세 함수 모두 동률일 때 동일하게 `1, 1, 2`를 반환한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "동률 값을 어떻게 순번 매길지가 `ROW_NUMBER`, `RANK`, `DENSE_RANK` 세 윈도 함수를 구분하는 핵심 차이다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "그룹당 정확히 1건(Top-1)을 뽑을 때는 결정적 `ORDER BY`와 `ROW_NUMBER()`, 동률 공동 1위를 모두 포함할 때는 `RANK()` 또는 `DENSE_RANK()`를 선택한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.window-function.q3",
+    "promptMarkdown": "다음 쿼리가 PostgreSQL에서 오류(`window functions are not allowed in WHERE`)를 내는 이유와 올바른 수정 방법은?\n```sql\nSELECT member_id, order_id, created_at\nFROM orders\nWHERE ROW_NUMBER() OVER (PARTITION BY member_id ORDER BY created_at DESC, order_id DESC) = 1;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.window-function",
+      "database.core.sql.select-order"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`WHERE`를 `HAVING`으로만 바꾸면 윈도 함수를 바로 필터링할 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "윈도 함수는 `WHERE`뿐 아니라 `HAVING` 절에서도 허용되지 않으므로 서브쿼리나 CTE로 감싸 바깥에서 필터링해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "`PARTITION BY` 안에 `order_id`를 넣지 않아서 발생한 오류다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`PARTITION BY` 구성이 아니라 `WHERE` 절에 윈도 함수를 직접 둔 것이 원인이다."
+      },
+      {
+        "key": "C",
+        "content": "PostgreSQL은 `ROW_NUMBER()` 함수를 지원하지 않는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "PostgreSQL은 표준 SQL 윈도 함수(`ROW_NUMBER`, `RANK`, `SUM() OVER`, `LAG`, `LEAD`)를 완벽히 지원한다."
+      },
+      {
+        "key": "D",
+        "content": "윈도 함수는 `WHERE`·`GROUP BY`·`HAVING` 이후 `SELECT` 단계에서 계산되므로 `WHERE`에서 필터링할 수 없다. CTE나 인라인 서브쿼리에서 `rn`을 계산한 뒤 바깥 `WHERE rn = 1`로 걸러야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "윈도 함수는 `WHERE` 이후에 평가된다. PostgreSQL에서는 서브쿼리/CTE로 감싸 바깥 `WHERE rn = 1`로 필터링하거나, Top-1 전용이라면 `DISTINCT ON (member_id)`를 활용할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "윈도 함수는 논리적으로 `WHERE`/`GROUP BY`/`HAVING` 이후에 평가되므로 `WHERE` 절에 직접 둘 수 없다. CTE/서브쿼리로 감싸 바깥에서 필터링(또는 PostgreSQL의 `DISTINCT ON`)하는 것이 표준이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.sql.window-function.q4",
+    "promptMarkdown": "회원별 주문 목록의 각 행을 유지하면서, 해당 회원의 누적 주문 금액(`running_total`)을 날짜순으로 함께 출력하려 한다. 올바른 SQL 표현은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.sql.window-function"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`SUM(amount) OVER (PARTITION BY member_id ORDER BY created_at, id ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)`",
+        "displayOrder": 0,
+        "rationaleMarkdown": "윈도 함수는 행을 접지(collapse) 않고 유지하면서 파티션 내 누적 합계를 계산한다. `ORDER BY`에 tie-breaker(`id`)와 `ROWS` 프레임을 명시하면 동률 시점에서도 결정적인 행 단위 누적합이 나온다."
+      },
+      {
+        "key": "B",
+        "content": "`SUM(amount)`와 `GROUP BY member_id`를 사용한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`GROUP BY member_id`는 회원당 1행으로 축소되어 개별 주문 행이 사라진다."
+      },
+      {
+        "key": "C",
+        "content": "`SUM(amount) OVER ()`를 사용하면 회원별 날짜순 누적합이 자동 계산된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "빈 `OVER ()`는 전체 테이블의 총합 1개를 모든 행에 동일하게 표시한다."
+      },
+      {
+        "key": "D",
+        "content": "`COUNT(amount) OVER (PARTITION BY member_id)`를 사용한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`COUNT`는 금액 누적 합계가 아니라 조건에 맞는 non-NULL 행의 개수를 반환하므로 `SUM(...) OVER (...)`가 필요하다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "행을 유지하며 그룹 합계·누적합·이전 행 비교(`LAG`/`LEAD`)를 계산할 때는 `GROUP BY`가 아니라 윈도 함수를 쓴다. 특히 `RANGE`(기본값) vs `ROWS` 프레임 차이를 인지해 동률 처리를 명확히 해야 한다."
+  }
 ]

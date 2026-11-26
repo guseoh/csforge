@@ -22,20 +22,7 @@ WAL 덕분에 dirty 데이터 페이지를 커밋마다 즉시 저장소에 쓸 
 
 ### 장애 복구는 체크포인트가 가리키는 redo point부터 필요한 WAL을 다시 적용한다
 
-```text
-Checkpoint record
-      │
-      └─ redo point
-            │
-            ├──── WAL record A
-            ├──── WAL record B
-            ├──── WAL record C
-            │
-            X crash
-
-restart
-  └─ redo point부터 필요한 WAL을 재적용해 consistent state 복구
-```
+![체크포인트 Redo Point와 장애 복구 WAL 재적용 범위](/learning/database/storage-checkpoint-recovery.svg)
 
 체크포인트가 너무 오래 전이면 장애 뒤 더 많은 WAL을 재처리해야 하고 복구 시간이 길어질 수 있습니다.
 

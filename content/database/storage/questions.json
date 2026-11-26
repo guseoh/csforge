@@ -1,8 +1,356 @@
 [
-  {"kind":"question","contentKey":"database.core.storage.pages-buffer.q1","promptMarkdown":"PostgreSQL 테이블·인덱스와 공유 버퍼(shared buffer)의 기본 저장·관리 단위를 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["database.core.storage.pages-buffer"],"acceptedAnswers":["PostgreSQL은 table/index를 page 단위로 관리하고 buffer cache도 page 단위로 읽고 재사용하기 때문이다","storage와 shared buffer의 기본 I/O 관리 단위는 row가 아니라 page/block이기 때문이다","page","block","page/block","page 또는 block","페이지","블록","페이지 또는 블록"],"explanationMarkdown":"SQL은 행을 논리 단위로 다루지만 PostgreSQL 테이블·인덱스와 공유 버퍼의 기본 접근 단위는 페이지(page/block)다. 따라서 한 행을 찾는 과정에서도 같은 페이지의 다른 튜플이 함께 읽히거나 캐시 적중으로 장치 읽기가 생략될 수 있다."},
-  {"kind":"question","contentKey":"database.core.storage.pages-buffer.q2","promptMarkdown":"한 행을 UPDATE한 직후 공유 버퍼의 페이지가 dirty 상태가 되었다. 이것만으로 해당 변경이 저장 장치에 영구 기록되었다고 말할 수 없는 이유는?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.storage.pages-buffer"],"modelAnswer":"dirty page는 메모리 버퍼의 페이지가 데이터 파일의 페이지와 달라 나중에 쓰기가 필요하다는 뜻일 뿐이다. 커밋 내구성은 필요한 WAL 레코드가 정해진 순서와 경계까지 영구 기록되었는지에 따라 판단하며 dirty 데이터 페이지의 flush와 같은 사건이 아니다.","explanationMarkdown":"dirty는 공유 버퍼의 페이지와 데이터 파일 내용이 다르다는 메모리 상태일 뿐 저장 장치에 flush됐다는 뜻이 아니다. 커밋 내구성은 설정에 따라 필요한 WAL 레코드가 내구성 경계까지 기록되었는지로 판단하며, 데이터 페이지 쓰기는 이후 체크포인트나 백그라운드 쓰기 과정에서 일어날 수 있다."},
-  {"kind":"question","contentKey":"database.core.storage.wal.q1","promptMarkdown":"커밋 시 변경된 모든 데이터 페이지를 먼저 저장 장치에 쓰지 않아도 장애 후 복구와 내구성을 제공할 수 있게 하는 WAL의 핵심 순서는?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.storage.wal"],"modelAnswer":"데이터 페이지를 쓰기 전에 변경을 복구할 WAL 레코드를 먼저 영구 기록하고, 커밋 성공을 반환하려면 설정이 요구하는 커밋 레코드의 내구성 경계도 충족한다. 장애 뒤에는 영구 기록된 WAL을 재실행(REDO)해 데이터 파일에 아직 반영되지 않은 물리 변경을 다시 구성할 수 있다.","explanationMarkdown":"WAL을 데이터 페이지보다 먼저 필요한 내구성 경계까지 기록하면 커밋 응답 뒤 데이터 페이지 쓰기가 늦어져도 복구 과정이 WAL을 사용해 필요한 페이지 변경을 재실행할 수 있다. 이 write-ahead 순서가 데이터 페이지의 실제 쓰기 시점과 트랜잭션의 커밋 내구성을 분리한다."},
-  {"kind":"question","contentKey":"database.core.storage.wal.q2","promptMarkdown":"내구성을 보장하는 설정에서 다음 순서가 일어났다.\n\n1. 변경 WAL과 해당 트랜잭션의 커밋 레코드까지 영구 기록\n2. 커밋 성공 응답\n3. dirty 데이터 페이지가 아직 데이터 파일에 기록되기 전 장애 발생\n\n질문: 재시작 복구가 해야 할 일은?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["database.core.storage.wal"],"modelAnswer":"재시작 복구는 영구 기록된 WAL을 순서대로 재실행해 데이터 파일에 아직 반영되지 않은 페이지 변경을 다시 구성한다. dirty 페이지가 장애 전에 기록되지 않았어도 필요한 WAL이 남아 있으면 물리 변경을 복구할 수 있다. 이 시나리오에서 커밋 레코드까지 영구 기록되었다는 사실은 클라이언트에 성공을 반환한 트랜잭션의 커밋 내구성이 확보되었음을 뜻한다.","explanationMarkdown":"여기서는 두 층을 구분해야 한다. WAL REDO는 영구 기록된 복구 정보를 이용해 데이터 페이지의 물리 변경을 재구성하는 과정이고, 트랜잭션의 커밋·중단 상태와 MVCC 가시성 판정은 별도의 개념이다. 따라서 REDO를 '커밋된 트랜잭션의 WAL만 골라 재생하는 절차'로 이해하면 안 된다. 이 시나리오에서는 커밋 레코드까지 내구성 경계를 통과한 뒤 성공이 반환되었으므로, 장애 전에 데이터 페이지가 기록되지 않았더라도 WAL을 이용해 필요한 변경을 복구할 수 있다."},
-  {"kind":"question","contentKey":"database.core.storage.checkpoint-recovery.q1","promptMarkdown":"체크포인트 간격을 매우 짧게 만들면 장애 복구가 빨라질 수 있으니 항상 좋은가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.storage.checkpoint-recovery"],"choices":[{"key":"A","content":"그렇다. 체크포인트가 곧 백업이므로 많을수록 좋다.","displayOrder":0,"rationaleMarkdown":"체크포인트는 장애 복구에서 재실행해야 할 WAL 범위를 관리하는 복구 과정의 일부이지 독립된 백업 복사본이 아니다. 복구 기준과 백업 복구 능력을 혼동할 수 없다."},{"key":"B","content":"그렇다. 체크포인트는 I/O를 전혀 만들지 않는다.","displayOrder":1,"rationaleMarkdown":"체크포인트는 dirty 페이지를 저장소에 쓰는 I/O를 동반한다. 간격을 짧게 줄이면 복구 기준은 자주 생기지만 쓰기 압력과 지연 시간 영향도 커질 수 있다."},{"key":"C","content":"아니다. dirty 페이지 쓰기와 WAL 관련 비용이 늘어 정상 처리 I/O에 영향을 줄 수 있다.","displayOrder":2,"rationaleMarkdown":"더 잦은 체크포인트가 복구 작업을 줄일 수 있는 대신 dirty 버퍼 쓰기를 더 자주 일으켜 정상 처리 I/O 비용을 높일 수 있다. 설정은 실제 작업 부하에서 복구 시간과 정상 지연 시간의 trade-off로 평가한다."},{"key":"D","content":"아니다. 체크포인트는 장애 복구와 아무 관계가 없다.","displayOrder":3,"rationaleMarkdown":"체크포인트는 WAL과 데이터 페이지를 복구에서 일관된 지점으로 정리해 장애 복구 작업량에 영향을 준다. 무관한 기록이나 단순 통계 작업이 아니다."}],"correctChoiceKey":"C","explanationMarkdown":"체크포인트를 자주 하면 복구에서 처리할 WAL 범위가 줄 수 있지만 dirty 페이지 쓰기와 관련 WAL·I/O가 정상 처리에 추가된다. 따라서 복구 시간 단축과 정상 지연 시간·쓰기 비용 사이의 실제 작업 부하 trade-off를 비교해야 한다."},
-  {"kind":"question","contentKey":"database.core.storage.checkpoint-recovery.q2","promptMarkdown":"DB 체크포인트가 방금 성공했다. 이것만으로 저장 장치 전체가 유실되어도 데이터를 복원할 백업이 확보되었다고 볼 수 있는가?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["database.core.storage.checkpoint-recovery"],"acceptedAnswers":["아니다. checkpoint와 backup은 다른 실패 모델을 다룬다","checkpoint는 crash recovery 기준점이지 별도 backup 복사본이 아니다","아니다. 체크포인트와 백업은 다른 실패 모델을 다룬다","체크포인트는 장애 복구 기준점이지 별도 백업 복사본이 아니다"],"explanationMarkdown":"체크포인트는 같은 저장소에서 장애 뒤 WAL 복구를 시작할 기준점을 만드는 동작이지 별도 매체의 복사본을 보장하지 않는다. 저장 매체 손실이나 특정 시점 복구에는 백업과 WAL 아카이브 보존 정책이 별도로 필요하다."}
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.pages-buffer.q1",
+    "promptMarkdown": "PostgreSQL 테이블·인덱스와 공유 버퍼(shared buffer)의 기본 저장·관리 단위를 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.pages-buffer"
+    ],
+    "acceptedAnswers": [
+      "PostgreSQL은 table/index를 page 단위로 관리하고 buffer cache도 page 단위로 읽고 재사용하기 때문이다",
+      "storage와 shared buffer의 기본 I/O 관리 단위는 row가 아니라 page/block이기 때문이다",
+      "page",
+      "block",
+      "page/block",
+      "page 또는 block",
+      "페이지",
+      "블록",
+      "페이지 또는 블록"
+    ],
+    "explanationMarkdown": "SQL은 행을 논리 단위로 다루지만 PostgreSQL 테이블·인덱스와 공유 버퍼의 기본 접근 단위는 페이지(page/block)다. 따라서 한 행을 찾는 과정에서도 같은 페이지의 다른 튜플이 함께 읽히거나 캐시 적중으로 장치 읽기가 생략될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.pages-buffer.q2",
+    "promptMarkdown": "한 행을 UPDATE한 직후 공유 버퍼의 페이지가 dirty 상태가 되었다. 이것만으로 해당 변경이 저장 장치에 영구 기록되었다고 말할 수 없는 이유는?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.pages-buffer"
+    ],
+    "modelAnswer": "dirty page는 메모리 버퍼의 페이지가 데이터 파일의 페이지와 달라 나중에 쓰기가 필요하다는 뜻일 뿐이다. 커밋 내구성은 필요한 WAL 레코드가 정해진 순서와 경계까지 영구 기록되었는지에 따라 판단하며 dirty 데이터 페이지의 flush와 같은 사건이 아니다.",
+    "explanationMarkdown": "dirty는 공유 버퍼의 페이지와 데이터 파일 내용이 다르다는 메모리 상태일 뿐 저장 장치에 flush됐다는 뜻이 아니다. 커밋 내구성은 설정에 따라 필요한 WAL 레코드가 내구성 경계까지 기록되었는지로 판단하며, 데이터 페이지 쓰기는 이후 체크포인트나 백그라운드 쓰기 과정에서 일어날 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.wal.q1",
+    "promptMarkdown": "커밋 시 변경된 모든 데이터 페이지를 먼저 저장 장치에 쓰지 않아도 장애 후 복구와 내구성을 제공할 수 있게 하는 WAL의 핵심 순서는?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.wal"
+    ],
+    "modelAnswer": "데이터 페이지를 쓰기 전에 변경을 복구할 WAL 레코드를 먼저 영구 기록하고, 커밋 성공을 반환하려면 설정이 요구하는 커밋 레코드의 내구성 경계도 충족한다. 장애 뒤에는 영구 기록된 WAL을 재실행(REDO)해 데이터 파일에 아직 반영되지 않은 물리 변경을 다시 구성할 수 있다.",
+    "explanationMarkdown": "WAL을 데이터 페이지보다 먼저 필요한 내구성 경계까지 기록하면 커밋 응답 뒤 데이터 페이지 쓰기가 늦어져도 복구 과정이 WAL을 사용해 필요한 페이지 변경을 재실행할 수 있다. 이 write-ahead 순서가 데이터 페이지의 실제 쓰기 시점과 트랜잭션의 커밋 내구성을 분리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.wal.q2",
+    "promptMarkdown": "내구성을 보장하는 설정에서 다음 순서가 일어났다.\n\n1. 변경 WAL과 해당 트랜잭션의 커밋 레코드까지 영구 기록\n2. 커밋 성공 응답\n3. dirty 데이터 페이지가 아직 데이터 파일에 기록되기 전 장애 발생\n\n질문: 재시작 복구가 해야 할 일은?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.wal"
+    ],
+    "modelAnswer": "재시작 복구는 영구 기록된 WAL을 순서대로 재실행해 데이터 파일에 아직 반영되지 않은 페이지 변경을 다시 구성한다. dirty 페이지가 장애 전에 기록되지 않았어도 필요한 WAL이 남아 있으면 물리 변경을 복구할 수 있다. 이 시나리오에서 커밋 레코드까지 영구 기록되었다는 사실은 클라이언트에 성공을 반환한 트랜잭션의 커밋 내구성이 확보되었음을 뜻한다.",
+    "explanationMarkdown": "여기서는 두 층을 구분해야 한다. WAL REDO는 영구 기록된 복구 정보를 이용해 데이터 페이지의 물리 변경을 재구성하는 과정이고, 트랜잭션의 커밋·중단 상태와 MVCC 가시성 판정은 별도의 개념이다. 따라서 REDO를 '커밋된 트랜잭션의 WAL만 골라 재생하는 절차'로 이해하면 안 된다. 이 시나리오에서는 커밋 레코드까지 내구성 경계를 통과한 뒤 성공이 반환되었으므로, 장애 전에 데이터 페이지가 기록되지 않았더라도 WAL을 이용해 필요한 변경을 복구할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.checkpoint-recovery.q1",
+    "promptMarkdown": "체크포인트 간격을 매우 짧게 만들면 장애 복구가 빨라질 수 있으니 항상 좋은가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.checkpoint-recovery"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "그렇다. 체크포인트가 곧 백업이므로 많을수록 좋다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "체크포인트는 장애 복구에서 재실행해야 할 WAL 범위를 관리하는 복구 과정의 일부이지 독립된 백업 복사본이 아니다. 복구 기준과 백업 복구 능력을 혼동할 수 없다."
+      },
+      {
+        "key": "B",
+        "content": "그렇다. 체크포인트는 I/O를 전혀 만들지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "체크포인트는 dirty 페이지를 저장소에 쓰는 I/O를 동반한다. 간격을 짧게 줄이면 복구 기준은 자주 생기지만 쓰기 압력과 지연 시간 영향도 커질 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "아니다. dirty 페이지 쓰기와 WAL 관련 비용이 늘어 정상 처리 I/O에 영향을 줄 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "더 잦은 체크포인트가 복구 작업을 줄일 수 있는 대신 dirty 버퍼 쓰기를 더 자주 일으켜 정상 처리 I/O 비용을 높일 수 있다. 설정은 실제 작업 부하에서 복구 시간과 정상 지연 시간의 trade-off로 평가한다."
+      },
+      {
+        "key": "D",
+        "content": "아니다. 체크포인트는 장애 복구와 아무 관계가 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "체크포인트는 WAL과 데이터 페이지를 복구에서 일관된 지점으로 정리해 장애 복구 작업량에 영향을 준다. 무관한 기록이나 단순 통계 작업이 아니다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "체크포인트를 자주 하면 복구에서 처리할 WAL 범위가 줄 수 있지만 dirty 페이지 쓰기와 관련 WAL·I/O가 정상 처리에 추가된다. 따라서 복구 시간 단축과 정상 지연 시간·쓰기 비용 사이의 실제 작업 부하 trade-off를 비교해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.checkpoint-recovery.q2",
+    "promptMarkdown": "DB 체크포인트가 방금 성공했다. 이것만으로 저장 장치 전체가 유실되어도 데이터를 복원할 백업이 확보되었다고 볼 수 있는가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.checkpoint-recovery"
+    ],
+    "acceptedAnswers": [
+      "아니다. checkpoint와 backup은 다른 실패 모델을 다룬다",
+      "checkpoint는 crash recovery 기준점이지 별도 backup 복사본이 아니다",
+      "아니다. 체크포인트와 백업은 다른 실패 모델을 다룬다",
+      "체크포인트는 장애 복구 기준점이지 별도 백업 복사본이 아니다"
+    ],
+    "explanationMarkdown": "체크포인트는 같은 저장소에서 장애 뒤 WAL 복구를 시작할 기준점을 만드는 동작이지 별도 매체의 복사본을 보장하지 않는다. 저장 매체 손실이나 특정 시점 복구에는 백업과 WAL 아카이브 보존 정책이 별도로 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.pages-buffer.q3",
+    "promptMarkdown": "PostgreSQL의 `EXPLAIN (ANALYZE, BUFFERS)` 결과에서 `Buffers: shared hit=420 read=15`가 출력되었다. 이 수치가 의미하는 바로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.pages-buffer",
+      "database.core.optimizer.explain"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "8KB 페이지 중 420번은 PostgreSQL 공유 버퍼(`shared_buffers`) 캐시에서 바로 찾았고, 15번은 캐시에 없어 OS 페이지 캐시 또는 디스크에서 읽어 들였다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`shared hit`는 공유 버퍼 적중 횟수, `shared read`는 공유 버퍼 미스로 OS/스토리지에서 읽은 8KB 블록 수다. 튜닝 시 실행 시간과 함께 총 버퍼 접근량(`hit + read`)을 줄이는 것이 핵심이다."
+      },
+      {
+        "key": "B",
+        "content": "420개 행이 조건에 일치했고 15개 행이 필터링되어 버려졌다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`Buffers: shared hit/read`는 반환 행 수가 아니라 PostgreSQL의 8KB 페이지(블록) 캐시 적중·읽기 통계다."
+      },
+      {
+        "key": "C",
+        "content": "15개 트랜잭션이 읽기 락으로 대기했다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "잠금 대기 횟수가 아니라 공유 버퍼 풀 적중(`hit`)과 OS/스토리지 블록 읽기(`read`) I/O 통계다."
+      },
+      {
+        "key": "D",
+        "content": "`shared read=15`는 15GB의 디스크를 읽었다는 뜻이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "기본 PostgreSQL 블록 크기는 8KB이므로 15블록은 약 120KB다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`EXPLAIN (ANALYZE, BUFFERS)`의 `shared hit` / `shared read`는 쿼리가 실제로 몇 개의 8KB 페이지를 건드렸는지 보여 주는 가장 객관적인 I/O 지표다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.pages-buffer.q4",
+    "promptMarkdown": "PostgreSQL이 행 1건(100바이트)만 수정할 때도 디스크와 `shared_buffers` 사이에서 8KB 페이지 단위로 읽고 쓰는 이유와 관련된 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.pages-buffer"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`shared_buffers`를 OS 전체 RAM의 100%로 설정해야 가장 빠르다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "PostgreSQL은 OS 페이지 캐시, 연결당 `work_mem`, 백그라운드 프로세스 메모리도 필요하므로 보통 `shared_buffers`를 전체 RAM의 약 25% 선에서 출발해 조정한다."
+      },
+      {
+        "key": "B",
+        "content": "dirty 페이지는 커밋 직전에 반드시 100% 디스크 데이터 파일로 동기 flush되어야만 내구성이 보장된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "커밋 시 동기 flush가 필요한 것은 순차 쓰기인 WAL이며, dirty 데이터 페이지는 체크포인트 등 비동기 경로로 기록된다."
+      },
+      {
+        "key": "C",
+        "content": "페이지 단위 I/O와 공유 버퍼 캐싱으로 인접 행의 공간 지역성을 활용하고, 수정된 페이지는 dirty 상태로 메모리에 모아 두었다가 백그라운드 라이터/체크포인트가 비동기 기록한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "매 행마다 100바이트씩 랜덤 디스크 I/O를 하는 대신 8KB 페이지를 버퍼 풀에 올려 메모리에서 수정(dirty)하고, 내구성은 순차 WAL 기록으로 먼저 보장한 뒤 dirty 데이터 페이지는 나중에 모아서 디스크에 쓴다."
+      },
+      {
+        "key": "D",
+        "content": "한 행을 수정하면 그 행이 속한 8KB 페이지 전체의 다른 행들이 모두 삭제된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "같은 페이지 안의 다른 튜플들은 그대로 유지되며 수정 대상 튜플만 MVCC 버전 갱신된다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "PostgreSQL의 버퍼 관리자는 8KB 페이지 단위로 `shared_buffers`를 운영하며, 커밋 지연을 줄이기 위해 WAL 순차 기록과 dirty 데이터 페이지 지연 쓰기를 분리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.wal.q3",
+    "promptMarkdown": "PostgreSQL에서 `COMMIT` 응답이 클라이언트에 반환된 직후 갑작스러운 정전으로 메모리(`shared_buffers`)의 dirty 데이터 페이지가 모두 사라졌다. 재기동 시 해당 트랜잭션 데이터가 살아남는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.wal"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "커밋 시 항상 테이블 전체 파일이 복사본으로 백업되기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "커밋마다 전체 테이블을 복사하는 것이 아니라 변경분 WAL 레코드만 순차 기록한다."
+      },
+      {
+        "key": "B",
+        "content": "Write-Ahead Logging 원칙에 따라 변경 내용과 커밋 레코드가 커밋 응답 전에 이미 WAL 파일에 영구 기록(`fsync`)되었으므로, 재기동 시 마지막 체크포인트부터 WAL을 재적용(redo)해 복구한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "WAL은 순차 쓰기이므로 랜덤 데이터 페이지 전체를 flush하는 것보다 훨씬 빠르면서도 ACID의 지속성(Durability)을 보장한다."
+      },
+      {
+        "key": "C",
+        "content": "RAM 메모리는 정전되어도 10분간 데이터가 유지되기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "일반 DRAM은 전원 차단 즉시 소실되므로 비휘발성 스토리지의 WAL 기록이 필수다."
+      },
+      {
+        "key": "D",
+        "content": "클라이언트 JDBC 드라이버가 자동으로 `INSERT` SQL을 보관했다가 서버 재기동 후 다시 보내기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "내구성은 클라이언트가 아니라 DB 서버의 WAL 복구 메커니즘이 보장한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "WAL(Write-Ahead Log)은 데이터 페이지보다 변경 로그를 먼저 순차 기록(`fsync`)함으로써 빠른 커밋 성능과 크래시 복구 시 지속성(Durability)을 동시에 달성한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.wal.q4",
+    "promptMarkdown": "쓰기 처리량을 높이기 위해 PostgreSQL에서 `synchronous_commit = off`를 설정했을 때의 정확한 트레이드오프는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.wal"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "데이터 파일이 깨져 크래시 후 DB가 영구적으로 기동 불가능해진다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "DB 손상 위험이 큰 것은 `fsync = off`이며, `synchronous_commit = off`는 WAL 선행 규칙은 유지하므로 파일 손상 없이 최근 미flush 트랜잭션만 유실된다."
+      },
+      {
+        "key": "B",
+        "content": "내구성이 100% 그대로 유지되면서 속도만 무료로 빨라진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "WAL flush 대기를 생략하므로 장애 시 소량의 커밋 유실 창(window)이 생긴다."
+      },
+      {
+        "key": "C",
+        "content": "모든 `SELECT` 쿼리가 비동기로 실행된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`synchronous_commit`은 읽기 쿼리가 아니라 커밋 시 WAL flush 대기 여부를 제어한다."
+      },
+      {
+        "key": "D",
+        "content": "트랜잭션이 WAL 디스크 flush 완료를 기다리지 않고 커밋 응답을 반환해 쓰기 지연이 줄어들지만, DB 크래시 시 최근 수백 밀리초 분량의 이미 성공 응답된 커밋이 유실될 수 있다(단, DB 파일 손상은 발생하지 않는다).",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`synchronous_commit = off`는 비동기 커밋으로, 데이터 일관성(손상 없음)은 유지하지만 최근 짧은 구간의 지속성(Durability)을 지연 시간과 맞바꾼다. 결제·원장에는 쓰면 안 되고 유실 허용 로그·조회수 집계 등에만 제한적으로 사용한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`fsync = off`(DB 손상 위험, 운영 금지)와 `synchronous_commit = off`(파일 안전, 최근 소량 커밋 유실 허용)는 완전히 다르다. 금융·주문처럼 무손실이 필수면 기본값 `on`을 유지해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.checkpoint-recovery.q3",
+    "promptMarkdown": "PostgreSQL에서 `max_wal_size = 4GB`로 설정했는데도 `pg_wal` 디렉터리가 30GB 넘게 커져 디스크 부족 경보가 울렸다. 가장 먼저 점검해야 할 원인은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.checkpoint-recovery"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "소비자가 끊어진 비활성 Replication Slot(`active = false`)이나 실패 중인 `archive_command`가 오래된 WAL 세그먼트 삭제를 막고 있는지 확인한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`max_wal_size`는 soft limit일 뿐이다. 연결이 끊긴 replication slot이나 실패하는 WAL 아카이빙이 있으면 PostgreSQL은 WAL을 절대 삭제하지 못해 디스크가 가득 찬다."
+      },
+      {
+        "key": "B",
+        "content": "PostgreSQL 설정 파일 문법 오류로 `max_wal_size`가 무시되어 항상 무한대이기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`max_wal_size`는 정상 적용되더라도 슬롯/아카이브 보존 의무가 우선한다."
+      },
+      {
+        "key": "C",
+        "content": "`SELECT` 쿼리가 많으면 `pg_wal` 파일이 무한히 생성되기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "읽기 전용 `SELECT`는 힌트 비트 갱신 외에는 WAL을 거의 생성하지 않으므로 `pg_wal` 폭증의 주원인이 아니다."
+      },
+      {
+        "key": "D",
+        "content": "`pg_wal` 안의 오래된 파일을 OS `rm -rf` 명령으로 직접 지우면 안전하게 해결된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`pg_wal` 파일을 수동 `rm`으로 삭제하면 DB 복구 불가 및 데이터 손상으로 직결되므로 절대 금지다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`max_wal_size`는 하드 상한이 아니다. `pg_wal` 폭증 시에는 `pg_replication_slots`의 비활성 슬롯과 `archive_command` 실패 로그를 최우선으로 점검하고, `max_slot_wal_keep_size` 안전장치를 설정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.storage.checkpoint-recovery.q4",
+    "promptMarkdown": "체크포인트 직후 장애 복구와 Point-in-Time Recovery(PITR) 백업의 역할을 가장 정확하게 구분한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.storage.checkpoint-recovery"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "체크포인트+로컬 WAL은 DB 프로세스/호스트 비정상 종료 후 기존 디스크를 일관된 최신 상태로 복구하는 장치이고, 디스크 유실이나 실수 `DROP TABLE` 직전 시점 복원은 별도 외부 베이스 백업+WAL 아카이브(PITR)가 담당한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "실수로 `DELETE`를 커밋하면 그 삭제도 WAL과 체크포인트에 정상 기록된다. 따라서 운영 실수·디스크 손실 복구에는 반드시 분리된 저장소의 백업과 PITR 아카이브가 필요하다."
+      },
+      {
+        "key": "B",
+        "content": "체크포인트가 매 5분마다 돌고 있으므로 별도 백업은 전혀 필요 없다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "체크포인트는 로컬 데이터 파일에 dirty 페이지를 쓸 뿐 외부 백업 복사본을 만들지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "실수로 `DROP TABLE`을 커밋해도 로컬 WAL만 있으면 자동으로 삭제 직전으로 되돌릴 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "로컬 crash recovery는 커밋된 `DROP TABLE`까지 그대로 재적용한다. 과거 시점 복원은 베이스 백업 + 아카이브 WAL(PITR)이 있어야 가능하다."
+      },
+      {
+        "key": "D",
+        "content": "PITR 백업은 체크포인트를 완전히 비활성화해야만 동작한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "PITR은 베이스 백업 시점의 체크포인트와 연속된 아카이브 WAL을 조합해 동작한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "체크포인트·로컬 WAL은 크래시 복구용, 외부 베이스 백업·WAL 아카이빙(PITR)은 재해·인적 실수 복구용이다. 두 책임을 혼동하면 운영 백업 전략에 치명적인 공백이 생긴다."
+  }
 ]
