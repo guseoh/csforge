@@ -75,7 +75,7 @@ class NetworkDiagramFullPackIntegrationTest {
     }
 
     @Test
-    void all58DiagramUpdatesPreserveHistoryAndReaderAndReimportUnchanged() throws Exception {
+    void allDiagramUpdatesPreserveHistoryAndReaderAndReimportUnchanged() throws Exception {
         var initial = bootstrapService.bootstrap();
         assertTrue(initial.success(), () -> "Initial isolated bootstrap: " + initial);
         assertEquals(CanonicalInventory.TOTAL_ITEMS, initial.totalItems());
