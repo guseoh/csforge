@@ -22,19 +22,7 @@ references:
 
 ### 저장하는 것은 비밀번호가 아니라 검증자다
 
-```text
-가입
-원문 비밀번호
-    │
-    ▼
-비밀번호 해시 함수 + 솔트
-    │
-    ▼
-인코딩된 검증 값 저장
-
-로그인
-원문 입력 ── matches ── 저장된 검증 값
-```
+![비밀번호 저장 방식 비교: 평문·양방향 암호화·고속 해시 vs 전용 느린 해시](/learning/security/password-storage-plaintext-vs-slow-hash.svg)
 
 `PasswordEncoder.matches(raw, encoded)` 같은 API는 저장 해시를 복호화하지 않습니다. 입력에 같은 비밀번호 해시 처리 스킴을 적용해 검증합니다.
 

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 410" width="840" height="410" role="img" aria-labelledby="title desc">
+  <title id="title">JPQL·네이티브 쿼리의 값 바인딩과 구조 화이트리스트 경계</title>
+  <desc id="desc">ORM 환경에서도 문자열 결합 JPQL과 ORDER BY 동적 정렬이 인젝션에 취약한 이유와 바인드 파라미터 및 허용 목록 매핑 방어를 비교하는 도식</desc>
+  <style>
+    :root { --bg:#f8fafc; --card:#ffffff; --muted:#f1f5f9; --bd:#cbd5e1; --tx:#0f172a; --sub:#475569; --blue-bg:#eff6ff; --blue-bd:#3b82f6; --blue-tx:#1d4ed8; --green-bg:#ecfdf5; --green-bd:#10b981; --green-tx:#047857; --amber-bg:#fffbeb; --amber-bd:#f59e0b; --amber-tx:#b45309; --red-bg:#fef2f2; --red-bd:#ef4444; --red-tx:#b91c1c; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#0f172a; --card:#1e293b; --muted:#0b1220; --bd:#334155; --tx:#f1f5f9; --sub:#94a3b8; --blue-bg:#172554; --blue-bd:#60a5fa; --blue-tx:#93c5fd; --green-bg:#064e3b; --green-bd:#34d399; --green-tx:#6ee7b7; --amber-bg:#451a03; --amber-bd:#fbbf24; --amber-tx:#fcd34d; --red-bg:#450a0a; --red-bd:#f87171; --red-tx:#fca5a5; } }
+    text { font-family: "Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .h1 { font-size:17px; font-weight:700; fill:var(--tx); }
+    .h2 { font-size:14px; font-weight:700; }
+    .b { font-size:12px; fill:var(--tx); }
+    .s { font-size:11px; fill:var(--sub); }
+    .k { font-size:11.5px; font-weight:700; }
+    .code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size:11px; fill:var(--tx); }
+  </style>
+  <rect x="0" y="0" width="840" height="410" rx="14" fill="var(--bg)"/>
+  <text x="28" y="34" class="h1">JPQL · Native SQL 인젝션 경계: 데이터 값 vs 쿼리 구조</text>
+  <text x="28" y="54" class="s">ORM(JPA/Hibernate)을 써도 문자열 결합으로 쿼리를 조립하면 인젝션은 그대로 발생한다.</text>
+
+  <!-- Left: Vulnerable -->
+  <rect x="28" y="74" width="382" height="214" rx="10" fill="var(--red-bg)" stroke="var(--red-bd)" stroke-width="1.5"/>
+  <text x="46" y="100" class="h2" fill="var(--red-tx)">✗ 취약한 패턴 (문자열 결합으로 구조 오염)</text>
+  <rect x="46" y="116" width="346" height="64" rx="7" fill="var(--card)" stroke="var(--red-bd)" stroke-width="1"/>
+  <text x="58" y="138" class="code">"select m from Member m"</text>
+  <text x="58" y="156" class="code">  + " where m.email = '" + email + "'"</text>
+  <text x="58" y="172" class="s">입력 값이 JPQL 구문(AST)을 직접 변조</text>
+
+  <rect x="46" y="192" width="346" height="64" rx="7" fill="var(--card)" stroke="var(--red-bd)" stroke-width="1"/>
+  <text x="58" y="214" class="code">"SELECT * FROM orders ORDER BY " + sort</text>
+  <text x="58" y="232" class="s">컬럼명·정렬 방향에 외부 문자열을 그대로 연결</text>
+  <text x="58" y="248" class="s">→ 서브쿼리/CASE 인젝션·민감 컬럼 추론 위험</text>
+
+  <!-- Right: Safe -->
+  <rect x="430" y="74" width="382" height="214" rx="10" fill="var(--green-bg)" stroke="var(--green-bd)" stroke-width="1.5"/>
+  <text x="448" y="100" class="h2" fill="var(--green-tx)">✓ 안전한 패턴 (값 바인딩 + 구조 화이트리스트)</text>
+  <rect x="448" y="116" width="346" height="64" rx="7" fill="var(--card)" stroke="var(--green-bd)" stroke-width="1"/>
+  <text x="460" y="138" class="code">where m.email = :email</text>
+  <text x="460" y="156" class="code">.setParameter("email", email)</text>
+  <text x="460" y="172" class="s">구문 컴파일과 값 채널을 완전 분리 (리터럴 고정)</text>
+
+  <rect x="448" y="192" width="346" height="64" rx="7" fill="var(--card)" stroke="var(--green-bd)" stroke-width="1"/>
+  <text x="460" y="214" class="code">enum OrderSort { CREATED_AT, TOTAL_PRICE }</text>
+  <text x="460" y="232" class="s">테이블·컬럼·ASC/DESC 같은 구조는 바인딩 불가</text>
+  <text x="460" y="248" class="s">→ 서버 허용 목록(enum/Map) 매핑 + 미허용 400 거부</text>
+
+  <!-- Bottom Reminder -->
+  <rect x="28" y="306" width="784" height="80" rx="10" fill="var(--card)" stroke="var(--amber-bd)" stroke-width="1.4"/>
+  <text x="46" y="332" class="h2" fill="var(--amber-tx)">주의: 인젝션 방어 ≠ 인가(BOLA) 방어</text>
+  <text x="46" y="356" class="b">• `:orderId` 파라미터 바인딩이 안전해도 `findById(orderId)`만으로 타인 주문을 반환하면 객체 수준 인가(BOLA) 취약점이 남는다.</text>
+  <text x="46" y="375" class="s">• LIKE 검색 시에는 바인딩과 함께 와일드카드(`%`, `_`, `\`) 이스케이프를 병행한다.</text>
+</svg>

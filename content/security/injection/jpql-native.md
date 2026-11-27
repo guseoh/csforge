@@ -27,6 +27,8 @@ entityManager.createQuery(jpql, Member.class).getResultList();
 
 ORM은 이 문자열을 분석해 SQL로 변환할 뿐 **이미 오염된 쿼리 구조를 안전한 매개변수로 되돌려 주지 않습니다.**
 
+![JPQL·네이티브 쿼리의 값 바인딩과 구조 화이트리스트 경계](/learning/security/jpql-native-parameter-binding-boundary.svg)
+
 ### JPQL 매개변수를 사용한다
 
 ```java

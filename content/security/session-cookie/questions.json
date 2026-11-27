@@ -1,7 +1,337 @@
 [
-  {"kind":"question","contentKey":"security.core.session-cookie.session-id.q1","promptMarkdown":"유효한 세션 ID는 보안상 어떤 성격의 값으로 취급해야 하는가?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["security.core.session-cookie.session-id"],"acceptedAnswers":["소지한 사람이 그대로 사용할 수 있는 자격 증명","인증 상태를 가리키는 자격 증명","세션 자격 증명","베어러 자격 증명"],"explanationMarkdown":"서버는 세션 ID만으로 저장된 로그인 상태를 찾는다. 값을 훔친 사람이 비밀번호 없이 같은 세션을 사용할 수 있으므로 ID는 소지형 자격 증명처럼 보호해야 한다."},
-  {"kind":"question","contentKey":"security.core.session-cookie.cookie-flags.q1","promptMarkdown":"`HttpOnly` 세션 쿠키를 쓰면 XSS가 발생해도 공격 스크립트가 사용자의 권한으로 `/orders` 요청을 보내는 것까지 막아 주는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.session-cookie.cookie-flags"],"choices":[{"key":"A","content":"아니다. HttpOnly는 쿠키를 암호화할 뿐 스크립트 실행은 막지 않는다.","displayOrder":0,"rationaleMarkdown":"HttpOnly는 브라우저 스크립트에서 쿠키 값을 읽지 못하게 하는 속성이지 쿠키를 암호화하거나 XSS 실행 자체를 차단하는 기능은 아니다. 전송 구간과 스크립트 삽입 방어는 다른 보안 통제로 다뤄야 한다."},{"key":"B","content":"그렇다. HttpOnly는 JavaScript 실행 자체를 막는다.","displayOrder":1,"rationaleMarkdown":"HttpOnly가 제한하는 것은 해당 쿠키를 JavaScript API로 직접 읽는 행위다. 페이지의 스크립트 실행 권한이나 XSS 취약점 자체를 없애지는 않으므로 다른 XSS 방어가 필요하다."},{"key":"C","content":"그렇다. HttpOnly는 교차 사이트 요청에 쿠키가 자동 전송되는 것을 막는다.","displayOrder":2,"rationaleMarkdown":"SameSite는 일부 교차 사이트 요청에서 쿠키 전송을 제한하는 데 쓰이는 별도 속성이다. HttpOnly는 스크립트의 쿠키 접근을 막지만 브라우저가 같은 사이트 요청에 쿠키를 자동 첨부하는 동작까지 막지 않는다."},{"key":"D","content":"아니다. 쿠키 값 직접 읽기는 줄이지만 동일 출처 요청에는 브라우저가 쿠키를 자동 전송할 수 있다.","displayOrder":3,"rationaleMarkdown":"HttpOnly는 공격 스크립트가 세션 쿠키 값을 훔쳐 재사용하는 위험을 줄이지만, XSS가 실행된 페이지에서 동일 출처 요청을 만들면 브라우저가 쿠키를 자동 전송할 수 있다. 따라서 사용자의 권한으로 수행되는 요청을 완전히 차단하지 않으며 XSS를 별도로 방어해야 한다."}],"correctChoiceKey":"D","explanationMarkdown":"`HttpOnly`는 스크립트가 쿠키 값을 직접 읽지 못하게 한다. XSS 스크립트가 같은 출처의 `/orders`를 호출할 때 브라우저가 쿠키를 붙이는 동작까지 막지는 않는다."},
-  {"kind":"question","contentKey":"security.core.session-cookie.fixation-expiration.q1","promptMarkdown":"세션 고정을 줄이기 위해 인증 성공 시 적용하는 대표 조치는?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.session-cookie.fixation-expiration"],"acceptedAnswers":["로그인 성공 시 세션 ID를 교체한다","인증 시 세션 ID를 새로 발급한다","세션 ID 교체","세션 ID 재발급"],"explanationMarkdown":"공격자가 로그인 전 세션 ID를 알고 있다면 그 ID가 로그인 후에도 유지될 때 인증된 세션을 재사용할 수 있다. 인증 성공 시 ID를 교체하면 이 연결을 끊는다."},
-  {"kind":"question","contentKey":"security.core.session-cookie.session-id.q2","promptMarkdown":"로그아웃 뒤 다음 상태가 함께 관측된다.\n\n- DB의 세션 기록: 삭제됨\n- 탈취된 세션 쿠키: 계속 인증에 성공함\n\n어떤 세션 상태와 폐기 경계를 확인해야 하는가?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["security.core.session-cookie.session-id"],"modelAnswer":"실제 인증 요청이 참조하는 세션 저장소와 삭제한 기록이 같은 출처인지, 캐시나 다른 복제본에 남은 상태와 쿠키 만료를 확인해야 한다. 소지한 사람이 그대로 사용할 수 있는 자격 증명인 세션 ID는 로그아웃·폐기 시점부터 서버가 더 이상 인증 주체로 해석하지 않도록 일관된 폐기 경계를 가져야 한다.","explanationMarkdown":"DB 기록을 지웠어도 실제 인증 처리에 쓰는 캐시·복제본에 세션이 남으면 탈취한 쿠키가 계속 통할 수 있다. 로그아웃 뒤 모든 인증 경로에서 해당 ID를 무효로 취급해야 한다."},
-  {"kind":"question","contentKey":"security.core.session-cookie.fixation-expiration.q2","promptMarkdown":"세션 쿠키에 `Max-Age=3600`을 설정했다고 사용자가 정확히 한 시간 뒤 반드시 로그아웃된다고 단정할 수 없는 이유는?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.session-cookie.fixation-expiration"],"modelAnswer":"쿠키 만료는 브라우저가 쿠키를 보내는 시간을 제한하지만 서버 측 세션 유휴 만료 시간, 절대 만료 시간, 로그아웃·폐기 정책과는 별도다. 서버에서도 세션 상태의 만료와 재사용 불가를 검사해야 하며 두 시계의 의미를 맞춰야 한다.","explanationMarkdown":"`Max-Age`는 브라우저의 쿠키 보관 시간이다. 서버 세션의 유휴·절대 만료와 무효화 정책은 별도로 동작하므로 쿠키 설정 하나로 정확한 로그아웃 시점을 보장할 수 없다."}
+  {
+    "kind": "question",
+    "contentKey": "security.core.session-cookie.session-id.q1",
+    "promptMarkdown": "유효한 세션 ID는 보안상 어떤 성격의 값으로 취급해야 하는가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.session-cookie.session-id"
+    ],
+    "acceptedAnswers": [
+      "소지한 사람이 그대로 사용할 수 있는 자격 증명",
+      "인증 상태를 가리키는 자격 증명",
+      "세션 자격 증명",
+      "베어러 자격 증명"
+    ],
+    "explanationMarkdown": "서버는 세션 ID만으로 저장된 로그인 상태를 찾는다. 값을 훔친 사람이 비밀번호 없이 같은 세션을 사용할 수 있으므로 ID는 소지형 자격 증명처럼 보호해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.session-cookie.cookie-flags.q1",
+    "promptMarkdown": "`HttpOnly` 세션 쿠키를 쓰면 XSS가 발생해도 공격 스크립트가 사용자의 권한으로 `/orders` 요청을 보내는 것까지 막아 주는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.session-cookie.cookie-flags"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "아니다. HttpOnly는 쿠키를 암호화할 뿐 스크립트 실행은 막지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "HttpOnly는 브라우저 스크립트에서 쿠키 값을 읽지 못하게 하는 속성이지 쿠키를 암호화하거나 XSS 실행 자체를 차단하는 기능은 아니다. 전송 구간과 스크립트 삽입 방어는 다른 보안 통제로 다뤄야 한다."
+      },
+      {
+        "key": "B",
+        "content": "그렇다. HttpOnly는 JavaScript 실행 자체를 막는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "HttpOnly가 제한하는 것은 해당 쿠키를 JavaScript API로 직접 읽는 행위다. 페이지의 스크립트 실행 권한이나 XSS 취약점 자체를 없애지는 않으므로 다른 XSS 방어가 필요하다."
+      },
+      {
+        "key": "C",
+        "content": "그렇다. HttpOnly는 교차 사이트 요청에 쿠키가 자동 전송되는 것을 막는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "SameSite는 일부 교차 사이트 요청에서 쿠키 전송을 제한하는 데 쓰이는 별도 속성이다. HttpOnly는 스크립트의 쿠키 접근을 막지만 브라우저가 같은 사이트 요청에 쿠키를 자동 첨부하는 동작까지 막지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "아니다. 쿠키 값 직접 읽기는 줄이지만 동일 출처 요청에는 브라우저가 쿠키를 자동 전송할 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "HttpOnly는 공격 스크립트가 세션 쿠키 값을 훔쳐 재사용하는 위험을 줄이지만, XSS가 실행된 페이지에서 동일 출처 요청을 만들면 브라우저가 쿠키를 자동 전송할 수 있다. 따라서 사용자의 권한으로 수행되는 요청을 완전히 차단하지 않으며 XSS를 별도로 방어해야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`HttpOnly`는 스크립트가 쿠키 값을 직접 읽지 못하게 한다. XSS 스크립트가 같은 출처의 `/orders`를 호출할 때 브라우저가 쿠키를 붙이는 동작까지 막지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.session-cookie.fixation-expiration.q1",
+    "promptMarkdown": "세션 고정을 줄이기 위해 인증 성공 시 적용하는 대표 조치는?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.session-cookie.fixation-expiration"
+    ],
+    "acceptedAnswers": [
+      "로그인 성공 시 세션 ID를 교체한다",
+      "인증 시 세션 ID를 새로 발급한다",
+      "세션 ID 교체",
+      "세션 ID 재발급"
+    ],
+    "explanationMarkdown": "공격자가 로그인 전 세션 ID를 알고 있다면 그 ID가 로그인 후에도 유지될 때 인증된 세션을 재사용할 수 있다. 인증 성공 시 ID를 교체하면 이 연결을 끊는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.session-cookie.session-id.q2",
+    "promptMarkdown": "로그아웃 뒤 다음 상태가 함께 관측된다.\n\n- DB의 세션 기록: 삭제됨\n- 탈취된 세션 쿠키: 계속 인증에 성공함\n\n어떤 세션 상태와 폐기 경계를 확인해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.session-cookie.session-id"
+    ],
+    "modelAnswer": "실제 인증 요청이 참조하는 세션 저장소와 삭제한 기록이 같은 출처인지, 캐시나 다른 복제본에 남은 상태와 쿠키 만료를 확인해야 한다. 소지한 사람이 그대로 사용할 수 있는 자격 증명인 세션 ID는 로그아웃·폐기 시점부터 서버가 더 이상 인증 주체로 해석하지 않도록 일관된 폐기 경계를 가져야 한다.",
+    "explanationMarkdown": "DB 기록을 지웠어도 실제 인증 처리에 쓰는 캐시·복제본에 세션이 남으면 탈취한 쿠키가 계속 통할 수 있다. 로그아웃 뒤 모든 인증 경로에서 해당 ID를 무효로 취급해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.session-cookie.fixation-expiration.q2",
+    "promptMarkdown": "세션 쿠키에 `Max-Age=3600`을 설정했다고 사용자가 정확히 한 시간 뒤 반드시 로그아웃된다고 단정할 수 없는 이유는?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.session-cookie.fixation-expiration"
+    ],
+    "modelAnswer": "쿠키 만료는 브라우저가 쿠키를 보내는 시간을 제한하지만 서버 측 세션 유휴 만료 시간, 절대 만료 시간, 로그아웃·폐기 정책과는 별도다. 서버에서도 세션 상태의 만료와 재사용 불가를 검사해야 하며 두 시계의 의미를 맞춰야 한다.",
+    "explanationMarkdown": "`Max-Age`는 브라우저의 쿠키 보관 시간이다. 서버 세션의 유휴·절대 만료와 무효화 정책은 별도로 동작하므로 쿠키 설정 하나로 정확한 로그아웃 시점을 보장할 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.session-cookie.cookie-flags.q4",
+    "promptMarkdown": "세션 ID 쿠키에 설정하는 `Secure`, `HttpOnly`, `SameSite=Lax` 세 속성의 방어 범위를 가장 정확하게 연결한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.session-cookie.cookie-flags"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Secure`: HTTPS 연결에서만 전송(평문 HTTP 도청 방지) | `HttpOnly`: JS `document.cookie` 읽기 차단(XSS 시 쿠키 직접 탈취 완화) | `SameSite=Lax`: 교차 사이트 POST 등 자동 전송 제한(CSRF 완화)",
+        "displayOrder": 0,
+        "rationaleMarkdown": "세 속성은 각각 전송 기밀성(`Secure`), 클라이언트 스크립트 격리(`HttpOnly`), 교차 사이트 자동 전송 통제(`SameSite`)라는 서로 다른 위협을 담당한다."
+      },
+      {
+        "key": "B",
+        "content": "`HttpOnly`: HTTPS 강제 | `Secure`: CSRF 차단 | `SameSite`: JS 쿠키 읽기 차단",
+        "displayOrder": 1,
+        "rationaleMarkdown": "세 속성(Secure=HTTPS 전용, HttpOnly=JS 차단, SameSite=교차 사이트 전송 제한)의 역할이 모두 뒤바뀌어 연결되었다."
+      },
+      {
+        "key": "C",
+        "content": "`SameSite=None`을 설정하면 `Secure` 속성 없이 평문 HTTP에서도 정상 동작한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "현대 브라우저는 `SameSite=None` 쿠키에 반드시 `Secure` 속성이 함께 있어야 수락하며, 없으면 쿠키를 거부한다."
+      },
+      {
+        "key": "D",
+        "content": "세 속성을 모두 켜면 서버 측 인가(BOLA)와 SQL 인젝션까지 자동으로 차단된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "쿠키 속성은 브라우저의 쿠키 보관·전송 규칙일 뿐 서버 측 인가나 SQL 인젝션 방어를 대체하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "인증 쿠키는 기본적으로 `Secure; HttpOnly; SameSite=Lax`(또는 Strict) 조합을 적용하고 각 속성이 막지 못하는 위협은 별도 통제로 보완한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.session-cookie.cookie-flags.q5",
+    "promptMarkdown": "`SameSite=Strict`와 `SameSite=Lax`의 실무적 차이로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.session-cookie.cookie-flags"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Lax`를 쓰면 `GET /orders/42?cancel=true`처럼 GET으로 상태를 바꾸는 엔드포인트도 CSRF에서 안전하다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`Lax`는 Top-level GET 이동에 쿠키를 붙이므로 GET 엔드포인트가 상태를 변경하면 여전히 CSRF에 뚫린다."
+      },
+      {
+        "key": "B",
+        "content": "`Strict`는 외부 사이트 링크 클릭(Top-level GET 이동)에서도 쿠키를 보내지 않아 첫 진입 시 로그아웃처럼 보일 수 있고, `Lax`는 안전한 Top-level GET 이동은 허용하면서 교차 사이트 POST/iframe/AJAX 쿠키 자동 전송을 차단해 보안과 UX 균형이 좋다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "일반 웹 서비스에서는 이메일·검색 결과 링크를 타고 들어왔을 때 로그인 상태가 유지되도록 `SameSite=Lax`를 기본으로 두고, 상태 변경은 POST+CSRF 토큰으로 보호한다."
+      },
+      {
+        "key": "C",
+        "content": "`Lax`는 모든 교차 사이트 `POST` 폼 요청에 쿠키를 자유롭게 전송한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`SameSite=Lax`는 교차 사이트 `POST` 요청의 쿠키 자동 전송을 차단한다."
+      },
+      {
+        "key": "D",
+        "content": "`Strict`를 쓰면 같은 사이트 내 페이지 이동에서도 쿠키가 전송되지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "동일 사이트(Same-Site) 내 이동에서는 `Strict`도 쿠키를 정상 전송한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`SameSite=Lax`는 Top-level GET 네비게이션 UX를 유지하면서 교차 사이트 POST CSRF를 완화하며, 반드시 GET 메서드의 안전성(상태 변경 금지)과 함께 사용해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.session-cookie.fixation-expiration.q4",
+    "promptMarkdown": "세션 고정(Session Fixation) 공격의 동작 방식과 Spring Security의 기본 방어 메커니즘은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.session-cookie.fixation-expiration"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "로그인 전과 후에 항상 똑같은 세션 ID를 유지해야 브라우저 호환성이 보장된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "로그인 전후 세션 ID를 유지하는 것이 바로 세션 고정 취약점이 성립하는 조건이다."
+      },
+      {
+        "key": "B",
+        "content": "세션 ID를 순차 숫자(`1, 2, 3...`)로 발급하면 세션 고정이 막힌다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "예측 가능한 순차 세션 ID는 타인 세션 추측(Session Prediction)까지 허용하는 치명적 취약점이다."
+      },
+      {
+        "key": "C",
+        "content": "로그아웃 시 클라이언트 쿠키만 지우고 서버 세션 저장소는 그대로 두어도 안전하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "로그아웃 시 반드시 서버 측 세션(`session.invalidate()`)도 폐기해야 탈취된 세션 ID의 재사용을 막을 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "공격자가 미리 확보한 세션 ID를 피해자에게 심어 로그인하게 만든 뒤 그 세션 ID로 피해자 계정을 탈취하는 공격이며, 로그인 성공 직후 기존 세션 ID를 새 랜덤 ID로 교체(`changeSessionId` / `migrateSession`)해 차단한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "인증 상태가 상승(익명 → 로그인)하는 순간 세션 ID를 즉시 재발급하면 공격자가 알고 있던 이전 세션 ID는 무효화된다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "세션 생명주기 보안은 '로그인 시 세션 ID 즉시 교체(Fixation 방어) + 유휴(Idle)/절대(Absolute) 만료 시간 설정 + 로그아웃/비밀번호 변경 시 서버 세션 폐기'로 구성한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.session-cookie.fixation-expiration.q5",
+    "promptMarkdown": "세션 만료 정책에서 유휴 만료(Idle Timeout, 예: 30분) 외에 절대 만료(Absolute Timeout, 예: 12시간)를 함께 두는 보안 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.session-cookie.fixation-expiration"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "절대 만료를 설정하면 CSRF 토큰 검증을 생략할 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "세션이 살아 있는 동안의 CSRF는 여전히 발생하므로 별도 방어가 필요하다."
+      },
+      {
+        "key": "B",
+        "content": "절대 만료는 Redis 메모리가 100% 찼을 때만 동작한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "메모리 압박과 무관하게 최초 생성 시각 기준으로 강제 만료시키는 보안 정책이다."
+      },
+      {
+        "key": "C",
+        "content": "유휴 만료만 있으면 탈취된 세션 ID를 공격자가 29분마다 주기적으로 핑(keep-alive)해 영구적으로 살려둘 수 있으므로, 최초 로그인 시점 기준 상한(절대 만료)을 두어 탈취 세션의 최대 생존 기간을 제한한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Sliding/Idle 만료는 활동할 때마다 수명이 연장되므로, 절대 만료 상한을 함께 두어야 장기 탈취 세션이 무한 연장되는 것을 막을 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "절대 만료를 두면 브라우저가 쿠키를 암호화해 저장한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "만료 정책은 세션의 최대 유효 수명을 통제하는 것이며 쿠키 암호화와는 별개다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Idle Timeout(미사용 방치 차단)과 Absolute Timeout(탈취 세션 무한 연장 차단)을 함께 설계해야 세션 수명주기가 견고해진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.session-cookie.session-id.q4",
+    "promptMarkdown": "서버 세션(Session ID 쿠키) 방식이 무상태(Stateless) JWT 액세스 토큰 방식에 비해 가지는 가장 뚜렷한 보안·운영 장점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.session-cookie.session-id"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "세션 ID는 사용자 이메일과 권한 목록을 평문 JSON으로 그대로 담아야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "세션 ID는 어떤 의미도 담지 않은 충분한 엔트로피(>=128비트)의 암호학적 랜덤 불투명 식별자여야 한다."
+      },
+      {
+        "key": "B",
+        "content": "세션 상태가 서버(또는 Redis)에 존재하므로 로그아웃·계정 정지·권한 회수·비밀번호 변경 시 해당 세션을 서버에서 **즉시 무효화(Revocation)**할 수 있고, 쿠키에는 불투명한 랜덤 ID만 담아 민감 클레임 노출을 피한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "서버 측 상태 저장소는 추가 블랙리스트 설계 없이도 즉각적인 강제 로그아웃과 권한 변경 반영이 가능하다는 큰 보안 장점이 있다."
+      },
+      {
+        "key": "C",
+        "content": "세션 방식은 다중 서버(Scale-out) 환경에서 Redis나 DB 없이도 모든 인스턴스가 세션을 자동 공유한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "멀티 인스턴스에서는 Spring Session(Redis/JDBC) 같은 공유 세션 저장소나 스티키 세션 설계가 필요하다."
+      },
+      {
+        "key": "D",
+        "content": "세션 ID 쿠키는 브라우저가 자동 전송하지 않으므로 CSRF 공격이 절대 발생하지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "세션 쿠키는 브라우저가 자동 전송하므로 CSRF 방어가 반드시 필요하다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "세션 ID 방식은 '불투명 랜덤 ID + 서버 측 즉시 폐기/권한 반영 가능'이 강점이며, 다중 서버 확장 시 공유 세션 저장소(Redis 등)와 CSRF 방어를 함께 구성한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.session-cookie.session-id.q5",
+    "promptMarkdown": "안전한 세션 ID 생성 요건으로 **가장 부적합한** 방식은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.session-cookie.session-id"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`java.util.Random`이나 `System.currentTimeMillis() + memberId` 조합으로 세션 ID를 생성한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`java.util.Random`은 암호학적으로 안전하지 않은 PRNG이며 타임스탬프+ID 조합은 공격자가 쉽게 예측(Session Prediction)해 타인 세션을 탈취할 수 있다. 반드시 `SecureRandom` 기반 128비트 이상 엔트로피를 써야 한다."
+      },
+      {
+        "key": "B",
+        "content": "서블릿 컨테이너/Spring Session이 제공하는 `SecureRandom` 기반 128비트 이상 랜덤 세션 ID를 사용한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "표준 `SecureRandom` 기반 고엔트로피 랜덤 ID가 권장 방식이다."
+      },
+      {
+        "key": "C",
+        "content": "세션 ID를 URL 쿼리 파라미터(`;jsessionid=...`)로 노출하지 않고 쿠키(`TrackingMode.COOKIE`)로만 전달한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "URL에 세션 ID가 들어가면 Referer 헤더·액세스 로그·링크 공유로 세션이 즉시 유출되므로 쿠키 전용 설정이 올바르다."
+      },
+      {
+        "key": "D",
+        "content": "로그와 에러 화면에 세션 ID 원문을 출력하지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "세션 ID는 비밀 자격 증명이므로 로그 마스킹이 올바른 보안 수칙이다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "세션 ID는 `SecureRandom` 기반 고엔트로피 불투명 값이어야 하며, URL 노출과 로그 기록을 금지해야 한다."
+  }
 ]
