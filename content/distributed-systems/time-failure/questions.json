@@ -237,5 +237,317 @@
     ],
     "modelAnswer": "E.send → E.receive → R.attempt는 실제 메시지 송수신과 같은 프로세스 사건 순서로 확정된다. S와 E/R 사이에는 통신이 없으므로 선후를 증명할 수 없다. 서로 다른 머신의 wall-clock timestamp는 clock skew가 있어 인과관계를 입증하지 못하고 Lamport 값의 크기도 역방향 인과 추론에 사용할 수 없다. Trace ID·eventId·송수신 이력과 재고 DB 커밋 결과를 조회해 업무 효과를 확인한다. timeout은 미처리 확정이 아니므로 eventId 기반 멱등 저장·재시도·결과 대사로 중복 부수 효과를 차단한다.",
     "explanationMarkdown": "메시지 경로의 인과관계와 독립 사건의 불명확한 순서, 전달 확인과 업무 커밋을 각각 별도로 판단해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.time-failure.clocks-deadlines.q4",
+    "promptMarkdown": "Java 백엔드에서 외부 HTTP 호출의 경과 시간(timeout/latency)을 측정할 때 `System.currentTimeMillis()` 대신 `System.nanoTime()`을 사용해야 하는 이유는?\n```java\nlong start = System.nanoTime();\n// ... 외부 호출 ...\nlong elapsedMs = Duration.ofNanos(System.nanoTime() - start).toMillis();\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.time-failure.clocks-deadlines"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`System.currentTimeMillis()`는 NTP 동기화나 윤초로 인해 뒤로 점프하거나 앞으로 튈 수 있는 wall clock인 반면, `System.nanoTime()`은 경과 시간 측정용 단조 시계(monotonic clock)이기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "wall clock이 NTP 보정으로 뒤로 이동하면 경과 시간이 음수가 되거나 타임아웃이 비정상적으로 늘어나/즉시 만료된다. 시각 표시는 wall clock, 경과 시간·타임아웃은 monotonic clock을 써야 한다."
+      },
+      {
+        "key": "B",
+        "content": "`System.nanoTime()`은 전 세계 모든 서버에서 동일한 UTC 에포크 시각을 반환하기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`System.nanoTime()`의 원점은 JVM 인스턴스마다 임의이므로 서버 간 타임스탬프 비교나 절대 시각 저장에 쓰면 안 된다."
+      },
+      {
+        "key": "C",
+        "content": "`System.currentTimeMillis()`는 1초 단위로만 변하기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "밀리초 해상도를 갖지만 NTP 조정으로 비단조 점프가 일어나는 것이 본질적 이유다."
+      },
+      {
+        "key": "D",
+        "content": "`System.nanoTime()`은 자동으로 분산 트랜잭션 순서를 전역 정렬해 주기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "단일 호스트 내부의 경과 시간 측정용이며 서로 다른 노드 간 전역 순서를 보장하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "절대 시각 기록·표시는 wall clock(`Instant.now(clock)`), 경과 시간·타임아웃·재시도 백오프 계산은 단조 시계(`System.nanoTime()`)로 분리해 사용해야 NTP 점프 버그를 막을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.time-failure.clocks-deadlines.q5",
+    "promptMarkdown": "클라이언트가 `2000ms` 요청 기한(deadline)으로 API A를 호출했다. API A가 자체 처리에 `700ms`를 쓴 뒤 하위 결제 서비스 B를 호출할 때, 서비스 B 호출의 타임아웃을 어떻게 설정하는 것이 가장 올바른가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.time-failure.clocks-deadlines"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "API A의 로컬 wall clock 절대 시각 문자열만 보내고 서버 간 시계 차이는 무시한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "노드 간 시계 오차(clock skew)가 크면 절대 시각 데드라인이 즉시 만료되거나 과도하게 늘어날 수 있으므로 남은 상대 시간(timeout budget) 전파가 안전하다."
+      },
+      {
+        "key": "B",
+        "content": "남은 시간 예산(`2000 - 700 = 1300ms` 이하)을 계산해 하위 호출의 타임아웃/데드라인으로 전파하여, 이미 상위 클라이언트가 포기한 뒤 하류에서 쓸모없는 작업을 계속하는 낭비를 막는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "데드라인 전파(Deadline Propagation, 예: gRPC deadline / HTTP 남은 예산 헤더)를 적용하면 상위 기한이 끝났을 때 하류 작업도 함께 취소되어 과부하 증폭을 막는다."
+      },
+      {
+        "key": "C",
+        "content": "하위 서비스 B의 타임아웃은 항상 상위보다 긴 `30초`로 고정해 둔다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "상위 클라이언트는 2초 만에 포기했는데 하류가 30초간 스레드와 DB 커넥션을 점유하면 연쇄 포화가 발생한다."
+      },
+      {
+        "key": "D",
+        "content": "타임아웃을 아예 무제한(`0`)으로 두어 모든 요청이 끝날 때까지 기다린다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "무제한 타임아웃은 하류 1개 장애로 상위 모든 스레드가 영원히 묶이는 최악의 안티패턴이다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "호출 체인이 길어질수록 남은 시간 예산(Deadline Propagation)을 하류로 전파해야 상위 타임아웃 이후에도 하류가 유령 작업을 계속 실행하는 자원 낭비와 연쇄 장애를 차단할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.time-failure.partial-failure.q4",
+    "promptMarkdown": "클라이언트가 `POST /api/payments` 호출 후 `SocketTimeoutException`을 받았다. 이때 결제 서버의 실제 상태에 대한 가장 정확한 판단과 대응은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.time-failure.partial-failure"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "타임아웃 발생 시 절대 재시도하지 않고 무조건 사용자에게 영구 실패라고 안내한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "실제로는 결제가 성공했을 수 있는데 실패라고 안내하면 사용자가 다시 결제해 중복 결제가 발생한다. 상태 조회/멱등 재시도로 확정해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "요청이 아예 도달하지 못했을 수도, 결제가 이미 성공 커밋되고 응답 패킷만 유실되었을 수도 있는 **불명확(ambiguous)** 상태이므로, 동일한 `Idempotency-Key`로 안전하게 재시도하거나 결과 조회 API로 상태를 먼저 확인한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "분산 RPC 타임아웃은 '실패 확정'이 아니라 '결과 미확인'이다. 멱등 키 없이 재시도하면 이중 결제가 발생하므로 반드시 멱등 키 기반 재시도 또는 조회 대사가 필요하다."
+      },
+      {
+        "key": "C",
+        "content": "타임아웃은 항상 서버에 요청이 도달하지 못했다는 뜻이므로 새 주문 번호로 즉시 다시 결제한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "서버가 결제를 이미 완료한 직후 응답이 지연·유실되었을 수 있어 새 주문 번호로 재시도하면 이중 결제 사고가 난다."
+      },
+      {
+        "key": "D",
+        "content": "TCP 연결이 끊어지면 결제 서버의 이미 커밋된 DB 트랜잭션이 자동으로 롤백된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "클라이언트 소켓 타임아웃은 서버에서 이미 커밋 완료된 DB 트랜잭션을 되돌리지 못한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "부분 장애에서 타임아웃은 '성공도 실패도 알 수 없는 불명확 상태'다. 따라서 쓰기 API는 반드시 `Idempotency-Key`와 결과 조회 엔드포인트를 함께 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.time-failure.partial-failure.q5",
+    "promptMarkdown": "외부 API 장애로 타임아웃이 증가하자 호출자 20대 인스턴스가 실패 즉시 지터(jitter) 없이 매 1초마다 10회씩 재시도하고 있다. 이 패턴이 유발하는 장애 현상과 올바른 완화책은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.time-failure.partial-failure"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "재시도 횟수를 100회로 더 늘리면 성공률이 항상 100%로 올라간다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "포화된 서버에 재시도를 늘릴수록 대기열과 오류율이 폭증해 오히려 성공률이 0%로 떨어진다."
+      },
+      {
+        "key": "B",
+        "content": "모든 실패 요청을 0ms 간격으로 동시 재시도하는 것이 가장 빠르게 복구된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "0ms 동시 재시도는 Thundering Herd를 일으켜 하류 서버가 복구할 틈을 주지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "비멱등 `POST /charge` 요청도 타임아웃 시 무제한 자동 재시도하는 것이 안전하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "멱등 키가 없는 비멱등 쓰기를 자동 재시도하면 중복 과금·중복 생성 사고가 발생한다."
+      },
+      {
+        "key": "D",
+        "content": "재시도 폭풍(Retry Storm)으로 하류 트래픽이 최대 10배 증폭되어 회복을 영구 차단한다. 지수 백오프 + 무작위 지터(Jitter), 최대 재시도 횟수/예산 제한, 서킷 브레이커를 함께 적용해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "동기화된 즉시 재시도는 과부하 상태의 하류 서버를 완전히 무너뜨린다. 지수 백오프+지터로 시점을 분산하고, 재시도 예산(retry budget)과 서킷 브레이커로 연쇄 증폭을 차단해야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "재시도는 일시적 네트워크 패킷 손실에는 유용하지만, 하류 과부하 시에는 장애를 증폭하는 독이 된다. **멱등성 + 제한된 횟수 + 지수 백오프/지터 + 서킷 브레이커**가 세트다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.time-failure.failure-detectors.q4",
+    "promptMarkdown": "분산 클러스터의 하트비트 기반 장애 감지기에서 타임아웃을 극도로 짧게(예: 100ms) 설정했을 때 발생하는 대표적 부작용은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.time-failure.failure-detectors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "타임아웃이 짧을수록 오탐(False Positive)이 0%에 가까워진다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "반대다. 타임아웃이 짧아질수록 정상 노드의 일시 지연까지 장애로 오판할 확률이 급격히 높아진다."
+      },
+      {
+        "key": "B",
+        "content": "하트비트 타임아웃을 줄이면 실제 네트워크 패킷 지연 시간이 물리적으로 절반으로 줄어든다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "타임아웃 설정은 물리 네트워크 RTT를 줄이지 못하며 단지 의심 판정 기준만 좁힐 뿐이다."
+      },
+      {
+        "key": "C",
+        "content": "정상 노드는 절대 GC 일시정지나 CPU 지연을 겪지 않으므로 100ms가 항상 최적이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "JVM GC, OS 스케줄링, 클라우드 네트워크 지터로 수백 ms 지연은 일상적으로 발생할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "일시적 GC 일시정지나 짧은 네트워크 지터만으로도 정상 노드를 장애로 오탐(False Positive)해 불필요한 리더 재선출과 파티션 리밸런싱·페일오버 폭풍이 발생한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "장애 감지기는 빠른 감지(짧은 타임아웃)와 낮은 오탐률(긴 타임아웃) 사이의 트레이드오프다. 오탐으로 인한 잦은 페일오버는 실제 장애보다 더 큰 서비스 중단을 유발할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "비동기 분산 네트워크에서는 '죽은 노드'와 '느린 노드'를 완벽히 구분할 수 없다. 장애 감지 타임아웃은 감지 속도와 오탐으로 인한 페일오버 비용을 균형 있게 조절해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.time-failure.failure-detectors.q5",
+    "promptMarkdown": "Cassandra/Akka 등에서 이진(정상/죽음) 고정 타임아웃 대신 **Phi Accrual Failure Detector**를 사용하는 주된 아이디어는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.time-failure.failure-detectors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "최근 하트비트 도착 간격 분포를 바탕으로 현재 침묵이 장애일 의심도(연속 값 φ)를 계산해, 네트워크 환경 변화에 적응하고 호출자가 용도별 임계치를 유연하게 선택할 수 있게 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "고정 초 단위 이진 판정 대신 과거 하트비트 분포 기반의 연속적 의심 지수(φ)를 산출하면, 네트워크가 다소 느린 환경에서도 오탐을 줄이면서 비정상 침묵을 효과적으로 감지한다."
+      },
+      {
+        "key": "B",
+        "content": "물리적 전원 상태를 원격으로 100% 정확히 판별해 오탐을 완전히 0으로 없앤다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "네트워크 분할과 느린 노드를 원천 구분할 수 없으므로 φ 감지기 역시 확률적 의심 판정이며 100% 무오탐은 불가능하다."
+      },
+      {
+        "key": "C",
+        "content": "하트비트 메시지를 전혀 보내지 않고도 장애를 감지한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "하트비트 도착 간격의 샘플링 이력을 기반으로 φ 값을 계산한다."
+      },
+      {
+        "key": "D",
+        "content": "합의 프로토콜(Raft)을 완전히 대체해 펜싱 토큰 없이 쓰기를 보장한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "장애 감지기는 의심 신호를 제공할 뿐, 안전성 보장은 여전히 합의와 펜싱 토큰이 담당한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Phi Accrual 장애 감지기는 하트비트 간격 분포를 학습해 연속적인 의심 지수 φ를 계산함으로써 고정 타임아웃의 오탐/지연 민감도를 실용적으로 완화한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.time-failure.causal-ordering.q4",
+    "promptMarkdown": "Lamport 논리 시계에서 사건 A가 사건 B에 인과적으로 선행한다(`A -> B`)면 `C(A) < C(B)`가 항상 성립한다. 반대로 서로 다른 두 노드에서 `C(X) = 5`, `C(Y) = 9`를 관측했을 때 옳은 추론은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.time-failure.causal-ordering"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`5 < 9`이므로 반드시 `X`가 `Y`의 인과적 원인(`X -> Y`)이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "서로 통신하지 않은 두 노드에서도 로컬 이벤트가 9번 일어난 노드의 값이 5보다 클 수 있으므로 `C(X) < C(Y)`만으로 인과 관계를 단정할 수 없다."
+      },
+      {
+        "key": "B",
+        "content": "`X`가 `Y`보다 물리적 UTC 시각으로 정확히 4초 먼저 발생했다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Lamport 시계는 물리 초 단위가 아닌 논리 카운터이므로 값의 차이(9-5=4)는 경과된 물리 시간이나 UTC 시각과 무관하다."
+      },
+      {
+        "key": "C",
+        "content": "Lamport 시계는 항상 단일 노드에서만 사용할 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "메시지에 시계 값을 실어 보내고 수신 시 `max(local, msg) + 1`로 갱신하는 분산 논리 시계 알고리즘이다."
+      },
+      {
+        "key": "D",
+        "content": "`Y`가 `X`에 인과적으로 선행할 수 없음(`!(Y -> X)`)은 확실하지만, `X -> Y`인지 아니면 둘이 서로 독립적인 동시(concurrent) 사건인지는 Lamport 시계 값만으로는 구분할 수 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Lamport 시계는 `A -> B ⇒ C(A) < C(B)`의 단방향 함의만 성립하고 역은 성립하지 않는다. 인과 관계와 동시성(concurrent)을 정확히 구분하려면 Vector Clock이 필요하다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Lamport 시계는 `A -> B ⇒ C(A) < C(B)`를 보장하지만 동시 사건과 인과 사건을 구분하지 못한다. 동시 충돌 감지까지 필요하면 Vector Clock(버전 벡터)을 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.time-failure.causal-ordering.q5",
+    "promptMarkdown": "노드 A가 로컬 Lamport 시계 `C=2`에서 메시지 M을 보내며 전송 사건을 `C=3`으로 기록해 M에 `3`을 실어 보냈다. 현재 로컬 시계가 `C=7`인 노드 B가 M을 수신할 때, B가 기록하는 수신 사건의 Lamport 시계 값은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.time-failure.causal-ordering"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`10` (`7 + 3`)",
+        "displayOrder": 0,
+        "rationaleMarkdown": "두 시계를 더하는 것이 아니라 `max(local, msg) + 1` 규칙을 적용한다."
+      },
+      {
+        "key": "B",
+        "content": "`8` (`max(7, 3) + 1`)",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Lamport 시계 수신 규칙은 `C_local = max(C_local, C_msg) + 1`이다. 따라서 `max(7, 3) + 1 = 8`이 되어 송신 시각(`3`)과 B의 직전 시각(`7`) 모두보다 엄격히 큰 값이 부여된다."
+      },
+      {
+        "key": "C",
+        "content": "`4` (`3 + 1`)",
+        "displayOrder": 2,
+        "rationaleMarkdown": "수신 노드의 로컬 시계(`7`)를 뒤로 되돌리면 B 내부 사건들의 인과 순서가 깨진다."
+      },
+      {
+        "key": "D",
+        "content": "`7` (변경 없음)",
+        "displayOrder": 3,
+        "rationaleMarkdown": "모든 송신·수신·로컬 사건은 반드시 카운터를 1 이상 증가시켜야 한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Lamport 논리 시계는 로컬·송신 시 `C = C + 1`, 수신 시 `C = max(C_local, C_msg) + 1` 규칙으로 인과적 선행 관계(`happens-before`)를 보존한다."
   }
 ]
