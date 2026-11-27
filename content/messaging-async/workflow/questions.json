@@ -1,11 +1,432 @@
 [
-  {"kind":"question","contentKey":"messaging.core.workflow.transactional-outbox.q1","promptMarkdown":"트랜잭셔널 아웃박스에서 아웃박스 레코드를 업무 DB 트랜잭션 안에 저장하는 주된 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["messaging.core.workflow.transactional-outbox"],"choices":[{"key":"A","content":"컨슈머 중복 처리를 자동 제거하기 위해서다.","displayOrder":0,"rationaleMarkdown":"아웃박스는 발행할 의도를 DB에 남기지만 릴레이 재시도나 소비자 재전달을 막지 않는다. 소비자 측 중복 처리 방지는 별도 멱등성 경계가 필요하다."},{"key":"B","content":"브로커가 DB 트랜잭션을 자동 롤백하게 하기 위해서다.","displayOrder":1,"rationaleMarkdown":"브로커와 업무 DB는 같은 로컬 트랜잭션에 자동 참여하지 않는다. 아웃박스는 DB 내부의 두 레코드를 함께 커밋하는 방식이지 브로커가 DB를 롤백하는 방식이 아니다."},{"key":"C","content":"DB 상태 커밋과 발행 의도를 같은 원자적 경계에 두기 위해서다.","displayOrder":2,"rationaleMarkdown":"업무 상태와 발행 의도를 같은 DB 트랜잭션에서 커밋하면 둘 중 하나만 남는 이중 쓰기 간격을 줄일 수 있다. 실제 브로커 발행은 이후 릴레이가 재시도 가능하게 수행한다."},{"key":"D","content":"아웃박스가 기준 업무 레코드를 대체하기 위해서다.","displayOrder":3,"rationaleMarkdown":"아웃박스 레코드는 전달할 이벤트의 내구성 있는 발행 의도다. 주문·결제 같은 기준 업무 상태를 대신하지 않으며 릴레이 처리 뒤에도 원본 상태가 필요하다."}],"correctChoiceKey":"C","explanationMarkdown":"업무 레코드와 아웃박스 레코드를 같은 DB 트랜잭션에 저장하면 업무 커밋이 존재하는 경우 발행해야 할 내구성 있는 의도도 함께 남는다. 이렇게 DB 커밋과 브로커 발행 사이의 '상태만 바뀌고 이벤트는 사라지는' 이중 쓰기 구간을 줄인다."},
-  {"kind":"question","contentKey":"messaging.core.workflow.transactional-outbox.q2","promptMarkdown":"다음 순서로 동작하던 폴링 릴레이가 있다.\n\n1. 브로커 발행에 성공한다.\n2. 아웃박스 레코드를 전송 완료로 표시하기 전에 프로세스가 종료된다.\n3. 릴레이가 재시작한다.\n\n생길 수 있는 결과와 컨슈머에 필요한 처리는?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["messaging.core.workflow.transactional-outbox"],"modelAnswer":"전송 완료 표시가 없어 같은 아웃박스 레코드를 다시 발행할 수 있어 중복 이벤트가 전달될 수 있다. 안정적인 eventId를 유지하고 컨슈머가 이벤트·업무 키를 기준으로 멱등하게 처리해야 한다. CDC 릴레이도 재시작·재생 시 중복 가능성이 있는지 구현 계약을 별도로 확인한다.","explanationMarkdown":"릴레이가 브로커 발행 후 전송 완료 표시 전에 종료되면 같은 아웃박스 레코드를 다시 발행할 수 있다. 아웃박스는 발행 의도의 내구성을 높이지만 중복 전달까지 없애지는 않으므로 안정적인 eventId와 컨슈머 멱등성이 여전히 필요하다."},
-  {"kind":"question","contentKey":"messaging.core.workflow.transactional-outbox.q3","promptMarkdown":"같은 주문의 아웃박스 이벤트를 다음 주체들이 처리해야 한다.\n\n- 여러 애플리케이션 인스턴스\n- 릴레이\n- 컨슈머\n\n같은 업무 키를 Kafka 키로 사용하는 것만으로 충분하지 않은 이유와 추가로 필요한 상태를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["messaging.core.workflow.transactional-outbox"],"modelAnswer":"같은 키는 일반적인 파티셔너에서 같은 파티션으로 보내는 재료지만, 릴레이가 e42를 e41보다 먼저 발행했다면 파티션은 이미 뒤집힌 추가 순서를 그대로 보존한다. 아웃박스에 업무 단위의 순번이나 버전을 기록하고 릴레이의 점유·발행 정책이 업무 순서를 보존하는지 확인하거나 컨슈머가 순번 누락·역순을 검증해야 한다. 컨슈머 내부 병렬 처리도 완료 순서를 다시 뒤집을 수 있으며 중복 이벤트는 안정적인 eventId로 흡수한다.","explanationMarkdown":"DB에서 만들어진 순서, 브로커에 추가된 순서, 컨슈머의 실제 완료 순서는 서로 다른 경계라 같은 업무 키 하나만으로 전체 경로의 순서가 자동 보장되지 않는다."},
-  {"kind":"question","contentKey":"messaging.core.workflow.backpressure-capacity.q1","promptMarkdown":"프로듀서 처리율이 컨슈머 처리율보다 높을 때 가장 먼저 관측되는 현상은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["messaging.core.workflow.backpressure-capacity"],"choices":[{"key":"A","content":"컨슈머 lag와 적체가 증가한다.","displayOrder":0,"rationaleMarkdown":"유입 속도가 처리 속도를 지속적으로 넘으면 처리되지 않은 메시지가 누적된다. 누적분이 커질수록 컨슈머 lag와 완료까지 기다리는 시간도 늘어난다."},{"key":"B","content":"컨슈머가 자동으로 무한히 빨라진다.","displayOrder":1,"rationaleMarkdown":"컨슈머 처리 속도는 CPU, 외부 API, DB 연결 등 실제 자원 한계에 묶인다. 유입이 늘었다는 이유만으로 처리율이 자동으로 무한 확장되지 않는다."},{"key":"C","content":"브로커 저장 공간이 충분하면 사용자가 느끼는 지연 시간은 증가하지 않는다.","displayOrder":2,"rationaleMarkdown":"브로커 저장 공간은 적체를 보관할 여유를 줄 뿐 메시지를 더 빨리 처리하지 않는다. 소비자 처리량이 부족하면 사용자가 결과를 보기까지의 지연이 커진다."},{"key":"D","content":"컨슈머 수를 파티션 수보다 늘리면 처리율이 그 비율로 계속 증가한다.","displayOrder":3,"rationaleMarkdown":"한 컨슈머 그룹에서 파티션 단위 병렬성에는 상한이 있다. 파티션보다 많은 컨슈머를 추가해도 할당받지 못한 컨슈머는 처리량을 비례해 늘리지 못한다."}],"correctChoiceKey":"A","explanationMarkdown":"프로듀서 입력률이 컨슈머 처리율보다 높으면 처리하지 못한 메시지가 적체로 쌓이고 컨슈머 lag가 증가한다. 브로커 저장 공간이 충분해도 사용자가 결과를 보기까지의 지연은 계속 늘 수 있으므로 lag를 처리 용량 부족의 신호로 봐야 한다."},
-  {"kind":"question","contentKey":"messaging.core.workflow.backpressure-capacity.q2","promptMarkdown":"컨슈머를 확장한 뒤 다음 변화가 관측되었다.\n\n- 컨슈머 수: 두 배로 증가\n- Lag: 감소\n- 하위 DB 연결 풀: 고갈 발생\n\n확장 판단에서 누락한 조건은?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["messaging.core.workflow.backpressure-capacity"],"modelAnswer":"브로커 파티션 병렬성만 확인하고 DB 연결·쿼리 처리 용량과 외부 API 제한을 확인하지 않았다. 컨슈머 동시 처리 수, 배치 크기와 하위 시스템 연결 풀·지연 시간을 함께 제한하고 lag와 오류를 관측해야 한다.","explanationMarkdown":"컨슈머 수를 늘려 lag를 줄여도 각 컨슈머가 DB 연결이나 외부 API 할당량을 더 사용하면 병목이 하위 시스템으로 이동할 수 있다. 동시 처리 수·배치 크기와 하위 시스템 연결 풀·QPS를 함께 제한해야 확장이 실제 처리량 향상으로 이어진다."},
-  {"kind":"question","contentKey":"messaging.core.workflow.backpressure-capacity.q3","promptMarkdown":"실패 메시지를 즉시 같은 파티션에서 재시도하는 정책이 lag를 악화시키는 시간 흐름과 개선 방향을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["messaging.core.workflow.backpressure-capacity"],"modelAnswer":"한 독성 또는 일시적 실패 메시지가 성공할 때까지 파티션 앞부분에서 반복되면 뒤의 정상 메시지가 처리되지 않아 선두 차단(head-of-line blocking)과 lag가 커진다. pause/seek나 별도 재시도 흐름으로 정상 트래픽을 분리할 수 있지만, 별도 토픽을 사용하면 원래 업무 단위의 순서와 확정 위치 처리 방식이 달라질 수 있어 중복·순번 정책을 다시 검토한다.","explanationMarkdown":"실패 메시지를 파티션 앞부분에서 즉시 반복하면 뒤의 정상 메시지가 진행하지 못해 선두 차단과 lag가 커질 수 있다. 재시도를 분리하면 처리 용량은 회복할 수 있지만 순서·오프셋·중복 처리 계약이 바뀌므로 함께 재설계해야 한다."},
-  {"kind":"question","contentKey":"messaging.core.workflow.schema-evolution.q1","promptMarkdown":"Confluent Schema Registry 용어에서 BACKWARD compatibility가 직접 의미하는 방향은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["messaging.core.workflow.schema-evolution"],"choices":[{"key":"A","content":"어떤 필드 변경도 항상 허용된다.","displayOrder":0,"rationaleMarkdown":"BACKWARD는 아무 필드 변경이나 허용한다는 뜻이 아니다. 새 읽기 코드가 기존 쓰기 스키마의 데이터를 읽을 수 있는지 스키마 규칙에 따라 검사한다."},{"key":"B","content":"이전 컨슈머가 새 데이터를 읽을 수 있다는 뜻만 가진다.","displayOrder":1,"rationaleMarkdown":"이전 읽기 코드가 새 스키마로 기록된 데이터를 읽는 방향은 FORWARD 호환성에 해당한다. BACKWARD는 새 읽기 코드가 이전 데이터와 호환되는지를 본다."},{"key":"C","content":"모든 과거 버전과 자동으로 전이 호환된다.","displayOrder":2,"rationaleMarkdown":"기본 BACKWARD 검사는 일반적으로 직전 등록 버전과의 호환성이다. 모든 과거 버전을 대상으로 삼으려면 BACKWARD_TRANSITIVE 같은 모드가 필요하다."},{"key":"D","content":"새 스키마를 사용하는 컨슈머가 이전 스키마로 기록된 데이터를 읽을 수 있다.","displayOrder":3,"rationaleMarkdown":"새 스키마를 쓰는 읽기 코드가 이전 스키마로 기록된 데이터를 읽을 수 있는 방향이다. 비교 대상이 직전 버전인지 전체 과거 버전인지는 선택한 호환성 모드에 달려 있다."}],"correctChoiceKey":"D","explanationMarkdown":"Confluent의 BACKWARD compatibility는 새 스키마를 사용하는 읽기 코드가 바로 이전 스키마로 기록된 데이터를 읽을 수 있는 방향을 뜻한다. 오래된 모든 버전까지 호환을 검사하려면 BACKWARD_TRANSITIVE처럼 검사 범위가 더 넓은 모드가 필요하다."},
-  {"kind":"question","contentKey":"messaging.core.workflow.schema-evolution.q2","promptMarkdown":"다음 스키마 변경을 배포하려 한다.\n\n- 프로듀서: enum에 새 값을 추가한다.\n- 기존 컨슈머: 알 수 없는 값에서 디코딩에 실패한다.\n\n구조상 추가처럼 보이는 변경이 위험한 이유와 안전한 배포 순서를 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["messaging.core.workflow.schema-evolution"],"modelAnswer":"실제 직렬화 형식과 컨슈머 디코더가 알 수 없는 값을 받아들이지 못하면 새 프로듀서가 쓴 데이터를 기존 컨슈머가 읽지 못해 상위 호환성이 깨질 수 있다. 사용하는 Avro·Protobuf·JSON Schema의 규칙과 Registry 호환성 모드를 확인한다. 하위 호환성만 확보된 경우 새 컨슈머가 이전 페이로드를 처리하는지 먼저 검증하고, 새 프로듀서를 배포하기 전에 새 페이로드를 읽지 못하는 이전 컨슈머를 모두 종료한다. 단순히 필드나 enum 값이 추가됐다는 모양만으로 호환을 단정하지 않는다.","explanationMarkdown":"enum 값 추가처럼 구조상 추가적인 변경도 이전 컨슈머가 알 수 없는 값을 거부하면 호환성을 깨뜨릴 수 있다. 새 컨슈머가 이전 페이로드를 읽는 하위 호환성과 이전 컨슈머가 새 페이로드를 읽는 상위 호환성은 서로 다른 방향이다. 새 enum 값을 발행하기 전에 실제 호환성 방향과 배포 중 남아 있는 컨슈머를 확인해야 한다."},
-  {"kind":"question","contentKey":"messaging.core.workflow.schema-evolution.q3","promptMarkdown":"다음 조건에서 6개월치 이벤트를 새 컨슈머로 재생해야 한다.\n\n- Registry는 비전이(non-transitive) `BACKWARD`만 검사해 왔다.\n- 오래된 페이로드의 필드 자료형은 현재와 다르다.\n\n안전한 마이그레이션 경계를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["messaging.core.workflow.schema-evolution"],"modelAnswer":"비전이 BACKWARD는 새 스키마와 바로 이전 스키마 사이 호환만 보장할 수 있어 6개월 전체 이력을 현재 컨슈머가 읽는다는 보장이 아니다. 보존 기간에 존재하는 실제 스키마 버전을 목록화하고 버전별 디코더·어댑터 또는 마이그레이션 컨슈머를 두며 필요하면 전이 호환성 정책을 사용한다. 재생은 순서·멱등성·처리량을 제한하고 과거 이벤트가 현재 외부 효과를 중복 실행하지 않도록 프로젝션 재구축과 실시간 워크플로를 분리한다.","explanationMarkdown":"비전이 호환성은 바로 이전 버전과의 관계만 검사하므로 장기간 보관된 모든 이벤트를 현재 컨슈머가 읽을 수 있다는 보장은 없다. 재생 보존 기간 안의 실제 스키마 버전을 목록화하고 디코더·어댑터와 멱등 재생 경계를 준비해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.transactional-outbox.q1",
+    "promptMarkdown": "트랜잭셔널 아웃박스에서 아웃박스 레코드를 업무 DB 트랜잭션 안에 저장하는 주된 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.transactional-outbox"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "컨슈머 중복 처리를 자동 제거하기 위해서다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "아웃박스는 발행할 의도를 DB에 남기지만 릴레이 재시도나 소비자 재전달을 막지 않는다. 소비자 측 중복 처리 방지는 별도 멱등성 경계가 필요하다."
+      },
+      {
+        "key": "B",
+        "content": "브로커가 DB 트랜잭션을 자동 롤백하게 하기 위해서다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "브로커와 업무 DB는 같은 로컬 트랜잭션에 자동 참여하지 않는다. 아웃박스는 DB 내부의 두 레코드를 함께 커밋하는 방식이지 브로커가 DB를 롤백하는 방식이 아니다."
+      },
+      {
+        "key": "C",
+        "content": "DB 상태 커밋과 발행 의도를 같은 원자적 경계에 두기 위해서다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "업무 상태와 발행 의도를 같은 DB 트랜잭션에서 커밋하면 둘 중 하나만 남는 이중 쓰기 간격을 줄일 수 있다. 실제 브로커 발행은 이후 릴레이가 재시도 가능하게 수행한다."
+      },
+      {
+        "key": "D",
+        "content": "아웃박스가 기준 업무 레코드를 대체하기 위해서다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "아웃박스 레코드는 전달할 이벤트의 내구성 있는 발행 의도다. 주문·결제 같은 기준 업무 상태를 대신하지 않으며 릴레이 처리 뒤에도 원본 상태가 필요하다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "업무 레코드와 아웃박스 레코드를 같은 DB 트랜잭션에 저장하면 업무 커밋이 존재하는 경우 발행해야 할 내구성 있는 의도도 함께 남는다. 이렇게 DB 커밋과 브로커 발행 사이의 '상태만 바뀌고 이벤트는 사라지는' 이중 쓰기 구간을 줄인다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.transactional-outbox.q2",
+    "promptMarkdown": "다음 순서로 동작하던 폴링 릴레이가 있다.\n\n1. 브로커 발행에 성공한다.\n2. 아웃박스 레코드를 전송 완료로 표시하기 전에 프로세스가 종료된다.\n3. 릴레이가 재시작한다.\n\n생길 수 있는 결과와 컨슈머에 필요한 처리는?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.transactional-outbox"
+    ],
+    "modelAnswer": "전송 완료 표시가 없어 같은 아웃박스 레코드를 다시 발행할 수 있어 중복 이벤트가 전달될 수 있다. 안정적인 eventId를 유지하고 컨슈머가 이벤트·업무 키를 기준으로 멱등하게 처리해야 한다. CDC 릴레이도 재시작·재생 시 중복 가능성이 있는지 구현 계약을 별도로 확인한다.",
+    "explanationMarkdown": "릴레이가 브로커 발행 후 전송 완료 표시 전에 종료되면 같은 아웃박스 레코드를 다시 발행할 수 있다. 아웃박스는 발행 의도의 내구성을 높이지만 중복 전달까지 없애지는 않으므로 안정적인 eventId와 컨슈머 멱등성이 여전히 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.transactional-outbox.q3",
+    "promptMarkdown": "같은 주문의 아웃박스 이벤트를 다음 주체들이 처리해야 한다.\n\n- 여러 애플리케이션 인스턴스\n- 릴레이\n- 컨슈머\n\n같은 업무 키를 Kafka 키로 사용하는 것만으로 충분하지 않은 이유와 추가로 필요한 상태를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.transactional-outbox"
+    ],
+    "modelAnswer": "같은 키는 일반적인 파티셔너에서 같은 파티션으로 보내는 재료지만, 릴레이가 e42를 e41보다 먼저 발행했다면 파티션은 이미 뒤집힌 추가 순서를 그대로 보존한다. 아웃박스에 업무 단위의 순번이나 버전을 기록하고 릴레이의 점유·발행 정책이 업무 순서를 보존하는지 확인하거나 컨슈머가 순번 누락·역순을 검증해야 한다. 컨슈머 내부 병렬 처리도 완료 순서를 다시 뒤집을 수 있으며 중복 이벤트는 안정적인 eventId로 흡수한다.",
+    "explanationMarkdown": "DB에서 만들어진 순서, 브로커에 추가된 순서, 컨슈머의 실제 완료 순서는 서로 다른 경계라 같은 업무 키 하나만으로 전체 경로의 순서가 자동 보장되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.backpressure-capacity.q1",
+    "promptMarkdown": "프로듀서 처리율이 컨슈머 처리율보다 높을 때 가장 먼저 관측되는 현상은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.backpressure-capacity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "컨슈머 lag와 적체가 증가한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "유입 속도가 처리 속도를 지속적으로 넘으면 처리되지 않은 메시지가 누적된다. 누적분이 커질수록 컨슈머 lag와 완료까지 기다리는 시간도 늘어난다."
+      },
+      {
+        "key": "B",
+        "content": "컨슈머가 자동으로 무한히 빨라진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "컨슈머 처리 속도는 CPU, 외부 API, DB 연결 등 실제 자원 한계에 묶인다. 유입이 늘었다는 이유만으로 처리율이 자동으로 무한 확장되지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "브로커 저장 공간이 충분하면 사용자가 느끼는 지연 시간은 증가하지 않는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "브로커 저장 공간은 적체를 보관할 여유를 줄 뿐 메시지를 더 빨리 처리하지 않는다. 소비자 처리량이 부족하면 사용자가 결과를 보기까지의 지연이 커진다."
+      },
+      {
+        "key": "D",
+        "content": "컨슈머 수를 파티션 수보다 늘리면 처리율이 그 비율로 계속 증가한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "한 컨슈머 그룹에서 파티션 단위 병렬성에는 상한이 있다. 파티션보다 많은 컨슈머를 추가해도 할당받지 못한 컨슈머는 처리량을 비례해 늘리지 못한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "프로듀서 입력률이 컨슈머 처리율보다 높으면 처리하지 못한 메시지가 적체로 쌓이고 컨슈머 lag가 증가한다. 브로커 저장 공간이 충분해도 사용자가 결과를 보기까지의 지연은 계속 늘 수 있으므로 lag를 처리 용량 부족의 신호로 봐야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.backpressure-capacity.q2",
+    "promptMarkdown": "컨슈머를 확장한 뒤 다음 변화가 관측되었다.\n\n- 컨슈머 수: 두 배로 증가\n- Lag: 감소\n- 하위 DB 연결 풀: 고갈 발생\n\n확장 판단에서 누락한 조건은?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.backpressure-capacity"
+    ],
+    "modelAnswer": "브로커 파티션 병렬성만 확인하고 DB 연결·쿼리 처리 용량과 외부 API 제한을 확인하지 않았다. 컨슈머 동시 처리 수, 배치 크기와 하위 시스템 연결 풀·지연 시간을 함께 제한하고 lag와 오류를 관측해야 한다.",
+    "explanationMarkdown": "컨슈머 수를 늘려 lag를 줄여도 각 컨슈머가 DB 연결이나 외부 API 할당량을 더 사용하면 병목이 하위 시스템으로 이동할 수 있다. 동시 처리 수·배치 크기와 하위 시스템 연결 풀·QPS를 함께 제한해야 확장이 실제 처리량 향상으로 이어진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.backpressure-capacity.q3",
+    "promptMarkdown": "실패 메시지를 즉시 같은 파티션에서 재시도하는 정책이 lag를 악화시키는 시간 흐름과 개선 방향을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.backpressure-capacity"
+    ],
+    "modelAnswer": "한 독성 또는 일시적 실패 메시지가 성공할 때까지 파티션 앞부분에서 반복되면 뒤의 정상 메시지가 처리되지 않아 선두 차단(head-of-line blocking)과 lag가 커진다. pause/seek나 별도 재시도 흐름으로 정상 트래픽을 분리할 수 있지만, 별도 토픽을 사용하면 원래 업무 단위의 순서와 확정 위치 처리 방식이 달라질 수 있어 중복·순번 정책을 다시 검토한다.",
+    "explanationMarkdown": "실패 메시지를 파티션 앞부분에서 즉시 반복하면 뒤의 정상 메시지가 진행하지 못해 선두 차단과 lag가 커질 수 있다. 재시도를 분리하면 처리 용량은 회복할 수 있지만 순서·오프셋·중복 처리 계약이 바뀌므로 함께 재설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.schema-evolution.q1",
+    "promptMarkdown": "Confluent Schema Registry 용어에서 BACKWARD compatibility가 직접 의미하는 방향은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.schema-evolution"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "어떤 필드 변경도 항상 허용된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "BACKWARD는 아무 필드 변경이나 허용한다는 뜻이 아니다. 새 읽기 코드가 기존 쓰기 스키마의 데이터를 읽을 수 있는지 스키마 규칙에 따라 검사한다."
+      },
+      {
+        "key": "B",
+        "content": "이전 컨슈머가 새 데이터를 읽을 수 있다는 뜻만 가진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "이전 읽기 코드가 새 스키마로 기록된 데이터를 읽는 방향은 FORWARD 호환성에 해당한다. BACKWARD는 새 읽기 코드가 이전 데이터와 호환되는지를 본다."
+      },
+      {
+        "key": "C",
+        "content": "모든 과거 버전과 자동으로 전이 호환된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "기본 BACKWARD 검사는 일반적으로 직전 등록 버전과의 호환성이다. 모든 과거 버전을 대상으로 삼으려면 BACKWARD_TRANSITIVE 같은 모드가 필요하다."
+      },
+      {
+        "key": "D",
+        "content": "새 스키마를 사용하는 컨슈머가 이전 스키마로 기록된 데이터를 읽을 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "새 스키마를 쓰는 읽기 코드가 이전 스키마로 기록된 데이터를 읽을 수 있는 방향이다. 비교 대상이 직전 버전인지 전체 과거 버전인지는 선택한 호환성 모드에 달려 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Confluent의 BACKWARD compatibility는 새 스키마를 사용하는 읽기 코드가 바로 이전 스키마로 기록된 데이터를 읽을 수 있는 방향을 뜻한다. 오래된 모든 버전까지 호환을 검사하려면 BACKWARD_TRANSITIVE처럼 검사 범위가 더 넓은 모드가 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.schema-evolution.q2",
+    "promptMarkdown": "다음 스키마 변경을 배포하려 한다.\n\n- 프로듀서: enum에 새 값을 추가한다.\n- 기존 컨슈머: 알 수 없는 값에서 디코딩에 실패한다.\n\n구조상 추가처럼 보이는 변경이 위험한 이유와 안전한 배포 순서를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.schema-evolution"
+    ],
+    "modelAnswer": "실제 직렬화 형식과 컨슈머 디코더가 알 수 없는 값을 받아들이지 못하면 새 프로듀서가 쓴 데이터를 기존 컨슈머가 읽지 못해 상위 호환성이 깨질 수 있다. 사용하는 Avro·Protobuf·JSON Schema의 규칙과 Registry 호환성 모드를 확인한다. 하위 호환성만 확보된 경우 새 컨슈머가 이전 페이로드를 처리하는지 먼저 검증하고, 새 프로듀서를 배포하기 전에 새 페이로드를 읽지 못하는 이전 컨슈머를 모두 종료한다. 단순히 필드나 enum 값이 추가됐다는 모양만으로 호환을 단정하지 않는다.",
+    "explanationMarkdown": "enum 값 추가처럼 구조상 추가적인 변경도 이전 컨슈머가 알 수 없는 값을 거부하면 호환성을 깨뜨릴 수 있다. 새 컨슈머가 이전 페이로드를 읽는 하위 호환성과 이전 컨슈머가 새 페이로드를 읽는 상위 호환성은 서로 다른 방향이다. 새 enum 값을 발행하기 전에 실제 호환성 방향과 배포 중 남아 있는 컨슈머를 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.schema-evolution.q3",
+    "promptMarkdown": "다음 조건에서 6개월치 이벤트를 새 컨슈머로 재생해야 한다.\n\n- Registry는 비전이(non-transitive) `BACKWARD`만 검사해 왔다.\n- 오래된 페이로드의 필드 자료형은 현재와 다르다.\n\n안전한 마이그레이션 경계를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.schema-evolution"
+    ],
+    "modelAnswer": "비전이 BACKWARD는 새 스키마와 바로 이전 스키마 사이 호환만 보장할 수 있어 6개월 전체 이력을 현재 컨슈머가 읽는다는 보장이 아니다. 보존 기간에 존재하는 실제 스키마 버전을 목록화하고 버전별 디코더·어댑터 또는 마이그레이션 컨슈머를 두며 필요하면 전이 호환성 정책을 사용한다. 재생은 순서·멱등성·처리량을 제한하고 과거 이벤트가 현재 외부 효과를 중복 실행하지 않도록 프로젝션 재구축과 실시간 워크플로를 분리한다.",
+    "explanationMarkdown": "비전이 호환성은 바로 이전 버전과의 관계만 검사하므로 장기간 보관된 모든 이벤트를 현재 컨슈머가 읽을 수 있다는 보장은 없다. 재생 보존 기간 안의 실제 스키마 버전을 목록화하고 디코더·어댑터와 멱등 재생 경계를 준비해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.transactional-outbox.q4",
+    "promptMarkdown": "다음 코드처럼 DB 트랜잭션 안에서 `kafkaTemplate.send(...)`를 직접 호출하는 이중 쓰기(Dual Write) 구조가 실패할 수 있는 대표 시나리오는?\n```java\n@Transactional\npublic void placeOrder(Order order) {\n    orderRepository.save(order);\n    kafkaTemplate.send(\"orders\", order.getId().toString(), event);\n    // 이후 DB 커밋 시점에 UNIQUE 제약 위반 또는 장애 발생\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.transactional-outbox"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`@Transactional`이 Kafka 브로커에 이미 전송된 메시지까지 자동으로 취소해 준다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "로컬 DB 트랜잭션 롤백은 이미 브로커에 발행된 Kafka 레코드를 취소하지 못한다."
+      },
+      {
+        "key": "B",
+        "content": "`kafkaTemplate.send()`는 DB 테이블 `outbox`에 자동으로 레코드를 기록해 준다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`kafkaTemplate.send()`는 Kafka 브로커로 직접 발행하며 Outbox 테이블을 자동으로 쓰지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "이중 쓰기는 개발 환경에서만 발생하고 운영 환경에서는 네트워크가 빨라 절대 발생하지 않는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "운영 환경의 네트워크 타임아웃, 브로커 장애, 프로세스 OOM 킬, 커밋 시점 제약 위반에서 훨씬 치명적으로 발생한다."
+      },
+      {
+        "key": "D",
+        "content": "Kafka 이벤트는 이미 발행되어 다른 서비스가 처리했는데 DB 커밋이 롤백되거나(유령 이벤트), 반대로 DB 커밋 후 Kafka 발행이 실패해 이벤트가 영구 누락될 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "PostgreSQL과 Kafka는 하나의 로컬 트랜잭션을 공유하지 않는다. `order`와 `outbox_event`를 같은 DB 트랜잭션에 원자적으로 저장한 뒤 별도 릴레이/CDC로 발행해야 이중 쓰기 불일치를 없앨 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "DB와 메시지 브로커에 대한 이중 쓰기는 어느 순서로 실행해도 부분 실패 창이 남는다. Transactional Outbox 패턴으로 DB 상태 변경과 이벤트 기록을 단일 로컬 트랜잭션에 묶고, 릴레이/CDC + 멱등 컨슈머로 최종 일관성을 보장한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.transactional-outbox.q5",
+    "promptMarkdown": "Transactional Outbox 테이블을 다중 릴레이 인스턴스가 폴링할 때와 Debezium 같은 로그 기반 CDC(WAL)로 발행할 때의 공통 전제로 반드시 지켜야 하는 컨슈머 설계 원칙은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.transactional-outbox",
+      "messaging.core.delivery.at-least-once-idempotency"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "폴링 릴레이는 항상 `SELECT * FROM outbox`로 잠금 없이 모든 인스턴스가 동시에 읽어야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "잠금 없이 다중 릴레이가 같은 행을 읽으면 매 폴링마다 대량 중복 발행이 발생하므로 `FOR UPDATE SKIP LOCKED`나 단일 리더/CDC를 사용한다."
+      },
+      {
+        "key": "B",
+        "content": "릴레이/CDC가 브로커 발행 직후 체크포인트 갱신 전에 크래시하면 같은 Outbox 이벤트가 재발행될 수 있으므로(At-Least-Once), 다운스트림 컨슈머는 반드시 `eventId` 기반 멱등 처리를 구현해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "폴링 릴레이든 CDC든 Outbox 패턴의 발행 보장은 At-Least-Once다. 따라서 컨슈머의 멱등성(`processed_events` 등)과 결합되어야 전체 종단 간 정합성이 완성된다."
+      },
+      {
+        "key": "C",
+        "content": "Outbox 테이블을 쓰면 브로커 발행 중복이 0%로 사라지므로 컨슈머 멱등성은 불필요하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "브로커 발행 성공 후 `published_at` 갱신 전 크래시로 중복 발행이 충분히 일어날 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "Outbox 테이블 행은 발행 완료 후에도 영원히 삭제·아카이브하지 않아야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "발행 완료된 Outbox 행을 정리하지 않으면 테이블과 인덱스가 무한히 비대해져 폴링 쿼리가 느려진다(주기적 삭제/파티션 드롭 필요)."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Transactional Outbox는 '발행 누락 방지(At-Least-Once)'를 해결하며, '중복 소비 방지'는 컨슈머 멱등성이 완성한다. 또한 완료된 Outbox 행의 정리/파티셔닝 운영도 필수다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.backpressure-capacity.q4",
+    "promptMarkdown": "Spring `@Async` 비동기 작업 실행기를 구성할 때 `new LinkedBlockingQueue<>()`(무제한 큐) 대신 용량이 제한된 큐(`queueCapacity = 500`)와 `CallerRunsPolicy` 같은 거부 정책을 설정하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.backpressure-capacity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "제한된 큐를 쓰면 GC가 전혀 발생하지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "GC 제거가 아니라 힙 메모리 상한 보호와 역압 전파가 목적이다."
+      },
+      {
+        "key": "B",
+        "content": "유입 속도가 워커 처리 속도를 오래 초과할 때 무제한 큐가 힙 메모리를 가득 채워 OOM으로 프로세스가 죽는 것을 막고, 생산자 측에 역압(Backpressure)을 전달해 부하를 통제하기 위해서다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "무제한 큐는 장애를 숨기다가 OOM으로 전체 JVM을 죽이고, `maxPoolSize` 확장 조건조차 발동되지 않게 만든다. 제한된 큐 + 거부 정책(`CallerRunsPolicy` 또는 `AbortPolicy` + 429)이 안전한 역압 설계다."
+      },
+      {
+        "key": "C",
+        "content": "무제한 `LinkedBlockingQueue`를 쓰면 작업이 도착할 때마다 `maxPoolSize`까지 스레드가 즉시 늘어나기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`ThreadPoolExecutor`는 큐가 **가득 찬 뒤에야** `corePoolSize`를 넘어 `maxPoolSize`로 스레드를 늘린다. 무제한 큐에서는 `maxPoolSize`가 영원히 사용되지 않는 함정이 있다."
+      },
+      {
+        "key": "D",
+        "content": "`CallerRunsPolicy`는 넘치는 모든 작업을 조용히 삭제한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "조용히 버리는 것은 `DiscardPolicy`이고, `CallerRunsPolicy`는 호출자 스레드가 직접 실행하게 해 자연스러운 속도 저하(역압)를 만든다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`ThreadPoolExecutor`에 무제한 큐를 두면 ① `maxPoolSize`가 동작하지 않고, ② 소비 지연 시 힙 메모리가 고갈되어 OOM이 발생한다. 반드시 유한 큐 크기와 명확한 거부/역압 정책을 설정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.backpressure-capacity.q5",
+    "promptMarkdown": "Kafka 컨슈머 Lag가 지속적으로 증가할 때 컨슈머 인스턴스 수만 2배로 늘리기 전에 반드시 확인해야 할 병목 요소는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.backpressure-capacity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "컨슈머 그룹 이름을 매분 새로 바꾸면 Lag가 해결된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "그룹 이름을 바꾸면 처리 위치가 초기화되어 대량 누락이나 중복 처리가 발생한다."
+      },
+      {
+        "key": "B",
+        "content": "① 토픽 파티션 수가 늘릴 컨슈머 수 이상인지, ② 다운스트림 DB 커넥션 풀·외부 API Rate Limit이 2배 동시성을 감당할 수 있는지, ③ Poison Pill 재시도가 파티션을 막고 있지 않은지 확인한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "파티션이 부족하면 추가 컨슈머는 유휴 상태가 되고, 하류 DB/API가 병목이면 컨슈머만 늘릴수록 타임아웃과 재시도 폭풍으로 오히려 처리량이 떨어진다."
+      },
+      {
+        "key": "C",
+        "content": "컨슈머 수만 늘리면 파티션 수와 DB 용량에 상관없이 Lag가 항상 절반으로 줄어든다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "파티션 상한과 하류 자원(DB 커넥션·락·외부 API) 한도를 무시하면 효과가 없거나 장애가 악화된다."
+      },
+      {
+        "key": "D",
+        "content": "Lag가 늘어나면 프로듀서의 `acks`를 `0`으로 낮추는 것이 해결책이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "프로듀서 `acks=0`은 발행 속도만 더 높이고 내구성을 깨뜨려 컨슈머 Lag를 오히려 키운다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "컨슈머 확장은 파티션 수, 하류 DB/API 용량, 재시도/DLQ 차단 여부를 함께 진단한 뒤 결정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.schema-evolution.q4",
+    "promptMarkdown": "Avro/Protobuf/JSON Schema 기반 이벤트 계약에서 `BACKWARD` 호환성을 유지하면서 프로듀서와 컨슈머를 무중단 배포할 때, **안전한 변경**과 **올바른 배포 순서**는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.schema-evolution"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "안전한 변경: 기본값 없는 필수(required) 필드 추가 / 배포 순서: 아무 순서나 상관없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "기본값 없는 필수 필드를 추가하면 새 컨슈머가 과거 이벤트를 읽을 때 필드가 없어 `BACKWARD` 호환이 깨진다."
+      },
+      {
+        "key": "B",
+        "content": "스키마를 바꿀 때마다 모든 프로듀서와 컨슈머를 동시에 강제 종료하고 토픽을 삭제한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "무중단 운영과 이벤트 보존 계약을 모두 깨뜨리는 비현실적인 방법이다."
+      },
+      {
+        "key": "C",
+        "content": "안전한 변경: 기본값(default)이 있는 선택 필드 추가 / 배포 순서: 새 스키마를 이해하는 **컨슈머를 먼저 배포**한 뒤 프로듀서를 배포한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`BACKWARD` 호환은 '새 컨슈머가 옛 데이터를 읽을 수 있음'을 보장한다. 따라서 컨슈머를 먼저 업그레이드해 구·신 메시지를 모두 읽게 만든 뒤 프로듀서가 새 필드를 발행해야 안전하다."
+      },
+      {
+        "key": "D",
+        "content": "안전한 변경: 기존 필수 필드의 타입을 `string`에서 `int`로 즉시 변경 / 배포 순서: 프로듀서를 먼저 배포한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "필드 타입 변경은 호환성을 파괴하는 breaking change이며 구 컨슈머가 즉시 역직렬화에 실패한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`BACKWARD` 호환은 컨슈머 선배포 → 프로듀서 후배포, `FORWARD` 호환은 프로듀서 선배포 → 컨슈머 후배포, `FULL` 호환은 양방향 배포 순서 자유를 뜻한다. 장기 리플레이가 필요하면 `BACKWARD_TRANSITIVE`/`FULL_TRANSITIVE`를 검사해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.workflow.schema-evolution.q5",
+    "promptMarkdown": "JSON 이벤트 컨슈머(Jackson)에서 프로듀서가 새 선택 필드 `couponCode`를 추가해 발행했는데, 아직 배포되지 않은 구 컨슈머가 `UnrecognizedPropertyException`으로 DLQ에 메시지를 쌓고 있다. 원인과 예방 설정은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.workflow.schema-evolution"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JSON 형식은 필드를 5개 이상 가질 수 없기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "JSON 필드 개수 제한이 아니라 역직렬화기의 strict 설정 문제다."
+      },
+      {
+        "key": "B",
+        "content": "Kafka 브로커가 `couponCode` 필드를 자동으로 암호화했기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "브로커는 페이로드 바이트를 그대로 전달하며, 구 컨슈머 DTO에 없는 필드 때문에 Jackson이 예외를 던진 것이다."
+      },
+      {
+        "key": "C",
+        "content": "프로듀서가 JSON 대신 자바 직렬화(`ObjectOutputStream`)를 쓰면 스키마 진화가 자동으로 해결된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "자바 기본 직렬화는 클래스 구조 변경에 극도로 취약하고 보안 위험도 커서 이벤트 계약에 부적합하다."
+      },
+      {
+        "key": "D",
+        "content": "구 컨슈머의 Jackson `FAIL_ON_UNKNOWN_PROPERTIES`가 켜져 있어 알 수 없는 필드를 거부했기 때문이다. 이벤트 컨슈머는 알 수 없는 필드를 무시(Tolerant Reader)하도록 설정해 Forward 호환을 유지해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "분산 이벤트 환경에서는 컨슈머가 자신이 모르는 신규 필드를 안전하게 무시하는 Tolerant Reader 패턴(`FAIL_ON_UNKNOWN_PROPERTIES=false`)과 알 수 없는 enum fallback 처리가 필수다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "이벤트 컨슈머는 Tolerant Reader 원칙(알 수 없는 JSON 필드 무시, 알 수 없는 enum 방어)을 지켜야 프로듀서의 하위 호환 필드 추가가 구 컨슈머 장애로 이어지지 않는다."
+  }
 ]

@@ -1,0 +1,65 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 420" width="840" height="420" role="img" aria-labelledby="title desc">
+  <title id="title">수직 권한 상승과 다층 서버 인가 경계</title>
+  <desc id="desc">일반 사용자가 관리자 엔드포인트를 직접 호출하는 수직 권한 상승 위협과 URL 규칙, 프록시 경유 @PreAuthorize, 거부 테스트 기반 방어를 보여주는 도식</desc>
+  <style>
+    :root { --bg:#f8fafc; --card:#ffffff; --muted:#f1f5f9; --bd:#cbd5e1; --tx:#0f172a; --sub:#475569; --blue-bg:#eff6ff; --blue-bd:#3b82f6; --blue-tx:#1d4ed8; --green-bg:#ecfdf5; --green-bd:#10b981; --green-tx:#047857; --amber-bg:#fffbeb; --amber-bd:#f59e0b; --amber-tx:#b45309; --red-bg:#fef2f2; --red-bd:#ef4444; --red-tx:#b91c1c; --arr:#64748b; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#0f172a; --card:#1e293b; --muted:#0b1220; --bd:#334155; --tx:#f1f5f9; --sub:#94a3b8; --blue-bg:#172554; --blue-bd:#60a5fa; --blue-tx:#93c5fd; --green-bg:#064e3b; --green-bd:#34d399; --green-tx:#6ee7b7; --amber-bg:#451a03; --amber-bd:#fbbf24; --amber-tx:#fcd34d; --red-bg:#450a0a; --red-bd:#f87171; --red-tx:#fca5a5; --arr:#94a3b8; } }
+    text { font-family: "Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .h1 { font-size:17px; font-weight:700; fill:var(--tx); }
+    .h2 { font-size:14px; font-weight:700; }
+    .b { font-size:12px; fill:var(--tx); }
+    .s { font-size:11px; fill:var(--sub); }
+    .k { font-size:11.5px; font-weight:700; }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--arr)"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="840" height="420" rx="14" fill="var(--bg)"/>
+  <text x="28" y="34" class="h1">수직 권한 상승(Vertical Escalation) 공격 경로 &amp; 서버 인가 방어선</text>
+  <text x="28" y="54" class="s">UI 메뉴 숨김은 인가 경계가 아니다. 서버의 URL 규칙과 메서드 보안이 기본 거부(Fail-Closed)로 차단해야 한다.</text>
+
+  <!-- Attack Flow -->
+  <rect x="28" y="74" width="784" height="114" rx="10" fill="var(--red-bg)" stroke="var(--red-bd)" stroke-width="1.4"/>
+  <text x="46" y="99" class="h2" fill="var(--red-tx)">취약 경로: 프론트엔드 숨김만 믿고 서버 인가가 누락된 경우</text>
+  <rect x="46" y="114" width="186" height="54" rx="8" fill="var(--card)" stroke="var(--red-bd)" stroke-width="1.2"/>
+  <text x="58" y="136" class="k" fill="var(--tx)">일반 사용자 (ROLE_USER)</text>
+  <text x="58" y="154" class="s">관리자 URL 직접 요청</text>
+  <rect x="278" y="114" width="246" height="54" rx="8" fill="var(--card)" stroke="var(--red-bd)" stroke-width="1.2"/>
+  <text x="290" y="136" class="k" fill="var(--red-tx)">POST /admin/products/17/delete</text>
+  <text x="290" y="154" class="s">관리자 역할 검증 누락 또는 순서 오류</text>
+  <rect x="570" y="114" width="224" height="54" rx="8" fill="var(--card)" stroke="var(--red-bd)" stroke-width="1.2"/>
+  <text x="582" y="136" class="k" fill="var(--red-tx)">상품 무단 삭제 (200 OK)</text>
+  <text x="582" y="154" class="s">낮은 권한으로 고권한 기능 실행</text>
+  <line x1="232" y1="141" x2="274" y2="141" stroke="var(--arr)" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="524" y1="141" x2="566" y2="141" stroke="var(--arr)" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- 3 Defense Pillars -->
+  <rect x="28" y="208" width="246" height="186" rx="10" fill="var(--card)" stroke="var(--blue-bd)" stroke-width="1.5"/>
+  <rect x="28" y="208" width="246" height="32" rx="10" fill="var(--blue-bg)"/>
+  <text x="42" y="229" class="h2" fill="var(--blue-tx)">1. Route-Level 경계</text>
+  <text x="42" y="260" class="b">• 구체적 고권한 경로 먼저 선언</text>
+  <text x="42" y="282" class="s">  /admin/** → hasRole("ADMIN")</text>
+  <text x="42" y="306" class="b">• 기본 거부(Default Deny)</text>
+  <text x="42" y="328" class="s">  anyRequest().authenticated()</text>
+  <text x="42" y="356" class="k" fill="var(--blue-tx)">→ 넓은 패턴이 위를 가리지 않게</text>
+
+  <rect x="297" y="208" width="246" height="186" rx="10" fill="var(--card)" stroke="var(--green-bd)" stroke-width="1.5"/>
+  <rect x="297" y="208" width="246" height="32" rx="10" fill="var(--green-bg)"/>
+  <text x="311" y="229" class="h2" fill="var(--green-tx)">2. Method Security</text>
+  <text x="311" y="260" class="b">• @EnableMethodSecurity 필수</text>
+  <text x="311" y="282" class="s">  @PreAuthorize("hasRole('ADMIN')")</text>
+  <text x="311" y="306" class="b">• 프록시 경유 호출 확인</text>
+  <text x="311" y="328" class="s">  this.method() 내부 호출 우회 주의</text>
+  <text x="311" y="356" class="k" fill="var(--green-tx)">→ 기능 단위 권한 세분화 권장</text>
+
+  <rect x="566" y="208" width="246" height="186" rx="10" fill="var(--card)" stroke="var(--amber-bd)" stroke-width="1.5"/>
+  <rect x="566" y="208" width="246" height="32" rx="10" fill="var(--amber-bg)"/>
+  <text x="580" y="229" class="h2" fill="var(--amber-tx)">3. 기능 권한 &amp; 거부 테스트</text>
+  <text x="580" y="260" class="b">• SUPPORT: ORDER_READ만 허용</text>
+  <text x="580" y="282" class="b">• ADMIN: CATALOG_WRITE 포함</text>
+  <text x="580" y="306" class="b">• 거부(Negative) 테스트 필수</text>
+  <text x="580" y="328" class="s">  ROLE_USER 호출 → 403 검증</text>
+  <text x="580" y="356" class="k" fill="var(--amber-tx)">→ 설정 누락을 빌드 시 즉시 차단</text>
+</svg>

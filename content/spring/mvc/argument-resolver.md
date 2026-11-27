@@ -37,21 +37,7 @@ OrderResponse get(
 
 이 값들은 Java가 자동으로 채우는 것이 아닙니다. Spring MVC가 메서드 매개변수의 타입과 annotation을 보고 **어떤 resolver가 이 매개변수를 만들 수 있는지 선택**한 뒤 요청·컨텍스트에서 값을 꺼내 실제 호출 인자를 준비합니다.
 
-```text
-Controller 메서드 매개변수
-        │
-        ▼
-resolver 목록 순회
-        │ supportsParameter?
-        ▼
-선택된 HandlerMethodArgumentResolver
-        │ resolveArgument
-        ▼
-실제 Java 인자
-        │
-        ▼
-Controller 메서드 호출
-```
+![HandlerMethodArgumentResolver 요청 인자 해석 경계](/learning/spring/argument-resolver-boundary.svg)
 
 ### `@PathVariable`과 `@RequestBody`는 같은 변환 경로가 아니다
 

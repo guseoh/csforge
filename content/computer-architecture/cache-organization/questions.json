@@ -6,12 +6,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.direct-mapped-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.direct-mapped-cache"
+    ],
     "choices": [
-      {"key": "A", "content": "각 메모리 블록은 주소 인덱스가 정한 하나의 캐시 라인에만 들어갈 수 있다.", "displayOrder": 0, "rationaleMarkdown": "직접 사상 구조에서는 주소의 인덱스가 가리키는 라인 하나만 배치 후보가 된다. 태그는 그 고정된 위치에 현재 들어 있는 블록이 요청한 블록과 같은지 확인한다."},
-      {"key": "B", "content": "각 메모리 블록은 인덱스가 고른 집합의 여러 way 중 아무 곳에나 들어갈 수 있다.", "displayOrder": 1, "rationaleMarkdown": "한 집합 안에서 여러 way를 고르는 방식은 집합 연관 캐시의 배치 규칙이다. 직접 사상 캐시는 각 인덱스에 라인이 하나뿐이라 다른 way를 선택할 수 없다."},
-      {"key": "C", "content": "빈 라인이 있으면 인덱스와 무관하게 그 라인을 선택한다.", "displayOrder": 2, "rationaleMarkdown": "빈 라인이 있더라도 블록이 갈 수 있는 위치는 주소 인덱스로 정해진다. 다른 인덱스의 빈 공간을 자유롭게 쓸 수 있다는 주장은 완전 연관 배치에 가깝다."},
-      {"key": "D", "content": "태그가 일치하면 인덱스가 다른 라인에도 배치할 수 있다.", "displayOrder": 3, "rationaleMarkdown": "태그는 이미 선택된 라인의 블록이 요청한 블록인지 검증하며 배치 위치를 바꾸지 않는다. 인덱스가 다른 블록은 태그가 우연히 같더라도 서로 다른 라인에 매핑된다."}
+      {
+        "key": "A",
+        "content": "각 메모리 블록은 주소 인덱스가 정한 하나의 캐시 라인에만 들어갈 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "직접 사상 구조에서는 주소의 인덱스가 가리키는 라인 하나만 배치 후보가 된다. 태그는 그 고정된 위치에 현재 들어 있는 블록이 요청한 블록과 같은지 확인한다."
+      },
+      {
+        "key": "B",
+        "content": "각 메모리 블록은 인덱스가 고른 집합의 여러 way 중 아무 곳에나 들어갈 수 있다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "한 집합 안에서 여러 way를 고르는 방식은 집합 연관 캐시의 배치 규칙이다. 직접 사상 캐시는 각 인덱스에 라인이 하나뿐이라 다른 way를 선택할 수 없다."
+      },
+      {
+        "key": "C",
+        "content": "빈 라인이 있으면 인덱스와 무관하게 그 라인을 선택한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "빈 라인이 있더라도 블록이 갈 수 있는 위치는 주소 인덱스로 정해진다. 다른 인덱스의 빈 공간을 자유롭게 쓸 수 있다는 주장은 완전 연관 배치에 가깝다."
+      },
+      {
+        "key": "D",
+        "content": "태그가 일치하면 인덱스가 다른 라인에도 배치할 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "태그는 이미 선택된 라인의 블록이 요청한 블록인지 검증하며 배치 위치를 바꾸지 않는다. 인덱스가 다른 블록은 태그가 우연히 같더라도 서로 다른 라인에 매핑된다."
+      }
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "각 메모리 블록은 주소의 인덱스로 정해지는 단 하나의 캐시 라인에만 배치될 수 있다. 그 라인의 태그를 비교해 현재 저장된 블록이 요청한 블록인지 판별한다."
@@ -23,7 +45,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.direct-mapped-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.direct-mapped-cache"
+    ],
     "modelAnswer": "직접 사상 캐시에서 각 메모리 블록은 하나의 인덱스에만 들어갈 수 있다. 서로 다른 두 블록이 같은 인덱스로 매핑되면 다른 라인이 비어 있어도 그 공간을 사용할 수 없고 같은 라인을 번갈아 교체한다. 그래서 전체 작업 집합이 캐시 용량보다 작아도 특정 접근 패턴에서는 충돌 미스가 반복될 수 있다.",
     "explanationMarkdown": "직접 사상 캐시는 각 블록의 배치가 한 인덱스로 고정된다. 따라서 전체 여유 공간과 무관하게 같은 인덱스를 공유하는 블록끼리는 서로를 계속 밀어내 충돌 미스를 만들 수 있다."
   },
@@ -34,7 +58,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.direct-mapped-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.direct-mapped-cache"
+    ],
     "modelAnswer": "전체 라인 수는 32KiB / 64B = 512개다. 32KiB 차이는 64바이트 블록 기준으로 512블록 차이이므로 블록 번호를 512로 나눈 인덱스가 동일해진다. 따라서 두 주소는 태그는 다르지만 같은 직접 사상 라인을 경쟁할 수 있고 반복 교차 접근하면 충돌로 인한 스래싱(thrashing)이 발생할 수 있다.",
     "explanationMarkdown": "32KiB/64B는 512라인이므로 512블록 간격의 주소는 인덱스 계산 결과가 다시 반복될 수 있다. 이 경우 태그만 다른 두 블록이 같은 라인을 번갈아 차지해 스래싱이 생길 수 있다. 초기 상태에 두 블록이 없고 두 주소를 반복 교차 읽는다면 다른 빈 라인이 있어도 서로 같은 후보 위치를 경쟁한다. 실제 해시 인덱싱을 사용하는 캐시에는 이 단순 식을 그대로 적용하지 않는다."
   },
@@ -45,12 +71,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.set-associative-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.set-associative-cache"
+    ],
     "choices": [
-      {"key": "A", "content": "캐시 전체에 라인이 네 개뿐이다.", "displayOrder": 0, "rationaleMarkdown": "Way 수는 각 집합 안에서 선택 가능한 라인 수를 뜻하므로 캐시 전체 라인 수와 같지 않다. 전체 라인 수는 용량과 라인 크기로 정해지고 집합 수는 이를 way 수로 나눈 값이다."},
-      {"key": "B", "content": "메모리 주소 하나가 반드시 네 캐시 집합에 동시에 저장된다.", "displayOrder": 1, "rationaleMarkdown": "주소 인덱스는 블록을 하나의 집합으로 보낸다. 집합 연관도는 그 집합 안의 여러 way 중 한 곳을 택하게 하며, 같은 블록을 네 집합에 복제한다는 뜻은 아니다."},
-      {"key": "C", "content": "하나의 인덱스가 선택한 집합 안에 네 개의 후보 라인이 있다.", "displayOrder": 2, "rationaleMarkdown": "4-way는 인덱스가 정한 각 집합에 네 개의 후보 라인이 있다는 뜻이다. 요청 블록은 그중 한 way에 들어가고 태그 비교로 실제 적중 여부를 판별한다."},
-      {"key": "D", "content": "태그 비교 없이 인덱스만 같으면 항상 적중한다.", "displayOrder": 3, "rationaleMarkdown": "인덱스는 후보 집합만 정하므로 그 안에 다른 블록이 있을 수 있다. 태그를 비교하지 않으면 해당 라인이 요청한 메모리 블록인지 확인할 수 없다."}
+      {
+        "key": "A",
+        "content": "캐시 전체에 라인이 네 개뿐이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Way 수는 각 집합 안에서 선택 가능한 라인 수를 뜻하므로 캐시 전체 라인 수와 같지 않다. 전체 라인 수는 용량과 라인 크기로 정해지고 집합 수는 이를 way 수로 나눈 값이다."
+      },
+      {
+        "key": "B",
+        "content": "메모리 주소 하나가 반드시 네 캐시 집합에 동시에 저장된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "주소 인덱스는 블록을 하나의 집합으로 보낸다. 집합 연관도는 그 집합 안의 여러 way 중 한 곳을 택하게 하며, 같은 블록을 네 집합에 복제한다는 뜻은 아니다."
+      },
+      {
+        "key": "C",
+        "content": "하나의 인덱스가 선택한 집합 안에 네 개의 후보 라인이 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "4-way는 인덱스가 정한 각 집합에 네 개의 후보 라인이 있다는 뜻이다. 요청 블록은 그중 한 way에 들어가고 태그 비교로 실제 적중 여부를 판별한다."
+      },
+      {
+        "key": "D",
+        "content": "태그 비교 없이 인덱스만 같으면 항상 적중한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "인덱스는 후보 집합만 정하므로 그 안에 다른 블록이 있을 수 있다. 태그를 비교하지 않으면 해당 라인이 요청한 메모리 블록인지 확인할 수 없다."
+      }
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "4-way는 하나의 인덱스가 고른 집합 안에 네 개의 후보 라인을 둔다는 뜻이다. 전체 라인 수가 512개라면 집합은 128개가 되며, 같은 집합에 다섯 블록 이상이 몰리면 교체에 따른 충돌 미스가 생길 수 있다."
@@ -62,7 +110,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.set-associative-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.set-associative-cache"
+    ],
     "modelAnswer": "전체 라인은 32KiB / 64B = 512개이고 4-way이므로 집합은 512 / 4 = 128개다. 64바이트 라인을 고르는 오프셋은 log2(64)=6비트, 128개 집합을 고르는 인덱스는 log2(128)=7비트다. 나머지 19비트가 태그가 된다.",
     "explanationMarkdown": "계산은 `전체 라인 수 → 집합 수 → 오프셋/인덱스 비트` 순서로 보면 된다. 512라인을 4 way로 묶으면 128집합이고, 64바이트 라인과 128집합은 각각 6비트 오프셋과 7비트 인덱스를 요구한다."
   },
@@ -73,7 +123,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.set-associative-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.set-associative-cache"
+    ],
     "modelAnswer": "해당 집합에는 두 way만 있으므로 같은 집합을 사용하는 활성 블록 세 개를 동시에 보관할 수 없다. 세 번째 블록을 넣을 때 기존 두 블록 중 하나를 교체해야 하고 접근 패턴과 교체 정책에 따라 다음에 필요한 블록이 계속 밀려날 수 있다. 연관도는 충돌 미스를 줄이지만 집합의 작업 집합이 way 수를 넘으면 충돌을 완전히 없애지 못한다.",
     "explanationMarkdown": "연관도는 한 집합에 여러 블록을 둘 수 있게 해 충돌을 줄일 뿐 무한히 없애지는 않는다. 같은 집합의 활성 작업 집합이 way 수보다 크면 결국 교체 대상을 골라야 하므로 반복 미스가 계속될 수 있다."
   },
@@ -84,12 +136,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.fully-associative-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.fully-associative-cache"
+    ],
     "choices": [
-      {"key": "A", "content": "태그가 필요 없고 오프셋만 비교한다.", "displayOrder": 0, "rationaleMarkdown": "완전 연관 구조에는 집합 인덱스가 없지만 각 라인의 태그는 어떤 메모리 블록이 저장됐는지 찾는 데 여전히 필요하다. 오프셋은 라인 안에서 요청한 바이트나 워드를 고른다."},
-      {"key": "B", "content": "메모리 블록은 주소 인덱스가 정한 단 하나의 라인에만 배치된다.", "displayOrder": 1, "rationaleMarkdown": "인덱스가 한 라인만 배치 후보로 정하는 것은 직접 사상 배치다. 완전 연관 구조는 특정 인덱스가 블록 위치를 제한하지 않는다."},
-      {"key": "C", "content": "메모리 블록은 캐시의 어느 라인에도 배치될 수 있다.", "displayOrder": 2, "rationaleMarkdown": "집합 선택 단계가 없으므로 캐시 안의 어떤 라인도 배치 후보가 될 수 있다. 그만큼 인덱스 충돌은 피할 수 있지만 적중을 찾기 위해 태그들을 비교하는 비용이 커질 수 있다."},
-      {"key": "D", "content": "용량 미스도 구조적으로 발생할 수 없다.", "displayOrder": 3, "rationaleMarkdown": "완전 연관 배치는 매핑 충돌을 줄일 뿐 저장 가능한 전체 용량을 늘리지 않는다. 동시에 다시 쓸 작업 집합이 캐시보다 크면 필요한 블록이 밀려나 용량 미스가 생긴다."}
+      {
+        "key": "A",
+        "content": "태그가 필요 없고 오프셋만 비교한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "완전 연관 구조에는 집합 인덱스가 없지만 각 라인의 태그는 어떤 메모리 블록이 저장됐는지 찾는 데 여전히 필요하다. 오프셋은 라인 안에서 요청한 바이트나 워드를 고른다."
+      },
+      {
+        "key": "B",
+        "content": "메모리 블록은 주소 인덱스가 정한 단 하나의 라인에만 배치된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "인덱스가 한 라인만 배치 후보로 정하는 것은 직접 사상 배치다. 완전 연관 구조는 특정 인덱스가 블록 위치를 제한하지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "메모리 블록은 캐시의 어느 라인에도 배치될 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "집합 선택 단계가 없으므로 캐시 안의 어떤 라인도 배치 후보가 될 수 있다. 그만큼 인덱스 충돌은 피할 수 있지만 적중을 찾기 위해 태그들을 비교하는 비용이 커질 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "용량 미스도 구조적으로 발생할 수 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "완전 연관 배치는 매핑 충돌을 줄일 뿐 저장 가능한 전체 용량을 늘리지 않는다. 동시에 다시 쓸 작업 집합이 캐시보다 크면 필요한 블록이 밀려나 용량 미스가 생긴다."
+      }
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "메모리 블록은 캐시의 어느 라인에나 배치될 수 있어 인덱스에 따른 배치 충돌이 없다. 대신 적중을 찾으려면 여러 라인의 태그를 비교해야 하므로 비교와 선택 회로가 커진다."
@@ -101,7 +175,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.fully-associative-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.fully-associative-cache"
+    ],
     "modelAnswer": "블록을 어느 라인에도 둘 수 있어 특정 인덱스 충돌은 피할 수 있지만 적중 여부를 찾으려면 많은 라인의 태그를 비교하고 결과를 선택해야 한다. 라인 수가 커질수록 비교기, 배선, 선택 회로, 교체 상태의 면적·전력·타이밍 비용이 커져 큰 캐시 전체에 적용하기 어렵다.",
     "explanationMarkdown": "배치 자유도를 높이면 인덱스 충돌은 줄지만 조회 비용이 커진다. 많은 태그를 병렬 비교하고 교체 상태까지 관리해야 하므로 라인 수가 큰 캐시에서는 면적·전력·타이밍 비용이 중요한 제약이 된다."
   },
@@ -112,7 +188,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.fully-associative-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.fully-associative-cache"
+    ],
     "modelAnswer": "완전 연관이라 배치 충돌은 최소화되지만 캐시가 동시에 보관할 수 있는 라인은 32개뿐이다. 활성 블록 40개가 반복적으로 필요하면 전체 작업 집합을 유지할 용량이 부족해 교체와 용량 미스가 발생할 수 있다. 연관도는 최초 미스나 용량 미스까지 제거하지 않는다.",
     "explanationMarkdown": "완전 연관은 배치 충돌을 줄여도 저장 용량 자체를 늘리지는 않는다. 활성 블록 수가 라인 수를 넘으면 어떤 배치를 쓰더라도 교체가 필요해 용량 미스가 남는다."
   },
@@ -123,12 +201,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.index-tag-offset"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.index-tag-offset"
+    ],
     "choices": [
-      {"key": "A", "content": "후보 집합을 고르고 태그가 그 안의 바이트 위치를 고른다.", "displayOrder": 0, "rationaleMarkdown": "이 설명은 오프셋과 인덱스의 역할을 서로 바꿔 놓았다. 인덱스가 후보 집합을 고르고 오프셋은 선택된 라인 안의 바이트 위치를 정하며, 태그는 블록을 식별한다."},
-      {"key": "B", "content": "선택된 캐시 라인 내부의 바이트/워드 위치를 고른다.", "displayOrder": 1, "rationaleMarkdown": "라인 크기가 64바이트라면 오프셋은 그 라인 안의 64개 위치 중 요청한 바이트나 워드를 고른다. 집합 선택과 블록 식별은 각각 인덱스와 태그가 담당한다."},
-      {"key": "C", "content": "메모리 블록의 식별 정보 전체를 나타내므로 태그 비교를 대신한다.", "displayOrder": 2, "rationaleMarkdown": "태그는 메모리 블록을 식별하지만 라인 내부 위치를 나타내지는 않는다. 같은 블록의 여러 바이트를 구분하려면 오프셋이 필요하고, 태그 비교를 생략할 수도 없다."},
-      {"key": "D", "content": "가상 주소에서 물리 주소로 변환이 끝난 뒤에는 더 이상 사용되지 않는다.", "displayOrder": 3, "rationaleMarkdown": "주소 변환 사용 여부나 캐시 설계가 달라져도 라인 내부 위치를 고르는 오프셋의 역할은 남는다. 예를 들어 페이지 오프셋은 변환 전후에 보존되므로 바이트 선택에 계속 쓰인다."}
+      {
+        "key": "A",
+        "content": "후보 집합을 고르고 태그가 그 안의 바이트 위치를 고른다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "이 설명은 오프셋과 인덱스의 역할을 서로 바꿔 놓았다. 인덱스가 후보 집합을 고르고 오프셋은 선택된 라인 안의 바이트 위치를 정하며, 태그는 블록을 식별한다."
+      },
+      {
+        "key": "B",
+        "content": "선택된 캐시 라인 내부의 바이트/워드 위치를 고른다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "라인 크기가 64바이트라면 오프셋은 그 라인 안의 64개 위치 중 요청한 바이트나 워드를 고른다. 집합 선택과 블록 식별은 각각 인덱스와 태그가 담당한다."
+      },
+      {
+        "key": "C",
+        "content": "메모리 블록의 식별 정보 전체를 나타내므로 태그 비교를 대신한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "태그는 메모리 블록을 식별하지만 라인 내부 위치를 나타내지는 않는다. 같은 블록의 여러 바이트를 구분하려면 오프셋이 필요하고, 태그 비교를 생략할 수도 없다."
+      },
+      {
+        "key": "D",
+        "content": "가상 주소에서 물리 주소로 변환이 끝난 뒤에는 더 이상 사용되지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "주소 변환 사용 여부나 캐시 설계가 달라져도 라인 내부 위치를 고르는 오프셋의 역할은 남는다. 예를 들어 페이지 오프셋은 변환 전후에 보존되므로 바이트 선택에 계속 쓰인다."
+      }
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "오프셋은 캐시 라인 안의 바이트 위치를 고르고, 인덱스는 확인할 캐시 집합을 선택한다. 태그는 그 집합에 든 라인이 요청한 메모리 블록인지 확인한다."
@@ -140,7 +240,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.index-tag-offset"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.index-tag-offset"
+    ],
     "modelAnswer": "64바이트는 2^6이므로 라인 내부 64개 바이트 위치를 구분하는 데 6비트가 필요하다. 집합이 256=2^8개라면 그중 하나를 선택하는 데 8비트가 필요하다. 바이트 단위 주소 지정과 2의 거듭제곱 크기를 가정한 캐시 모델에서는 낮은 비트부터 오프셋, 그다음이 인덱스가 되고 나머지 상위 비트가 태그가 된다.",
     "explanationMarkdown": "오프셋은 라인 내부 바이트 위치를, 인덱스는 집합 위치를 고르는 비트다. 64바이트 라인 때문에 6비트, 256집합 때문에 8비트가 필요하고 나머지가 태그가 된다."
   },
@@ -151,7 +253,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.index-tag-offset"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.index-tag-offset"
+    ],
     "modelAnswer": "전체 라인 수는 용량과 라인 크기가 같으므로 변하지 않는다. 연관도가 두 배가 되면 한 집합의 way 수가 두 배가 되어 집합 수는 절반으로 줄고, 2의 거듭제곱 모델에서는 인덱스 비트가 1비트 감소한다. 주소 폭과 오프셋 비트가 고정이므로 줄어든 인덱스 1비트만큼 태그 영역은 1비트 늘어난다.",
     "explanationMarkdown": "용량과 라인 크기가 같으면 전체 라인 수는 유지된다. Way 수를 두 배로 늘리면 집합 수가 절반이 되어 인덱스 비트가 하나 줄고, 주소 폭과 오프셋이 같으므로 그만큼 태그 비트가 늘어난다."
   },
@@ -162,12 +266,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.replacement-policy"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.replacement-policy"
+    ],
     "choices": [
-      {"key": "A", "content": "선택된 집합에 빈 way가 있어도 기존 라인을 먼저 내보낼 때", "displayOrder": 0, "rationaleMarkdown": "선택된 집합에 빈 way가 있으면 새 블록을 그곳에 둘 수 있어 기존 라인을 내보낼 교체 대상 선택이 필요하지 않다. 교체 정책은 여유 공간이 없을 때 의미가 있다."},
-      {"key": "B", "content": "선택된 집합의 모든 way가 사용 중인데 새 블록을 넣어야 할 때", "displayOrder": 1, "rationaleMarkdown": "새 블록은 인덱스가 정한 집합에 들어가야 한다. 그 집합의 모든 way가 차 있다면 어느 라인을 밀어낼지 골라야 하므로 교체 정책이 필요하다."},
-      {"key": "C", "content": "write-through 캐시가 하위 계층에 쓰기를 전달할 때마다", "displayOrder": 2, "rationaleMarkdown": "Write-through는 쓰기를 하위 계층에 언제 전달할지 정하는 정책이다. 교체는 공간이 찬 집합에 새 블록을 넣을 때 대상을 고르는 별도의 문제다."},
-      {"key": "D", "content": "미스가 발생하면 선택된 집합과 무관하게 캐시 전체에서 교체 대상을 고를 때", "displayOrder": 3, "rationaleMarkdown": "집합 연관 캐시에서 해당 블록이 들어갈 수 있는 후보는 선택된 집합의 way들이다. 다른 집합까지 검색해 교체 대상으로 삼으면 인덱스 기반 배치 계약을 어기게 된다."}
+      {
+        "key": "A",
+        "content": "선택된 집합에 빈 way가 있어도 기존 라인을 먼저 내보낼 때",
+        "displayOrder": 0,
+        "rationaleMarkdown": "선택된 집합에 빈 way가 있으면 새 블록을 그곳에 둘 수 있어 기존 라인을 내보낼 교체 대상 선택이 필요하지 않다. 교체 정책은 여유 공간이 없을 때 의미가 있다."
+      },
+      {
+        "key": "B",
+        "content": "선택된 집합의 모든 way가 사용 중인데 새 블록을 넣어야 할 때",
+        "displayOrder": 1,
+        "rationaleMarkdown": "새 블록은 인덱스가 정한 집합에 들어가야 한다. 그 집합의 모든 way가 차 있다면 어느 라인을 밀어낼지 골라야 하므로 교체 정책이 필요하다."
+      },
+      {
+        "key": "C",
+        "content": "write-through 캐시가 하위 계층에 쓰기를 전달할 때마다",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Write-through는 쓰기를 하위 계층에 언제 전달할지 정하는 정책이다. 교체는 공간이 찬 집합에 새 블록을 넣을 때 대상을 고르는 별도의 문제다."
+      },
+      {
+        "key": "D",
+        "content": "미스가 발생하면 선택된 집합과 무관하게 캐시 전체에서 교체 대상을 고를 때",
+        "displayOrder": 3,
+        "rationaleMarkdown": "집합 연관 캐시에서 해당 블록이 들어갈 수 있는 후보는 선택된 집합의 way들이다. 다른 집합까지 검색해 교체 대상으로 삼으면 인덱스 기반 배치 계약을 어기게 된다."
+      }
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "미스가 선택한 집합에 도착했을 때 사용할 수 있는 빈 way가 없으면 기존 라인 하나를 내보내야 하므로 교체 정책이 대상을 고른다. 빈 way가 있으면 먼저 그 자리를 사용한다."
@@ -179,7 +305,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.replacement-policy"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.replacement-policy"
+    ],
     "modelAnswer": "LRU는 최근 사용한 라인이 가까운 미래에 다시 사용될 가능성이 높다는 시간적 지역성에 기대어 가장 오래 사용하지 않은 라인을 교체 대상으로 고르려 한다. way 수가 많아지면 모든 way의 정확한 최근 사용 순서를 추적·갱신하는 상태와 논리가 커지므로 실제 하드웨어는 pseudo-LRU 같은 근사 정책을 사용할 수 있다.",
     "explanationMarkdown": "LRU의 아이디어는 최근 사용 이력이 미래 재사용 가능성을 어느 정도 나타낸다는 시간적 지역성에 있다. 하지만 way 수가 커질수록 정확한 순서를 계속 추적하는 하드웨어 비용이 커져 실제 구현은 근사 정책을 사용할 수 있다."
   },
@@ -190,7 +318,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.replacement-policy"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.replacement-policy"
+    ],
     "modelAnswer": "한 번 읽고 재사용하지 않는 스트림은 최근에 사용했다는 사실이 미래 재사용을 잘 예측하지 못한다. 스트리밍 라인이 반복 사용되는 자주 쓰는 라인을 밀어내면 캐시 오염이 생길 수 있다. 교체 정책의 효과는 작업 부하의 지역성에 의존하며 적중률과 미스 비용을 실제 접근 패턴에서 확인해야 한다.",
     "explanationMarkdown": "최근 사용 여부가 항상 미래 재사용을 잘 예측하는 것은 아니다. 한 번만 훑는 스트림처럼 재사용이 거의 없는 작업 부하에서는 최근 라인이 자주 쓰는 데이터를 밀어내 캐시 오염을 만들 수 있어 정책 효과를 실제 접근 패턴으로 검증해야 한다."
   },
@@ -201,12 +331,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.write-through-write-back"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.write-through-write-back"
+    ],
     "choices": [
-      {"key": "A", "content": "다른 코어와의 캐시 일관성 처리를 자동으로 불필요하게 만든다.", "displayOrder": 0, "rationaleMarkdown": "Write-back은 하위 계층 반영을 늦출 뿐 여러 코어 사이의 캐시 일관성을 해결하지 않는다. 공유 라인의 최신 값을 일관되게 보이게 하는 일관성 프로토콜은 별도로 필요하다."},
-      {"key": "B", "content": "쓰기 적중마다 하위 캐시 계층에도 즉시 같은 쓰기를 전달한다.", "displayOrder": 1, "rationaleMarkdown": "쓰기 적중마다 하위 계층에도 바로 반영하는 동작은 write-through의 특징이다. Write-back은 캐시 라인을 먼저 바꾸고 dirty 상태로 기록한 뒤 반영을 미룰 수 있다."},
-      {"key": "C", "content": "dirty 상태가 필요 없고 교체 비용도 항상 수정되지 않은 라인과 같다.", "displayOrder": 2, "rationaleMarkdown": "캐시에서만 바뀌고 하위 계층은 아직 이전 값을 가진 라인을 추적하려면 dirty 상태가 필요하다. Dirty 라인이 교체될 때는 최신 내용을 아래 계층에 써야 한다."},
-      {"key": "D", "content": "쓰기 적중에서 캐시 라인을 수정하고 dirty로 표시한 뒤 하위 계층 반영을 나중으로 미룰 수 있다.", "displayOrder": 3, "rationaleMarkdown": "Write-back은 적중한 라인을 캐시에서 수정하고 dirty로 표시해 하위 계층 쓰기를 뒤로 미룰 수 있다. 교체나 일관성 동작에서 최신 값을 전달해야 하므로 그 반영 자체가 사라지는 것은 아니다."}
+      {
+        "key": "A",
+        "content": "다른 코어와의 캐시 일관성 처리를 자동으로 불필요하게 만든다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Write-back은 하위 계층 반영을 늦출 뿐 여러 코어 사이의 캐시 일관성을 해결하지 않는다. 공유 라인의 최신 값을 일관되게 보이게 하는 일관성 프로토콜은 별도로 필요하다."
+      },
+      {
+        "key": "B",
+        "content": "쓰기 적중마다 하위 캐시 계층에도 즉시 같은 쓰기를 전달한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "쓰기 적중마다 하위 계층에도 바로 반영하는 동작은 write-through의 특징이다. Write-back은 캐시 라인을 먼저 바꾸고 dirty 상태로 기록한 뒤 반영을 미룰 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "dirty 상태가 필요 없고 교체 비용도 항상 수정되지 않은 라인과 같다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "캐시에서만 바뀌고 하위 계층은 아직 이전 값을 가진 라인을 추적하려면 dirty 상태가 필요하다. Dirty 라인이 교체될 때는 최신 내용을 아래 계층에 써야 한다."
+      },
+      {
+        "key": "D",
+        "content": "쓰기 적중에서 캐시 라인을 수정하고 dirty로 표시한 뒤 하위 계층 반영을 나중으로 미룰 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Write-back은 적중한 라인을 캐시에서 수정하고 dirty로 표시해 하위 계층 쓰기를 뒤로 미룰 수 있다. 교체나 일관성 동작에서 최신 값을 전달해야 하므로 그 반영 자체가 사라지는 것은 아니다."
+      }
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "Write-back은 캐시에서 값을 갱신하고 라인을 dirty로 표시한 뒤, 그 라인이 교체되거나 다른 일관성 동작이 요구될 때 하위 계층에 변경 내용을 반영한다. Write-through는 각 캐시 쓰기를 하위 계층에도 전달한다."
@@ -218,7 +370,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.write-through-write-back"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.write-through-write-back"
+    ],
     "modelAnswer": "Write-through는 캐시 쓰기를 하위 계층에도 전달하므로 같은 라인을 반복 수정할 때 쓰기 트래픽이 많아질 수 있지만 캐시 라인의 dirty write-back을 미룰 필요는 적다. Write-back은 여러 수정 내용을 캐시에 모아 교체할 때 한 번에 내릴 수 있어 트래픽을 줄일 수 있지만 dirty 교체 대상을 내보내는 추가 비용과 상태 관리가 필요하다.",
     "explanationMarkdown": "Write-through는 매 쓰기를 하위 계층으로 전달해 트래픽을 늘릴 수 있고, write-back은 여러 변경을 dirty 라인에 모아 나중에 내릴 수 있다. 대신 write-back은 dirty 상태와 교체 시 추가 쓰기 비용을 관리해야 한다."
   },
@@ -229,7 +383,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.write-through-write-back"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.write-through-write-back"
+    ],
     "modelAnswer": "CPU 캐시 쓰기 정책은 CPU 캐시와 하위 메모리 계층 사이의 데이터 이동을 다룬다. DB 영속성은 트랜잭션 로그, OS/파일 시스템 writeback, fsync 또는 저장장치 flush, 장치의 영속성 계약 같은 별도 경계를 통과해야 한다. DRAM이나 CPU 캐시에 최신 값이 있다는 사실은 비휘발성 저장장치에 영속적으로 기록되었다는 보장이 아니다.",
     "explanationMarkdown": "CPU 캐시의 dirty/clean 상태와 DB 영속성은 서로 다른 계층의 계약이다. 트랜잭션 영속성은 로그와 파일 시스템/저장장치 flush 같은 비휘발성 저장 경계를 통과해야 하므로 최신 값이 캐시나 DRAM에 있다는 사실만으로는 충분하지 않다."
   },
@@ -240,12 +396,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.write-allocate"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.write-allocate"
+    ],
     "choices": [
-      {"key": "A", "content": "같은 주소에 두 번째 쓰기 미스가 날 때까지 할당을 미룬다.", "displayOrder": 0, "rationaleMarkdown": "Write-allocate는 첫 쓰기 미스 때 해당 블록을 캐시에 들이는 정책이다. 두 번째 미스를 기다리는 규칙은 write-allocate의 정의가 아니다."},
-      {"key": "B", "content": "캐시에 블록을 들이지 않고 하위 계층에만 쓴다.", "displayOrder": 1, "rationaleMarkdown": "미스 난 블록을 캐시에 채우지 않고 하위 계층에만 쓰는 동작은 no-write-allocate에 해당한다. Write-allocate는 이후 지역성을 활용하도록 캐시 라인을 확보한다."},
-      {"key": "C", "content": "블록을 캐시에 가져오지만 대상 바이트는 하위 계층에만 수정한다.", "displayOrder": 2, "rationaleMarkdown": "블록을 캐시에 가져온다고 하면서 대상 바이트만 하위 계층에 반영하면 캐시와 아래 계층의 값이 달라질 수 있다. Write-allocate에서는 라인을 확보한 뒤 그 안의 쓰기를 반영한다."},
-      {"key": "D", "content": "해당 블록을 캐시에 확보한 뒤 대상 위치를 수정한다.", "displayOrder": 3, "rationaleMarkdown": "Write-allocate는 미스가 난 블록을 캐시에 채워 라인을 확보한 다음 해당 위치를 수정한다. 이후 같은 라인에 대한 접근은 캐시에서 처리할 기회를 얻는다."}
+      {
+        "key": "A",
+        "content": "같은 주소에 두 번째 쓰기 미스가 날 때까지 할당을 미룬다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Write-allocate는 첫 쓰기 미스 때 해당 블록을 캐시에 들이는 정책이다. 두 번째 미스를 기다리는 규칙은 write-allocate의 정의가 아니다."
+      },
+      {
+        "key": "B",
+        "content": "캐시에 블록을 들이지 않고 하위 계층에만 쓴다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "미스 난 블록을 캐시에 채우지 않고 하위 계층에만 쓰는 동작은 no-write-allocate에 해당한다. Write-allocate는 이후 지역성을 활용하도록 캐시 라인을 확보한다."
+      },
+      {
+        "key": "C",
+        "content": "블록을 캐시에 가져오지만 대상 바이트는 하위 계층에만 수정한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "블록을 캐시에 가져온다고 하면서 대상 바이트만 하위 계층에 반영하면 캐시와 아래 계층의 값이 달라질 수 있다. Write-allocate에서는 라인을 확보한 뒤 그 안의 쓰기를 반영한다."
+      },
+      {
+        "key": "D",
+        "content": "해당 블록을 캐시에 확보한 뒤 대상 위치를 수정한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Write-allocate는 미스가 난 블록을 캐시에 채워 라인을 확보한 다음 해당 위치를 수정한다. 이후 같은 라인에 대한 접근은 캐시에서 처리할 기회를 얻는다."
+      }
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "Write-allocate는 미스 난 블록을 캐시에 가져와 수정하므로 같은 라인을 곧 다시 읽거나 쓰는 지역성이 있으면 이후 접근을 캐시에서 처리할 수 있다. 큰 단발성 스트리밍 쓰기는 라인을 캐시에 가져와도 재사용하지 않아 채우기 트래픽과 캐시 오염만 만들 수 있으므로 no-write-allocate나 non-temporal 계열 접근이 유리할 여지가 있다."
@@ -257,7 +435,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.write-allocate"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.write-allocate"
+    ],
     "modelAnswer": "Write-allocate는 미스 난 블록을 캐시에 가져와 수정하므로 같은 라인을 곧 다시 읽거나 쓰는 지역성이 있으면 이후 접근을 캐시에서 처리할 수 있다. No-write-allocate는 미스 난 블록을 캐시에 채우지 않고 하위 쓰기 경로로 보내므로 한 번 쓰고 지나가는 스트리밍 쓰기에서 라인 채우기와 캐시 오염을 줄일 수 있다.",
     "explanationMarkdown": "쓰기 미스 때 라인을 가져올지는 이후 지역성이 있는지에 달려 있다. 곧 다시 접근할 라인은 write-allocate가 유리할 수 있고, 한 번 쓰고 지나가는 스트림은 불필요한 채우기와 오염을 피하는 전략이 더 나을 수 있다."
   },
@@ -268,7 +448,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.write-allocate"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.write-allocate"
+    ],
     "modelAnswer": "큰 단발성 스트리밍 쓰기는 라인을 캐시에 가져와도 재사용하지 않아 채우기 트래픽과 캐시 오염만 만들 수 있으므로 no-write-allocate나 non-temporal 계열 접근이 유리할 여지가 있다. 작은 반복 수정 작업 부하는 한 번 라인을 캐시에 확보하면 여러 쓰기와 후속 읽기가 적중할 수 있어 write-allocate가 지역성을 활용하기 쉽다. 실제 선택은 대상 아키텍처와 측정한 대역폭·캐시 동작으로 검증해야 한다.",
     "explanationMarkdown": "두 작업 부하의 차이는 쓰기 뒤 재사용 여부다. 한 번만 쓰는 큰 버퍼는 캐시 채우기 이득이 작지만 작은 자주 쓰는 버퍼는 같은 라인의 후속 읽기·쓰기가 반복되어 write-allocate의 지역성 이득을 얻기 쉽다."
   },
@@ -279,12 +461,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.cache-friendly-access"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.cache-friendly-access"
+    ],
     "choices": [
-      {"key": "A", "content": "연속 메모리를 작은 간격으로 순회해 한 캐시 라인의 여러 값을 사용한다.", "displayOrder": 0, "rationaleMarkdown": "연속 주소를 작은 간격으로 읽으면 한 번 가져온 라인의 인접 값들도 곧 사용될 가능성이 높다. 이는 공간적 지역성을 활용해 라인당 유효한 접근을 늘리는 방식이다."},
-      {"key": "B", "content": "매 접근마다 큰 주소 공간의 무작위 라인 하나만 사용한다.", "displayOrder": 1, "rationaleMarkdown": "큰 주소 공간에서 매번 무작위 라인을 하나씩 읽으면 이미 가져온 라인의 인접 값이나 최근 값이 재사용될 가능성이 낮다. 따라서 공간·시간 지역성이 모두 약해질 수 있다."},
-      {"key": "C", "content": "작업 집합을 일부러 캐시 용량보다 계속 크게 만든다.", "displayOrder": 2, "rationaleMarkdown": "작업 집합을 캐시보다 크게 유지하면 필요한 라인이 다시 사용되기 전에 밀려날 수 있다. 이는 지역성을 활용하는 접근이 아니라 용량 미스를 늘릴 수 있는 조건이다."},
-      {"key": "D", "content": "같은 집합을 충돌시키도록 주소를 의도적으로 배치한다.", "displayOrder": 3, "rationaleMarkdown": "같은 집합으로 계속 매핑되는 블록을 의도적으로 충돌시키면 캐시 전체에 여유가 있어도 라인이 반복 교체될 수 있다. 이런 충돌은 재사용을 돕기보다 지역성 효과를 약화한다."}
+      {
+        "key": "A",
+        "content": "연속 메모리를 작은 간격으로 순회해 한 캐시 라인의 여러 값을 사용한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "연속 주소를 작은 간격으로 읽으면 한 번 가져온 라인의 인접 값들도 곧 사용될 가능성이 높다. 이는 공간적 지역성을 활용해 라인당 유효한 접근을 늘리는 방식이다."
+      },
+      {
+        "key": "B",
+        "content": "매 접근마다 큰 주소 공간의 무작위 라인 하나만 사용한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "큰 주소 공간에서 매번 무작위 라인을 하나씩 읽으면 이미 가져온 라인의 인접 값이나 최근 값이 재사용될 가능성이 낮다. 따라서 공간·시간 지역성이 모두 약해질 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "작업 집합을 일부러 캐시 용량보다 계속 크게 만든다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "작업 집합을 캐시보다 크게 유지하면 필요한 라인이 다시 사용되기 전에 밀려날 수 있다. 이는 지역성을 활용하는 접근이 아니라 용량 미스를 늘릴 수 있는 조건이다."
+      },
+      {
+        "key": "D",
+        "content": "같은 집합을 충돌시키도록 주소를 의도적으로 배치한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "같은 집합으로 계속 매핑되는 블록을 의도적으로 충돌시키면 캐시 전체에 여유가 있어도 라인이 반복 교체될 수 있다. 이런 충돌은 재사용을 돕기보다 지역성 효과를 약화한다."
+      }
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "연속된 배열 원소를 차례로 읽거나 쓰면 한 번 가져온 캐시 라인의 이웃 원소를 곧 사용해 공간적 지역성을 활용한다. 큰 배열은 캐시에 맞는 블록 단위로 처리하면 그 블록의 데이터도 교체되기 전에 재사용할 수 있다."
@@ -296,7 +500,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.cache-friendly-access"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.cache-friendly-access"
+    ],
     "modelAnswer": "전체 데이터를 한 번에 넓게 순회하는 대신 캐시에 들어갈 정도의 작은 블록을 반복 처리하면 해당 블록의 라인을 교체되기 전에 여러 번 재사용할 수 있다. 작업 집합을 가까운 캐시에 맞춰 시간적·공간적 지역성을 높이는 것이 핵심이며 타일 크기가 지나치게 크거나 추가 반복문 오버헤드가 크면 이득이 줄 수 있다.",
     "explanationMarkdown": "타일링은 한 번 가져온 캐시 라인을 교체되기 전에 여러 연산에서 재사용하도록 작업 집합을 작게 만든다. 핵심은 타일 크기를 가까운 캐시 수준에 맞춰 시간적·공간적 지역성을 높이는 것이다."
   },
@@ -307,8 +513,322 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.cache-organization.cache-friendly-access"],
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.cache-friendly-access"
+    ],
     "modelAnswer": "배열 배치가 CPU 캐시 지역성과 할당 비용을 개선했더라도 운영 요청이 DB/네트워크 I/O, 잠금, 큐 대기 같은 다른 비용에 지배되면 종단 간 지연 시간 영향은 작을 수 있다. CPU 사용률, 캐시 미스/IPC, 할당·GC와 함께 DB/네트워크 대기와 p95/p99를 비교해 실제 병목이 어디인지 확인해야 한다.",
     "explanationMarkdown": "마이크로벤치마크에서 지역성이 좋아져도 운영 병목이 DB·네트워크·잠금·큐에 있으면 종단 간 지연 시간 변화는 작을 수 있다. CPU/캐시 지표와 함께 실제 요청의 대기 시간과 꼬리 지연 시간을 다시 측정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.cache-organization.cache-friendly-access.q5",
+    "promptMarkdown": "2차원 정수 배열 `int[4096][4096] a`의 전체 합을 구할 때, 행 우선(`a[i][j]`) 순회가 열 우선(`a[j][i]`) 순회보다 CPU에서 훨씬 빠른 이유는?\n\n```java\n// A: 행 우선(Row-Major)\nfor (int i = 0; i < N; i++)\n    for (int j = 0; j < N; j++) sum += a[i][j];\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.cache-friendly-access"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "CPU L1 캐시는 크기가 64GB이므로 배열 순회 순서는 속도에 영향을 주지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "L1 데이터 캐시는 보통 코어당 32KB~64KB 수준으로 매우 작아 접근 순서가 성능에 수 배~수십 배 차이를 만든다."
+      },
+      {
+        "key": "B",
+        "content": "같은 행의 인접 원소(`a[i][0..15]`)가 하나의 64B CPU 캐시 라인에 연속 배치되어 공간적 지역성과 하드웨어 프리페처(Prefetcher) 적중률이 극대화되지만, 열 우선 순회는 매 접근마다 캐시 라인을 건너뛰어 캐시 미스가 폭증한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "연속 메모리 접근은 1회 캐시 라인 로드(64B = `int` 16개)로 후속 15번 접근을 L1 히트로 처리할 수 있게 해 준다."
+      },
+      {
+        "key": "C",
+        "content": "행 우선 순회는 덧셈 연산 횟수 자체가 열 우선보다 절반 적기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "두 루프 모두 정확히 `N^2`번 덧셈을 수행하며, 속도 차이는 메모리 계층(L1/L2/L3 캐시 적중률)에서 나온다."
+      },
+      {
+        "key": "D",
+        "content": "열 우선 순회는 Java에서 컴파일러가 강제로 `synchronized`를 삽입하기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "동기화 삽입은 전혀 없으며 순수하게 메모리 접근 패턴과 캐시 라인 활용률 차이다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "연속 메모리 접근(행 우선, 배열 기반 구조)은 64B 캐시 라인과 하드웨어 프리페처를 최대한 활용해 메모리 병목을 극적으로 줄인다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.cache-organization.direct-mapped-cache.q5",
+    "promptMarkdown": "직접 사상 캐시(Direct-Mapped Cache)에서 전체 캐시 공간이 대부분 비어 있는데도 두 메모리 주소가 번갈아 접근될 때마다 계속 미스가 나는 현상의 이름과 원인은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.direct-mapped-cache"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "충돌 미스(Conflict Miss) — 각 메모리 블록이 매핑될 수 있는 캐시 인덱스가 단 1개로 고정되어 있어, 같은 인덱스로 매핑되는 두 주소가 서로를 계속 쫓아내기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "직접 사상은 비교기가 1개뿐이라 빠르고 단순하지만, 같은 인덱스로 매핑되는 주소들이 번갈아 접근될 때 심각한 충돌 미스(Cache Thrashing)를 일으킨다."
+      },
+      {
+        "key": "B",
+        "content": "강제 미스(Compulsory Miss) — 한 번도 접근하지 않은 주소를 처음 읽었기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "최초 1회 접근이 강제 미스이고, 이미 읽었던 두 주소가 같은 캐시 슬롯을 두고 서로 밀어내는 것은 충돌 미스다."
+      },
+      {
+        "key": "C",
+        "content": "용량 미스(Capacity Miss) — 캐시 전체 크기가 2바이트보다 작기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "다른 슬롯이 비어 있는데도 인덱스 매핑 충돌로 쫓겨나는 것이므로 용량 미스가 아니라 충돌 미스다."
+      },
+      {
+        "key": "D",
+        "content": "직접 사상 캐시에서는 어떤 주소도 서로 같은 인덱스로 매핑되지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "메인 메모리가 캐시보다 훨씬 크므로 수많은 메모리 블록이 `address % numLines`로 동일한 캐시 인덱스를 공유한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Direct-Mapped Cache는 구조가 단순하지만 같은 인덱스에 몰리는 Conflict Miss에 취약하므로 현대 CPU는 Set-Associative 캐시를 사용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.cache-organization.fully-associative-cache.q5",
+    "promptMarkdown": "완전 연관 캐시(Fully-Associative Cache)가 충돌 미스를 사실상 없애는데도 대용량 L1/L2/L3 데이터 캐시에 그대로 쓰이지 않고 소형 TLB 등에만 제한적으로 쓰이는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.fully-associative-cache"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "완전 연관 캐시는 쓰기(Write) 연산을 아예 지원하지 않기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "읽기·쓰기 모두 지원하지만 전체 태그 병렬 비교의 하드웨어 비용과 전력 소모가 핵심 제약이다."
+      },
+      {
+        "key": "B",
+        "content": "완전 연관 캐시는 충돌 미스가 직접 사상 캐시보다 항상 더 많기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "완전 연관은 충돌 미스를 최소화하는 대신 하드웨어 비교기 비용이 가장 크다."
+      },
+      {
+        "key": "C",
+        "content": "완전 연관 캐시는 64비트 주소를 표현할 수 없기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "주소 폭 제약이 아니라 병렬 태그 비교기(CAM)의 면적·전력·지연 확장성 한계 때문이다."
+      },
+      {
+        "key": "D",
+        "content": "임의의 블록이 캐시 어느 슬롯에나 들어갈 수 있으므로 매 접근마다 캐시의 **모든 엔트리 태그를 병렬 비교(CAM)**해야 해, 엔트리 수가 커지면 회로 면적·전력 소모·조회 지연이 급격히 증가하기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "엔트리가 수십 개 수준인 TLB에서는 완전 연관이 실용적이지만, 수천~수만 라인인 L1/L2/L3 캐시에서는 N-way 집합 연관 캐시가 현실적 절충점이다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Fully-Associative는 충돌 미스가 없지만 전체 태그 병렬 비교 비용이 커 소형 캐시(TLB 등)에 주로 쓰인다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.cache-organization.index-tag-offset.q5",
+    "promptMarkdown": "캐시 라인 크기가 `64 바이트(2^6)`이고, `64개 집합(2^6)`을 가진 8-way 집합 연관 캐시에서 32비트 메모리 주소가 `[Tag | Index | Block Offset]`으로 분할될 때 각 필드의 비트 폭은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.index-tag-offset"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Tag`는 주소의 가장 하위 비트에 배치한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "공간적 지역성을 살리기 위해 하위 비트가 Offset, 중간 비트가 Index, 상위 비트가 Tag로 배치된다."
+      },
+      {
+        "key": "B",
+        "content": "`Block Offset = 6비트`, `Index = 6비트`, `Tag = 20비트` (`32 - 6 - 6 = 20`)",
+        "displayOrder": 1,
+        "rationaleMarkdown": "64B 캐시 라인 내 바이트 선택에 `log2(64) = 6비트`, 64개 집합 선택에 `log2(64) = 6비트`가 쓰이며, 나머지 상위 `20비트`가 블록 식별용 Tag가 된다."
+      },
+      {
+        "key": "C",
+        "content": "`Block Offset = 8비트`, `Index = 8비트`, `Tag = 16비트`",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`64 = 2^6`이므로 Offset과 Index는 각각 8비트가 아니라 6비트다."
+      },
+      {
+        "key": "D",
+        "content": "`Block Offset = 6비트`, `Index = 3비트`, `Tag = 23비트`",
+        "displayOrder": 3,
+        "rationaleMarkdown": "8-way 연관도(`2^3`)는 한 집합 내부의 병렬 비교 슬롯 수일 뿐, 집합 번호를 고르는 Index 비트 수(`log2(64) = 6`)가 아니다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "주소 분할은 `[상위 Tag | 중간 Index(log2 집합 수) | 하위 Offset(log2 라인 크기)]`로 구성되어 인접 주소들이 서로 다른 집합으로 고르게 퍼지도록 설계한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.cache-organization.replacement-policy.q5",
+    "promptMarkdown": "8-way 집합 연관 CPU 캐시에서 정확한 LRU(True LRU) 대신 Pseudo-LRU(Tree-PLRU) 같은 근사 교체 정책을 하드웨어에 자주 구현하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.replacement-policy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "직접 사상(1-way) 캐시에서는 항상 복잡한 LRU 회로가 필요하기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "직접 사상 캐시는 집합당 슬롯이 1개뿐이므로 교체 대상 선택 정책 자체가 필요 없다."
+      },
+      {
+        "key": "B",
+        "content": "Pseudo-LRU는 캐시 미스를 0%로 만들어 주기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "교체 정책은 충돌/용량 미스 시 어떤 블록을 내보낼지 결정할 뿐, 강제 미스나 용량 초과 미스를 0으로 만들지 못한다."
+      },
+      {
+        "key": "C",
+        "content": "FIFO 정책이 모든 워크로드에서 항상 최적(Belady 최적)이기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "FIFO는 자주 쓰이는 오래된 데이터를 쫓아낼 수 있고 Belady의 모순도 겪을 수 있어 일반적으로 LRU/PLRU보다 성능이 떨어진다."
+      },
+      {
+        "key": "D",
+        "content": "연관도(way 수)가 커질수록 정확한 LRU 순서 추적에 필요한 상태 비트와 갱신 회로가 급격히 복잡해지므로, 훨씬 적은 비트(예: 8-way당 7비트)와 단순 회로로 LRU에 근접한 적중률을 얻기 위해서다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "하드웨어 캐시는 수 나노초 안에 매 접근마다 교체 메타데이터를 갱신해야 하므로, 회로 복잡도와 적중률 사이의 최적 균형으로 PLRU나 SRRIP 같은 정책을 사용한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "CPU 캐시 교체 정책은 적은 상태 비트와 빠른 하드웨어 갱신 비용으로 높은 적중률을 내는 PLRU·RRIP 계열이 실무 하드웨어의 주류다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.cache-organization.set-associative-cache.q5",
+    "promptMarkdown": "현대 CPU의 L1/L2/L3 캐시가 대부분 `4-way ~ 16-way` 집합 연관 캐시(Set-Associative Cache)를 채택하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.set-associative-cache"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "연관도(way 수)를 늘릴수록 같은 용량에서 Index 비트 수가 늘어난다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "전체 캐시 용량이 고정되어 있을 때 way 수가 2배 늘면 집합 수는 절반으로 줄어들어 Index 비트는 1비트 줄고 Tag 비트가 1비트 늘어난다."
+      },
+      {
+        "key": "B",
+        "content": "집합 연관 캐시에서는 캐시 라인 크기가 1바이트로 고정된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "현대 x86/ARM 집합 연관 캐시의 표준 라인 크기는 보통 64바이트다."
+      },
+      {
+        "key": "C",
+        "content": "인덱스로 집합을 먼저 좁힌 뒤 그 집합 안의 `N`개 슬롯만 병렬 태그 비교함으로써, 직접 사상의 충돌 미스를 크게 줄이면서도 완전 연관의 과도한 하드웨어·전력 비용을 피하는 절충점이기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "집합 연관 캐시는 Direct-Mapped(1-way)와 Fully-Associative(전체 way) 사이의 실용적 스펙트럼으로, 8-way 정도만 되어도 대부분의 충돌 미스를 효과적으로 제거한다."
+      },
+      {
+        "key": "D",
+        "content": "집합 연관 캐시는 Index 비트를 전혀 사용하지 않기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "집합을 선택하기 위해 `log2(집합 수)`만큼의 Index 비트를 사용한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "N-way Set-Associative 캐시는 충돌 미스 감소와 회로 복잡도·전력·접근 지연 사이의 최적 균형점이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.cache-organization.write-allocate.q5",
+    "promptMarkdown": "캐시 쓰기 미스(Write Miss) 발생 시 'Write-Allocate(쓰기 할당)' 정책과 'No-Write-Allocate(비할당)' 정책의 차이와 일반적인 조합은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.write-allocate"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Write-Allocate는 쓰기 미스 시 해당 블록을 하위 메모리에서 캐시로 먼저 불러온 뒤 캐시에 기록하며 주로 **Write-Back**과 결합하고, No-Write-Allocate는 캐시에 올리지 않고 하위 메모리에 직접 기록하며 주로 **Write-Through**와 결합한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Write-Back은 같은 라인에 이어지는 후속 쓰기들을 캐시 안에서 흡수(coalesce)하기 위해 Write-Allocate와 짝을 이루는 것이 효율적이다."
+      },
+      {
+        "key": "B",
+        "content": "Write-Allocate는 읽기 미스(Read Miss)에서만 동작하고 쓰기 미스에서는 동작하지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Write-Allocate는 이름 그대로 쓰기 미스(Write Miss) 시 캐시 라인을 할당해 불러올지 결정하는 정책이다."
+      },
+      {
+        "key": "C",
+        "content": "Write-Allocate를 쓰면 쓰기 미스 시 하위 메모리에서 기존 라인을 읽을 필요가 전혀 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "64B 캐시 라인 중 일부 바이트만 수정할 때는 나머지 바이트를 보존해야 하므로 기존 라인을 먼저 메모리에서 읽어와야 한다(Read-For-Ownership, RFO)."
+      },
+      {
+        "key": "D",
+        "content": "No-Write-Allocate를 쓰면 캐시에 이미 존재하는 라인에 쓸 때도 캐시를 갱신하지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "No-Write-Allocate는 '쓰기 미스' 정책이며, 이미 캐시에 있는 쓰기 히트(Write Hit) 시에는 캐시를 정상 갱신한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "일반적인 캐시 정책 조합은 'Write-Back + Write-Allocate'(후속 쓰기 흡수)와 'Write-Through + No-Write-Allocate'다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.cache-organization.write-through-write-back.q5",
+    "promptMarkdown": "Write-Back 캐시가 Write-Through 캐시 대비 메모리 버스 대역폭을 크게 절약하는 원리와, 그 대신 추가로 관리해야 하는 상태 비트는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.cache-organization.write-through-write-back"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Write-Back 캐시는 `Dirty Bit` 없이도 수정된 라인과 수정되지 않은 라인을 구분한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Dirty Bit가 없으면 교체 시 모든 라인을 무조건 하위 메모리에 다시 써야 해 불필요한 메모리 쓰기가 발생한다."
+      },
+      {
+        "key": "B",
+        "content": "Write-Through는 쓰기 버퍼(Write Buffer)가 없어도 항상 메인 메모리 쓰기 지연이 0이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Write-Through는 하위 메모리 쓰기 지연을 숨기기 위해 보통 Write Buffer를 함께 사용한다."
+      },
+      {
+        "key": "C",
+        "content": "같은 캐시 라인에 여러 번 쓰기가 발생해도 매번 하위 메모리에 쓰지 않고 캐시 라인에 `Dirty Bit`만 표시해 두었다가 그 라인이 교체(eviction)될 때 한 번만 하위 메모리에 반영한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "반복 갱신되는 지역 변수·카운터의 쓰기 트래픽을 L1/L2 캐시 안에서 흡수하므로 메모리 버스 대역폭을 크게 아낄 수 있다(단, Dirty 라인 퇴출 시 쓰기 지연과 멀티코어 일관성 관리가 필요하다)."
+      },
+      {
+        "key": "D",
+        "content": "Write-Back은 모든 쓰기를 매번 캐시와 메인 메모리에 동시에 기록한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "매 쓰기마다 캐시와 하위 메모리에 동시 반영하는 방식은 Write-Through다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Write-Back은 Dirty Bit를 두고 퇴출 시 1회 반영해 메모리 대역폭을 절약하고, Write-Through는 단순성과 즉각적 하위 일관성을 얻는 대신 쓰기 트래픽이 크다."
   }
 ]

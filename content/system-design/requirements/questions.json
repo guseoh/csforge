@@ -1,11 +1,419 @@
 [
-  {"kind":"question","contentKey":"system-design.core.requirements.functional-nonfunctional.q1","promptMarkdown":"사용자가 할 수 있는 동작과 지연 시간·가용성 같은 품질 조건을 각각 무엇이라 부르는가? 순서대로 두 이름을 쉼표로 구분해 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["system-design.core.requirements.functional-nonfunctional"],"acceptedAnswers":["functional은 사용자가 할 수 있는 동작이고 non-functional은 지연 시간 가용성 security cost 같은 품질과 제약이다","functional은 business behavior이고 non-functional은 그 behavior의 성능 안정성 보안 비용 같은 조건이다","functional: 동작, non-functional: 품질과 제약","functional: business behavior, non-functional: 품질/제약","기능 요구는 사용자가 할 수 있는 동작이고, 비기능 요구는 지연 시간·가용성·보안·비용 같은 품질과 제약이다","기능 요구, 품질 요구","기능 요구 / 품질 요구","기능 요구와 품질 요구","기능 요구, 비기능 요구","기능 요구 / 비기능 요구","기능 요구,품질 요구","기능 요구,비기능 요구","기능 요구와 비기능 요구"],"explanationMarkdown":"사용자가 수행할 동작과 이를 평가하는 품질·제약을 구분해야 목표 충족 여부를 검증할 수 있다."},
-  {"kind":"question","contentKey":"system-design.core.requirements.functional-nonfunctional.q2","promptMarkdown":"기획자가 검색을 “실시간”으로 제공해 달라고 했다.\n\n설계 전에 다음 표현을 어떤 측정 가능한 요구사항으로 바꿀지 설명하라.\n\n- 응답 지연 시간과 최대 부하\n- 결과 최신성\n- 오류와 일부 결과를 허용하는 범위\n- 보존 기간·권한·비용","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["system-design.core.requirements.functional-nonfunctional"],"modelAnswer":"누가 어떤 검색 질의를 얼마나 자주 보내는지, 결과가 몇 초 이내에 최신이어야 하는지, p95/p99 지연 시간과 최대 QPS, 오류·일부 결과 허용 여부, 보존·권한·비용을 확인한다. 이를 예를 들어 유효한 질의의 99%에 300ms 이내 응답하고 색인을 10초 안에 반영한다는 수용 기준으로 바꾼다.","explanationMarkdown":"실시간·대규모·고가용성 같은 표현은 실제 부하, 수치, 허용할 실패 조건으로 구체화해야 한다."},
-  {"kind":"question","contentKey":"system-design.core.requirements.functional-nonfunctional.q3","promptMarkdown":"검색 시스템은 다음 요구 사이에서 절충해야 한다.\n\n- 지연 시간\n- 최신성\n- 가용성\n- 비용\n\n반드시 지켜야 할 불변 조건과 조정 가능한 선호 조건을 구분하고, 각각의 검증 방법을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["system-design.core.requirements.functional-nonfunctional"],"modelAnswer":"권한 없는 결과를 반환하지 않는 보안 불변 조건과 기준 데이터 쓰기의 정합성은 타협하지 않는다. 반면 검색 결과 수·최신성·꼬리 지연 시간·비용은 실제 부하에 맞춰 목표를 조정할 수 있다. 질의별 p95/p99와 오류율, 색인 갱신 지연, 원본 대체 처리, 최대 부하·의존 대상 장애·배포 시나리오를 정한다. SLO와 비용 예산을 함께 수용 기준으로 검증한다.","explanationMarkdown":"요구사항의 우선순위와 측정 방법이 없으면 아키텍처 선택은 임의의 수치 비교가 된다."},
-  {"kind":"question","contentKey":"system-design.core.requirements.capacity-data.q1","promptMarkdown":"용량을 추정할 때 평균 QPS뿐 아니라 최대 QPS와 요청 구성을 확인해야 하는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["system-design.core.requirements.capacity-data"],"choices":[{"key":"A","content":"peak QPS가 정해지면 storage·retention과 무관하게 capacity가 결정되기 때문이다.","displayOrder":0,"rationaleMarkdown":"최대 QPS는 처리량의 한 축일 뿐이다. 저장 용량은 데이터 크기·보존 기간·복제 방식에 따라 달라지므로 최대 QPS만으로 결정되지 않는다."},{"key":"B","content":"burst와 실제 query·byte·fan-out 작업량이 평균과 다를 수 있기 때문이다.","displayOrder":1,"rationaleMarkdown":"요청률 평균이 같아도 급증 폭과 지속 시간, 요청당 DB 질의·전송량·호출 분기가 다르면 포화되는 자원이 달라진다. 실제 요청 구성을 반영해야 용량을 추정할 수 있다."},{"key":"C","content":"평균 QPS만으로도 burst의 지속 시간과 resource saturation을 알 수 있기 때문이다.","displayOrder":2,"rationaleMarkdown":"평균은 시간에 따라 몰리는 요청을 평탄화한다. 급증의 지속 시간, 대기열 누적, 자원 포화는 평균 QPS 하나로 알 수 없다."},{"key":"D","content":"요청 mix가 달라도 retry와 downstream query·byte 부하는 같기 때문이다.","displayOrder":3,"rationaleMarkdown":"읽기/쓰기 비율, 재시도율, 호출 분기가 달라지면 하위 서비스 질의와 전송량도 달라진다. 요청 수가 같다고 서버 부하도 같은 것은 아니다."}],"correctChoiceKey":"B","explanationMarkdown":"용량은 지속 평균이 아니라 최대 부하와 실제 작업량이 자원 포화 지점에 닿을 때 결정될 수 있다."},
-  {"kind":"question","contentKey":"system-design.core.requirements.capacity-data.q2","promptMarkdown":"API 부하는 다음과 같다.\n\n| 항목 | 값 |\n| --- | --- |\n| 일일 평균 요청 수 | 100만 건 |\n| 캠페인 기간 급증 | 평소의 10배 |\n| 요청당 DB 질의 | 평균 3회 |\n| 요청당 쓰기 데이터 | 2KB |\n\n초기 추산에서 어떤 수치와 배수를 먼저 모델링해야 하는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["system-design.core.requirements.capacity-data"],"modelAnswer":"평균 요청률은 1,000,000 / 86,400 ≈ 11.57 QPS, 캠페인 peak는 약 115.74 QPS다. DB 질의율은 반올림 전 peak 값에 3을 곱한 약 347.22 queries/s다. 모든 요청이 2KB를 실제 저장한다면 원본 증가량은 약 2GB/day(십진 단위)이고 쓰기 비율이 f라면 약 2GB×f/day다. peak 지속 시간, 실제 일일 총량, 보존 기간, 인덱스·복제·백업·재시도와 연결 풀·동시성·데이터 분포를 별도로 추정하고 부하 시험으로 확인한다.","explanationMarkdown":"일일 총량과 최대 순간 요청률은 별도 단위다. peak 배수를 하루 저장량에 무조건 곱하지 않고 요청당 내부 작업량과 실제 쓰기 비율을 반영한다. 평균 약 11.57 QPS, peak 약 115.74 QPS, DB 약 347.22 queries/s는 초기 모델이지 실측값이 아니다."},
-  {"kind":"question","contentKey":"system-design.core.requirements.capacity-data.q3","promptMarkdown":"용량 추정에 낮음·기준·높음 시나리오와 불확실성을 포함해야 하는 이유를 설명하라.\n\n또한 어떤 조건에서 아키텍처 결정을 다시 검토할지 정하는 기준을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["system-design.core.requirements.capacity-data"],"modelAnswer":"미래 수요와 접근 방식은 확정할 수 없으므로 숫자 하나만 제시하면 정밀한 예측처럼 보이는 문제가 생긴다. 최대 QPS·요청 크기·호출 분기·재시도·복제본·보존 기간을 낮음/기준/높음 시나리오로 계산하고 가정과 관측 근거를 기록한다. 예를 들어 질의 지연·저장량 증가·DB 연결 수가 예산의 70%를 넘거나 예상 증가 시점이 노드 확보 기간보다 짧아지면 사전 계산·분할·비동기 처리 같은 다음 선택지를 검증한다.","explanationMarkdown":"추정은 미래를 맞히는 예언이 아니라 어떤 변화가 설계를 바꾸는지 보여 주는 결정 모델이다."},
-  {"kind":"question","contentKey":"system-design.core.requirements.ownership-boundaries.q1","promptMarkdown":"기준 데이터(source of truth)와 파생 뷰(derived projection)의 관계에 대한 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["system-design.core.requirements.ownership-boundaries"],"choices":[{"key":"A","content":"search index의 결과를 다시 canonical transaction의 source로 사용한다.","displayOrder":0,"rationaleMarkdown":"검색 색인은 조회를 위한 복제 상태이므로 갱신이 늦거나 누락될 수 있다. 이를 원본 트랜잭션의 권위 있는 입력으로 취급하면 데이터 소유권이 뒤집힌다."},{"key":"B","content":"모든 projection이 독립적으로 write해야 가용성이 높아진다.","displayOrder":1,"rationaleMarkdown":"여러 파생 뷰가 같은 상태를 따로 수정하면 충돌 시 어느 값을 기준으로 삼을지 정하기 어렵다. 쓰기 권한은 명확한 원본 소유자에게 둬야 한다."},{"key":"C","content":"cache가 최신이면 canonical DB가 필요 없다.","displayOrder":2,"rationaleMarkdown":"캐시가 당장은 최신이어도 만료·장애·재시작 뒤 값을 복구할 원본이 필요하다. 다시 만들 수 있는 캐시는 기준 데이터베이스의 지속 상태를 대체하지 못한다."},{"key":"D","content":"canonical owner가 state transition을 소유하고 cache·search 같은 projection은 재생성 가능하게 둔다.","displayOrder":3,"rationaleMarkdown":"원본 소유자가 상태 전이를 확정하고 캐시·검색 같은 파생 뷰는 그 결과에서 만들어야 한다. 그러면 파생 뷰 장애나 재구성 중에도 원본의 권위와 복구 경로가 유지된다."}],"correctChoiceKey":"D","explanationMarkdown":"쓰기 권한과 파생 읽기 모델을 분리해야 상태 충돌과 복구 순서를 통제할 수 있다."},
-  {"kind":"question","contentKey":"system-design.core.requirements.ownership-boundaries.q2","promptMarkdown":"주문 상태를 다음 두 저장소에서 모두 수정하고 있다.\n\n- API 데이터베이스\n- 검색 색인\n\n장애 복구 후 서로 다른 상태가 보인다면 데이터 소유권 경계를 어떻게 바로잡아야 하는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["system-design.core.requirements.ownership-boundaries"],"modelAnswer":"주문 애그리거트의 상태 전이와 불변 조건을 한 기준 DB 소유자 안에 두고, 검색 색인은 이벤트/outbox로 갱신되는 파생 뷰로 바꾼다. 파생 뷰의 revision과 갱신 지연을 기록하고 실패 시 이벤트 재생·재구성으로 복구한다. 오래된 검색 결과를 사용자에게 어떻게 표시할지도 계약으로 정한다.","explanationMarkdown":"여러 저장소가 같은 업무 상태를 독립적으로 수정하면 어느 쪽이 원본인지, 어떤 순서로 복구할지 정하기 어렵다."},
-  {"kind":"question","contentKey":"system-design.core.requirements.ownership-boundaries.q3","promptMarkdown":"팀별로 서비스를 분리할 데이터 소유권 경계를 정할 때 다음 요소를 함께 고려해야 하는 이유를 설명하라.\n\n- 애그리거트(aggregate)와 불변 조건\n- API와 쓰기 권한\n- 스키마 변경·마이그레이션\n- 복구와 파생 뷰 재구성","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["system-design.core.requirements.ownership-boundaries"],"modelAnswer":"프로세스나 URL만으로 경계를 나누면 공유 테이블 쓰기와 서비스 간 트랜잭션이 남아 분산 모놀리스가 된다. 함께 지켜야 하는 불변 조건은 소유자의 로컬 트랜잭션에서 보호한다. 다른 팀은 API/이벤트를 통해 접근하고 스키마 변경·권한 부여·복구·파생 뷰 재구성 책임도 소유자에게 둔다. 경계를 넘는 업무 흐름은 최종 일관성·예약·사가(saga)의 사용자 상태와 비용을 드러낸다.","explanationMarkdown":"소유권은 코드가 놓인 위치만 뜻하지 않는다. 쓰기 권한, 불변 조건, 스키마, 운영 책임까지 포함하는 경계다."}
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.functional-nonfunctional.q1",
+    "promptMarkdown": "사용자가 할 수 있는 동작과 지연 시간·가용성 같은 품질 조건을 각각 무엇이라 부르는가? 순서대로 두 이름을 쉼표로 구분해 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.functional-nonfunctional"
+    ],
+    "acceptedAnswers": [
+      "functional은 사용자가 할 수 있는 동작이고 non-functional은 지연 시간 가용성 security cost 같은 품질과 제약이다",
+      "functional은 business behavior이고 non-functional은 그 behavior의 성능 안정성 보안 비용 같은 조건이다",
+      "functional: 동작, non-functional: 품질과 제약",
+      "functional: business behavior, non-functional: 품질/제약",
+      "기능 요구는 사용자가 할 수 있는 동작이고, 비기능 요구는 지연 시간·가용성·보안·비용 같은 품질과 제약이다",
+      "기능 요구, 품질 요구",
+      "기능 요구 / 품질 요구",
+      "기능 요구와 품질 요구",
+      "기능 요구, 비기능 요구",
+      "기능 요구 / 비기능 요구",
+      "기능 요구,품질 요구",
+      "기능 요구,비기능 요구",
+      "기능 요구와 비기능 요구"
+    ],
+    "explanationMarkdown": "사용자가 수행할 동작과 이를 평가하는 품질·제약을 구분해야 목표 충족 여부를 검증할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.functional-nonfunctional.q2",
+    "promptMarkdown": "기획자가 검색을 “실시간”으로 제공해 달라고 했다.\n\n설계 전에 다음 표현을 어떤 측정 가능한 요구사항으로 바꿀지 설명하라.\n\n- 응답 지연 시간과 최대 부하\n- 결과 최신성\n- 오류와 일부 결과를 허용하는 범위\n- 보존 기간·권한·비용",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.functional-nonfunctional"
+    ],
+    "modelAnswer": "누가 어떤 검색 질의를 얼마나 자주 보내는지, 결과가 몇 초 이내에 최신이어야 하는지, p95/p99 지연 시간과 최대 QPS, 오류·일부 결과 허용 여부, 보존·권한·비용을 확인한다. 이를 예를 들어 유효한 질의의 99%에 300ms 이내 응답하고 색인을 10초 안에 반영한다는 수용 기준으로 바꾼다.",
+    "explanationMarkdown": "실시간·대규모·고가용성 같은 표현은 실제 부하, 수치, 허용할 실패 조건으로 구체화해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.functional-nonfunctional.q3",
+    "promptMarkdown": "검색 시스템은 다음 요구 사이에서 절충해야 한다.\n\n- 지연 시간\n- 최신성\n- 가용성\n- 비용\n\n반드시 지켜야 할 불변 조건과 조정 가능한 선호 조건을 구분하고, 각각의 검증 방법을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.functional-nonfunctional"
+    ],
+    "modelAnswer": "권한 없는 결과를 반환하지 않는 보안 불변 조건과 기준 데이터 쓰기의 정합성은 타협하지 않는다. 반면 검색 결과 수·최신성·꼬리 지연 시간·비용은 실제 부하에 맞춰 목표를 조정할 수 있다. 질의별 p95/p99와 오류율, 색인 갱신 지연, 원본 대체 처리, 최대 부하·의존 대상 장애·배포 시나리오를 정한다. SLO와 비용 예산을 함께 수용 기준으로 검증한다.",
+    "explanationMarkdown": "요구사항의 우선순위와 측정 방법이 없으면 아키텍처 선택은 임의의 수치 비교가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.capacity-data.q1",
+    "promptMarkdown": "용량을 추정할 때 평균 QPS뿐 아니라 최대 QPS와 요청 구성을 확인해야 하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.capacity-data"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "peak QPS가 정해지면 storage·retention과 무관하게 capacity가 결정되기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "최대 QPS는 처리량의 한 축일 뿐이다. 저장 용량은 데이터 크기·보존 기간·복제 방식에 따라 달라지므로 최대 QPS만으로 결정되지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "burst와 실제 query·byte·fan-out 작업량이 평균과 다를 수 있기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "요청률 평균이 같아도 급증 폭과 지속 시간, 요청당 DB 질의·전송량·호출 분기가 다르면 포화되는 자원이 달라진다. 실제 요청 구성을 반영해야 용량을 추정할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "평균 QPS만으로도 burst의 지속 시간과 resource saturation을 알 수 있기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "평균은 시간에 따라 몰리는 요청을 평탄화한다. 급증의 지속 시간, 대기열 누적, 자원 포화는 평균 QPS 하나로 알 수 없다."
+      },
+      {
+        "key": "D",
+        "content": "요청 mix가 달라도 retry와 downstream query·byte 부하는 같기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "읽기/쓰기 비율, 재시도율, 호출 분기가 달라지면 하위 서비스 질의와 전송량도 달라진다. 요청 수가 같다고 서버 부하도 같은 것은 아니다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "용량은 지속 평균이 아니라 최대 부하와 실제 작업량이 자원 포화 지점에 닿을 때 결정될 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.capacity-data.q2",
+    "promptMarkdown": "API 부하는 다음과 같다.\n\n| 항목 | 값 |\n| --- | --- |\n| 일일 평균 요청 수 | 100만 건 |\n| 캠페인 기간 급증 | 평소의 10배 |\n| 요청당 DB 질의 | 평균 3회 |\n| 요청당 쓰기 데이터 | 2KB |\n\n초기 추산에서 어떤 수치와 배수를 먼저 모델링해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.capacity-data"
+    ],
+    "modelAnswer": "평균 요청률은 1,000,000 / 86,400 ≈ 11.57 QPS, 캠페인 peak는 약 115.74 QPS다. DB 질의율은 반올림 전 peak 값에 3을 곱한 약 347.22 queries/s다. 모든 요청이 2KB를 실제 저장한다면 원본 증가량은 약 2GB/day(십진 단위)이고 쓰기 비율이 f라면 약 2GB×f/day다. peak 지속 시간, 실제 일일 총량, 보존 기간, 인덱스·복제·백업·재시도와 연결 풀·동시성·데이터 분포를 별도로 추정하고 부하 시험으로 확인한다.",
+    "explanationMarkdown": "일일 총량과 최대 순간 요청률은 별도 단위다. peak 배수를 하루 저장량에 무조건 곱하지 않고 요청당 내부 작업량과 실제 쓰기 비율을 반영한다. 평균 약 11.57 QPS, peak 약 115.74 QPS, DB 약 347.22 queries/s는 초기 모델이지 실측값이 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.capacity-data.q3",
+    "promptMarkdown": "용량 추정에 낮음·기준·높음 시나리오와 불확실성을 포함해야 하는 이유를 설명하라.\n\n또한 어떤 조건에서 아키텍처 결정을 다시 검토할지 정하는 기준을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.capacity-data"
+    ],
+    "modelAnswer": "미래 수요와 접근 방식은 확정할 수 없으므로 숫자 하나만 제시하면 정밀한 예측처럼 보이는 문제가 생긴다. 최대 QPS·요청 크기·호출 분기·재시도·복제본·보존 기간을 낮음/기준/높음 시나리오로 계산하고 가정과 관측 근거를 기록한다. 예를 들어 질의 지연·저장량 증가·DB 연결 수가 예산의 70%를 넘거나 예상 증가 시점이 노드 확보 기간보다 짧아지면 사전 계산·분할·비동기 처리 같은 다음 선택지를 검증한다.",
+    "explanationMarkdown": "추정은 미래를 맞히는 예언이 아니라 어떤 변화가 설계를 바꾸는지 보여 주는 결정 모델이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.ownership-boundaries.q1",
+    "promptMarkdown": "기준 데이터(source of truth)와 파생 뷰(derived projection)의 관계에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.ownership-boundaries"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "search index의 결과를 다시 canonical transaction의 source로 사용한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "검색 색인은 조회를 위한 복제 상태이므로 갱신이 늦거나 누락될 수 있다. 이를 원본 트랜잭션의 권위 있는 입력으로 취급하면 데이터 소유권이 뒤집힌다."
+      },
+      {
+        "key": "B",
+        "content": "모든 projection이 독립적으로 write해야 가용성이 높아진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "여러 파생 뷰가 같은 상태를 따로 수정하면 충돌 시 어느 값을 기준으로 삼을지 정하기 어렵다. 쓰기 권한은 명확한 원본 소유자에게 둬야 한다."
+      },
+      {
+        "key": "C",
+        "content": "cache가 최신이면 canonical DB가 필요 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "캐시가 당장은 최신이어도 만료·장애·재시작 뒤 값을 복구할 원본이 필요하다. 다시 만들 수 있는 캐시는 기준 데이터베이스의 지속 상태를 대체하지 못한다."
+      },
+      {
+        "key": "D",
+        "content": "canonical owner가 state transition을 소유하고 cache·search 같은 projection은 재생성 가능하게 둔다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "원본 소유자가 상태 전이를 확정하고 캐시·검색 같은 파생 뷰는 그 결과에서 만들어야 한다. 그러면 파생 뷰 장애나 재구성 중에도 원본의 권위와 복구 경로가 유지된다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "쓰기 권한과 파생 읽기 모델을 분리해야 상태 충돌과 복구 순서를 통제할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.ownership-boundaries.q2",
+    "promptMarkdown": "주문 상태를 다음 두 저장소에서 모두 수정하고 있다.\n\n- API 데이터베이스\n- 검색 색인\n\n장애 복구 후 서로 다른 상태가 보인다면 데이터 소유권 경계를 어떻게 바로잡아야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.ownership-boundaries"
+    ],
+    "modelAnswer": "주문 애그리거트의 상태 전이와 불변 조건을 한 기준 DB 소유자 안에 두고, 검색 색인은 이벤트/outbox로 갱신되는 파생 뷰로 바꾼다. 파생 뷰의 revision과 갱신 지연을 기록하고 실패 시 이벤트 재생·재구성으로 복구한다. 오래된 검색 결과를 사용자에게 어떻게 표시할지도 계약으로 정한다.",
+    "explanationMarkdown": "여러 저장소가 같은 업무 상태를 독립적으로 수정하면 어느 쪽이 원본인지, 어떤 순서로 복구할지 정하기 어렵다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.ownership-boundaries.q3",
+    "promptMarkdown": "팀별로 서비스를 분리할 데이터 소유권 경계를 정할 때 다음 요소를 함께 고려해야 하는 이유를 설명하라.\n\n- 애그리거트(aggregate)와 불변 조건\n- API와 쓰기 권한\n- 스키마 변경·마이그레이션\n- 복구와 파생 뷰 재구성",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.ownership-boundaries"
+    ],
+    "modelAnswer": "프로세스나 URL만으로 경계를 나누면 공유 테이블 쓰기와 서비스 간 트랜잭션이 남아 분산 모놀리스가 된다. 함께 지켜야 하는 불변 조건은 소유자의 로컬 트랜잭션에서 보호한다. 다른 팀은 API/이벤트를 통해 접근하고 스키마 변경·권한 부여·복구·파생 뷰 재구성 책임도 소유자에게 둔다. 경계를 넘는 업무 흐름은 최종 일관성·예약·사가(saga)의 사용자 상태와 비용을 드러낸다.",
+    "explanationMarkdown": "소유권은 코드가 놓인 위치만 뜻하지 않는다. 쓰기 권한, 불변 조건, 스키마, 운영 책임까지 포함하는 경계다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.functional-nonfunctional.q4",
+    "promptMarkdown": "기획자가 “검색 결과를 실시간으로 빠르게 보여 주세요”라고 요청했다. 아키텍처 설계 착수 전에 이를 **측정 가능한 비기능 요구사항(NFR)**으로 구체화한 가장 좋은 표현은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.functional-nonfunctional"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "“평균 응답 시간만 1초 이하이면 p99는 30초여도 상관없다.”",
+        "displayOrder": 0,
+        "rationaleMarkdown": "꼬리 지연(p99)을 방치하면 검색이 느린 사용자가 반복 이탈하고 타임아웃이 누적된다."
+      },
+      {
+        "key": "B",
+        "content": "“Peak 500 QPS 부하에서 검색 API p99 < 250ms, 신규 문서 등록 후 검색 반영 지연(freshness) <= 5초, 월간 가용성 >= 99.9%”",
+        "displayOrder": 1,
+        "rationaleMarkdown": "부하 조건(QPS), 백분위수 지연(p99), 최신성 허용치(staleness), 가용성(SLO)을 숫자로 명시해야 PostgreSQL 직접 검색으로 충분한지 전용 검색 엔진이 필요한지 객관적으로 결정할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "“최대한 빠르게, 장애는 절대 없도록, 비용은 무료로 구현한다.”",
+        "displayOrder": 2,
+        "rationaleMarkdown": "측정 불가능하고 서로 모순되는 구호로는 아키텍처 트레이드오프와 검증 기준을 세울 수 없다."
+      },
+      {
+        "key": "D",
+        "content": "“무조건 Elasticsearch와 Kafka를 도입해 0ms 지연을 달성한다.”",
+        "displayOrder": 3,
+        "rationaleMarkdown": "요구사항을 수치화하기 전에 특정 기술 스택부터 못 박으면 과잉 설계가 되며, 0ms 지연은 물리적으로 불가능하다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "'실시간', '빠르게', '안정적으로' 같은 모호한 형용사를 **부하(QPS) · 백분위수 지연(p99) · 최신성(staleness) · 가용성(SLO)** 수치로 번역하는 것이 시스템 설계의 첫걸음이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.functional-nonfunctional.q5",
+    "promptMarkdown": "다음 중 **기능 요구사항(Functional Requirement)**과 **비기능 요구사항(Non-Functional Requirement)**을 올바르게 구분한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.functional-nonfunctional"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "기능 요구만 테스트하고 비기능 요구는 테스트할 수 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "부하 테스트, 장애 주입, 보안 테스트, RPO/RTO 복구 리허설로 비기능 요구도 정량 검증한다."
+      },
+      {
+        "key": "B",
+        "content": "기능 요구: “사용자는 틀린 문제만 모아 재풀이 퀴즈를 시작할 수 있다” / 비기능 요구: “퀴즈 제출 API는 동시 200 요청에서 p99 < 300ms로 응답하고 멱등 키 중복 제출을 차단한다”",
+        "displayOrder": 1,
+        "rationaleMarkdown": "기능 요구는 시스템이 제공하는 업무 행위(What)이고, 비기능 요구는 지연·처리량·가용성·일관성·보안·복구 목표 같은 품질 속성(How well)이다."
+      },
+      {
+        "key": "C",
+        "content": "기능 요구: “p99 < 200ms” / 비기능 요구: “오답 노트 메모 저장”",
+        "displayOrder": 2,
+        "rationaleMarkdown": "기능 요구(무엇을 할 수 있는가)와 비기능 품질 요구(얼마나 빠르고 안정적으로 동작하는가)가 정확히 반대로 연결되었다."
+      },
+      {
+        "key": "D",
+        "content": "비기능 요구는 배포가 끝난 뒤 운영 단계에서만 생각하면 되므로 초기 설계에는 필요 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "일관성·지연·확장성·보안 같은 비기능 요구가 오히려 데이터 모델과 아키텍처 구조를 가장 크게 좌우한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "기능 요구는 도메인 모델과 API 스펙을, 비기능 요구는 저장소·캐시·비동기 경계·격리·관측 아키텍처를 결정한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.capacity-data.q4",
+    "promptMarkdown": "일일 API 요청이 `8,640,000건`이고, 피크 시간대 트래픽이 일평균의 `5배`, 읽기:쓰기 비율이 `9:1`인 서비스의 **평균 QPS**와 **피크 쓰기 QPS**는 각각 얼마인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.capacity-data"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "평균 전체 `100 QPS`, 피크 쓰기 `450 QPS`",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`450 QPS`는 쓰기(10%)가 아니라 피크 읽기(90%) QPS다."
+      },
+      {
+        "key": "B",
+        "content": "평균 전체 `500 QPS`, 피크 쓰기 `10 QPS`",
+        "displayOrder": 1,
+        "rationaleMarkdown": "평균 QPS(100)와 피크 배수(5배)를 혼동해 잘못 계산했다. 일일 864만 건 ÷ 86,400초 = 평균 100 QPS, 피크 5배는 500 QPS다."
+      },
+      {
+        "key": "C",
+        "content": "평균 전체 `100 QPS`, 피크 쓰기 `50 QPS` (`8,640,000 / 86,400 = 100`, `100 × 5 × 0.1 = 50`)",
+        "displayOrder": 2,
+        "rationaleMarkdown": "하루는 `86,400초`이므로 평균은 `100 QPS`, 피크 전체는 `500 QPS`, 그중 쓰기 10%는 `50 QPS`다. 이 수준이면 잘 인덱싱된 단일 PostgreSQL로도 여유 있게 처리 가능해 조기 샤딩을 피할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "평균 전체 `1,000 QPS`, 피크 쓰기 `500 QPS`",
+        "displayOrder": 3,
+        "rationaleMarkdown": "자릿수를 10배 과대 계산했다(`8,640,000 / 86,400 = 100`)."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "간단한 용량 추정(`일 요청수 / 86,400 × 피크 배수 × 읽기/쓰기 비율`)만 해 보아도 불필요한 과잉 분산 설계(조기 샤딩)를 피하고 실제 병목 지점을 정확히 짚을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.capacity-data.q5",
+    "promptMarkdown": "일일 신규 레코드가 `100만 건`, 행당 평균 크기(인덱스 포함)가 `1KB`인 로그 테이블을 1년간(365일) 보존할 때 대략적인 연간 디스크 증가량과 가장 먼저 검토할 운영 전략은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.capacity-data"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 로그를 JVM 힙 메모리의 `ArrayList`에만 보관한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "365GB 데이터를 JVM 힙에 올릴 수 없으며 재기동 시 즉시 유실된다."
+      },
+      {
+        "key": "B",
+        "content": "연간 약 `365GB` 증가(`1GB/day × 365`). 시간 기반 파티셔닝(월/일 단위 `DROP PARTITION`), 보존 기간(TTL)·콜드 스토리지 아카이빙, 그리고 인덱스 크기 관리를 초기부터 설계한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "하루 1GB씩 쌓이는 append-heavy 테이블을 단일 비파티션 테이블로 두면 1년 뒤 `DELETE` 정리 시 대량 WAL과 VACUUM bloat가 발생한다. 시간 파티셔닝으로 오래된 파티션을 즉시 `DROP`하는 설계가 정석이다."
+      },
+      {
+        "key": "C",
+        "content": "연간 약 `365MB`이므로 10년간 아무 정리 정책도 필요 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`10^6 × 1KB = 1GB/day`이므로 연간 `365GB`다(1,000배 과소 추정)."
+      },
+      {
+        "key": "D",
+        "content": "매주 `DELETE FROM logs WHERE created_at < NOW() - INTERVAL '30 days'`를 한 트랜잭션으로 실행하면 I/O 부담이 전혀 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "3천만 행을 한 번에 `DELETE`하면 거대한 WAL·잠금·VACUUM bloat 폭탄이 발생한다. 파티션 `DROP`이 훨씬 안전하다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "데이터 증가량 추정(`일 건수 × 행 크기 × 보존 일수`)은 파티셔닝, 보존/아카이빙 정책, 백업/복구 시간(RTO) 설계의 직접 근거가 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.ownership-boundaries.q4",
+    "promptMarkdown": "기준 데이터(Source of Truth)와 파생 데이터(Derived Data: Redis 캐시, 검색 색인, 통계 테이블)의 소유권 원칙으로 가장 올바른 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.ownership-boundaries"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 쓰기·불변식 검증은 단일 기준 데이터(예: PostgreSQL)에서만 확정하고, 파생 저장소는 기준 데이터로부터 단방향으로 갱신되며 언제든 완전히 비우고 재구축할 수 있어야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "단일 진실 공급원(Single Source of Truth)을 명확히 해야 캐시·검색 장애 시에도 데이터 손실 없이 재구축할 수 있고, 두 저장소 간 충돌·불일치 원인이 사라진다."
+      },
+      {
+        "key": "B",
+        "content": "쓰기 속도를 위해 어떤 요청은 Redis에만 쓰고 어떤 요청은 PostgreSQL에만 쓴다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "쓰기 소유권이 분산되면 Redis 재기동이나 eviction 시 정본 데이터가 영구 유실되고 두 저장소가 영구 분기된다."
+      },
+      {
+        "key": "C",
+        "content": "파생 저장소(캐시·검색)에 장애가 나면 기준 데이터까지 자동으로 삭제되어야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "파생 인프라는 선택적 가속 계층이므로 장애 시 기준 데이터는 안전히 유지되고 가능하면 축소 모드로 계속 동작해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "파생 데이터와 기준 데이터의 불일치는 운영상 전혀 문제가 되지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "소유권이 모호해 양방향 수정이 일어나면 어느 값이 진짜인지 판별할 수 없는 심각한 정합성 사고가 난다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "기준 데이터(Source of Truth)는 단일 쓰기 소유권을 갖고, 캐시·검색·집계 뷰 같은 파생 데이터는 단방향 투영이며 항상 기준 데이터에서 재구축 가능해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.requirements.ownership-boundaries.q5",
+    "promptMarkdown": "결제 모듈과 주문 모듈을 분리할 때, 결제 모듈이 주문 모듈의 내부 테이블 `orders`를 직접 SQL로 `SELECT/UPDATE`하는 대신 주문 모듈의 명시적 API/서비스 인터페이스나 이벤트만 사용하도록 강제하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.requirements.ownership-boundaries"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "SQL `UPDATE`는 Java 메서드보다 항상 느리기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "속도 문제가 아니라 도메인 불변식 보호와 스키마 결합 차단이 목적이다."
+      },
+      {
+        "key": "B",
+        "content": "모듈 경계를 나누면 DB 트랜잭션을 사용할 수 없기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "모듈형 모놀리스 안에서는 공개 애플리케이션 인터페이스를 통해 여전히 깔끔한 트랜잭션 경계를 유지할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "주문 모듈이 자신의 스키마와 도메인 불변식(`Order.markPaid()`)을 캡슐화해 타 모듈의 우회 수정으로 불변식이 깨지는 것을 막고, 향후 스키마 리팩터링과 독립 배포를 가능하게 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "다른 모듈이 내부 테이블을 직접 만지면 상태 전이 규칙이 우회되고 컬럼 이름 하나도 안전하게 바꾸지 못한다. 소유 모듈의 공개 경계를 통해서만 상태를 변경해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "PostgreSQL은 한 데이터베이스 안에 2개 이상의 테이블을 만들 수 없기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "DB 제약이 아니라 소프트웨어 모듈 간 캡슐화와 변경 비용 통제를 위한 아키텍처 경계다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "데이터 소유권 경계는 '누가 이 테이블에 쓸 수 있는가'를 1개 모듈로 제한하는 규칙이다. 이 경계를 지켜야 불변식 보호, 안전한 스키마 진화, 향후 서비스 분리가 모두 가능해진다."
+  }
 ]

@@ -26,12 +26,7 @@ ON orders(created_at, id)
 WHERE status = 'PENDING';
 ```
 
-```text
-orders 전체
-├─ PAID        99,900,000 ─┐
-├─ CANCELLED       50,000 ─┴─ 인덱스 대상 아님
-└─ PENDING         50,000 ───► partial index
-```
+![PostgreSQL 부분 인덱스(Partial Index) 범위와 쿼리 매칭](/learning/database/index-partial.svg)
 
 ### 쿼리 조건이 부분 인덱스 조건과 맞아야 한다
 

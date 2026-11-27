@@ -1,8 +1,345 @@
 [
-  {"kind":"question","contentKey":"security.core.injection.sql-injection.q1","promptMarkdown":"PreparedStatement 매개변수 바인딩이 SQL 인젝션을 줄이는 핵심 원리를 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["security.core.injection.sql-injection"],"acceptedAnswers":["쿼리 구조와 사용자 입력 값을 분리한다","입력 값을 SQL 문법이 아닌 데이터로 전달한다","SQL 구조와 입력 값 분리","SQL 코드와 데이터의 분리"],"explanationMarkdown":"매개변수 바인딩은 SQL 문장 구조와 사용자 입력 값을 분리한다. 입력에 SQL 문법처럼 보이는 문자가 있어도 값으로 전달되므로 쿼리 구조를 바꾸지 못한다."},
-  {"kind":"question","contentKey":"security.core.injection.jpql-native.q1","promptMarkdown":"JPA를 쓰므로 `ORDER BY \" + requestSort` 같은 JPQL·네이티브 쿼리 문자열 결합도 안전하다는 주장이 틀린 이유는?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.injection.jpql-native"],"modelAnswer":"ORM도 동적으로 조립한 쿼리 구조를 실행하므로 신뢰할 수 없는 식별자나 키워드가 구조에 들어가면 인젝션 위험이 남는다. 값은 매개변수 바인딩하고 정렬 필드와 방향 같은 구조는 서버의 허용 목록이나 열거형으로 매핑해야 한다.","explanationMarkdown":"JPA가 실행하더라도 `ORDER BY` 뒤에 붙인 요청 문자열은 쿼리 구조가 된다. 값은 매개변수로 바인딩하고 정렬 필드·방향은 서버가 허용한 항목으로 매핑해야 한다."},
-  {"kind":"question","contentKey":"security.core.injection.output-encoding.q1","promptMarkdown":"HTML 본문에서 안전하게 인코딩한 문자열을 JavaScript 문자열 문맥에도 그대로 사용하면 항상 안전한가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.injection.output-encoding"],"choices":[{"key":"A","content":"아니다. JavaScript 문맥에서는 URL 인코딩만 적용하면 된다.","displayOrder":0,"rationaleMarkdown":"URL 인코딩은 URL 구성 요소의 특수 문자를 표현하는 규칙이지 JavaScript 문자열이나 HTML 문맥을 안전하게 만드는 만능 처리 방식이 아니다. 출력 위치의 문법에 맞는 인코딩 또는 안전한 DOM API를 선택해야 한다."},{"key":"B","content":"그렇다. HTML 인코딩 하나면 모든 브라우저 파서를 보호한다.","displayOrder":1,"rationaleMarkdown":"HTML 본문용 인코딩은 HTML 파서 문맥을 고려하지만 스크립트 안의 JavaScript 문법을 모두 안전하게 처리하지는 않는다. 같은 문자열도 HTML 속성, URL, 스크립트 리터럴 등 위치에 따라 해석과 필요한 방어가 다르다."},{"key":"C","content":"그렇다. JavaScript 문자열도 HTML 문서 안에 있으므로 HTML 파서만 고려하면 된다.","displayOrder":2,"rationaleMarkdown":"브라우저는 HTML을 파싱한 뒤 스크립트 내용을 JavaScript 문법으로 다시 해석한다. HTML 본문에서 안전한 문자 표현도 JavaScript 문자열 문맥에서는 데이터 경계를 지키지 못할 수 있다."},{"key":"D","content":"아니다. 파서 문맥마다 특별한 문법이 달라 문맥별 인코딩 또는 안전한 API가 필요하다.","displayOrder":3,"rationaleMarkdown":"브라우저는 HTML, 속성, URL, JavaScript 등 각 문맥을 서로 다른 문법으로 파싱하므로 안전한 처리 규칙도 문맥에 따라 달라진다. 문맥에 맞는 인코딩과 안전한 구조화 API를 사용해 데이터가 코드로 해석되지 않게 해야 한다."}],"correctChoiceKey":"D","explanationMarkdown":"HTML 본문과 JavaScript 문자열은 파싱 규칙이 다르다. 본문용 인코딩 결과를 스크립트에 그대로 넣으면 문법을 벗어나는 문자가 남을 수 있으므로 스크립트 문맥에 맞는 안전한 삽입 방식을 써야 한다."},
-  {"kind":"question","contentKey":"security.core.injection.sql-injection.q2","promptMarkdown":"목록 API가 사용자에게 정렬 열 이름을 받는다.\n\n- 쿼리 값: 매개변수 바인딩 적용\n- `ORDER BY` 식별자: 요청 문자열을 직접 연결\n\n어떻게 안전하게 설계해야 하는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.injection.sql-injection"],"modelAnswer":"식별자는 일반 값 매개변수처럼 바인딩할 수 없으므로 허용된 정렬 키를 열거형 또는 서버의 매핑으로 제한하고 DB 열 표현으로 변환해야 한다. 정렬 방향도 ASC/DESC 허용 목록으로 제한하며 원문 요청 문자열을 쿼리 구조에 넣지 않는다.","explanationMarkdown":"매개변수는 값에 적용되며 `ORDER BY`의 열 이름 같은 쿼리 구조를 대신할 수 없다. 요청한 정렬 키와 방향을 서버의 허용 목록에 대조해 정해진 식별자로 변환해야 한다."},
-  {"kind":"question","contentKey":"security.core.injection.jpql-native.q2","promptMarkdown":"검색 API는 제목 값을 JPQL 매개변수로 전달하지만, 요청에서 받은 엔티티 이름을 `FROM ` 뒤에 문자열로 붙여 쿼리를 만든다. 값만 바인딩했으니 안전하다는 판단이 틀린 이유와 엔티티 선택 방법을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.injection.jpql-native"],"modelAnswer":"매개변수 바인딩은 제목 같은 값이 쿼리 문법으로 해석되지 않게 할 뿐, `FROM` 뒤의 엔티티 이름을 안전하게 만들지 않는다. 사용자가 엔티티 이름을 직접 정하게 하지 말고, 서버가 허용한 검색 대상 중 하나를 선택해 미리 정의한 JPQL 또는 쿼리 구성에 매핑해야 한다.","explanationMarkdown":"ORM을 사용하거나 일부 값을 바인딩해도 쿼리 구조에 사용자 입력을 직접 붙이면 인젝션 위험이 남는다. 값과 구조를 각각 다른 방식으로 제한해야 한다."},
-  {"kind":"question","contentKey":"security.core.injection.output-encoding.q2","promptMarkdown":"검색어를 HTML 본문 텍스트에는 안전하게 출력했지만 HTML 속성과 인라인 JavaScript에도 같은 방식으로 넣었다. 추가로 확인해야 할 방어 원칙은?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.injection.output-encoding"],"modelAnswer":"HTML 본문 텍스트, 속성·URL, JavaScript는 서로 다른 파서 문맥이므로 각각에 맞는 인코딩과 안전한 API를 사용해야 한다. 가능하면 인라인 스크립트를 제거하고 URL은 허용 스킴·매개변수를 구조적으로 생성해 문맥 혼동을 줄인다.","explanationMarkdown":"HTML 속성이나 인라인 JavaScript는 본문 텍스트와 다른 문법으로 값을 해석한다. 각 위치에 맞는 인코딩·안전한 API를 사용하고 가능하면 인라인 스크립트 생성을 피해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.sql-injection.q1",
+    "promptMarkdown": "PreparedStatement 매개변수 바인딩이 SQL 인젝션을 줄이는 핵심 원리를 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.sql-injection"
+    ],
+    "acceptedAnswers": [
+      "쿼리 구조와 사용자 입력 값을 분리한다",
+      "입력 값을 SQL 문법이 아닌 데이터로 전달한다",
+      "SQL 구조와 입력 값 분리",
+      "SQL 코드와 데이터의 분리"
+    ],
+    "explanationMarkdown": "매개변수 바인딩은 SQL 문장 구조와 사용자 입력 값을 분리한다. 입력에 SQL 문법처럼 보이는 문자가 있어도 값으로 전달되므로 쿼리 구조를 바꾸지 못한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.jpql-native.q1",
+    "promptMarkdown": "JPA를 쓰므로 `ORDER BY \" + requestSort` 같은 JPQL·네이티브 쿼리 문자열 결합도 안전하다는 주장이 틀린 이유는?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.jpql-native"
+    ],
+    "modelAnswer": "ORM도 동적으로 조립한 쿼리 구조를 실행하므로 신뢰할 수 없는 식별자나 키워드가 구조에 들어가면 인젝션 위험이 남는다. 값은 매개변수 바인딩하고 정렬 필드와 방향 같은 구조는 서버의 허용 목록이나 열거형으로 매핑해야 한다.",
+    "explanationMarkdown": "JPA가 실행하더라도 `ORDER BY` 뒤에 붙인 요청 문자열은 쿼리 구조가 된다. 값은 매개변수로 바인딩하고 정렬 필드·방향은 서버가 허용한 항목으로 매핑해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.output-encoding.q1",
+    "promptMarkdown": "HTML 본문에서 안전하게 인코딩한 문자열을 JavaScript 문자열 문맥에도 그대로 사용하면 항상 안전한가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.output-encoding"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "아니다. JavaScript 문맥에서는 URL 인코딩만 적용하면 된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "URL 인코딩은 URL 구성 요소의 특수 문자를 표현하는 규칙이지 JavaScript 문자열이나 HTML 문맥을 안전하게 만드는 만능 처리 방식이 아니다. 출력 위치의 문법에 맞는 인코딩 또는 안전한 DOM API를 선택해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "그렇다. HTML 인코딩 하나면 모든 브라우저 파서를 보호한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "HTML 본문용 인코딩은 HTML 파서 문맥을 고려하지만 스크립트 안의 JavaScript 문법을 모두 안전하게 처리하지는 않는다. 같은 문자열도 HTML 속성, URL, 스크립트 리터럴 등 위치에 따라 해석과 필요한 방어가 다르다."
+      },
+      {
+        "key": "C",
+        "content": "그렇다. JavaScript 문자열도 HTML 문서 안에 있으므로 HTML 파서만 고려하면 된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "브라우저는 HTML을 파싱한 뒤 스크립트 내용을 JavaScript 문법으로 다시 해석한다. HTML 본문에서 안전한 문자 표현도 JavaScript 문자열 문맥에서는 데이터 경계를 지키지 못할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "아니다. 파서 문맥마다 특별한 문법이 달라 문맥별 인코딩 또는 안전한 API가 필요하다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "브라우저는 HTML, 속성, URL, JavaScript 등 각 문맥을 서로 다른 문법으로 파싱하므로 안전한 처리 규칙도 문맥에 따라 달라진다. 문맥에 맞는 인코딩과 안전한 구조화 API를 사용해 데이터가 코드로 해석되지 않게 해야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "HTML 본문과 JavaScript 문자열은 파싱 규칙이 다르다. 본문용 인코딩 결과를 스크립트에 그대로 넣으면 문법을 벗어나는 문자가 남을 수 있으므로 스크립트 문맥에 맞는 안전한 삽입 방식을 써야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.sql-injection.q2",
+    "promptMarkdown": "목록 API가 사용자에게 정렬 열 이름을 받는다.\n\n- 쿼리 값: 매개변수 바인딩 적용\n- `ORDER BY` 식별자: 요청 문자열을 직접 연결\n\n어떻게 안전하게 설계해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.sql-injection"
+    ],
+    "modelAnswer": "식별자는 일반 값 매개변수처럼 바인딩할 수 없으므로 허용된 정렬 키를 열거형 또는 서버의 매핑으로 제한하고 DB 열 표현으로 변환해야 한다. 정렬 방향도 ASC/DESC 허용 목록으로 제한하며 원문 요청 문자열을 쿼리 구조에 넣지 않는다.",
+    "explanationMarkdown": "매개변수는 값에 적용되며 `ORDER BY`의 열 이름 같은 쿼리 구조를 대신할 수 없다. 요청한 정렬 키와 방향을 서버의 허용 목록에 대조해 정해진 식별자로 변환해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.jpql-native.q2",
+    "promptMarkdown": "검색 API는 제목 값을 JPQL 매개변수로 전달하지만, 요청에서 받은 엔티티 이름을 `FROM ` 뒤에 문자열로 붙여 쿼리를 만든다. 값만 바인딩했으니 안전하다는 판단이 틀린 이유와 엔티티 선택 방법을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.jpql-native"
+    ],
+    "modelAnswer": "매개변수 바인딩은 제목 같은 값이 쿼리 문법으로 해석되지 않게 할 뿐, `FROM` 뒤의 엔티티 이름을 안전하게 만들지 않는다. 사용자가 엔티티 이름을 직접 정하게 하지 말고, 서버가 허용한 검색 대상 중 하나를 선택해 미리 정의한 JPQL 또는 쿼리 구성에 매핑해야 한다.",
+    "explanationMarkdown": "ORM을 사용하거나 일부 값을 바인딩해도 쿼리 구조에 사용자 입력을 직접 붙이면 인젝션 위험이 남는다. 값과 구조를 각각 다른 방식으로 제한해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.output-encoding.q2",
+    "promptMarkdown": "검색어를 HTML 본문 텍스트에는 안전하게 출력했지만 HTML 속성과 인라인 JavaScript에도 같은 방식으로 넣었다. 추가로 확인해야 할 방어 원칙은?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.output-encoding"
+    ],
+    "modelAnswer": "HTML 본문 텍스트, 속성·URL, JavaScript는 서로 다른 파서 문맥이므로 각각에 맞는 인코딩과 안전한 API를 사용해야 한다. 가능하면 인라인 스크립트를 제거하고 URL은 허용 스킴·매개변수를 구조적으로 생성해 문맥 혼동을 줄인다.",
+    "explanationMarkdown": "HTML 속성이나 인라인 JavaScript는 본문 텍스트와 다른 문법으로 값을 해석한다. 각 위치에 맞는 인코딩·안전한 API를 사용하고 가능하면 인라인 스크립트 생성을 피해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.jpql-native.q4",
+    "promptMarkdown": "아래 JPA 코드 중 JPQL/SQL 인젝션에 **안전한** 것과 **취약한** 것을 올바르게 판별한 것은?\n\n```java\n// (1)\nem.createQuery(\"select m from Member m where m.email = '\" + email + \"'\", Member.class);\n// (2)\nem.createQuery(\"select m from Member m where m.email = :email\", Member.class)\n  .setParameter(\"email\", email);\n// (3)\nem.createNativeQuery(\"select * from member order by \" + sortCol);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.jpql-native"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "(2)만 안전하다. (1)은 JPQL 문자열 결합으로 인젝션에 취약하고, (3)은 `ORDER BY` 식별자에 파라미터 바인딩이 안 되므로 반드시 서버 화이트리스트(`enum`/Map)로 허용 컬럼만 매핑해야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "ORM(JPA/Hibernate)을 써도 문자열 결합으로 JPQL을 조립하면 인젝션이 발생한다. 값은 `:param` 바인딩을, 컬럼명·정렬 방향 같은 구조 요소는 화이트리스트 매핑을 써야 한다."
+      },
+      {
+        "key": "B",
+        "content": "(1)과 (2)는 JPQL이므로 Hibernate가 알아서 SQL 인젝션을 모두 막아준다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Hibernate는 이미 문자열 결합으로 오염된 JPQL 구문을 안전한 파라미터로 되돌려주지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "(3)에서 `sortCol`을 `:sortCol` 바인드 파라미터로 넘기면 `ORDER BY` 동적 컬럼 정렬이 정상 동작한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "SQL 바인드 파라미터는 리터럴 값으로 바인딩되므로 컬럼 식별자(`ORDER BY 'created_at'`)로 해석되지 않아 의도한 정렬이 되지 않는다. 화이트리스트가 정답이다."
+      },
+      {
+        "key": "D",
+        "content": "(1), (2), (3) 모두 JPA를 쓰므로 완전히 안전하다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "JPA 사용 여부가 아니라 '쿼리 구조와 데이터 값의 분리' 여부가 인젝션 안전성을 결정한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "값은 바인드 파라미터(`:param`), 테이블·컬럼·정렬 방향 같은 쿼리 구조는 서버 화이트리스트(`enum`)로 매핑해야 JPQL·네이티브 쿼리 모두 인젝션에서 안전하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.jpql-native.q5",
+    "promptMarkdown": "Spring Data JPA에서 `LIKE` 검색을 구현할 때, SQL 인젝션은 막았지만 사용자가 `%`나 `_`를 검색어로 입력해 전체 테이블 스캔을 유발하거나 의도치 않은 패턴 매칭을 일으키는 문제를 방지하려면?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.jpql-native"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`%`가 입력되면 DB 커넥션을 강제로 닫는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "정상적인 이스케이프 처리를 하면 `%` 문자 자체를 포함한 제목(예: '100% 성공')도 안전하게 검색할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "값은 반드시 바인드 파라미터로 전달하고, 사용자 입력 내의 `LIKE` 와일드카드 문자(`%`, `_`, `\\`)를 이스케이프 처리한 뒤 `ESCAPE '\\'` 절과 함께 사용한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "파라미터 바인딩은 SQL 구문 주입을 막아주지만 `LIKE` 연산자의 와일드카드 의미(`%`, `_`)까지는 제거하지 않으므로 별도 이스케이프가 필요하다."
+      },
+      {
+        "key": "C",
+        "content": "사용자 입력을 작은따옴표로 감싸 문자열 결합하면 `%`가 무력화된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "문자열 결합은 곧바로 치명적인 SQL 인젝션 취약점을 만들므로 반드시 파라미터 바인딩과 와일드카드 이스케이프를 써야 한다."
+      },
+      {
+        "key": "D",
+        "content": "`LIKE` 검색에서는 바인드 파라미터를 쓸 수 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`WHERE title ILIKE :pattern ESCAPE '\\'`처럼 바인드 파라미터로 안전하게 사용할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "JPQL/SQL `LIKE` 검색은 바인드 파라미터 + 와일드카드(`%`, `_`, `\\`) 이스케이프 + 입력 길이 제한으로 안전하게 구현한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.output-encoding.q4",
+    "promptMarkdown": "출력 인코딩(Output Encoding)을 '입력 시점에 한 번만 HTML 이스케이프해 DB에 저장'하는 것보다 '출력하는 문맥(HTML 본문·속성·JS·URL·JSON)에 맞게 렌더링 경계에서 수행'해야 하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.output-encoding"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JSON API 응답에서는 HTML 엔티티로 미리 변환해 보내야 프론트엔드 파싱이 빨라진다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "JSON API는 JSON 직렬화 규칙에 따라 원문 데이터를 보내고, 브라우저 렌더링 계층이 출력 문맥에 맞게 안전하게 바인딩해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "같은 데이터라도 HTML 본문, HTML 속성, JavaScript 문자열, URL 쿼리, JSON 응답마다 필요한 인코딩 규칙이 다르며, DB에 HTML 엔티티(`&lt;`)로 저장하면 모바일 앱·CSV·이메일에서 원문이 깨지고 다른 문맥의 XSS도 못 막는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "입력 검증은 데이터 형식/범위를 검사하고, 출력 인코딩은 데이터가 최종 소비되는 문맥(HTML/URL/JSON/CSV)에 맞춰 수행해야 이중 인코딩과 문맥 불일치를 피할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "DB에는 `<`나 `&` 문자를 저장하는 것이 SQL 표준상 금지되어 있기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "파라미터 바인딩을 쓰면 DB에는 어떤 유니코드 문자열도 안전하게 원문 그대로 저장할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "HTML 이스케이프만 한 번 해두면 JavaScript 문자열과 `href` URL 문맥의 XSS까지 100% 차단된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`href=\"javascript:alert(1)\"`에는 `<`, `>`가 전혀 없어 HTML 이스케이프만으로 전혀 막히지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "DB에는 검증된 원문을 파라미터 바인딩으로 저장하고, 출력 인코딩은 최종 소비 문맥(HTML/속성/URL/JS/JSON/CSV)에 맞춰 수행하는 것이 정석이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.output-encoding.q5",
+    "promptMarkdown": "백엔드가 JSON API 응답을 내려줄 때 `Content-Type: application/json; charset=UTF-8`과 `X-Content-Type-Options: nosniff` 헤더를 함께 설정하는 보안 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.output-encoding"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "CORS Preflight 요청을 영구적으로 생략하기 위해서다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "CORS Preflight 캐싱은 `Access-Control-Max-Age` 헤더의 역할이다."
+      },
+      {
+        "key": "B",
+        "content": "브라우저가 응답 본문 속 HTML 조각을 임의로 MIME 스니핑(Sniffing)해 `text/html`로 오인·실행하는 XSS 공격을 방지한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`nosniff`가 없으면 일부 브라우저 환경에서 JSON이나 업로드 파일의 본문을 HTML/스크립트로 추측해 실행할 수 있다. Spring Security도 기본으로 `X-Content-Type-Options: nosniff`를 추가한다."
+      },
+      {
+        "key": "C",
+        "content": "JSON 응답 본문을 AES-256으로 자동 암호화하기 위해서다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`nosniff`는 브라우저 MIME 타입 추측 방지 헤더이며 암호화 기능이 아니다."
+      },
+      {
+        "key": "D",
+        "content": "SQL 인젝션을 방어하기 위한 데이터베이스 드라이버 옵션이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "브라우저 콘텐츠 해석 보안 헤더이며 SQL 인젝션과는 무관하다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "정확한 `Content-Type` 명시와 `X-Content-Type-Options: nosniff`는 브라우저의 MIME 스니핑 기반 XSS를 차단하는 필수 응답 보안 헤더다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.sql-injection.q4",
+    "promptMarkdown": "SQL 인젝션의 근본 원인과 `PreparedStatement`(파라미터 바인딩)가 이를 구조적으로 차단하는 원리는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.sql-injection"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "SQL 인젝션은 `SELECT` 문에서만 발생하고 `UPDATE`나 `DELETE`에서는 발생하지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`UPDATE`/`DELETE`/`INSERT`의 WHERE 절에 문자열 결합을 쓰면 전체 테이블 데이터 변조·삭제 사고로 이어진다."
+      },
+      {
+        "key": "B",
+        "content": "사용자 입력이 SQL 문법(코드) 영역에 합쳐져 쿼리 AST 구조가 변조되는 것이 원인이며, 파라미터 바인딩은 SQL 구문 파싱·컴파일과 데이터 값 전달을 분리해 입력이 절대 SQL 키워드나 연산자로 해석되지 않게 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "데이터와 코드의 경계를 분리하는 것이 SQL 인젝션 방어의 본질이다. 바인딩된 값은 `' OR '1'='1`이 들어와도 단순 리터럴 문자열 비교 대상으로만 처리된다."
+      },
+      {
+        "key": "C",
+        "content": "`PreparedStatement`는 입력 문자열에서 `SELECT`, `OR`, `--` 단어를 삭제해 버리기 때문에 안전하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "단어를 삭제하는 것이 아니라 값 채널로 분리 전달하므로 `O'Reilly`나 `OR`이 포함된 정상 텍스트도 손상 없이 안전하게 저장·조회된다."
+      },
+      {
+        "key": "D",
+        "content": "WAF(웹 방화벽)를 앞단에 두면 애플리케이션 코드에서 문자열 결합 SQL을 써도 완벽히 안전하다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "WAF는 보조 방어선일 뿐 다양한 인코딩·변형 우회에 뚫릴 수 있으므로 코드 수준 파라미터 바인딩이 필수다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "SQL 인젝션 방어의 핵심은 입력 필터링이 아니라, 파라미터 바인딩으로 'SQL 구문 구조(코드)'와 '사용자 입력(데이터)'을 완전히 분리하는 것이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.injection.sql-injection.q5",
+    "promptMarkdown": "PostgreSQL에서 `IN (...)` 목록 조건을 동적 개수로 조회할 때 SQL 인젝션 없이 안전하게 작성하는 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.injection.sql-injection"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`\"WHERE id IN (\" + String.join(\",\", rawIds) + \")\"`로 문자열을 조립한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "문자열 배열을 그대로 SQL에 결합하면 `1) OR 1=1 --` 같은 인젝션에 즉시 노출된다."
+      },
+      {
+        "key": "B",
+        "content": "목록이 100개면 100번의 `SELECT`를 루프로 실행하는 것이 유일한 안전 방법이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "N+1 쿼리를 만들 필요 없이 컬렉션 바인딩(`IN :ids`)으로 단일 안전한 쿼리를 실행하면 된다."
+      },
+      {
+        "key": "C",
+        "content": "`IN` 절은 파라미터 바인딩이 지원되지 않으므로 항상 `LIKE`로 대체해야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "JPQL `IN :ids`와 PostgreSQL `= ANY(?)` 모두 안전하게 파라미터 바인딩을 지원한다."
+      },
+      {
+        "key": "D",
+        "content": "Spring Data JPA/JPQL의 컬렉션 바인딩(`WHERE o.id IN :ids`)이나 JDBC/PostgreSQL 배열 바인딩(`= ANY(:ids)`)처럼 바인드 파라미터를 사용하고, 빈 컬렉션과 최대 원소 수 상한을 함께 검증한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "문자열 `String.join(\",\", ids)` 결합 대신 컬렉션/배열 바인딩을 쓰면 SQL 인젝션을 원천 차단하고, 최대 개수 상한으로 과도한 쿼리 부하도 막을 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "동적 `IN` 조건도 문자열 조립을 피하고 JPQL 컬렉션 바인딩(`IN :ids`)이나 배열 바인딩(`= ANY(...)`) + 원소 개수 상한 제한을 적용한다."
+  }
 ]

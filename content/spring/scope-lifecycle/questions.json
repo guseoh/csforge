@@ -1,8 +1,347 @@
 [
-  {"kind":"question","contentKey":"spring.core.scope-lifecycle.scopes.q1","promptMarkdown":"Spring Bean scope가 결정하는 핵심은 무엇인가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.scope-lifecycle.scopes"],"choices":[{"key":"A","content":"singleton scope는 같은 클래스의 객체를 JVM 전체에서 정확히 하나만 허용한다.","displayOrder":0,"rationaleMarkdown":"Spring singleton의 공유 단위는 JVM의 클래스가 아니라 한 IoC 컨테이너 안의 Bean 정의다. 다른 컨테이너나 별도 Bean 정의는 같은 클래스를 각각 관리할 수 있다."},{"key":"B","content":"prototype scope도 컨테이너가 생성부터 소멸 콜백까지 모든 객체의 전체 생명주기를 계속 관리한다.","displayOrder":1,"rationaleMarkdown":"prototype 객체도 컨테이너가 생성하고 초기화하지만, 객체를 호출자에게 넘긴 뒤에는 singleton처럼 모든 소멸 과정을 추적하지 않는다. 자원 해제 책임은 호출자나 별도 관리자가 맡아야 할 수 있다."},{"key":"C","content":"같은 Bean 정의에서 객체를 언제 만들고 어느 범위에서 같은 객체를 공유할지 정한다.","displayOrder":2,"rationaleMarkdown":"scope는 Bean 정의로 만든 객체의 생성 시점과 공유 범위를 정한다. 요청 사이에서 같은 객체를 재사용할지 요청마다 분리할지가 상태와 생명주기 설계에 직접 영향을 준다."},{"key":"D","content":"request scope는 HTTP 요청이 아니라 요청을 처리하는 스레드마다 객체 하나를 만든다.","displayOrder":3,"rationaleMarkdown":"request scope는 웹 환경에서 HTTP 요청의 수명에 연결된다. 요청 처리가 특정 스레드에서 수행되더라도 스레드 단위 scope라고 정의되는 것은 아니다."}],"correctChoiceKey":"C","explanationMarkdown":"Bean scope는 같은 Bean 정의에서 객체를 언제 만들고 어느 범위에서 같은 객체를 공유할지 정하는 정책이다. Spring singleton은 컨테이너와 Bean 정의 기준이며, prototype은 생성 이후 관리 범위가 다르고 request scope도 단순한 thread-local 개념과 같지 않다."},
-  {"kind":"question","contentKey":"spring.core.scope-lifecycle.scopes.q2","promptMarkdown":"prototype Bean이 `AutoCloseable` 자원을 소유한다. 컨텍스트 종료 시 Spring이 모든 prototype 객체의 `close()`를 자동 호출한다고 가정하면 위험한 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.scope-lifecycle.scopes"],"modelAnswer":"prototype은 컨테이너가 생성과 의존성 주입을 수행하더라도 singleton처럼 모든 객체의 소멸 생명주기를 끝까지 추적하지 않는다. 자원의 소유자와 정리 시점을 호출자나 별도 관리자가 명시해야 한다.","explanationMarkdown":"prototype은 Spring이 생성·초기화를 도와도 모든 객체의 소멸을 추적한다는 뜻이 아니다. `AutoCloseable` 자원의 소유자와 `close()` 호출 시점을 명시하지 않으면 컨텍스트가 종료되어도 자원이 남을 수 있다."},
-  {"kind":"question","contentKey":"spring.core.scope-lifecycle.scope-proxy.q1","promptMarkdown":"singleton에 request-scoped Bean을 직접 고정 주입할 때 생기는 핵심 scope 문제를 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.scope-lifecycle.scope-proxy"],"acceptedAnswers":["singleton은 애플리케이션 동안 오래 유지되지만 request Bean은 HTTP 요청마다 다른 객체여야 하므로 시작 시 하나를 고정하면 현재 요청의 실제 객체를 표현할 수 없다","긴 수명의 singleton 생성 시점과 짧은 request 대상 생성 시점이 달라 실제 객체를 호출 시점에 선택해야 한다","Bean 수명 범위가 달라 요청별 객체를 singleton 생성 시점에 고정할 수 없다"],"explanationMarkdown":"오래 사는 singleton에 요청마다 달라져야 하는 객체를 직접 고정하면 singleton 생성 시점에는 요청이 없거나 특정 요청의 객체를 계속 재사용하는 문제가 생길 수 있다. scoped proxy는 호출 시점에 현재 요청의 실제 객체를 찾게 하지만, 해당 request scope가 실제로 활성화되어 있어야 한다."},
-  {"kind":"question","contentKey":"spring.core.scope-lifecycle.scope-proxy.q2","promptMarkdown":"scoped proxy를 주입한 singleton이 `@Async` 비동기 스레드에서 request-scoped 객체를 호출한다. proxy가 있으니 항상 정상이라는 판단이 왜 틀릴 수 있는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.scope-lifecycle.scope-proxy"],"modelAnswer":"proxy는 실제 객체 조회를 호출 시점으로 늦출 뿐 request scope 자체를 새 스레드에 자동 생성하거나 전파하지 않는다. 비동기 스레드에 활성 request scope가 없으면 대상 조회가 실패할 수 있으므로 필요한 요청 값은 명시적으로 전달해야 할 수 있다.","explanationMarkdown":"scoped proxy는 실제 객체 조회를 늦출 뿐 request scope를 `@Async` 스레드에 새로 만들거나 자동 전파하지 않는다. 비동기 스레드에 활성 request scope가 없으면 요청 상태를 사용할 수 없으므로, 백그라운드 작업에 필요한 값은 명시적으로 전달하고 작업 수명을 별도로 설계해야 한다."},
-  {"kind":"question","contentKey":"spring.core.scope-lifecycle.lifecycle-callback.q1","promptMarkdown":"Bean 생명주기에서 `@PostConstruct`가 생성자보다 뒤에 있는 이유와 여기에 적합한 책임을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.scope-lifecycle.lifecycle-callback"],"modelAnswer":"객체 생성과 의존성 설정이 끝난 뒤 Bean 자체가 사용할 준비를 마치는 초기화 작업을 수행할 수 있기 때문이다. 객체의 기본 불변식을 만드는 생성자와 컨테이너 연결 이후 필요한 자원 준비를 구분한다.","explanationMarkdown":"`@PostConstruct`는 생성자 실행과 의존성 주입이 끝난 뒤 호출되므로 Bean이 협력 객체를 사용할 준비를 마치는 초기화에 적합하다. 반면 객체 자체의 필수 불변식은 생성자가 보장해야 하며, 초기화 콜백이 잘못된 객체 생성을 뒤늦게 발견하는 유일한 방어선이 되어서는 안 된다."},
-  {"kind":"question","contentKey":"spring.core.scope-lifecycle.lifecycle-callback.q2","promptMarkdown":"공유 `HttpClient`를 여러 Bean에 주입했는데 한 Bean의 `@PreDestroy`에서 그 클라이언트를 닫는다. 무엇을 먼저 확인해야 하는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.scope-lifecycle.lifecycle-callback"],"modelAnswer":"그 Bean이 실제로 `HttpClient`의 생명주기를 소유하는지 확인해야 한다. 다른 Bean도 공유하고 컨테이너나 별도 factory가 수명을 관리한다면 한 사용자가 임의로 닫아서는 안 된다.","explanationMarkdown":"`@PreDestroy`에서 `close()`하기 전에 해당 Bean이 공유 `HttpClient`의 실제 소유자인지 확인해야 한다. 다른 Bean이나 별도 factory가 계속 사용하는 자원을 한 사용자가 닫으면 정상 사용 중인 호출자까지 실패하므로 자원 소유권과 종료 순서를 조립 경계에서 정해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.scopes.q1",
+    "promptMarkdown": "Spring Bean scope가 결정하는 핵심은 무엇인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.scopes"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "singleton scope는 같은 클래스의 객체를 JVM 전체에서 정확히 하나만 허용한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Spring singleton의 공유 단위는 JVM의 클래스가 아니라 한 IoC 컨테이너 안의 Bean 정의다. 다른 컨테이너나 별도 Bean 정의는 같은 클래스를 각각 관리할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "prototype scope도 컨테이너가 생성부터 소멸 콜백까지 모든 객체의 전체 생명주기를 계속 관리한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "prototype 객체도 컨테이너가 생성하고 초기화하지만, 객체를 호출자에게 넘긴 뒤에는 singleton처럼 모든 소멸 과정을 추적하지 않는다. 자원 해제 책임은 호출자나 별도 관리자가 맡아야 할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "같은 Bean 정의에서 객체를 언제 만들고 어느 범위에서 같은 객체를 공유할지 정한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "scope는 Bean 정의로 만든 객체의 생성 시점과 공유 범위를 정한다. 요청 사이에서 같은 객체를 재사용할지 요청마다 분리할지가 상태와 생명주기 설계에 직접 영향을 준다."
+      },
+      {
+        "key": "D",
+        "content": "request scope는 HTTP 요청이 아니라 요청을 처리하는 스레드마다 객체 하나를 만든다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "request scope는 웹 환경에서 HTTP 요청의 수명에 연결된다. 요청 처리가 특정 스레드에서 수행되더라도 스레드 단위 scope라고 정의되는 것은 아니다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Bean scope는 같은 Bean 정의에서 객체를 언제 만들고 어느 범위에서 같은 객체를 공유할지 정하는 정책이다. Spring singleton은 컨테이너와 Bean 정의 기준이며, prototype은 생성 이후 관리 범위가 다르고 request scope도 단순한 thread-local 개념과 같지 않다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.scopes.q2",
+    "promptMarkdown": "prototype Bean이 `AutoCloseable` 자원을 소유한다. 컨텍스트 종료 시 Spring이 모든 prototype 객체의 `close()`를 자동 호출한다고 가정하면 위험한 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.scopes"
+    ],
+    "modelAnswer": "prototype은 컨테이너가 생성과 의존성 주입을 수행하더라도 singleton처럼 모든 객체의 소멸 생명주기를 끝까지 추적하지 않는다. 자원의 소유자와 정리 시점을 호출자나 별도 관리자가 명시해야 한다.",
+    "explanationMarkdown": "prototype은 Spring이 생성·초기화를 도와도 모든 객체의 소멸을 추적한다는 뜻이 아니다. `AutoCloseable` 자원의 소유자와 `close()` 호출 시점을 명시하지 않으면 컨텍스트가 종료되어도 자원이 남을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.scope-proxy.q1",
+    "promptMarkdown": "singleton에 request-scoped Bean을 직접 고정 주입할 때 생기는 핵심 scope 문제를 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.scope-proxy"
+    ],
+    "acceptedAnswers": [
+      "singleton은 애플리케이션 동안 오래 유지되지만 request Bean은 HTTP 요청마다 다른 객체여야 하므로 시작 시 하나를 고정하면 현재 요청의 실제 객체를 표현할 수 없다",
+      "긴 수명의 singleton 생성 시점과 짧은 request 대상 생성 시점이 달라 실제 객체를 호출 시점에 선택해야 한다",
+      "Bean 수명 범위가 달라 요청별 객체를 singleton 생성 시점에 고정할 수 없다"
+    ],
+    "explanationMarkdown": "오래 사는 singleton에 요청마다 달라져야 하는 객체를 직접 고정하면 singleton 생성 시점에는 요청이 없거나 특정 요청의 객체를 계속 재사용하는 문제가 생길 수 있다. scoped proxy는 호출 시점에 현재 요청의 실제 객체를 찾게 하지만, 해당 request scope가 실제로 활성화되어 있어야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.scope-proxy.q2",
+    "promptMarkdown": "scoped proxy를 주입한 singleton이 `@Async` 비동기 스레드에서 request-scoped 객체를 호출한다. proxy가 있으니 항상 정상이라는 판단이 왜 틀릴 수 있는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.scope-proxy"
+    ],
+    "modelAnswer": "proxy는 실제 객체 조회를 호출 시점으로 늦출 뿐 request scope 자체를 새 스레드에 자동 생성하거나 전파하지 않는다. 비동기 스레드에 활성 request scope가 없으면 대상 조회가 실패할 수 있으므로 필요한 요청 값은 명시적으로 전달해야 할 수 있다.",
+    "explanationMarkdown": "scoped proxy는 실제 객체 조회를 늦출 뿐 request scope를 `@Async` 스레드에 새로 만들거나 자동 전파하지 않는다. 비동기 스레드에 활성 request scope가 없으면 요청 상태를 사용할 수 없으므로, 백그라운드 작업에 필요한 값은 명시적으로 전달하고 작업 수명을 별도로 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.lifecycle-callback.q1",
+    "promptMarkdown": "Bean 생명주기에서 `@PostConstruct`가 생성자보다 뒤에 있는 이유와 여기에 적합한 책임을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.lifecycle-callback"
+    ],
+    "modelAnswer": "객체 생성과 의존성 설정이 끝난 뒤 Bean 자체가 사용할 준비를 마치는 초기화 작업을 수행할 수 있기 때문이다. 객체의 기본 불변식을 만드는 생성자와 컨테이너 연결 이후 필요한 자원 준비를 구분한다.",
+    "explanationMarkdown": "`@PostConstruct`는 생성자 실행과 의존성 주입이 끝난 뒤 호출되므로 Bean이 협력 객체를 사용할 준비를 마치는 초기화에 적합하다. 반면 객체 자체의 필수 불변식은 생성자가 보장해야 하며, 초기화 콜백이 잘못된 객체 생성을 뒤늦게 발견하는 유일한 방어선이 되어서는 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.lifecycle-callback.q2",
+    "promptMarkdown": "공유 `HttpClient`를 여러 Bean에 주입했는데 한 Bean의 `@PreDestroy`에서 그 클라이언트를 닫는다. 무엇을 먼저 확인해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.lifecycle-callback"
+    ],
+    "modelAnswer": "그 Bean이 실제로 `HttpClient`의 생명주기를 소유하는지 확인해야 한다. 다른 Bean도 공유하고 컨테이너나 별도 factory가 수명을 관리한다면 한 사용자가 임의로 닫아서는 안 된다.",
+    "explanationMarkdown": "`@PreDestroy`에서 `close()`하기 전에 해당 Bean이 공유 `HttpClient`의 실제 소유자인지 확인해야 한다. 다른 Bean이나 별도 factory가 계속 사용하는 자원을 한 사용자가 닫으면 정상 사용 중인 호출자까지 실패하므로 자원 소유권과 종료 순서를 조립 경계에서 정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.scopes.q3",
+    "promptMarkdown": "다음 코드에서 `singleton` Bean인 `JobRunner`가 `prototype` Bean인 `TaskContext`를 생성자에서 직접 주입받았다. `run()`을 3번 호출했을 때 `TaskContext` 인스턴스 수는?\n```java\n@Component @Scope(\"prototype\")\nclass TaskContext { }\n\n@Service\nclass JobRunner {\n    private final TaskContext context;\n    JobRunner(TaskContext context) { this.context = context; }\n    void run() { /* this.context 사용 */ }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.scopes",
+      "spring.core.scope-lifecycle.scope-proxy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "1개 — `JobRunner` 생성 시점에 `TaskContext`가 한 번만 주입되어 고정되므로 매 실행마다 새 객체가 필요하면 `ObjectProvider<TaskContext>.getObject()` 등을 사용해야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "긴 수명(`singleton`)에 짧은 수명(`prototype`)을 직접 주입하면 주입 시점의 인스턴스 1개에 고착된다. 호출 시점마다 새 인스턴스가 필요하면 `ObjectProvider` 조회나 팩토리 메서드로 요청해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "0개 — `singleton`에 `prototype`을 주입하면 기동 시 예외가 발생한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Spring은 기동 예외를 던지지 않고 1개의 prototype 인스턴스를 생성해 주입해 버리므로 의도와 다른 공유 버그가 숨기 쉽다."
+      },
+      {
+        "key": "C",
+        "content": "스레드당 1개 — Spring이 자동으로 `ThreadLocal`에 격리한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`prototype` scope는 `ThreadLocal` 격리를 제공하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "3개 — `TaskContext`가 `prototype`이므로 `run()` 호출마다 자동으로 새 객체로 교체된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "생성자 주입은 `JobRunner` singleton이 생성되는 시점에 단 1번 실행된다. 따라서 이후 `run()`을 몇 번 호출해도 같은 `TaskContext` 인스턴스 1개가 계속 재사용된다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "prototype Bean을 singleton에 직접 주입하면 singleton 생성 시점에 단 1회만 주입되어 사실상 singleton처럼 공유된다. 호출마다 새 객체가 필요하면 `ObjectProvider<T>.getObject()`로 지연 조회하거나 아예 일반 `new`로 생성하는 편이 명확하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.scopes.q4",
+    "promptMarkdown": "`@Scope(\"prototype\")` Bean에 `@PreDestroy` 메서드를 정의했을 때 Spring 컨테이너 종료 시의 동작으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.scopes",
+      "spring.core.scope-lifecycle.lifecycle-callback"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Spring 컨테이너는 prototype Bean의 생성·초기화까지만 관여하고 참조를 보관하지 않으므로 `@PreDestroy`가 자동 호출되지 않으며, 자원 해제는 호출 측이 책임져야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "모든 prototype 인스턴스를 컨테이너가 붙잡고 있으면 메모리 누수가 발생한다. 따라서 파일 핸들·소켓 같은 자원을 가진 prototype은 호출 측이 `try-with-resources` 등으로 직접 닫아야 한다."
+      },
+      {
+        "key": "B",
+        "content": "prototype Bean은 `@PostConstruct`와 `@PreDestroy` 모두 호출되지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "초기화 콜백(`@PostConstruct`)은 정상 호출되지만, 소멸 콜백(`@PreDestroy`)만 컨테이너가 호출하지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "GC가 수거하기 직전에 Spring이 `@PreDestroy`를 강제 실행한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Spring은 GC와 연동해 `@PreDestroy`를 호출하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "컨테이너가 생성한 모든 prototype 인스턴스를 끝까지 추적해 종료 시 `@PreDestroy`를 자동 호출한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Spring 컨테이너는 prototype Bean을 생성·초기화(`@PostConstruct`)해 호출자에게 넘긴 뒤 참조를 보관하지 않으므로, 종료 시 `@PreDestroy`를 호출하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "prototype Bean은 생성·주입·`@PostConstruct`까지만 컨테이너가 처리하고, 이후 참조를 유지하지 않으므로 종료 시 `@PreDestroy`가 호출되지 않는다. 닫아야 하는 자원은 호출 측이 명시적으로 해제해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.scope-proxy.q3",
+    "promptMarkdown": "HTTP 요청마다 고유한 추적 정보를 담는 `@RequestScope` Bean을 `singleton` 컨트롤러/서비스에 주입할 때 scoped proxy(`proxyMode = ScopedProxyMode.TARGET_CLASS`)가 필요한 핵심 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.scope-proxy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "request-scoped Bean의 메서드를 자동으로 DB 트랜잭션으로 감싸기 위해서다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "scoped proxy는 수명 범위 위임용 프록시이며 `@Transactional` 트랜잭션 경계와는 별개다."
+      },
+      {
+        "key": "B",
+        "content": "HTTP 응답 JSON 직렬화 속도를 높이기 위해서다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "JSON 직렬화 성능과는 무관하며 수명이 짧은 Bean을 긴 수명 Bean에서 안전하게 참조하기 위한 메커니즘이다."
+      },
+      {
+        "key": "C",
+        "content": "`@Async` 백그라운드 스레드에서도 자동으로 동일한 HTTP 요청 객체를 공유하기 위해서다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`RequestContextHolder`는 기본적으로 요청 스레드의 `ThreadLocal`에 바인딩되므로, 별도 컨텍스트 전파 없이 `@Async` 스레드에서 scoped proxy를 호출하면 활성 요청이 없어 실패할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "애플리케이션 기동 시점에는 활성 HTTP 요청이 존재하지 않으므로, singleton에는 프록시를 주입해 두고 실제 메서드 호출 시점에 현재 요청 스레드의 대상 Bean을 찾아 위임하기 위해서다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`@RequestScope`의 수명은 HTTP 요청 1건이고 `singleton`의 수명은 컨테이너 전체다. Scoped proxy를 주입하면 기동 시점의 수명 불일치를 해결하고 매 요청마다 현재 요청에 바인딩된 실제 객체를 조회해 위임한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "scoped proxy는 긴 수명의 singleton Bean에 짧은 수명의 request/session Bean을 연결할 때 호출 시점 lookup을 대행하는 어댑터다. 단, 요청 스레드 밖(`@Async`, 스케줄러)에서는 활성 요청 scope가 없어 실패할 수 있으므로 필요한 값만 불변 객체로 추출해 넘겨야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.scope-proxy.q4",
+    "promptMarkdown": "다음 코드에서 컨트롤러가 `@Async` 메서드를 호출했고, 비동기 스레드 안에서 `@RequestScope` Bean(`requestTrace`)의 `getTraceId()`를 읽으려 할 때 가장 안전한 개선 방법은?\n```java\n@Async\npublic void sendAuditAsync() {\n    String traceId = requestTrace.getTraceId(); // 비동기 스레드에서 호출\n    auditClient.send(traceId);\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.scope-proxy"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "호출 측 HTTP 요청 스레드에서 `traceId` 값만 미리 추출해 불변 인자(`sendAuditAsync(String traceId)`)로 전달한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "비동기 작업 스레드에는 활성 HTTP 요청 scope가 바인딩되어 있지 않아 `ScopeNotActiveException`이 발생할 수 있다. 필요한 값만 요청 스레드에서 꺼내 명시적 인자로 전달하면 scope 결합과 스레드 전파 버그를 원천 차단할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "`requestTrace`에 `@Primary`를 추가하면 비동기 스레드에서도 자동 해결된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`@Primary`는 다중 Bean 후보 중 기본 선택용이며 요청 scope 부재 문제를 해결하지 못한다."
+      },
+      {
+        "key": "C",
+        "content": "`sendAuditAsync`에 `@Transactional`을 붙이면 요청 스레드가 유지된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`@Transactional`은 `@Async` 워커 스레드에서 새 DB 트랜잭션을 열 뿐 HTTP 요청 scope를 복사하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "`requestTrace`를 `static` 필드에 저장해 모든 스레드가 읽게 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`static` 필드에 요청별 `traceId`를 저장하면 동시 요청 간 추적 ID가 서로 덮어씌워진다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "request-scoped proxy는 HTTP 요청 스레드 안에서만 안전하다. `@Async`나 메시지 큐 워커로 작업을 넘길 때는 scoped Bean을 비동기 스레드에서 조회하지 말고, 필요한 값(`traceId`, `memberId`)만 불변 데이터로 추출해 인자로 전달해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.lifecycle-callback.q3",
+    "promptMarkdown": "다음 코드에서 `@PostConstruct` 메서드에 `@Transactional`을 붙여 초기 시드 데이터를 저장하려 했지만 트랜잭션 프록시가 적용되지 않았다. 가장 정확한 이유는?\n```java\n@Component\npublic class SeedLoader {\n    @PostConstruct\n    @Transactional\n    public void init() {\n        repository.saveAll(seeds);\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.lifecycle-callback",
+      "spring.core.container.application-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`@Component` 클래스에서는 `@Transactional`이 절대 동작하지 않기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`@Service`도 `@Component`의 특수화이며 `@Component` Bean의 외부 호출에도 `@Transactional`은 정상 동작한다."
+      },
+      {
+        "key": "B",
+        "content": "`repository.saveAll()`은 트랜잭션 안에서 호출하면 안 되기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`saveAll()`은 트랜잭션 경계 안에서 정상적으로 배치 저장된다."
+      },
+      {
+        "key": "C",
+        "content": "Spring이 `@PostConstruct`와 `@Transactional`이 함께 붙은 메서드를 아예 실행하지 않기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`init()` 메서드 자체는 실행되지만 의도한 트랜잭션 경계가 프록시로 감싸지지 않을 뿐이다."
+      },
+      {
+        "key": "D",
+        "content": "`@PostConstruct`는 초기화 전 후처리 단계에서 원본 타깃 객체에 직접 호출되고, `@Transactional` AOP 프록시는 그 이후 초기화 후 후처리 단계에서 생성되기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "프록시 래핑이 끝나기 전에 타깃 객체의 `@PostConstruct`가 직접 실행되므로 트랜잭션 interceptor를 거치지 못한다. 기동 시 트랜잭션이 필요하면 `ApplicationReadyEvent` 리스너나 `TransactionTemplate`을 사용해야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`@PostConstruct`는 `BeanPostProcessor.postProcessBeforeInitialization`에서 실행되고, 일반적인 AOP 프록시 생성은 `postProcessAfterInitialization`에서 실행된다. 따라서 기동 후 트랜잭션이 필요한 작업은 `ApplicationReadyEvent`/`ApplicationRunner`에서 외부 Bean 프록시를 호출하거나 `TransactionTemplate`으로 실행해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.scope-lifecycle.lifecycle-callback.q4",
+    "promptMarkdown": "여러 서비스가 공유하는 `HttpClient` Bean을 한 서비스(`OrderClient`)의 `@PreDestroy`에서 `httpClient.close()`로 직접 닫으면 생길 수 있는 문제와 올바른 위치는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.scope-lifecycle.lifecycle-callback"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`HttpClient`는 절대 닫지 않고 OS 프로세스 종료에만 맡겨야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "연결 풀·스레드 풀을 가진 클라이언트는 소유 Bean의 종료 콜백에서 순서대로 정상 해제하는 것이 바람직하다."
+      },
+      {
+        "key": "B",
+        "content": "종료 순서에 따라 아직 진행 중인 다른 서비스가 닫힌 `HttpClient`를 호출해 실패할 수 있으므로, 자원의 수명 해제는 공유 자원을 생성·소유하는 `@Bean(destroyMethod = ...)` 경계에서 관리해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "공유 인프라 자원의 소멸 책임은 소비자 Bean 중 하나가 아니라 그 자원을 생성·소유한 Bean 정의(`@Bean`의 `close`/`shutdown` destroy 메서드)에 두어야 의존 순서에 맞춰 안전하게 정리된다."
+      },
+      {
+        "key": "C",
+        "content": "Spring이 모든 소비자의 `@PreDestroy`를 동시에 병렬 실행하므로 어느 쪽에서 닫아도 동일하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "공유 자원을 소비하는 다른 Bean이 아직 drain 중일 때 먼저 닫히면 오류를 유발한다."
+      },
+      {
+        "key": "D",
+        "content": "`@PreDestroy`는 예외를 삼키기 때문에 `close()`를 중복 호출해도 아무 부작용이 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "중복 호출 이전에, 아직 그 클라이언트를 사용 중인 다른 Bean의 인플라이트 요청이 끊기는 것이 핵심 문제다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "소멸 콜백(`@PreDestroy` / `@Bean(destroyMethod)`)은 자원을 소유한 경계에 두어야 한다. 공유 `HttpClient`나 커넥션 풀을 소비자 Bean 하나가 임의로 닫으면 graceful shutdown 중 다른 서비스 요청이 실패한다."
+  }
 ]

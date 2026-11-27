@@ -12,14 +12,31 @@ import com.guseoh.csforge.question.domain.QuestionType;
 public record QuizQuestionSelectionCriteria(
         List<String> areaSlugs,
         List<Long> conceptIds,
+        List<Long> topicIds,
+        Long bookmarkCategoryId,
         List<Short> levels,
         List<QuestionDifficulty> difficulties,
         List<QuestionType> questionTypes,
-        QuizQuestionState state) {
+        QuizQuestionState state,
+        boolean shuffle) {
+
+    public QuizQuestionSelectionCriteria(
+            List<String> areaSlugs,
+            List<Long> conceptIds,
+            List<Short> levels,
+            List<QuestionDifficulty> difficulties,
+            List<QuestionType> questionTypes,
+            QuizQuestionState state) {
+        this(areaSlugs, conceptIds, List.of(), null, levels, difficulties, questionTypes, state, false);
+    }
 
     public QuizQuestionSelectionCriteria {
         areaSlugs = normalizeSlugs(areaSlugs);
         conceptIds = normalize(conceptIds, "conceptIds");
+        topicIds = normalize(topicIds, "topicIds");
+        if (bookmarkCategoryId != null && bookmarkCategoryId <= 0) {
+            throw new IllegalArgumentException("bookmarkCategoryId must be positive");
+        }
         levels = normalize(levels, "levels");
         difficulties = normalize(difficulties, "difficulties");
         questionTypes = normalize(questionTypes, "questionTypes");

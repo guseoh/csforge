@@ -1,5 +1,6 @@
 package com.guseoh.csforge.review.infrastructure;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +12,7 @@ import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -82,5 +84,49 @@ public class ReviewScheduleSearchRepository {
             case ALL -> { }
         }
         return predicates.toArray(Predicate[]::new);
+    }
+
+    public List<Long> findEligibleQuestionIds(
+            com.guseoh.csforge.review.application.ReviewQuizSetupCommand command,
+            Instant cutoff) {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<Long> query = builder.createQuery(Long.class);
+        Root<ReviewSchedule> root = query.from(ReviewSchedule.class);
+        Join<ReviewSchedule, Question> question = root.join("question", JoinType.INNER);
+
+        Subquery<Long> visible = query.subquery(Long.class);
+        Root<com.guseoh.csforge.question.domain.QuestionConcept> link =
+                visible.from(com.guseoh.csforge.question.domain.QuestionConcept.class);
+        Join<?, ?> concept = link.join("concept", JoinType.INNER);
+        Join<?, ?> topic = concept.join("topic", JoinType.INNER);
+        Join<?, ?> area = topic.join("learningArea", JoinType.INNER);
+
+        List<Predicate> subPredicates = new ArrayList<>();
+        subPredicates.add(builder.equal(link.get("question").get("id"), question.get("id")));
+        subPredicates.add(builder.equal(concept.get("status"), ContentStatus.PUBLISHED));
+        subPredicates.add(builder.isTrue(topic.get("active")));
+        subPredicates.add(builder.isTrue(area.get("active")));
+        if (command.areaSlug() != null) {
+            subPredicates.add(builder.equal(area.get("slug"), command.areaSlug()));
+        }
+        if (command.topicId() != null) {
+            subPredicates.add(builder.equal(topic.get("id"), command.topicId()));
+        }
+        if (command.level() != null) {
+            subPredicates.add(builder.equal(concept.get("level"), command.level()));
+        }
+        visible.select(builder.literal(1L)).where(subPredicates.toArray(Predicate[]::new));
+
+        query.select(root.get("questionId"))
+                .where(
+                        builder.equal(root.get("status"), com.guseoh.csforge.review.domain.ReviewScheduleStatus.SCHEDULED),
+                        builder.lessThanOrEqualTo(root.get("dueAt"), cutoff),
+                        builder.equal(question.get("status"), com.guseoh.csforge.question.domain.QuestionStatus.PUBLISHED),
+                        builder.exists(visible))
+                .orderBy(builder.asc(root.get("dueAt")), builder.asc(root.get("questionId")));
+
+        return entityManager.createQuery(query)
+                .setMaxResults(command.count())
+                .getResultList();
     }
 }

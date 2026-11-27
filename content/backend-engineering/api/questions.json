@@ -6,12 +6,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.api.resource-endpoint"],
+    "conceptKeys": [
+      "backend.core.api.resource-endpoint"
+    ],
     "choices": [
-      {"key": "A", "content": "URI는 외부 소비자가 이해하는 resource 의미를 중심으로 하고 method/status와 함께 계약을 이룬다.", "displayOrder": 0, "rationaleMarkdown": "URI에서 resource identity를 읽을 수 있고 HTTP method는 그 자원에 대한 행위를, status는 결과를 표현한다. 이 조합이 client와 server가 공유하는 외부 계약이 된다."},
-      {"key": "B", "content": "DB table 이름을 그대로 URI에 노출한다.", "displayOrder": 1, "rationaleMarkdown": "table 이름은 내부 저장 구조라 schema 변경을 외부 client에 전파할 수 있다. API 주소는 DB 구현보다 consumer가 이해할 domain resource를 표현하는 편이 안전하다."},
-      {"key": "C", "content": "모든 action은 반드시 `/doSomething` POST로 표현한다.", "displayOrder": 2, "rationaleMarkdown": "모든 요청을 동작 이름의 POST로 보내면 조회·삭제 등 HTTP method가 전달하는 의미와 caching·retry 처리 기준이 흐려진다. POST가 필요한 command도 있지만 모든 operation의 유일한 형태는 아니다."},
-      {"key": "D", "content": "nested resource는 깊을수록 ownership이 명확해 항상 좋다.", "displayOrder": 3, "rationaleMarkdown": "깊은 경로는 parent-child 관계를 드러낼 수 있지만 이동·공유 관계가 복잡해지면 긴 URI와 강한 coupling을 만든다. depth 자체가 ownership이나 좋은 계약을 보장하지 않는다."}
+      {
+        "key": "A",
+        "content": "URI는 외부 소비자가 이해하는 resource 의미를 중심으로 하고 method/status와 함께 계약을 이룬다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "URI에서 resource identity를 읽을 수 있고 HTTP method는 그 자원에 대한 행위를, status는 결과를 표현한다. 이 조합이 client와 server가 공유하는 외부 계약이 된다."
+      },
+      {
+        "key": "B",
+        "content": "DB table 이름을 그대로 URI에 노출한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "table 이름은 내부 저장 구조라 schema 변경을 외부 client에 전파할 수 있다. API 주소는 DB 구현보다 consumer가 이해할 domain resource를 표현하는 편이 안전하다."
+      },
+      {
+        "key": "C",
+        "content": "모든 action은 반드시 `/doSomething` POST로 표현한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "모든 요청을 동작 이름의 POST로 보내면 조회·삭제 등 HTTP method가 전달하는 의미와 caching·retry 처리 기준이 흐려진다. POST가 필요한 command도 있지만 모든 operation의 유일한 형태는 아니다."
+      },
+      {
+        "key": "D",
+        "content": "nested resource는 깊을수록 ownership이 명확해 항상 좋다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "깊은 경로는 parent-child 관계를 드러낼 수 있지만 이동·공유 관계가 복잡해지면 긴 URI와 강한 coupling을 만든다. depth 자체가 ownership이나 좋은 계약을 보장하지 않는다."
+      }
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "Resource-oriented endpoint는 DB table이나 action 이름을 그대로 노출하기보다 외부 소비자가 이해하는 resource 의미를 URI에 담고 method/status와 함께 계약을 이룬다. nested depth나 URI 미학만으로 좋은 API가 결정되지는 않는다."
@@ -23,7 +45,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.api.resource-endpoint"],
+    "conceptKeys": [
+      "backend.core.api.resource-endpoint"
+    ],
     "modelAnswer": "취소가 단순 command인지 별도 이력·조회가 필요한 resource인지 product 의미에 따라 표현이 달라지기 때문이다.",
     "explanationMarkdown": "`cancel`이 단순 command라면 action endpoint가 충분할 수 있지만, 취소 이력 자체를 조회·식별해야 한다면 `cancellations`라는 resource가 더 자연스러울 수 있다. 같은 동작도 상태·이력·재시도 요구가 달라지면 contract가 달라지므로 한 형태를 보편 규칙으로 외우면 안 된다."
   },
@@ -34,7 +58,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.api.resource-endpoint"],
+    "conceptKeys": [
+      "backend.core.api.resource-endpoint"
+    ],
     "modelAnswer": "부모 ID가 resource 식별/authorization에 실제 필요한지, canonical URI가 무엇인지 기준으로 depth를 줄인다.",
     "explanationMarkdown": "각 부모 ID가 resource identity나 authorization 경계에 실제 필요한지 확인한 뒤 canonical URI 하나를 정하고 불필요한 조상을 제거한다. 여러 alias가 남으면 link·권한·캐시·문서 계약이 분산되므로 단순화는 URL 길이가 아니라 ownership과 식별 semantics로 결정한다."
   },
@@ -45,12 +71,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.api.methods-status"],
+    "conceptKeys": [
+      "backend.core.api.methods-status"
+    ],
     "choices": [
-      {"key": "A", "content": "DELETE 두 번째 응답이 404면 idempotent가 아니다.", "displayOrder": 0, "rationaleMarkdown": "DELETE를 반복 적용했을 때 최종 resource 상태에 추가 변화가 누적되지 않는다면 두 번째 응답이 404여도 의도된 의미는 idempotent일 수 있다. response code와 body까지 같아야 한다는 계약은 아니다."},
-      {"key": "B", "content": "200 OK만 사용하면 client가 가장 단순해진다.", "displayOrder": 1, "rationaleMarkdown": "200 하나로 모든 결과를 표현하면 client가 생성·삭제·검증 실패를 구별하기 위한 의미가 사라진다. status는 operation outcome을 전달해야 하며 항상 성공 코드 하나만 쓰는 것이 간단한 계약은 아니다."},
-      {"key": "C", "content": "POST는 절대로 idempotent하게 설계할 수 없다.", "displayOrder": 2, "rationaleMarkdown": "HTTP method POST 자체는 안전한 중복 실행을 약속하지 않지만 server가 idempotency key와 deduplication 상태를 적용해 중복 effect를 막을 수 있다. method 이름만으로 application의 구현 가능성을 금지하지 않는다."},
-      {"key": "D", "content": "같은 의도를 여러 번 적용해도 서버의 의도된 추가 효과가 누적되지 않는 의미이며 응답 body가 항상 같다는 뜻은 아니다.", "displayOrder": 3, "rationaleMarkdown": "Idempotence는 같은 요청의 반복이 의도된 server effect를 추가로 쌓지 않는 성질이다. 재요청 결과 표현은 달라져도 된다."}
+      {
+        "key": "A",
+        "content": "DELETE 두 번째 응답이 404면 idempotent가 아니다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "DELETE를 반복 적용했을 때 최종 resource 상태에 추가 변화가 누적되지 않는다면 두 번째 응답이 404여도 의도된 의미는 idempotent일 수 있다. response code와 body까지 같아야 한다는 계약은 아니다."
+      },
+      {
+        "key": "B",
+        "content": "200 OK만 사용하면 client가 가장 단순해진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "200 하나로 모든 결과를 표현하면 client가 생성·삭제·검증 실패를 구별하기 위한 의미가 사라진다. status는 operation outcome을 전달해야 하며 항상 성공 코드 하나만 쓰는 것이 간단한 계약은 아니다."
+      },
+      {
+        "key": "C",
+        "content": "POST는 절대로 idempotent하게 설계할 수 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "HTTP method POST 자체는 안전한 중복 실행을 약속하지 않지만 server가 idempotency key와 deduplication 상태를 적용해 중복 effect를 막을 수 있다. method 이름만으로 application의 구현 가능성을 금지하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "같은 의도를 여러 번 적용해도 서버의 의도된 추가 효과가 누적되지 않는 의미이며 응답 body가 항상 같다는 뜻은 아니다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Idempotence는 같은 요청의 반복이 의도된 server effect를 추가로 쌓지 않는 성질이다. 재요청 결과 표현은 달라져도 된다."
+      }
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "DELETE의 두 번째 요청이 404를 반환해도 이미 삭제된 의도된 상태가 다시 누적되지 않는다면 idempotent일 수 있다. 반대로 POST도 application key 등으로 중복 효과를 제거하도록 설계할 수 있으므로 응답 body 동일성이나 method 이름만으로 판단하지 않는다."
@@ -62,7 +110,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.api.methods-status"],
+    "conceptKeys": [
+      "backend.core.api.methods-status"
+    ],
     "modelAnswer": "201은 새 리소스 생성 완료, 202는 요청을 수락했지만 처리가 아직 완료되지 않을 수 있음, 409는 현재 리소스 상태와 요청이 충돌함을 표현한다.",
     "explanationMarkdown": "201 Created는 새 리소스가 생성되었음을, 202 Accepted는 요청을 수락했지만 처리가 완료되지 않았을 수 있음을, 409 Conflict는 현재 리소스 상태와 요청이 충돌함을 나타낸다. 같은 숫자를 외우는 것보다 각 상태 코드가 클라이언트의 다음 행동에 어떤 의미를 주는지 구분하는 것이 중요하다."
   },
@@ -73,7 +123,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.api.methods-status"],
+    "conceptKeys": [
+      "backend.core.api.methods-status"
+    ],
     "modelAnswer": "HTTP 클라이언트·프록시·관측 도구가 응답을 HTTP 성공 범주로 분류해 일반적인 실패 처리가 어려워진다. 실제 결과에 맞는 HTTP 상태와 안정적인 제품 오류 코드를 분리해야 한다.",
     "explanationMarkdown": "업무 실패를 모두 200으로 포장하면 프록시·모니터링·일반 HTTP 클라이언트가 HTTP 수준에서는 성공 응답으로 분류하므로 재시도, 경보, 사용자 입력 수정 같은 후속 판단이 왜곡될 수 있다. HTTP 상태로 넓은 성공·실패 의미를 표현하고 응답 본문의 안정적인 제품 오류 코드로 구체적인 원인과 재시도 가능성을 전달해야 한다. TCP/TLS 전송 성공 여부와 HTTP 2xx/4xx/5xx 의미는 같은 층위가 아니다."
   },
@@ -84,12 +136,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.api.compatibility"],
+    "conceptKeys": [
+      "backend.core.api.compatibility"
+    ],
     "choices": [
-      {"key": "A", "content": "선택 응답 필드를 추가한다.", "displayOrder": 0, "rationaleMarkdown": "client가 알지 못하는 optional response field를 무시할 수 있다면 additive change는 기존 동작을 보존하기 쉽다. 그래도 strict schema client 등 실제 consumer 계약은 확인해야 한다."},
-      {"key": "B", "content": "field 타입은 유지하지만 의미를 '할인 전 금액'에서 '최종 결제 금액'으로 조용히 바꾼다.", "displayOrder": 1, "rationaleMarkdown": "type이 같아도 값의 business meaning이 바뀌면 기존 client는 새 payload를 유효한 형식으로 받아 잘못된 계산을 할 수 있다. 조용한 semantic change는 문법적 변경보다 발견이 어렵고 version 또는 migration 전략이 필요하다."},
-      {"key": "C", "content": "새 endpoint를 추가한다.", "displayOrder": 2, "rationaleMarkdown": "새 endpoint는 기존 경로와 계약을 유지한 채 새 기능을 추가할 수 있다. 기존 client가 새 경로를 자동 사용하지는 않지만 보통 기존 기능을 깨는 변경은 아니다."},
-      {"key": "D", "content": "문서 오타를 고친다.", "displayOrder": 3, "rationaleMarkdown": "오타 수정이 문서 표현만 바꾸고 machine-readable contract나 실제 의미를 바꾸지 않는다면 protocol compatibility에 직접 영향을 주지 않는다. 계약 의미를 바꾸는 문서 수정은 별도 문제다."}
+      {
+        "key": "A",
+        "content": "선택 응답 필드를 추가한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "client가 알지 못하는 optional response field를 무시할 수 있다면 additive change는 기존 동작을 보존하기 쉽다. 그래도 strict schema client 등 실제 consumer 계약은 확인해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "field 타입은 유지하지만 의미를 '할인 전 금액'에서 '최종 결제 금액'으로 조용히 바꾼다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "type이 같아도 값의 business meaning이 바뀌면 기존 client는 새 payload를 유효한 형식으로 받아 잘못된 계산을 할 수 있다. 조용한 semantic change는 문법적 변경보다 발견이 어렵고 version 또는 migration 전략이 필요하다."
+      },
+      {
+        "key": "C",
+        "content": "새 endpoint를 추가한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "새 endpoint는 기존 경로와 계약을 유지한 채 새 기능을 추가할 수 있다. 기존 client가 새 경로를 자동 사용하지는 않지만 보통 기존 기능을 깨는 변경은 아니다."
+      },
+      {
+        "key": "D",
+        "content": "문서 오타를 고친다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "오타 수정이 문서 표현만 바꾸고 machine-readable contract나 실제 의미를 바꾸지 않는다면 protocol compatibility에 직접 영향을 주지 않는다. 계약 의미를 바꾸는 문서 수정은 별도 문제다."
+      }
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "field type이 같아도 할인 전 금액을 최종 결제 금액으로 바꾸면 기존 client의 계산과 화면 의미가 조용히 달라진다. optional field 추가처럼 consumer가 무시할 수 있는 변화와 달리 semantic change는 문서·version·공존 기간을 검토해야 하는 breaking change다."
@@ -101,7 +175,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.api.compatibility"],
+    "conceptKeys": [
+      "backend.core.api.compatibility"
+    ],
     "modelAnswer": "strict deserializer나 exhaustive switch가 unknown value를 처리하지 못하면 schema상 작은 확장도 runtime 실패가 될 수 있다.",
     "explanationMarkdown": "새 enum 값이 wire schema에는 additive여도 strict deserializer나 exhaustive switch가 unknown을 예외로 처리하면 구버전 client가 runtime 실패를 낸다. consumer의 unknown 정책을 확인하고 대체 처리·capability negotiation 또는 단계적 rollout으로 의미 변화를 통제해야 한다."
   },
@@ -112,8 +188,127 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["backend.core.api.compatibility"],
+    "conceptKeys": [
+      "backend.core.api.compatibility"
+    ],
     "modelAnswer": "새 field additive 제공→server가 old/new 동시 지원→client migration→usage 관측/deprecation→old field 제거 순으로 공존 기간을 둔다.",
     "explanationMarkdown": "먼저 새 field를 additive로 제공하고 server가 old/new를 함께 읽거나 쓰게 한 뒤 client를 이동시키고 실제 사용량을 관측한다. deprecation window 동안 구버전 사용을 확인한 후에만 old field를 제거해야 하며, producer 배포만 먼저 하면 구버전 요청이 깨질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.compatibility.q4",
+    "promptMarkdown": "운영 중인 주문 조회 API의 JSON 응답을 아래와 같이 변경하려 한다. 기존 클라이언트와 하위 호환성(Backward Compatibility)을 깨뜨리지 않는 변경은?\n\n```json\n// 기존 응답 (v1)\n{\n  \"orderId\": 1042,\n  \"status\": \"PAID\",\n  \"totalAmount\": 35000\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.api.compatibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`totalAmount`의 타입을 숫자 `35000`에서 문자열 `\"35000\"`으로 바꾼다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "기존 필드의 데이터 타입 변경은 정적 타입 역직렬화나 산술 연산을 수행하는 기존 클라이언트를 즉시 깨뜨리는 파괴적(breaking) 변경이다."
+      },
+      {
+        "key": "B",
+        "content": "`status` 필드를 삭제하고 `orderStatus`로 이름을 바꾼다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "기존 필드 삭제나 이름 변경은 해당 키를 읽는 모든 구버전 소비자의 파싱 실패와 비즈니스 오류를 유발한다."
+      },
+      {
+        "key": "C",
+        "content": "`orderId` 필드를 nullable로 바꾸어 간헐적으로 `null`을 내려보낸다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "기존에 non-null이던 필수 응답 필드를 nullable로 완화하면 null 방어가 없는 기존 클라이언트에서 NullPointerException이 발생한다."
+      },
+      {
+        "key": "D",
+        "content": "기존 필드를 그대로 유지하고 선택적(optional) 새 필드 `\"currency\": \"KRW\"`를 응답에 추가한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "잘 설계된 JSON 소비자는 알지 못하는 신규 선택 필드를 무시(ignore unknown)하므로 기존 필드를 유지한 채 선택 필드를 추가하는 것이 대표적인 비파괴적(additive) 변경이다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "응답 스키마에서 필드 추가는 일반적으로 비파괴적이지만, 필드 삭제·이름 변경·타입 변경·필수→nullable 완화·enum 미지 값 무통보 강제는 기존 소비자를 깨뜨리는 breaking change다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.methods-status.q4",
+    "promptMarkdown": "아래와 같은 HTTP API 설계 중 RFC 9110의 메서드 안전성(Safe)·멱등성(Idempotent) 및 상태 코드 의미 계약을 **가장 잘 지킨** 것은?\n\n```http\n1) GET /api/orders/42?action=cancel  -> 200 OK (주문 취소 실행)\n2) DELETE /api/orders/42             -> 1회차 204 No Content, 2회차 404 Not Found\n3) POST /api/orders                  -> 재고 부족 시 200 OK {\"error\": \"OUT_OF_STOCK\"}\n4) PUT /api/orders/42/items          -> 호출할 때마다 항목을 리스트 끝에 계속 append\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.api.methods-status"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "2번 — `DELETE`는 같은 리소스를 반복 호출해도 삭제 효과가 누적되지 않으므로 1회차 `204`, 2회차 `404`처럼 응답 코드가 달라도 멱등성 계약을 만족한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "HTTP 멱등성은 '매번 같은 응답 코드'가 아니라 '동일 요청을 여러 번 적용해도 의도된 최종 서버 상태가 추가로 누적되지 않음'을 뜻한다. 2번이 RFC 9110 계약에 정확히 부합한다."
+      },
+      {
+        "key": "B",
+        "content": "1번 — `GET` 쿼리 파라미터로 상태를 변경하면 브라우저 주소창에서 바로 테스트하기 편하므로 권장된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`GET`은 안전(safe) 메서드여야 하므로 상태 변경을 넣으면 링크 프리페치·크롤러·프록시 재요청이 의도치 않게 주문을 취소하는 사고를 낸다."
+      },
+      {
+        "key": "C",
+        "content": "3번 — 모든 비즈니스 실패를 `200 OK`로 감싸면 클라이언트 HTTP 인터셉터가 에러를 무시해 안정적이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "비즈니스 실패를 `200 OK`로 반환하면 API 게이트웨이·모니터링·클라이언트 에러 지표가 실패를 정상으로 오인해 관측성과 계약이 무너진다."
+      },
+      {
+        "key": "D",
+        "content": "4번 — `PUT`으로 리스트 끝에 항목을 계속 추가하면 멱등성이 보장된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`PUT`은 대상 리소스 상태를 대체(replace)하는 멱등 메서드다. 호출할 때마다 항목이 계속 늘어나는 append 동작은 멱등성 위반이므로 `POST`나 고유 항목 키 기반 `PUT`을 써야 한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "`GET`은 읽기 전용(safe), `PUT`/`DELETE`는 상태 누적 없는 멱등(idempotent) 계약을 지켜야 하며, 실패는 적절한 4xx/5xx 상태 코드와 오류 코드로 표현해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.api.resource-endpoint.q4",
+    "promptMarkdown": "주문(`orders`)에 속한 취소 요청을 모델링할 때, 리소스 경계와 URI 일관성 관점에서 가장 적절한 설계 판단은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.api.resource-endpoint"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "URL 경로에 `/api/users/{u}/orders/{o}/items/{i}/discounts/{d}/logs/{l}`처럼 5단계 이상 깊게 중첩할수록 항상 좋은 설계다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "과도한 경로 중첩은 URL 결합도를 높이고 독립 식별자로 조회할 수 있는 리소스 접근을 불필요하게 복잡하게 만든다."
+      },
+      {
+        "key": "B",
+        "content": "취소가 단순 상태 전이라면 `POST /api/orders/{orderId}/cancel` 또는 취소 이력·사유가 독립 생명주기를 가지면 `POST /api/orders/{orderId}/cancellations`처럼 리소스 소유 경계를 일관되게 표현한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "상위 리소스(`orders/{orderId}`) 아래에 하위 동작이나 하위 리소스를 일관된 규칙으로 배치하면 URL만 보고도 어떤 엔티티의 경계 안에서 일어나는 행위인지 명확히 드러난다."
+      },
+      {
+        "key": "C",
+        "content": "모든 API를 `/api/execute?cmd=cancelOrder&id=42` 단일 엔드포인트로 통합하는 것이 REST 리소스 모델링의 표준이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "단일 RPC 스타일 엔드포인트는 리소스 경계·HTTP 메서드·캐시·권한 정책(URI 기반 라우팅/로깅)을 모두 흐리게 만든다."
+      },
+      {
+        "key": "D",
+        "content": "DB 테이블 이름과 컬럼명을 URL 경로에 그대로 노출해야 API가 DB와 항상 동기화된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "URL은 외부 도메인 리소스 계약이어야 하며 내부 물리 테이블 구조를 그대로 노출하면 스키마 리팩토링 시 API가 깨진다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "리소스 엔드포인트는 물리 테이블이 아니라 도메인 개념과 소유 경계를 반영해야 하며, 단순 행위 vs 독립 수명주기 리소스(예: `cancellations`)를 프로젝트 규칙에 따라 일관되게 선택한다."
   }
 ]

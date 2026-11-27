@@ -6,8 +6,15 @@
     "questionType": "SHORT_ANSWER",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["infrastructure.core.compute.execution-models"],
-    "acceptedAnswers": ["실행 환경과 운영 책임이 어디까지 플랫폼에 위임되는지 확인한다", "운영 책임과 실행 환경의 경계를 확인한다", "운영 책임 경계", "실행 환경과 운영 책임의 경계"],
+    "conceptKeys": [
+      "infrastructure.core.compute.execution-models"
+    ],
+    "acceptedAnswers": [
+      "실행 환경과 운영 책임이 어디까지 플랫폼에 위임되는지 확인한다",
+      "운영 책임과 실행 환경의 경계를 확인한다",
+      "운영 책임 경계",
+      "실행 환경과 운영 책임의 경계"
+    ],
     "explanationMarkdown": "VM·컨테이너·서버리스는 단순히 가벼운 실행 방식의 순서가 아니라 호스트 관리, 격리, 시작 방식, 확장과 패치 책임을 서로 다르게 나눈다. 따라서 애플리케이션 팀이 직접 통제할 범위와 플랫폼에 맡길 운영 책임의 경계를 먼저 확인해야 한다."
   },
   {
@@ -17,7 +24,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["infrastructure.core.compute.execution-models"],
+    "conceptKeys": [
+      "infrastructure.core.compute.execution-models"
+    ],
     "modelAnswer": "컨테이너 쓰기 계층은 컨테이너 수명 주기에 묶여 있어 삭제·재생성 뒤에도 보존된다고 가정할 수 없다. 단순 프로세스 재시작과 컨테이너 재생성을 구분하고, 재생성 뒤에도 필요한 데이터는 PostgreSQL·볼륨·객체 저장소처럼 별도 수명 주기를 가진 영구 저장소에 두며 컨테이너에는 다시 만들 수 있는 캐시·임시 데이터만 둔다.",
     "explanationMarkdown": "컨테이너 쓰기 계층은 컨테이너 수명 주기에 종속되므로 재생성되면 그대로 보존된다고 가정할 수 없다. 재시작 후에도 필요한 데이터는 볼륨·객체 저장소·DB처럼 별도 수명 주기를 가진 영구 저장소에 두고 컨테이너에는 재생성 가능한 임시 데이터나 캐시만 남겨야 한다."
   },
@@ -28,7 +37,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["infrastructure.core.compute.execution-models"],
+    "conceptKeys": [
+      "infrastructure.core.compute.execution-models"
+    ],
     "modelAnswer": "서버리스는 유휴 비용과 운영 부담을 줄이고 순간 부하 확장이 쉽지만 콜드 스타트, 실행 시간·네트워크 제약과 호출별 비용을 검토해야 한다. 관리형 컨테이너는 실행 환경과 장시간 처리 제어가 넓지만 처리 용량·배포·패치 책임이 더 크다. 두 경우 모두 최소 권한 식별자, 내부 네트워크 경계, p95/p99 지연 시간과 실제 부하별 비용을 기준으로 선택한다.",
     "explanationMarkdown": "서버리스는 순간 부하 확장과 낮은 유휴 운영 부담이 장점이지만 콜드 스타트·실행 제약·호출 비용을 지불할 수 있다. 관리형 컨테이너는 실행 제어가 넓은 대신 처리 용량·배포·패치 책임이 커지므로 실제 지연 시간과 비용, 권한 경계로 비교해야 한다."
   },
@@ -39,12 +50,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["infrastructure.core.compute.resource-boundaries"],
+    "conceptKeys": [
+      "infrastructure.core.compute.resource-boundaries"
+    ],
     "choices": [
-      {"key":"A","content":"요청은 모든 시점의 실제 CPU 사용량을 고정한다.","displayOrder":0,"rationaleMarkdown":"CPU 요청은 배치 시 필요한 자원량을 스케줄러에 알리는 값이다. 실행 중 사용량을 그 수치로 고정하지 않는다."},
-      {"key":"B","content":"요청은 스케줄링 기준이고 제한은 사용량 상한으로 동작한다.","displayOrder":1,"rationaleMarkdown":"CPU 요청은 Pod 배치 가능성을 계산하는 기준이고 CPU 제한은 실행 중 사용할 수 있는 CPU 시간을 제한한다. 제한에 닿으면 throttling이 발생할 수 있다."},
-      {"key":"C","content":"제한은 노드의 전체 CPU를 자동으로 예약한다.","displayOrder":2,"rationaleMarkdown":"CPU 제한은 해당 컨테이너의 실행 상한이지 노드 전체 CPU를 독점 예약하는 값이 아니다. 배치 판단에는 요청 값이 쓰인다."},
-      {"key":"D","content":"메모리 제한은 초과해도 항상 throttling만 발생한다.","displayOrder":3,"rationaleMarkdown":"메모리는 CPU처럼 실행 시간을 늦추는 방식으로 제한하지 않는다. 메모리 압박에서는 OOM 종료가 일어날 수 있다."}
+      {
+        "key": "A",
+        "content": "요청은 모든 시점의 실제 CPU 사용량을 고정한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "CPU 요청은 배치 시 필요한 자원량을 스케줄러에 알리는 값이다. 실행 중 사용량을 그 수치로 고정하지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "요청은 스케줄링 기준이고 제한은 사용량 상한으로 동작한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "CPU 요청은 Pod 배치 가능성을 계산하는 기준이고 CPU 제한은 실행 중 사용할 수 있는 CPU 시간을 제한한다. 제한에 닿으면 throttling이 발생할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "제한은 노드의 전체 CPU를 자동으로 예약한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "CPU 제한은 해당 컨테이너의 실행 상한이지 노드 전체 CPU를 독점 예약하는 값이 아니다. 배치 판단에는 요청 값이 쓰인다."
+      },
+      {
+        "key": "D",
+        "content": "메모리 제한은 초과해도 항상 throttling만 발생한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "메모리는 CPU처럼 실행 시간을 늦추는 방식으로 제한하지 않는다. 메모리 압박에서는 OOM 종료가 일어날 수 있다."
+      }
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "Kubernetes의 요청은 스케줄러가 Pod를 배치할 때 보는 자원 기준이고, 제한은 실행 중 사용할 수 있는 상한을 적용한다. CPU 초과는 throttling될 수 있지만 메모리 제한 초과는 커널이 메모리 압박을 감지할 때 OOM 종료로 이어질 수 있다."
@@ -56,7 +89,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["infrastructure.core.compute.resource-boundaries"],
+    "conceptKeys": [
+      "infrastructure.core.compute.resource-boundaries"
+    ],
     "modelAnswer": "CPU 제한 초과는 실행이 제약되어 지연 시간과 처리량이 악화될 수 있지만 메모리 제한 초과는 OOM 종료와 재시작으로 이어질 수 있다. CPU는 동시 처리량·요청·제한과 작업량을 함께 조정하고, 메모리는 힙·네이티브 메모리·배치 크기와 여유 공간을 측정해 조정해야 한다.",
     "explanationMarkdown": "CPU 제한 근처에서는 throttling 때문에 지연 시간과 처리량이 악화될 수 있지만 메모리 제한 초과는 프로세스 종료와 재시작으로 이어질 수 있다. 따라서 CPU와 메모리는 서로 다른 실패 형태와 측정값을 기준으로 조정해야 한다."
   },
@@ -67,7 +102,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["infrastructure.core.compute.resource-boundaries"],
+    "conceptKeys": [
+      "infrastructure.core.compute.resource-boundaries"
+    ],
     "modelAnswer": "JVM에는 힙 외에 Metaspace, 스레드 스택, direct buffer, 네이티브 라이브러리와 실행 환경 자체의 메모리가 있어 힙이 제한보다 작아도 OOM이 발생할 수 있다. 최대 힙·네이티브 메모리·스레드 수·GC 여유 공간을 관측해 제한을 정하고, 인스턴스 수와 DB 연결 수가 하위 시스템의 처리 예산을 넘지 않는지도 함께 계산한다.",
     "explanationMarkdown": "JVM 메모리는 힙만이 아니라 Metaspace, 스레드 스택, direct buffer, 네이티브 라이브러리까지 포함한다. 그래서 컨테이너 제한은 최대 프로세스 메모리와 GC 여유 공간을 기준으로 잡고 인스턴스·연결 수가 DB 같은 하위 시스템의 처리 용량을 넘지 않는지도 함께 계산해야 한다."
   },
@@ -78,12 +115,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["infrastructure.core.compute.configuration-secrets"],
+    "conceptKeys": [
+      "infrastructure.core.compute.configuration-secrets"
+    ],
     "choices": [
-      {"key":"A","content":"같은 배포 산출물을 환경별 값과 분리하고 Secret 노출 범위를 줄이기 위해서","displayOrder":0,"rationaleMarkdown":"이미지를 환경과 분리하면 동일하게 빌드한 산출물에 환경별 값을 주입할 수 있다. Secret도 이미지와 소스에 남기지 않아 접근 범위를 따로 관리할 수 있다."},
-      {"key":"B","content":"이미지가 실행 환경에서 실행될 수 없게 만들기 위해서","displayOrder":1,"rationaleMarkdown":"설정을 분리하는 목적은 실행을 막는 것이 아니라 동일한 이미지의 재사용과 설정 관리다."},
-      {"key":"C","content":"실행 설정이 이미지를 바꾸므로 환경마다 별도 이미지를 만들기 위해서","displayOrder":2,"rationaleMarkdown":"실행 시 주입한 값은 이미 빌드된 이미지 자체를 다시 작성하지 않는다. 오히려 환경마다 별도 이미지를 만들 필요를 줄인다."},
-      {"key":"D","content":"Secret을 실행 시 주입하면 교체와 접근 권한 관리가 필요 없어지기 때문에","displayOrder":3,"rationaleMarkdown":"실행 시 주입은 Secret을 이미지에 굳히지 않는 한 방법일 뿐이다. 접근 권한과 노출, 재시작·갱신 방식, 교체는 여전히 관리해야 한다."}
+      {
+        "key": "A",
+        "content": "같은 배포 산출물을 환경별 값과 분리하고 Secret 노출 범위를 줄이기 위해서",
+        "displayOrder": 0,
+        "rationaleMarkdown": "이미지를 환경과 분리하면 동일하게 빌드한 산출물에 환경별 값을 주입할 수 있다. Secret도 이미지와 소스에 남기지 않아 접근 범위를 따로 관리할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "이미지가 실행 환경에서 실행될 수 없게 만들기 위해서",
+        "displayOrder": 1,
+        "rationaleMarkdown": "설정을 분리하는 목적은 실행을 막는 것이 아니라 동일한 이미지의 재사용과 설정 관리다."
+      },
+      {
+        "key": "C",
+        "content": "실행 설정이 이미지를 바꾸므로 환경마다 별도 이미지를 만들기 위해서",
+        "displayOrder": 2,
+        "rationaleMarkdown": "실행 시 주입한 값은 이미 빌드된 이미지 자체를 다시 작성하지 않는다. 오히려 환경마다 별도 이미지를 만들 필요를 줄인다."
+      },
+      {
+        "key": "D",
+        "content": "Secret을 실행 시 주입하면 교체와 접근 권한 관리가 필요 없어지기 때문에",
+        "displayOrder": 3,
+        "rationaleMarkdown": "실행 시 주입은 Secret을 이미지에 굳히지 않는 한 방법일 뿐이다. 접근 권한과 노출, 재시작·갱신 방식, 교체는 여전히 관리해야 한다."
+      }
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "이미지와 환경별 설정을 분리하면 동일한 배포 산출물을 여러 환경에 재사용하면서 차이를 실행 설정으로 관리할 수 있다. Secret은 소스·이미지에 포함하지 않고 접근 권한과 교체 수명 주기를 별도로 관리해야 노출 범위를 줄일 수 있다."
@@ -95,7 +154,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["infrastructure.core.compute.configuration-secrets"],
+    "conceptKeys": [
+      "infrastructure.core.compute.configuration-secrets"
+    ],
     "modelAnswer": "환경 변수나 마운트된 Secret이 바뀌어도 이미 생성된 연결의 자격 증명이 자동으로 바뀌지 않을 수 있다. 새 Secret을 주입한 Pod를 순차적으로 교체하고 연결 풀을 비우고 다시 만들며, 이전 자격 증명 폐기 시점과 실패 시 되돌리기 절차를 검증해야 한다.",
     "explanationMarkdown": "Secret 값이 바뀌어도 이미 생성된 프로세스나 DB 연결이 새 자격 증명을 자동으로 다시 읽는 것은 아니다. 교체는 새 값 배포, 인스턴스·연결 교체, 이전 자격 증명 폐기와 되돌리기까지 포함하는 수명 주기로 봐야 한다."
   },
@@ -106,8 +167,245 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["infrastructure.core.compute.configuration-secrets"],
+    "conceptKeys": [
+      "infrastructure.core.compute.configuration-secrets"
+    ],
     "modelAnswer": "이미지와 소스에는 Secret을 넣지 않고 실행 시 Secret 저장소와 워크로드 식별자를 통해 필요한 값만 최소 권한으로 주입한다. Kubernetes Secret을 쓴다면 기본 etcd 저장이 암호화되지 않는 점을 고려해 저장 시 암호화와 최소 권한 RBAC를 적용한다. manifest의 base64는 암호화가 아니다. 로그·추적 정보·오류 응답·장애 덤프에서는 민감 값을 가리고, Secret 접근을 감사하며 짧은 수명·교체·폐기 절차를 둔다. 설정 변경은 버전 관리되는 manifest로 추적하되 Secret 값 자체는 기록하지 않는다.",
     "explanationMarkdown": "Secret 유출은 저장소 한 곳만 안전하게 만든다고 끝나지 않는다. Kubernetes Secret의 기본 etcd 저장은 암호화되지 않으며 base64 인코딩도 비밀성을 제공하지 않는다. 저장 시 암호화, 최소 권한 접근, 빌드 산출물·실행 환경·로그·추적 정보·장애 덤프의 민감 값 제거, 감사와 교체·폐기까지 전 구간에서 Secret 값이 불필요하게 복제되지 않게 해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.compute.execution-models.q4",
+    "promptMarkdown": "컨테이너 기반 Spring Boot 애플리케이션이 업로드된 임시 PDF 파일을 컨테이너 내부 로컬 경로 `/app/tmp/report.pdf`에 저장한 뒤 비동기 워커가 읽도록 구현했다. Kubernetes 멀티 Pod 환경에서 이 구조가 실패하는 직접 원인은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.compute.execution-models",
+      "infrastructure.core.reliability.storage-models"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "PDF 파일은 컨테이너 안에서만 암호화되어 읽을 수 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "파일 형식 문제가 아니라 컨테이너의 임시·격리 스토리지 모델 때문이다."
+      },
+      {
+        "key": "B",
+        "content": "컨테이너의 쓰기 계층은 임시(ephemeral)이며 Pod마다 격리되어 있어 다른 Pod 워커가 접근할 수 없고, Pod 재시작·재스케줄링 시 파일이 즉시 영구 소실된다. 공유 객체 저장소(S3 등)를 사용해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "컨테이너는 무상태(stateless)·임시 파일시스템을 전제로 설계해야 한다. 여러 인스턴스가 공유하거나 재기동 후 유지되어야 하는 파일은 객체 저장소나 외부 영속 볼륨에 두어야 한다."
+      },
+      {
+        "key": "C",
+        "content": "Linux 컨테이너는 `/app/tmp` 디렉터리에 파일을 쓰는 것 자체가 불가능하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "단일 컨테이너 내 쓰기는 가능하지만, 다중 Pod 공유 불가와 재시작 시 소실이 본질적 문제다."
+      },
+      {
+        "key": "D",
+        "content": "Kubernetes가 모든 Pod의 `/app/tmp`를 자동으로 실시간 동기화하지만 속도가 느릴 뿐이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "컨테이너 로컬 파일시스템은 Pod 간에 자동 동기화되지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "컨테이너는 언제든 종료·교체될 수 있는 무상태 실행 단위다. 영속 파일·세션·공유 임시 데이터는 반드시 외부 객체 저장소, DB, 또는 Redis로 분리해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.compute.execution-models.q5",
+    "promptMarkdown": "상시 트래픽이 일정하게 흐르고 DB 커넥션 풀(HikariCP)과 낮은 p99 지연이 중요한 Java/Spring Boot 백엔드 API에 서버리스(FaaS)보다 관리형 컨테이너(ECS/Kubernetes)가 일반적으로 더 유리한 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.compute.execution-models"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "서버리스 환경에서는 HTTP JSON 응답을 반환할 수 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "서버리스도 API Gateway와 결합해 HTTP JSON API를 제공할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "컨테이너는 OS 커널을 컨테이너마다 별도로 부팅해 보안이 서버리스보다 항상 높다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "컨테이너는 호스트 OS 커널을 공유하며(VM이 별도 게스트 OS 커널을 가짐), 선택 기준은 워크로드 패턴·콜드 스타트·상태/커넥션 관리다."
+      },
+      {
+        "key": "C",
+        "content": "관리형 컨테이너는 자동 확장이 전혀 불가능하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Kubernetes HPA/KEDA나 ECS Auto Scaling으로 정상적인 수평 확장이 가능하다."
+      },
+      {
+        "key": "D",
+        "content": "JVM/Spring의 콜드 스타트 지연과 함수 인스턴스 급증 시 RDBMS 커넥션 풀 폭발 문제를 피하고, 예측 가능한 상시 트래픽에서 비용과 p99 지연을 안정적으로 통제할 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "서버리스는 간헐적·버스트성 이벤트 처리에 강하지만, 상시 트래픽의 JVM API에서는 콜드 스타트, DB 커넥션 프록시 필요성, 장기 실행 비용 면에서 관리형 컨테이너가 더 유리한 경우가 많다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "VM, 컨테이너, 서버리스는 운영 책임 범위와 콜드 스타트·커넥션 관리·비용 구조가 다르다. 상시 트래픽의 JVM/RDBMS API는 컨테이너, 간헐적 이벤트/크론 작업은 서버리스가 자연스럽다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.compute.resource-boundaries.q4",
+    "promptMarkdown": "다음 Kubernetes Deployment 스펙에서 JVM 컨테이너가 힙을 `1024Mi`로 설정(`-Xmx1024m`)했을 때 `OOMKilled (Exit Code 137)`가 반복 발생하는 가장 직접적인 이유는?\n```yaml\nresources:\n  requests:\n    memory: 1024Mi\n    cpu: 500m\n  limits:\n    memory: 1024Mi\n    cpu: 1000m\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.compute.resource-boundaries"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`cpu: 500m`가 500코어를 의미해 메모리가 부족해졌다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`500m`은 0.5 vCPU(500 millicores)를 의미하며 메모리 OOM의 원인이 아니다."
+      },
+      {
+        "key": "B",
+        "content": "Java 25는 Linux 컨테이너 cgroup 메모리 제한을 전혀 인식하지 못한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "최신 JVM은 기본적으로 컨테이너 cgroup 제한을 인식하지만, 사용자가 명시적으로 `-Xmx1024m`을 주면 Off-Heap 여유 없이 1024Mi까지 힙을 쓰려다 커널 OOM Killer에 종료된다."
+      },
+      {
+        "key": "C",
+        "content": "JVM 전체 프로세스 메모리는 Heap 외에도 Metaspace, Code Cache, 스레드 스택, Direct Buffer 등 Off-Heap 네이티브 메모리를 사용하므로 `-Xmx`를 컨테이너 `limits.memory`와 동일하게 잡으면 cgroup 상한을 넘어 즉시 `OOMKilled`된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "컨테이너 메모리 제한은 OS 프로세스 전체 RSS+캐시 기준이다. `-XX:MaxRAMPercentage=70.0~75.0` 등으로 Off-Heap 여유(25~30%)를 남겨 두어야 `OOMKilled(137)`를 막을 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "Kubernetes에서 `limits.memory`가 `requests.memory`와 같으면 컨테이너 실행이 금지된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "둘이 같으면 오히려 가장 안정적인 `Guaranteed` QoS 클래스가 되며, 문제는 JVM Heap을 컨테이너 전체 메모리 한도의 100%로 잡은 것이다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "컨테이너 안의 JVM 메모리 = `Heap + Metaspace + Thread Stacks + Direct/Native Memory`다. `-Xmx`를 `limits.memory`의 70~75% 수준(`-XX:MaxRAMPercentage`)으로 제한해 Off-Heap 여유를 확보해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.compute.resource-boundaries.q5",
+    "promptMarkdown": "Kubernetes에서 CPU `limits`를 매우 타이트하게(예: `200m`) 설정한 Spring Boot Pod에서 전체 노드 CPU는 30%로 여유로운데도 API p99 지연이 주기적으로 100ms 이상 튀고 있다. 가장 유력한 원인은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.compute.resource-boundaries"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "디스크 용량이 부족할 때만 발생하는 현상이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "디스크 부족이 아니라 CFS CPU quota 초과로 인한 CPU Throttling 현상이다."
+      },
+      {
+        "key": "B",
+        "content": "Linux CFS quota 주기(기본 100ms) 안에 할당된 20ms CPU 예산을 멀티스레드(GC/JIT/요청)가 순식간에 소진하고 남은 80ms 동안 강제 대기하는 **CPU Throttling**이 발생했다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "멀티스레드 JVM이 100ms 주기 중 4개 스레드로 5ms씩만 써도 20ms 쿼터를 다 써 버려 남은 80ms 동안 전체 스레드가 멈춘다. `container_cpu_cfs_throttled_periods_total` 지표로 확인하고 적절한 CPU request/limit을 조정해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "CPU 한도를 넘으면 Linux 커널이 즉시 `OOMKilled(137)`로 프로세스를 죽이기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "메모리는 압축 불가 자원이라 초과 시 `OOMKilled`되지만, CPU는 압축 가능 자원이라 초과 시 종료 대신 Throttling(지연)이 발생한다."
+      },
+      {
+        "key": "D",
+        "content": "노드 전체 CPU가 30%이면 컨테이너 `limits.cpu`는 자동으로 무시된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "노드에 여유 CPU가 남아 있어도 cgroup `limits.cpu` 상한에 걸리면 강제로 throttling된다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "메모리 limit 초과는 즉시 `OOMKilled`, CPU limit 초과는 CFS Throttling으로 인한 꼬리 지연 급증으로 나타난다. 멀티스레드 JVM에서는 지나치게 낮은 CPU limit이 p99를 망가뜨리는 흔한 원인이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.compute.configuration-secrets.q4",
+    "promptMarkdown": "Docker 이미지 빌드 시 `Dockerfile`에 `ENV DB_PASSWORD=prod-secret` 또는 `ARG API_KEY=...`를 넣고 빌드한 이미지를 레지스트리에 푸시했을 때의 보안 위험은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.compute.configuration-secrets"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`ARG`로 전달한 값은 이미지 레이어 히스토리에 절대 남지 않으므로 운영 비밀번호 전달에 완벽히 안전하다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`ARG` 값 역시 `docker history` 빌드 명령 기록에 평문으로 노출될 수 있어 비밀값 전달에 사용하면 안 된다."
+      },
+      {
+        "key": "B",
+        "content": "Docker 레지스트리가 푸시 시 자동으로 `ENV` 비밀번호를 KMS로 암호화해 숨겨 준다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "컨테이너 레지스트리는 이미지 설정 JSON의 `ENV` 문자열을 자동 마스킹/암호화하지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "빌드 시 비밀값을 넣으면 컨테이너 기동 속도가 10배 빨라진다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "속도 이점은 전혀 없으며 심각한 자격 증명 유출과 로테이션 불가 문제를 일으킨다."
+      },
+      {
+        "key": "D",
+        "content": "`docker history`와 이미지 레이어 메타데이터에 비밀값이 평문으로 영구 기록되어, 이미지 접근 권한이 있는 누구나 비밀번호를 추출할 수 있고 환경별 이미지 재사용도 깨진다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "이미지는 불변 아티팩트로 환경 독립적으로 빌드하고, Secret은 런타임에 Secret Manager·Kubernetes Secret·환경 주입으로 전달해야 한다. 빌드 시 비밀이 필요하면 BuildKit `--mount=type=secret`을 쓴다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "비밀값은 Git과 컨테이너 이미지 레이어에 절대 포함하면 안 된다. 런타임 주입 + 주기적 로테이션 + 최소 권한 IAM/Secret 접근 제어가 기본이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.compute.configuration-secrets.q5",
+    "promptMarkdown": "운영 DB 비밀번호를 무중단으로 교체(Secret Rotation)하려 할 때, 새 비밀번호로 즉시 덮어쓰고 기존 비밀번호를 바로 폐기하면 기존 실행 중인 Pod에서 인증 오류가 터진다. 안전한 무중단 로테이션 절차는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.compute.configuration-secrets"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "이중 자격 증명(Dual-Credential / 2-user 또는 활성 키 2개) 구간을 두어 새 자격 증명을 추가 → Secret 갱신 및 앱 롤링 재시작/커넥션 풀 전환 → 기존 자격 증명 사용량 0 확인 후 구 자격 증명 폐기한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "기존 Pod의 HikariCP 풀과 롤링 배포 중인 신 Pod가 잠시 공존하므로, 구·신 자격 증명이 동시에 유효한 전환 창을 둔 뒤 트래픽 전환을 확인하고 구 자격 증명을 회수해야 무중단 로테이션이 완성된다."
+      },
+      {
+        "key": "B",
+        "content": "DB 비밀번호를 먼저 바꾼 뒤 10분 후에 Kubernetes Secret을 수정한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "10분 동안 모든 신규 DB 연결과 재연결이 인증 실패로 전면 장애가 발생한다."
+      },
+      {
+        "key": "C",
+        "content": "Kubernetes Secret 파일만 바꾸면 실행 중인 모든 JDBC 커넥션 풀이 즉시 새 비밀번호로 자동 재인증된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "이미 맺어진 TCP/JDBC 커넥션과 메모리에 캐시된 `DataSource` 설정은 별도 리로드나 롤링 재시작 없이는 새 Secret을 반영하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "로테이션 위험을 피하기 위해 운영 DB 비밀번호는 한 번 설정하면 영구히 바꾸지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "영구 고정 자격 증명은 유출 시 피해 범위가 무한히 커지므로 안전한 무중단 로테이션 절차를 갖추어야 한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "무중단 Secret 로테이션의 핵심은 **이중 유효 구간(구+신 동시 허용) → 앱 전환/롤링 배포 → 구 자격 증명 트래픽 0 검증 → 폐기** 순서다."
   }
 ]

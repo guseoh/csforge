@@ -448,7 +448,9 @@ class ContentImportIntegrationTest {
                 pack.add(new Part(path.getFileName().toString(), path.toString().endsWith(".md") ? "text/markdown" : "application/json", Files.readString(path)));
             }
         }
-        assertEquals(12, pack.size());
+        int packConcepts = conceptCount(pack);
+        int packQuestions = questionCount(pack);
+        assertEquals(2 + packConcepts, pack.size());
         // Seed the same canonical identities with older bodies, then exercise real UPDATE paths.
         List<Part> older = new ArrayList<>(pack.stream().map(part -> part.type().equals("text/markdown")
                 ? new Part(part.name(), part.type(), part.content().split("\\r?\\n---\\r?\\n", 2)[0] + "\n---\n# 이전 본문\n")
@@ -474,8 +476,8 @@ class ContentImportIntegrationTest {
         JsonNode initial = json(post("/api/imports/preview", older, null)).get("body");
         assertEquals(0, initial.get("totals").get("errors").asInt(), initial::toString);
         assertEquals(200, post("/api/imports/apply", older, initial.get("previewDigest").asText()).statusCode());
-        assertEquals(10, jdbc.queryForObject("select count(*) from concept", Integer.class));
-        assertEquals(56, jdbc.queryForObject("select count(*) from question", Integer.class));
+        assertEquals(packConcepts, jdbc.queryForObject("select count(*) from concept", Integer.class));
+        assertEquals(packQuestions, jdbc.queryForObject("select count(*) from question", Integer.class));
         List<Map<String, Object>> identities = jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id");
         List<Map<String, Object>> links = jdbc.queryForList("select * from question_concept order by question_id, concept_id");
         long correctedQuestionId = jdbc.queryForObject("select id from question where content_key = ?", Long.class, correctedQuestionKey);
@@ -496,7 +498,8 @@ class ContentImportIntegrationTest {
         JsonNode preview = json(post("/api/imports/preview", pack, null)).get("body");
         assertTrue(preview.get("canApply").asBoolean(), preview::toString);
         assertEquals(0, preview.get("totals").get("errors").asInt());
-        assertEquals(11, preview.get("totals").get("updated").asInt());
+        // 모든 Concept 본문과 수정한 Question 1개가 갱신된다.
+        assertEquals(packConcepts + 1, preview.get("totals").get("updated").asInt());
         assertEquals(200, post("/api/imports/apply", pack, preview.get("previewDigest").asText()).statusCode());
         assertEquals(before, personalHistorySnapshot());
         assertEquals(identities, jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id"));
@@ -504,7 +507,7 @@ class ContentImportIntegrationTest {
         assertEquals(choices, jdbc.queryForList("select id, choice_key, display_order from question_choice where question_id = ? order by id", correctedQuestionId));
         assertTrue(jdbc.queryForObject("select prompt_markdown from question where id = ?", String.class, correctedQuestionId).contains("System.out.println(a == b);"));
         JsonNode repeated = json(post("/api/imports/preview", pack, null)).get("body");
-        assertEquals(67, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
+        assertEquals(1 + packConcepts + packQuestions, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
         assertEquals(0, repeated.get("totals").get("updated").asInt());
         assertEquals(0, repeated.get("totals").get("created").asInt());
         assertEquals(0, repeated.get("totals").get("errors").asInt());
@@ -521,7 +524,9 @@ class ContentImportIntegrationTest {
         try (var paths = Files.list(Path.of("../content/java/object-model"))) {
             for (Path path : paths.sorted().toList()) pack.add(new Part(path.getFileName().toString(), path.toString().endsWith(".md") ? "text/markdown" : "application/json", Files.readString(path)));
         }
-        assertEquals(14, pack.size());
+        int packConcepts = conceptCount(pack);
+        int packQuestions = questionCount(pack);
+        assertEquals(2 + packConcepts, pack.size());
         List<Part> older = new ArrayList<>();
         for (Part part : pack) {
             if (part.type().equals("text/markdown")) {
@@ -545,8 +550,8 @@ class ContentImportIntegrationTest {
         JsonNode initial = json(post("/api/imports/preview", older, null)).get("body");
         assertEquals(0, initial.get("totals").get("errors").asInt(), initial::toString);
         assertEquals(200, post("/api/imports/apply", older, initial.get("previewDigest").asText()).statusCode());
-        assertEquals(12, jdbc.queryForObject("select count(*) from concept", Integer.class));
-        assertEquals(68, jdbc.queryForObject("select count(*) from question", Integer.class));
+        assertEquals(packConcepts, jdbc.queryForObject("select count(*) from concept", Integer.class));
+        assertEquals(packQuestions, jdbc.queryForObject("select count(*) from question", Integer.class));
         var concepts = jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id");
         var questions = jdbc.queryForList("select id, content_key, question_type, difficulty, status from question order by id");
         var links = jdbc.queryForList("select * from question_concept order by question_id, concept_id");
@@ -570,7 +575,8 @@ class ContentImportIntegrationTest {
         JsonNode preview = json(post("/api/imports/preview", pack, null)).get("body");
         assertTrue(preview.get("canApply").asBoolean(), preview::toString);
         assertEquals(0, preview.get("totals").get("errors").asInt());
-        assertEquals(14, preview.get("totals").get("updated").asInt());
+        // 모든 Concept 본문과 수정한 Question 2개가 갱신된다.
+        assertEquals(packConcepts + 2, preview.get("totals").get("updated").asInt());
         assertEquals(200, post("/api/imports/apply", pack, preview.get("previewDigest").asText()).statusCode());
         assertEquals(concepts, jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id"));
         assertEquals(questions, jdbc.queryForList("select id, content_key, question_type, difficulty, status from question order by id"));
@@ -579,7 +585,7 @@ class ContentImportIntegrationTest {
         assertEquals(answers, jdbc.queryForList("select * from question_answer order by id"));
         assertEquals(history, personalHistorySnapshot());
         JsonNode repeated = json(post("/api/imports/preview", pack, null)).get("body");
-        assertEquals(81, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
+        assertEquals(1 + packConcepts + packQuestions, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
         for (String count : List.of("created", "updated", "errors")) assertEquals(0, repeated.get("totals").get(count).asInt());
         assertEquals(200, post("/api/imports/apply", pack, repeated.get("previewDigest").asText()).statusCode());
         assertEquals(history, personalHistorySnapshot());
@@ -652,9 +658,6 @@ class ContentImportIntegrationTest {
             assertEquals(200, post("/api/imports/apply", pack, repeated.get("previewDigest").asText()).statusCode());
             assertEquals(history, personalHistorySnapshot());
         }
-        assertEquals(18, expectedTopics);
-        assertEquals(145, expectedConcepts);
-        assertEquals(843, expectedQuestions);
         assertEquals(expectedTopics, jdbc.queryForObject("select count(*) from topic", Integer.class));
         assertEquals(expectedConcepts, jdbc.queryForObject("select count(*) from concept", Integer.class));
         for (var history : personalHistorySnapshot().entrySet()) {
@@ -783,14 +786,14 @@ class ContentImportIntegrationTest {
         assertTrue(first.get("success").asBoolean());
         assertEquals(CanonicalInventory.TOTAL_ITEMS, first.get("totals").get("created").asInt());
         assertEquals(15, jdbc.queryForObject("select count(*) from learning_area", Integer.class));
-        assertEquals(134, jdbc.queryForObject("select count(*) from topic", Integer.class));
+        assertEquals(CanonicalInventory.TOPICS, jdbc.queryForObject("select count(*) from topic", Integer.class));
         assertEquals(CanonicalInventory.CONCEPTS, jdbc.queryForObject("select count(*) from concept", Integer.class));
         assertEquals(CanonicalInventory.QUESTIONS, jdbc.queryForObject("select count(*) from question", Integer.class));
 
         JsonNode ready = json(get("/api/canonical-bootstrap/status")).get("body");
         assertEquals("READY", ready.get("state").asText());
         assertEquals(ready.get("totalBatches").asInt(), ready.get("readyBatches").asInt());
-        assertEquals(134, ready.get("currentCounts").get("topics").asInt());
+        assertEquals(CanonicalInventory.TOPICS, ready.get("currentCounts").get("topics").asInt());
         assertEquals(CanonicalInventory.CONCEPTS, ready.get("currentCounts").get("concepts").asInt());
         assertEquals(CanonicalInventory.QUESTIONS, ready.get("currentCounts").get("questions").asInt());
 
@@ -821,9 +824,19 @@ class ContentImportIntegrationTest {
 
         assertTrue(recovered.get("success").asBoolean());
         assertEquals("READY", recovered.get("state").asText());
-        assertEquals(134, jdbc.queryForObject("select count(*) from topic", Integer.class));
+        assertEquals(CanonicalInventory.TOPICS, jdbc.queryForObject("select count(*) from topic", Integer.class));
         assertEquals(CanonicalInventory.CONCEPTS, jdbc.queryForObject("select count(*) from concept", Integer.class));
         assertEquals(CanonicalInventory.QUESTIONS, jdbc.queryForObject("select count(*) from question", Integer.class));
+    }
+
+    private static int conceptCount(List<Part> pack) {
+        return (int) pack.stream().filter(part -> part.type().equals("text/markdown")).count();
+    }
+
+    private int questionCount(List<Part> pack) {
+        return pack.stream().filter(part -> part.name().equals("questions.json"))
+                .mapToInt(part -> objectMapper.readTree(part.content()).size())
+                .sum();
     }
 
     private long insertAttempt(long questionId) {

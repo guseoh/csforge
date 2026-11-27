@@ -1,8 +1,377 @@
 [
-  {"kind":"question","contentKey":"database.core.transaction.acid.q1","promptMarkdown":"다음 순서로 작업이 실행됐다.\n\n1. DB 트랜잭션 안에서 주문 INSERT\n2. 외부 결제 API 성공\n3. DB UPDATE 실패와 롤백\n\n질문: ACID 원자성이 외부 결제도 자동 취소하는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.transaction.acid"],"modelAnswer":"아니다. DB 트랜잭션의 원자성은 해당 DB 변경 경계를 보호하며 이미 외부 시스템에 발생한 부수 효과까지 롤백하지 않는다. 결제 취소·보상, 멱등성, 상태 기록 같은 별도 분산 실패 설계가 필요하다.","explanationMarkdown":"롤백은 DB 트랜잭션 안의 주문 INSERT·UPDATE만 되돌리고 이미 결제 시스템에 전달된 부수 효과는 되돌리지 않는다. 따라서 결제 취소·보상, 멱등성과 상태 기록처럼 DB 밖의 실패를 처리하는 별도 경계를 설계해야 하며 ACID를 분산 트랜잭션 보장으로 확대하면 안 된다."},
-  {"kind":"question","contentKey":"database.core.transaction.acid.q2","promptMarkdown":"ACID의 일관성과 데이터베이스 제약 조건의 관계를 설명할 때 가장 정확한 표현은 무엇인가?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.transaction.acid"],"modelAnswer":"일관성은 트랜잭션 전후에 데이터베이스가 정의한 불변 조건과 제약 조건을 만족하는 상태로 남도록 설계한다는 의미다. UNIQUE/FK/CHECK가 일부 불변 조건을 집행하지만 모든 업무 규칙이나 외부 시스템 상태까지 자동으로 보장한다는 뜻은 아니다.","explanationMarkdown":"ACID 일관성은 트랜잭션 전후에 애플리케이션과 DB가 정의한 유효 상태와 불변 조건을 유지한다는 뜻이고, UNIQUE/FK/CHECK는 그중 DB가 직접 집행하는 일부다. 제약 조건이 모든 업무 규칙이나 외부 시스템 상태까지 자동 보장하는 것은 아니므로 '항상 데이터가 일관된다'는 결과 문장만으로 축소하면 안 된다."},
-  {"kind":"question","contentKey":"database.core.transaction.autocommit.q1","promptMarkdown":"서로 다른 두 계좌의 UPDATE가 반드시 함께 성공해야 하는데 자동 커밋으로 SQL 문별 커밋된다. 첫 UPDATE 후 장애가 나면 왜 문제가 되는가?","questionType":"DESCRIPTIVE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["database.core.transaction.autocommit"],"modelAnswer":"첫 SQL 문이 이미 커밋되어 두 번째가 실행되지 않아 부분 상태가 남을 수 있다. 둘을 하나의 업무 상태 전이로 봐야 한다면 같은 트랜잭션 블록으로 묶어 함께 커밋하거나 함께 롤백해야 한다.","explanationMarkdown":"자동 커밋에서는 첫 UPDATE가 SQL 문 종료 시 커밋될 수 있으므로 그 뒤 장애가 나면 출금만 반영되고 입금은 실행되지 않은 부분 상태가 남는다. 두 변경을 하나의 업무 상태 전이로 취급하려면 명시적 트랜잭션 블록에서 함께 커밋하거나 실패 시 함께 롤백해야 한다."},
-  {"kind":"question","contentKey":"database.core.transaction.autocommit.q2","promptMarkdown":"자동 커밋이 켜진 연결에서 각 SQL 문을 별도 요청으로 실행하는 상황이다. 다음 두 SQL 문 사이에 애플리케이션 오류가 났다.\n\n```sql\nUPDATE account SET balance=balance-100 WHERE id=1;\nUPDATE account SET balance=balance+100 WHERE id=2;\n```\n\n질문: 명시적 트랜잭션을 사용해야 하는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.transaction.autocommit"],"choices":[{"key":"A","content":"자동 커밋은 어떤 SQL 문도 실행하지 않게 한다.","displayOrder":0,"rationaleMarkdown":"자동 커밋 연결은 각 성공 SQL 문을 따로 커밋할 수 있어 두 UPDATE가 실행되지 않는 모드가 아니다. 문제는 첫 문장 이후 두 번째가 실패하면 앞선 커밋이 남는다는 점이다."},{"key":"B","content":"두 SQL 문을 하나의 커밋·롤백 경계로 묶어 송금의 부분 반영을 막아야 한다.","displayOrder":1,"rationaleMarkdown":"출금과 입금이 하나의 송금 결과라면 같은 명시적 트랜잭션으로 묶어 둘 다 커밋하거나 실패 때 함께 롤백해야 한다. 그래야 중간 한쪽만 반영된 상태를 피한다."},{"key":"C","content":"명시적 트랜잭션을 쓰면 외부 API도 자동 롤백된다.","displayOrder":2,"rationaleMarkdown":"데이터베이스 트랜잭션은 해당 DB의 SQL 문을 묶는다. 원격 HTTP API 호출은 다른 시스템 경계라 같은 롤백에 자동으로 들어오지 않는다."},{"key":"D","content":"각 UPDATE가 개별 SQL 문으로 원자적이므로 두 SQL 문 전체도 자동으로 하나의 원자적 작업이 된다.","displayOrder":3,"rationaleMarkdown":"SQL 문 하나의 원자성을 두 문장 전체의 원자성으로 확장할 수 없다. 자동 커밋이면 두 UPDATE가 서로 다른 트랜잭션으로 커밋될 수 있어 첫 변경만 반영되는 부분 적용이 생길 수 있다."}],"correctChoiceKey":"B","explanationMarkdown":"자동 커밋은 각 SQL 문을 별도 커밋 경계로 만들 수 있어 첫 잔액 변경 뒤 오류가 나면 송금이 반쪽만 반영된다. 명시적 트랜잭션은 두 UPDATE를 하나의 DB 원자성 경계에 넣지만, 그 경계 밖의 외부 API까지 롤백하지는 않는다."},
-  {"kind":"question","contentKey":"database.core.transaction.atomic-write.q1","promptMarkdown":"`UPDATE ... SET quantity=quantity-1 WHERE quantity>0` 방식의 핵심 동시성 특성을 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.transaction.atomic-write"],"acceptedAnswers":["현재 DB 값에 대한 조건 검사와 변경을 한 statement에서 수행해 read-modify-write 경쟁 구간을 줄이기 때문이다","현재 DB 값에 대한 조건 검사와 변경을 한 SQL 문에서 수행해 읽기-수정-쓰기 경쟁 구간을 줄이기 때문이다","조건과 감소를 DB에서 원자적으로 처리하고 affected row count로 성공 여부를 판단할 수 있기 때문이다","조건과 감소를 DB에서 원자적으로 처리하고 영향받은 행 수로 성공 여부를 판단할 수 있기 때문이다","조건부 원자적 UPDATE","conditional atomic update","조건 검사와 변경을 한 statement에서 수행","조건 검사와 변경을 한 SQL 문에서 수행"],"explanationMarkdown":"DB가 현재 행을 기준으로 `quantity > 0`을 검사하면서 감소를 수행하므로 두 요청이 같은 오래된 값을 읽고 절대값 0을 덮는 경쟁 구간을 줄인다. 영향받은 행이 1개면 조건을 만족해 성공한 것이고 0개면 재고 부족 등으로 실패했음을 확인할 수 있지만, 다른 업무 불변 조건은 별도로 보호해야 한다."},
-  {"kind":"question","contentKey":"database.core.transaction.atomic-write.q2","promptMarkdown":"복잡한 주문 도메인 규칙까지 모두 거대한 조건부 UPDATE 한 문장에 넣는 것이 항상 더 안전한가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.transaction.atomic-write"],"choices":[{"key":"A","content":"그렇다. 한 SQL이면 격리 수준은 의미가 없다.","displayOrder":0,"rationaleMarkdown":"단일 UPDATE도 트랜잭션 격리 수준과 잠금 규칙의 영향을 받는다. 한 문장으로 옮겼다고 읽기 현상이나 모든 경합 문제가 사라지는 것은 아니다."},{"key":"B","content":"그렇다. SQL 한 문장만 사용하면 모든 외부 부수 효과도 원자적이 된다.","displayOrder":1,"rationaleMarkdown":"하나의 SQL 문은 데이터베이스의 원자성 경계일 뿐 외부 결제나 메시징 효과까지 한꺼번에 커밋·롤백하지 않는다."},{"key":"C","content":"아니다. 작은 DB 내부 불변 조건에는 강하지만 복잡한 도메인 흐름은 가독성과 책임 경계를 고려해야 한다.","displayOrder":2,"rationaleMarkdown":"조건부 UPDATE는 비교적 작은 불변 조건을 DB의 현재 값과 함께 검사하고 수정할 때 유용하다. 복잡한 주문 정책과 여러 단계의 책임을 모두 SQL에 옮기면 변경 의도를 읽고 검증하기 어려울 수 있다."},{"key":"D","content":"아니다. UPDATE는 동시성 제어를 전혀 사용하지 않기 때문이다.","displayOrder":3,"rationaleMarkdown":"UPDATE는 동시성 제어와 트랜잭션 잠금을 사용한다. 이를 활용해도 다른 업무 규칙의 소유권, 격리 설정과 여러 자원 사이의 일관성은 따로 설계해야 한다."}],"correctChoiceKey":"C","explanationMarkdown":"조건부 UPDATE는 재고처럼 작은 DB 내부 불변 조건을 현재 값과 함께 원자적으로 검사하는 데 강하다. 복잡한 도메인 흐름을 한 SQL로 밀어 넣어도 격리가 사라지거나 외부 부수 효과가 원자적이 되는 것은 아니므로, 가독성·책임 경계와 별도 트랜잭션 설계를 함께 판단한다."}
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.acid.q1",
+    "promptMarkdown": "다음 순서로 작업이 실행됐다.\n\n1. DB 트랜잭션 안에서 주문 INSERT\n2. 외부 결제 API 성공\n3. DB UPDATE 실패와 롤백\n\n질문: ACID 원자성이 외부 결제도 자동 취소하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.acid"
+    ],
+    "modelAnswer": "아니다. DB 트랜잭션의 원자성은 해당 DB 변경 경계를 보호하며 이미 외부 시스템에 발생한 부수 효과까지 롤백하지 않는다. 결제 취소·보상, 멱등성, 상태 기록 같은 별도 분산 실패 설계가 필요하다.",
+    "explanationMarkdown": "롤백은 DB 트랜잭션 안의 주문 INSERT·UPDATE만 되돌리고 이미 결제 시스템에 전달된 부수 효과는 되돌리지 않는다. 따라서 결제 취소·보상, 멱등성과 상태 기록처럼 DB 밖의 실패를 처리하는 별도 경계를 설계해야 하며 ACID를 분산 트랜잭션 보장으로 확대하면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.acid.q2",
+    "promptMarkdown": "ACID의 일관성과 데이터베이스 제약 조건의 관계를 설명할 때 가장 정확한 표현은 무엇인가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.acid"
+    ],
+    "modelAnswer": "일관성은 트랜잭션 전후에 데이터베이스가 정의한 불변 조건과 제약 조건을 만족하는 상태로 남도록 설계한다는 의미다. UNIQUE/FK/CHECK가 일부 불변 조건을 집행하지만 모든 업무 규칙이나 외부 시스템 상태까지 자동으로 보장한다는 뜻은 아니다.",
+    "explanationMarkdown": "ACID 일관성은 트랜잭션 전후에 애플리케이션과 DB가 정의한 유효 상태와 불변 조건을 유지한다는 뜻이고, UNIQUE/FK/CHECK는 그중 DB가 직접 집행하는 일부다. 제약 조건이 모든 업무 규칙이나 외부 시스템 상태까지 자동 보장하는 것은 아니므로 '항상 데이터가 일관된다'는 결과 문장만으로 축소하면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.autocommit.q1",
+    "promptMarkdown": "서로 다른 두 계좌의 UPDATE가 반드시 함께 성공해야 하는데 자동 커밋으로 SQL 문별 커밋된다. 첫 UPDATE 후 장애가 나면 왜 문제가 되는가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.autocommit"
+    ],
+    "modelAnswer": "첫 SQL 문이 이미 커밋되어 두 번째가 실행되지 않아 부분 상태가 남을 수 있다. 둘을 하나의 업무 상태 전이로 봐야 한다면 같은 트랜잭션 블록으로 묶어 함께 커밋하거나 함께 롤백해야 한다.",
+    "explanationMarkdown": "자동 커밋에서는 첫 UPDATE가 SQL 문 종료 시 커밋될 수 있으므로 그 뒤 장애가 나면 출금만 반영되고 입금은 실행되지 않은 부분 상태가 남는다. 두 변경을 하나의 업무 상태 전이로 취급하려면 명시적 트랜잭션 블록에서 함께 커밋하거나 실패 시 함께 롤백해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.autocommit.q2",
+    "promptMarkdown": "자동 커밋이 켜진 연결에서 각 SQL 문을 별도 요청으로 실행하는 상황이다. 다음 두 SQL 문 사이에 애플리케이션 오류가 났다.\n\n```sql\nUPDATE account SET balance=balance-100 WHERE id=1;\nUPDATE account SET balance=balance+100 WHERE id=2;\n```\n\n질문: 명시적 트랜잭션을 사용해야 하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.autocommit"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "자동 커밋은 어떤 SQL 문도 실행하지 않게 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "자동 커밋 연결은 각 성공 SQL 문을 따로 커밋할 수 있어 두 UPDATE가 실행되지 않는 모드가 아니다. 문제는 첫 문장 이후 두 번째가 실패하면 앞선 커밋이 남는다는 점이다."
+      },
+      {
+        "key": "B",
+        "content": "두 SQL 문을 하나의 커밋·롤백 경계로 묶어 송금의 부분 반영을 막아야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "출금과 입금이 하나의 송금 결과라면 같은 명시적 트랜잭션으로 묶어 둘 다 커밋하거나 실패 때 함께 롤백해야 한다. 그래야 중간 한쪽만 반영된 상태를 피한다."
+      },
+      {
+        "key": "C",
+        "content": "명시적 트랜잭션을 쓰면 외부 API도 자동 롤백된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "데이터베이스 트랜잭션은 해당 DB의 SQL 문을 묶는다. 원격 HTTP API 호출은 다른 시스템 경계라 같은 롤백에 자동으로 들어오지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "각 UPDATE가 개별 SQL 문으로 원자적이므로 두 SQL 문 전체도 자동으로 하나의 원자적 작업이 된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "SQL 문 하나의 원자성을 두 문장 전체의 원자성으로 확장할 수 없다. 자동 커밋이면 두 UPDATE가 서로 다른 트랜잭션으로 커밋될 수 있어 첫 변경만 반영되는 부분 적용이 생길 수 있다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "자동 커밋은 각 SQL 문을 별도 커밋 경계로 만들 수 있어 첫 잔액 변경 뒤 오류가 나면 송금이 반쪽만 반영된다. 명시적 트랜잭션은 두 UPDATE를 하나의 DB 원자성 경계에 넣지만, 그 경계 밖의 외부 API까지 롤백하지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.atomic-write.q1",
+    "promptMarkdown": "`UPDATE ... SET quantity=quantity-1 WHERE quantity>0` 방식의 핵심 동시성 특성을 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.atomic-write"
+    ],
+    "acceptedAnswers": [
+      "현재 DB 값에 대한 조건 검사와 변경을 한 statement에서 수행해 read-modify-write 경쟁 구간을 줄이기 때문이다",
+      "현재 DB 값에 대한 조건 검사와 변경을 한 SQL 문에서 수행해 읽기-수정-쓰기 경쟁 구간을 줄이기 때문이다",
+      "조건과 감소를 DB에서 원자적으로 처리하고 affected row count로 성공 여부를 판단할 수 있기 때문이다",
+      "조건과 감소를 DB에서 원자적으로 처리하고 영향받은 행 수로 성공 여부를 판단할 수 있기 때문이다",
+      "조건부 원자적 UPDATE",
+      "conditional atomic update",
+      "조건 검사와 변경을 한 statement에서 수행",
+      "조건 검사와 변경을 한 SQL 문에서 수행"
+    ],
+    "explanationMarkdown": "DB가 현재 행을 기준으로 `quantity > 0`을 검사하면서 감소를 수행하므로 두 요청이 같은 오래된 값을 읽고 절대값 0을 덮는 경쟁 구간을 줄인다. 영향받은 행이 1개면 조건을 만족해 성공한 것이고 0개면 재고 부족 등으로 실패했음을 확인할 수 있지만, 다른 업무 불변 조건은 별도로 보호해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.atomic-write.q2",
+    "promptMarkdown": "복잡한 주문 도메인 규칙까지 모두 거대한 조건부 UPDATE 한 문장에 넣는 것이 항상 더 안전한가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.atomic-write"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "그렇다. 한 SQL이면 격리 수준은 의미가 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "단일 UPDATE도 트랜잭션 격리 수준과 잠금 규칙의 영향을 받는다. 한 문장으로 옮겼다고 읽기 현상이나 모든 경합 문제가 사라지는 것은 아니다."
+      },
+      {
+        "key": "B",
+        "content": "그렇다. SQL 한 문장만 사용하면 모든 외부 부수 효과도 원자적이 된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "하나의 SQL 문은 데이터베이스의 원자성 경계일 뿐 외부 결제나 메시징 효과까지 한꺼번에 커밋·롤백하지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "아니다. 작은 DB 내부 불변 조건에는 강하지만 복잡한 도메인 흐름은 가독성과 책임 경계를 고려해야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "조건부 UPDATE는 비교적 작은 불변 조건을 DB의 현재 값과 함께 검사하고 수정할 때 유용하다. 복잡한 주문 정책과 여러 단계의 책임을 모두 SQL에 옮기면 변경 의도를 읽고 검증하기 어려울 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "아니다. UPDATE는 동시성 제어를 전혀 사용하지 않기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "UPDATE는 동시성 제어와 트랜잭션 잠금을 사용한다. 이를 활용해도 다른 업무 규칙의 소유권, 격리 설정과 여러 자원 사이의 일관성은 따로 설계해야 한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "조건부 UPDATE는 재고처럼 작은 DB 내부 불변 조건을 현재 값과 함께 원자적으로 검사하는 데 강하다. 복잡한 도메인 흐름을 한 SQL로 밀어 넣어도 격리가 사라지거나 외부 부수 효과가 원자적이 되는 것은 아니므로, 가독성·책임 경계와 별도 트랜잭션 설계를 함께 판단한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.acid.q3",
+    "promptMarkdown": "다음 주문 처리 트랜잭션에서 3번 단계 예외로 DB 롤백이 발생했을 때, ACID가 보장하는 범위와 보장하지 **못하는** 범위를 올바르게 구분한 것은?\n```java\n@Transactional\npublic void placeOrder(OrderCommand cmd) {\n    orderRepository.save(order);          // 1. DB INSERT\n    pgClient.approvePayment(cmd);         // 2. 외부 PG HTTP 승인 (성공)\n    inventoryRepository.decrease(cmd);    // 3. DB UPDATE 실패 -> RuntimeException\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.acid"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "ACID의 원자성 덕분에 DB가 자동으로 PG 서버에 HTTP 취소 요청을 보내 결제를 환불한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "PostgreSQL은 애플리케이션이 호출한 임의의 외부 HTTP API를 알지 못하며 자동 취소할 수 없다."
+      },
+      {
+        "key": "B",
+        "content": "2번이 성공했으므로 ACID에 따라 1번과 3번도 강제로 커밋된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "3번 예외로 로컬 DB 트랜잭션은 롤백되고, 외부 PG만 승인된 불일치 상태가 남는다."
+      },
+      {
+        "key": "C",
+        "content": "격리 수준을 `SERIALIZABLE`로 올리면 외부 PG 결제까지 함께 롤백된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "격리 수준 변경은 DB 내부 동시성 규칙만 바꿀 뿐 외부 원격 시스템의 부수 효과를 롤백하지 못한다."
+      },
+      {
+        "key": "D",
+        "content": "1번 DB INSERT는 원자성(Atomicity)에 따라 롤백되지만, 2번 외부 PG 승인은 로컬 DB 트랜잭션 바깥의 원격 부수 효과이므로 자동 취소되지 않아 별도의 보상/환불·멱등성·아웃박스 설계가 필요하다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "DB ACID는 해당 데이터베이스 내부 자원의 상태 전이만 원자적으로 묶는다. 외부 HTTP API 호출은 트랜잭션 바깥으로 분리하거나 사가/보상·상태 대사(reconciliation)로 일관성을 맞춰야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "로컬 DB 트랜잭션 안에서 외부 HTTP 호출을 수행하면 ① DB 커넥션과 잠금이 네트워크 지연 동안 묶이고, ② DB 롤백 시 외부 부수 효과가 원복되지 않는 이중 문제가 생긴다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.acid.q4",
+    "promptMarkdown": "ACID의 일관성(Consistency)에 대한 실무적 이해로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.acid",
+      "database.core.schema.unique-check"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`BEGIN ... COMMIT`으로 묶기만 하면 제약 조건이 없어도 음수 잔고나 중복 이메일이 절대 저장되지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`CHECK (balance >= 0)`나 `UNIQUE` 제약, 또는 올바른 도메인 검증 없이 `COMMIT`하면 잘못된 값도 그대로 저장된다."
+      },
+      {
+        "key": "B",
+        "content": "ACID의 Consistency는 CAP 정리의 Linearizability(선형화 가능성)와 완전히 같은 개념이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "ACID의 C는 데이터 불변식 보존이고, CAP의 C는 분산 복제본 간 최신 읽기 일관성으로 서로 다른 개념이다."
+      },
+      {
+        "key": "C",
+        "content": "Consistency는 읽기 전용 쿼리에만 적용된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Consistency는 트랜잭션의 쓰기 전이 결과가 도메인·스키마 불변식을 만족하는지 다룬다."
+      },
+      {
+        "key": "D",
+        "content": "DB 엔진이 모든 업무 규칙을 자동으로 알아서 지켜 주는 것이 아니라, DB 제약(`PK`/`FK`/`UNIQUE`/`CHECK`)과 애플리케이션의 올바른 트랜잭션 로직·격리 수준이 결합되어 유효 상태에서 유효 상태로 전이하는 성질이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "예를 들어 계좌 이체에서 출금만 하고 입금을 빼먹은 잘못된 코드를 커밋하면 DB는 그 버그를 자동으로 막지 못한다. DB 제약으로 표현 가능한 불변식은 스키마에 두고, 업무 불변식은 도메인·트랜잭션으로 지켜야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "ACID의 Consistency는 DB의 Atomicity·Isolation·제약 조건 위에서 애플리케이션 로직이 업무 불변식을 지키도록 함께 달성하는 속성이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.autocommit.q3",
+    "promptMarkdown": "JDBC 연결의 `autocommit = true` 상태에서 다음 두 SQL을 별도 문장으로 실행하던 중 두 번째 `UPDATE`가 제약 위반으로 실패했다. 최종 DB 상태는?\n```sql\nUPDATE accounts SET balance = balance - 10000 WHERE id = 1;\nUPDATE accounts SET balance = balance + 10000 WHERE id = 2;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.autocommit"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 번째 문장이 자동으로 재시도되어 성공할 때까지 대기한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "제약 조건 위반 오류는 JDBC나 DB가 자동 재시도하지 않고 즉시 예외를 반환하며, 첫 문장은 이미 커밋된 상태로 남는다."
+      },
+      {
+        "key": "B",
+        "content": "첫 번째 `UPDATE`는 실행 직후 이미 자동 커밋되었으므로 `id = 1` 계좌만 10,000원 차감된 채 남고 `id = 2`는 증가하지 않아 금액 불일치가 발생한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`autocommit = true`에서는 각 SQL 문장이 독립된 1문장 트랜잭션으로 즉시 커밋된다. 여러 SQL을 하나의 원자적 단위로 묶으려면 반드시 명시적 트랜잭션(`BEGIN ... COMMIT` / `@Transactional`) 경계를 열어야 한다."
+      },
+      {
+        "key": "C",
+        "content": "두 번째 문장이 실패하면 JDBC 드라이버가 자동으로 첫 번째 문장까지 롤백한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "이미 커밋이 끝난 첫 번째 문장은 뒤이은 실패로 되돌려지지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "두 문장이 모두 반영되지 않고 초기 상태가 유지된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "명시적 트랜잭션 경계가 없으므로 첫 문장은 이미 영구 커밋되었다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "하나의 업무 유스케이스에 속한 복수 쓰기 SQL은 `autocommit`에 맡기면 부분 반영 사고가 난다. 반드시 `@Transactional` 또는 `BEGIN ... COMMIT`으로 원자적 경계를 묶어야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.autocommit.q4",
+    "promptMarkdown": "Spring Boot + HikariCP에서 `spring.datasource.hikari.auto-commit: false`를 설정하고 모든 읽기/쓰기 유스케이스의 트랜잭션 경계를 관리할 때 기대할 수 있는 효과와 주의점으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.autocommit"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`auto-commit: false`를 설정하면 DB의 모든 `SELECT` 쿼리가 실행되지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`SELECT`는 정상 실행되며 트랜잭션 경계 종료 시 커넥션이 깔끔히 정리된다."
+      },
+      {
+        "key": "B",
+        "content": "커넥션 풀 크기가 자동으로 2배 늘어난다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`auto-commit` 설정은 트랜잭션 경계 시작 방식을 제어할 뿐 HikariCP 최대 커넥션 풀 크기를 변경하지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "`@Transactional` 진입 시 불필요한 `setAutoCommit(false)` 왕복을 줄이고 의도치 않은 자동 커밋을 방지할 수 있지만, `@Transactional` 밖에서 JDBC를 직접 실행하면 커밋 없이 방치되지 않도록 트랜잭션 경계를 빠짐없이 선언해야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Hibernate의 `provider_disables_autocommit`와 결합하면 실제 쿼리가 필요한 시점까지 커넥션 획득을 지연(lazy connection acquisition)하는 최적화도 얻을 수 있다. 단, 명시적 트랜잭션 관리가 전제된다."
+      },
+      {
+        "key": "D",
+        "content": "`auto-commit: false`로 설정하면 `@Transactional` 없이도 모든 컨트롤러 요청이 자동 커밋된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "반대로 명시적 커밋이 없으면 변경이 커밋되지 않으므로 트랜잭션 경계 관리가 더 중요해진다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "트랜잭션 경계를 명확히 설계하고 `auto-commit` 동작을 이해하면 부분 커밋 사고를 막고, 커넥션 획득 지연 같은 성능 최적화도 안전하게 적용할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.atomic-write.q3",
+    "promptMarkdown": "재고 차감 로직을 아래 두 방식으로 구현했을 때, 동시 요청 50건이 `stock = 10`인 상품을 구매하려 할 때의 결과 차이로 가장 정확한 것은?\n```sql\n-- 방식 A (Read-Modify-Write, 잠금 없음)\nSELECT stock FROM products WHERE id = 1;           -- 10 읽음\n-- 앱에서 10 >= 1 확인 후\nUPDATE products SET stock = 9 WHERE id = 1;\n\n-- 방식 B (조건부 원자적 UPDATE)\nUPDATE products SET stock = stock - 1\nWHERE id = 1 AND stock >= 1;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.atomic-write",
+      "database.core.isolation.read-committed"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "방식 A와 방식 B 모두 결과는 100% 동일하다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "방식 A는 Lost Update로 재고 정합성이 깨지고, 방식 B는 정확히 10건만 성공시킨다."
+      },
+      {
+        "key": "B",
+        "content": "방식 A는 여러 요청이 동시에 `10`을 읽고 `9`를 덮어써 Lost Update(초과 판매)가 발생하지만, 방식 B는 행 잠금 + 최신 커밋 행 재평가로 정확히 10건만 `affected rows = 1`로 성공하고 나머지 40건은 `0`이 반환된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "방식 B는 조건 검사(`stock >= 1`)와 차감(`stock = stock - 1`)을 DB의 단일 원자적 행 잠금 연산으로 결합해 초과 판매를 막고, 반환된 갱신 행 수(`1` vs `0`)로 성공 여부를 판정한다."
+      },
+      {
+        "key": "C",
+        "content": "방식 A가 `SELECT`로 먼저 검증하므로 방식 B보다 동시성 안전성이 높다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`SELECT`와 `UPDATE` 사이의 틈에서 다른 트랜잭션이 같은 값을 읽고 덮어쓰므로 방식 A가 동시성에 취약하다."
+      },
+      {
+        "key": "D",
+        "content": "방식 B는 `stock`이 음수(`-40`)가 될 때까지 모두 성공한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`WHERE stock >= 1` 조건이 행 잠금 해제 후 최신 값에 대해 재평가되므로 `stock`이 0이 된 뒤의 요청은 0행 갱신으로 차단된다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "단순 재고·잔액·쿠폰 수량 차감은 읽기-수정-쓰기(Read-Modify-Write) 대신 `UPDATE ... SET stock = stock - 1 WHERE id = ? AND stock >= 1` 조건부 원자적 SQL과 갱신 행 수 확인(`== 1`)으로 깔끔하게 동시성을 해결할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.transaction.atomic-write.q4",
+    "promptMarkdown": "PostgreSQL에서 재고 차감과 동시에 차감 후 남은 재고(`stock`)를 한 번의 DB 왕복으로 즉시 받아 오려는 가장 깔끔한 SQL 구문은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.transaction.atomic-write"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`UPDATE` 후 별도 트랜잭션에서 `SELECT stock`을 다시 호출하면 항상 내가 차감한 직후의 값이 보장된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "별도 트랜잭션 `SELECT` 사이에 다른 요청이 재고를 또 변경할 수 있고 불필요한 DB 왕복도 추가된다."
+      },
+      {
+        "key": "B",
+        "content": "`UPDATE` 문은 결과를 반환할 수 없으므로 반드시 저장 프로시저를 써야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "PostgreSQL은 `INSERT`, `UPDATE`, `DELETE` 모두에 `RETURNING` 절을 기본 지원한다."
+      },
+      {
+        "key": "C",
+        "content": "`SELECT stock`에 `NOWAIT`만 붙이면 자동으로 차감까지 수행된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`SELECT ... FOR UPDATE NOWAIT`는 읽기+잠금만 할 뿐 값을 차감하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "`UPDATE products SET stock = stock - $1 WHERE id = $2 AND stock >= $1 RETURNING stock;`",
+        "displayOrder": 3,
+        "rationaleMarkdown": "PostgreSQL의 `RETURNING` 절은 원자적으로 갱신된 행의 최종 값을 별도 `SELECT` 왕복 없이 바로 반환하며, 조건 미충족 시 빈 결과를 돌려주어 실패 판정도 동시에 끝난다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "PostgreSQL의 `UPDATE ... WHERE ... RETURNING ...`은 조건 검사, 원자적 차감, 최종 결과 조회를 단일 SQL 왕복으로 결합하는 매우 실용적인 패턴이다."
+  }
 ]

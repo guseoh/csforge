@@ -84,6 +84,8 @@ class AppConfig {
 
 일반 Java 메서드 호출만 생각하면 `orderRepository()`가 매번 새 객체를 만들 것 같지만, `@Configuration`의 proxy 기반 동작이 적용되는 전형적인 경우에는 컨테이너가 관리하는 Bean을 반환하도록 가로챕니다. 다만 `proxyBeanMethods` 설정이나 다른 등록 방식에 따라 동작이 달라질 수 있으므로 **“@Bean 메서드를 호출하면 언제나 자동 singleton”처럼 문법만으로 일반화하면 안 됩니다.** 중요한 것은 애플리케이션 코드가 객체를 임의로 만드는 경로와 Spring 컨테이너가 Bean을 만드는 경로를 구분하는 것입니다.
 
+![@Configuration 프록시 모드와 Lite 모드 비교](/learning/spring/configuration-proxy-vs-lite.svg)
+
 ### 언제 `@Bean`이 특히 적합한가
 
 | 상황                            | 이유                                   |

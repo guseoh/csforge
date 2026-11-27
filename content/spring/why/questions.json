@@ -1,39 +1,372 @@
 [
   {
-    "kind":"question","contentKey":"spring.core.why.object-graph.q1","promptMarkdown":"다음 중 애플리케이션 객체 그래프를 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.why.object-graph"],
-    "choices":[
-      {"key":"A","content":"실행 중인 객체들이 실제 참조로 연결되어 협력하는 구조이며, 구현 선택과 객체 수명도 조립 문제에 포함된다.","displayOrder":0,"rationaleMarkdown":"객체 그래프는 실행 중인 객체 사이의 참조 관계를 나타낸다. 어떤 구현을 만들고 얼마나 오래 공유할지도 실제 객체 그래프를 결정하는 조립 책임에 포함된다."},
-      {"key":"B","content":"클래스 파일의 상속 관계만을 모아 놓은 구조다.","displayOrder":1,"rationaleMarkdown":"상속은 클래스 사이의 정적 관계를 나타내지만 실제로 어떤 협력 객체와 연결되어 있는지까지 설명하지 않는다. 객체 그래프는 실행 시점의 객체 참조 관계를 본다."},
-      {"key":"C","content":"DB 테이블의 외래 키 관계를 Java 객체로 그대로 옮긴 것이다.","displayOrder":2,"rationaleMarkdown":"외래 키는 관계형 데이터 모델의 연관관계이고 객체 참조와는 표현 방식과 생명주기가 다르다. ORM으로 서로 연결할 수는 있어도 같은 개념은 아니다."},
-      {"key":"D","content":"인터페이스 개수가 많을수록 자동으로 좋은 객체 그래프가 된다.","displayOrder":3,"rationaleMarkdown":"인터페이스 수는 객체 그래프의 품질 지표가 아니다. 실제 대체 가능성이나 경계가 없는데 추상화만 늘리면 오히려 연결과 설정이 더 복잡해질 수 있다."}
+    "kind": "question",
+    "contentKey": "spring.core.why.object-graph.q1",
+    "promptMarkdown": "다음 중 애플리케이션 객체 그래프를 가장 정확히 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.object-graph"
     ],
-    "correctChoiceKey":"A","explanationMarkdown":"객체 그래프는 실행 중인 객체들이 실제 참조로 어떤 협력 객체와 연결되어 있는지를 뜻한다. 클래스 상속 관계나 DB 외래 키 관계와 동일한 개념이 아니며, 구현 선택·객체 수명·설정도 최종 조립 결과에 영향을 준다."
-  },
-  {
-    "kind":"question","contentKey":"spring.core.why.object-graph.q2","promptMarkdown":"`OrderService`가 `OrderRepository`와 `PaymentGateway`를 생성자로 받는다. 이 구조에서 객체 그래프를 완성하기 위해 서비스 밖에서 추가로 결정해야 할 내용을 두 가지 이상 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.object-graph"],
-    "modelAnswer":"어떤 구체 구현을 만들지, 각 객체를 언제 몇 개 만들고 얼마나 오래 공유할지, 필요한 설정 값을 무엇으로 채울지, 만들어진 객체를 어떤 순서로 연결할지를 외부 조립자가 결정해야 한다.","explanationMarkdown":"생성자에 의존성을 선언해도 어떤 `OrderRepository`·`PaymentGateway` 구현을 선택할지, 객체를 몇 개 만들지, 어떤 설정을 넣을지는 아직 남아 있다. 이 생성·선택·연결 책임이 외부 조립자나 Spring 컨테이너로 이동하면서 서비스는 협력 객체를 사용하는 책임에 집중할 수 있다."
-  },
-  {
-    "kind":"question","contentKey":"spring.core.why.coupling.q1","promptMarkdown":"`OrderService` 내부에서 `new StripePaymentGateway(apiKey)`를 직접 호출한다. 테스트에서는 가짜 gateway를 쓰고 운영 환경에서는 다른 PG로 교체하려 한다. 가장 먼저 드러나는 설계 문제는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.coupling"],
-    "choices":[
-      {"key":"A","content":"필드 타입만 `PaymentGateway` 인터페이스로 바꾸면 내부에서 `new StripePaymentGateway(apiKey)`를 계속 호출해도 구현 결합은 사라진다.","displayOrder":0,"rationaleMarkdown":"필드 타입을 인터페이스로 바꿔도 생성 코드가 `StripePaymentGateway`를 직접 선택하면 구체 구현에 대한 생성 의존성은 그대로 남는다. 타입 추상화만으로 조립 책임이 서비스 밖으로 이동하지는 않는다."},
-      {"key":"B","content":"gateway를 static singleton으로 만들면 구현 선택과 주문 기능의 변경 이유가 자동으로 분리된다.","displayOrder":1,"rationaleMarkdown":"static singleton으로 만들어도 특정 구현과 설정을 고정하는 책임은 남는다. 공유 수명을 사용한다고 테스트 대체나 다른 PG로의 교체 결합이 없어지는 것은 아니다."},
-      {"key":"C","content":"`OrderService` 안에 private factory 메서드를 만들어 Stripe 구현을 생성하면 조립 책임이 서비스 밖으로 이동한 것과 같다.","displayOrder":2,"rationaleMarkdown":"private factory 메서드는 생성 코드를 같은 `OrderService` 안에 감쌀 뿐이다. 구현 선택과 설정 책임이 별도의 조립 경계로 이동한 것은 아니다."},
-      {"key":"D","content":"주문 기능 코드가 PG 구현의 선택·설정 책임까지 함께 가져 서로 다른 변경 이유가 한 클래스에 결합되어 있다.","displayOrder":3,"rationaleMarkdown":"`OrderService`가 주문 규칙과 PG 구현 선택·설정까지 맡으면 서로 독립적으로 바뀔 수 있는 책임이 한 클래스에 묶인다. 외부에서 gateway를 주입하면 업무 흐름과 구현 선택을 따로 변경할 수 있다."}
+    "choices": [
+      {
+        "key": "A",
+        "content": "실행 중인 객체들이 실제 참조로 연결되어 협력하는 구조이며, 구현 선택과 객체 수명도 조립 문제에 포함된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "객체 그래프는 실행 중인 객체 사이의 참조 관계를 나타낸다. 어떤 구현을 만들고 얼마나 오래 공유할지도 실제 객체 그래프를 결정하는 조립 책임에 포함된다."
+      },
+      {
+        "key": "B",
+        "content": "클래스 파일의 상속 관계만을 모아 놓은 구조다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "상속은 클래스 사이의 정적 관계를 나타내지만 실제로 어떤 협력 객체와 연결되어 있는지까지 설명하지 않는다. 객체 그래프는 실행 시점의 객체 참조 관계를 본다."
+      },
+      {
+        "key": "C",
+        "content": "DB 테이블의 외래 키 관계를 Java 객체로 그대로 옮긴 것이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "외래 키는 관계형 데이터 모델의 연관관계이고 객체 참조와는 표현 방식과 생명주기가 다르다. ORM으로 서로 연결할 수는 있어도 같은 개념은 아니다."
+      },
+      {
+        "key": "D",
+        "content": "인터페이스 개수가 많을수록 자동으로 좋은 객체 그래프가 된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "인터페이스 수는 객체 그래프의 품질 지표가 아니다. 실제 대체 가능성이나 경계가 없는데 추상화만 늘리면 오히려 연결과 설정이 더 복잡해질 수 있다."
+      }
     ],
-    "correctChoiceKey":"D","explanationMarkdown":"문제는 `new` 자체가 아니라 `OrderService`가 주문 기능과 함께 **PG 구현 선택·설정·수명 책임까지 소유**한다는 점이다. 인터페이스 타입, singleton, 내부 factory만으로는 조립 책임이 서비스 밖으로 이동하지 않는다. 생성자 주입처럼 외부 조립 경계로 분리하면 테스트용 구현이나 다른 PG로 바꿀 때 업무 클래스를 수정할 이유를 줄일 수 있다."
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "객체 그래프는 실행 중인 객체들이 실제 참조로 어떤 협력 객체와 연결되어 있는지를 뜻한다. 클래스 상속 관계나 DB 외래 키 관계와 동일한 개념이 아니며, 구현 선택·객체 수명·설정도 최종 조립 결과에 영향을 준다."
   },
   {
-    "kind":"question","contentKey":"spring.core.why.coupling.q2","promptMarkdown":"`OrderService`가 `new Money(...)`를 만드는 것과 `new JpaOrderRepository(...)`를 만드는 것을 결합도 관점에서 왜 다르게 판단할 수 있는지 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.coupling"],
-    "modelAnswer":"Money는 주문 기능이 소유하는 내부 값 객체 생성일 수 있어 서비스 책임과 자연스럽게 결합될 수 있다. 반면 JpaOrderRepository 생성은 영속성 기술 선택·객체 수명·설정이라는 별도 변경 이유를 끌어온다. 무엇이 독립적으로 바뀌는지로 판단해야 한다.","explanationMarkdown":"`Money`가 주문 불변식을 표현하는 값 객체라면 서비스가 직접 만드는 것이 자연스러울 수 있다. 반면 `JpaOrderRepository`를 만드는 일은 영속성 기술·수명·설정의 선택을 끌어오므로 업무 기능과 다른 변경 이유가 생긴다. 어떤 책임이 독립적으로 바뀌는지를 기준으로 외부 조립 여부를 판단해야 한다."
+    "kind": "question",
+    "contentKey": "spring.core.why.object-graph.q2",
+    "promptMarkdown": "`OrderService`가 `OrderRepository`와 `PaymentGateway`를 생성자로 받는다. 이 구조에서 객체 그래프를 완성하기 위해 서비스 밖에서 추가로 결정해야 할 내용을 두 가지 이상 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.object-graph"
+    ],
+    "modelAnswer": "어떤 구체 구현을 만들지, 각 객체를 언제 몇 개 만들고 얼마나 오래 공유할지, 필요한 설정 값을 무엇으로 채울지, 만들어진 객체를 어떤 순서로 연결할지를 외부 조립자가 결정해야 한다.",
+    "explanationMarkdown": "생성자에 의존성을 선언해도 어떤 `OrderRepository`·`PaymentGateway` 구현을 선택할지, 객체를 몇 개 만들지, 어떤 설정을 넣을지는 아직 남아 있다. 이 생성·선택·연결 책임이 외부 조립자나 Spring 컨테이너로 이동하면서 서비스는 협력 객체를 사용하는 책임에 집중할 수 있다."
   },
   {
-    "kind":"question","contentKey":"spring.core.why.ioc-di.q1","promptMarkdown":"생성자 주입에서 제어가 역전되는 핵심 책임 이동을 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.why.ioc-di"],
-    "acceptedAnswers":["협력 객체의 구현 선택과 생성·연결 책임이 사용하는 객체에서 외부 조립자나 컨테이너로 이동한다","의존 객체를 사용하는 객체가 직접 찾거나 만들지 않고 외부에서 전달받는다","생성·연결 책임이 사용하는 객체에서 외부로 이동한다","의존 객체의 생성과 연결을 외부가 담당한다"],
-    "explanationMarkdown":"생성자 주입에서는 서비스가 협력 객체를 직접 찾거나 만들지 않고 외부 조립자나 Spring 컨테이너가 선택해 전달한다. 핵심은 annotation이나 `new` 제거 자체가 아니라 **의존 객체를 선택하고 만드는 책임의 위치가 바뀐다**는 점이다."
+    "kind": "question",
+    "contentKey": "spring.core.why.coupling.q1",
+    "promptMarkdown": "`OrderService` 내부에서 `new StripePaymentGateway(apiKey)`를 직접 호출한다. 테스트에서는 가짜 gateway를 쓰고 운영 환경에서는 다른 PG로 교체하려 한다. 가장 먼저 드러나는 설계 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.coupling"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "필드 타입만 `PaymentGateway` 인터페이스로 바꾸면 내부에서 `new StripePaymentGateway(apiKey)`를 계속 호출해도 구현 결합은 사라진다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "필드 타입을 인터페이스로 바꿔도 생성 코드가 `StripePaymentGateway`를 직접 선택하면 구체 구현에 대한 생성 의존성은 그대로 남는다. 타입 추상화만으로 조립 책임이 서비스 밖으로 이동하지는 않는다."
+      },
+      {
+        "key": "B",
+        "content": "gateway를 static singleton으로 만들면 구현 선택과 주문 기능의 변경 이유가 자동으로 분리된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "static singleton으로 만들어도 특정 구현과 설정을 고정하는 책임은 남는다. 공유 수명을 사용한다고 테스트 대체나 다른 PG로의 교체 결합이 없어지는 것은 아니다."
+      },
+      {
+        "key": "C",
+        "content": "`OrderService` 안에 private factory 메서드를 만들어 Stripe 구현을 생성하면 조립 책임이 서비스 밖으로 이동한 것과 같다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "private factory 메서드는 생성 코드를 같은 `OrderService` 안에 감쌀 뿐이다. 구현 선택과 설정 책임이 별도의 조립 경계로 이동한 것은 아니다."
+      },
+      {
+        "key": "D",
+        "content": "주문 기능 코드가 PG 구현의 선택·설정 책임까지 함께 가져 서로 다른 변경 이유가 한 클래스에 결합되어 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`OrderService`가 주문 규칙과 PG 구현 선택·설정까지 맡으면 서로 독립적으로 바뀔 수 있는 책임이 한 클래스에 묶인다. 외부에서 gateway를 주입하면 업무 흐름과 구현 선택을 따로 변경할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "문제는 `new` 자체가 아니라 `OrderService`가 주문 기능과 함께 **PG 구현 선택·설정·수명 책임까지 소유**한다는 점이다. 인터페이스 타입, singleton, 내부 factory만으로는 조립 책임이 서비스 밖으로 이동하지 않는다. 생성자 주입처럼 외부 조립 경계로 분리하면 테스트용 구현이나 다른 PG로 바꿀 때 업무 클래스를 수정할 이유를 줄일 수 있다."
   },
   {
-    "kind":"question","contentKey":"spring.core.why.ioc-di.q2","promptMarkdown":"다음 두 코드 중 생성자 주입에 더 가까운 것은 무엇이며 이유는 무엇인가?\n\nA. `repository = context.getBean(OrderRepository.class);`\nB. `OrderService(OrderRepository repository)`","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.why.ioc-di"],
-    "modelAnswer":"B다. 필요한 의존 객체가 생성자에 명시되고 외부 조립자가 전달한다. A는 객체가 컨테이너에서 직접 의존 객체를 찾아오는 Service Locator 방식에 가깝다.","explanationMarkdown":"B는 생성자 매개변수에 필요한 협력 객체가 드러나고 외부가 이를 전달하므로 생성자 주입이다. A는 서비스가 `ApplicationContext`를 직접 조회해 의존 객체를 찾는 Service Locator 방식이어서 실제 의존성이 메서드 내부에 숨고 애플리케이션 코드가 컨테이너 API에 결합된다."
+    "kind": "question",
+    "contentKey": "spring.core.why.coupling.q2",
+    "promptMarkdown": "`OrderService`가 `new Money(...)`를 만드는 것과 `new JpaOrderRepository(...)`를 만드는 것을 결합도 관점에서 왜 다르게 판단할 수 있는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.coupling"
+    ],
+    "modelAnswer": "Money는 주문 기능이 소유하는 내부 값 객체 생성일 수 있어 서비스 책임과 자연스럽게 결합될 수 있다. 반면 JpaOrderRepository 생성은 영속성 기술 선택·객체 수명·설정이라는 별도 변경 이유를 끌어온다. 무엇이 독립적으로 바뀌는지로 판단해야 한다.",
+    "explanationMarkdown": "`Money`가 주문 불변식을 표현하는 값 객체라면 서비스가 직접 만드는 것이 자연스러울 수 있다. 반면 `JpaOrderRepository`를 만드는 일은 영속성 기술·수명·설정의 선택을 끌어오므로 업무 기능과 다른 변경 이유가 생긴다. 어떤 책임이 독립적으로 바뀌는지를 기준으로 외부 조립 여부를 판단해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.why.ioc-di.q1",
+    "promptMarkdown": "생성자 주입에서 제어가 역전되는 핵심 책임 이동을 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.ioc-di"
+    ],
+    "acceptedAnswers": [
+      "협력 객체의 구현 선택과 생성·연결 책임이 사용하는 객체에서 외부 조립자나 컨테이너로 이동한다",
+      "의존 객체를 사용하는 객체가 직접 찾거나 만들지 않고 외부에서 전달받는다",
+      "생성·연결 책임이 사용하는 객체에서 외부로 이동한다",
+      "의존 객체의 생성과 연결을 외부가 담당한다"
+    ],
+    "explanationMarkdown": "생성자 주입에서는 서비스가 협력 객체를 직접 찾거나 만들지 않고 외부 조립자나 Spring 컨테이너가 선택해 전달한다. 핵심은 annotation이나 `new` 제거 자체가 아니라 **의존 객체를 선택하고 만드는 책임의 위치가 바뀐다**는 점이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.why.ioc-di.q2",
+    "promptMarkdown": "다음 두 코드 중 생성자 주입에 더 가까운 것은 무엇이며 이유는 무엇인가?\n\nA. `repository = context.getBean(OrderRepository.class);`\nB. `OrderService(OrderRepository repository)`",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.ioc-di"
+    ],
+    "modelAnswer": "B다. 필요한 의존 객체가 생성자에 명시되고 외부 조립자가 전달한다. A는 객체가 컨테이너에서 직접 의존 객체를 찾아오는 Service Locator 방식에 가깝다.",
+    "explanationMarkdown": "B는 생성자 매개변수에 필요한 협력 객체가 드러나고 외부가 이를 전달하므로 생성자 주입이다. A는 서비스가 `ApplicationContext`를 직접 조회해 의존 객체를 찾는 Service Locator 방식이어서 실제 의존성이 메서드 내부에 숨고 애플리케이션 코드가 컨테이너 API에 결합된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.why.object-graph.q3",
+    "promptMarkdown": "다음과 같이 순수 Java 코드로 애플리케이션 진입점(`main`)에서 객체 그래프를 직접 조립했다. 이 코드에서 `OrderService`가 가지는 설계상 이점으로 가장 정확한 것은?\n```java\nOrderRepository repo = new JpaOrderRepository(dataSource);\nPaymentGateway gateway = new StripePaymentGateway(apiKey);\nOrderService service = new OrderService(repo, gateway);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.object-graph",
+      "spring.core.why.ioc-di"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Spring 없이 조립했으므로 `@Service`를 붙여야만 컴파일이 된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "순수 Java 객체 조립에는 어떤 Spring 애노테이션도 필요하지 않다."
+      },
+      {
+        "key": "B",
+        "content": "`OrderService`가 구체 구현 클래스(`JpaOrderRepository`, `StripePaymentGateway`)와 조립 순서를 알지 않아도 되어 테스트와 구현 교체가 쉬워진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "객체 생성·연결 책임이 진입점(조립 경계)으로 분리되면 `OrderService`는 인터페이스 계약에만 의존하므로 단위 테스트에서 Fake/Stub으로 쉽게 교체할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "Spring 컨테이너를 사용하지 않았으므로 객체 그래프가 존재하지 않는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "객체 그래프는 프레임워크 개념이 아니라 객체 간 참조 연결 구조 자체다. Spring은 이 조립과 수명 관리를 자동화하는 도구일 뿐이다."
+      },
+      {
+        "key": "D",
+        "content": "`OrderService`가 매 요청마다 자동으로 새 `DataSource` 연결 풀을 만든다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "외부에서 이미 생성된 `repo`를 공유 주입받으므로 `OrderService`가 연결 풀을 만들지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Spring을 쓰기 전에도 객체 그래프 조립 경계와 비즈니스 객체의 책임 분리는 성립한다. Spring IoC 컨테이너는 애플리케이션이 커질 때 이 조립(wiring)·수명·횡단 관심사를 일관되게 관리해 주는 도구다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.why.object-graph.q4",
+    "promptMarkdown": "애플리케이션 규모가 커져 50개 이상의 서비스·리포지토리·외부 클라이언트를 수동 조립(`new`)할 때 Spring 컨테이너가 해결해 주는 핵심 문제로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.object-graph"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "DB 인덱스 설계와 SQL 튜닝을 자동으로 대체한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "컨테이너는 애플리케이션 객체 그래프 관리 도구이며 DB 물리 설계와 쿼리 비용을 없애지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "의존성 그래프 자동 해결, 공유 수명(scope)·종료 생명주기 관리, 설정 바인딩, 트랜잭션 같은 횡단 관심사 프록시 적용을 일관되게 처리한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "수동 조립 코드가 거대해지면 생성 순서, 자원 종료, 환경별 구현 교체, 트랜잭션 프록시 래핑이 모두 반복 코드가 된다. Spring 컨테이너는 이를 선언적 조립과 생명주기 관리로 표준화한다."
+      },
+      {
+        "key": "C",
+        "content": "개발자가 인터페이스나 도메인 불변식을 전혀 설계하지 않아도 자동으로 비즈니스 로직을 생성한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "컨테이너는 객체 조립과 인프라 경계를 도울 뿐 도메인 모델링과 비즈니스 규칙 설계를 대신하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "모든 Java 클래스에서 `new` 키워드 사용을 JVM 수준에서 금지한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "값 객체, 엔티티, DTO는 여전히 일반 `new`나 정적 팩토리로 자유롭게 생성한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Spring 컨테이너의 존재 이유는 '객체 조립·수명·환경 설정·횡단 관심사(트랜잭션 등)를 업무 코드 밖의 일관된 조립 경계로 끌어내는 것'이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.why.coupling.q3",
+    "promptMarkdown": "다음 코드에서 `OrderService`가 `new Money(amount)`를 호출하는 것은 허용하면서도 `new StripePaymentGateway(apiKey)`를 직접 호출하는 것은 피하려는 이유로 가장 타당한 것은?\n```java\npublic class OrderService {\n    public void pay(long amount) {\n        Money price = new Money(amount);\n        PaymentGateway gateway = new StripePaymentGateway(System.getenv(\"STRIPE_KEY\"));\n        gateway.charge(price);\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.coupling"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Java에서는 같은 메서드 안에서 `new`를 두 번 이상 호출하면 성능이 급격히 떨어지기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "JVM은 단명 객체 할당이 매우 빠르다. 문제는 메모리 할당 속도가 아니라 인프라 구현과의 강결합이다."
+      },
+      {
+        "key": "B",
+        "content": "`Money`도 반드시 `@Component` Bean으로 등록해야만 결합도가 낮아진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "금액마다 달라지는 불변 값 객체를 singleton Bean으로 등록하면 오히려 잘못된 설계가 된다."
+      },
+      {
+        "key": "C",
+        "content": "`Money`는 외부 IO나 환경별 교체가 없는 안정적인 도메인 값 객체인 반면, `StripePaymentGateway`는 외부 네트워크 부수 효과·인증 설정·테스트 대체가 필요한 인프라 경계이기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "모든 `new`가 나쁜 것이 아니다. 값 객체의 직접 생성은 자연스럽지만, 외부 시스템·환경 설정·테스트 더블 교체가 필요한 협력 객체를 직접 `new`하면 테스트와 변경 비용이 급증한다."
+      },
+      {
+        "key": "D",
+        "content": "`Money`는 크기가 작아서 메모리를 적게 쓰고 `StripePaymentGateway`는 클래스 이름이 길기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "객체 생성 경계 판단 기준은 클래스 이름 길이가 아니라 변경 이유, 외부 부수 효과, 테스트 대체 가능성이다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "결합도 관리의 핵심은 '모든 `new` 제거'가 아니라 **외부 인프라·환경 설정·정책 교체 경계**를 추상화와 주입으로 분리하고, 순수 값 객체와 도메인 엔티티는 자연스럽게 생성하는 구분에 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.why.coupling.q4",
+    "promptMarkdown": "구현체가 단 하나뿐이고 테스트 대체나 외부 경계 보호 필요도 없는 단순 내부 계산 헬퍼 클래스마다 무조건 `FooService` 인터페이스 + `FooServiceImpl` 쌍을 만드는 관행의 문제점으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.coupling"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "실제 다형성·교체 경계 없이 탐색 단계와 보일러플레이트만 늘어 코드 가독성과 변경 비용이 오히려 나빠진다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "추상화는 실제 교체 지점·외부 경계·다중 구현이 있을 때 가치를 낸다. 의미 없는 1:1 인터페이스 복제는 메서드 시그니처 변경 시 수정 파일만 2배로 늘리는 의례적 계층이 된다."
+      },
+      {
+        "key": "B",
+        "content": "Spring은 인터페이스가 없는 구체 클래스에는 `@Transactional` 프록시를 적용할 수 없다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Spring Boot는 기본 CGLIB 프록시를 사용하므로 인터페이스가 없는 구체 클래스에도 `@Transactional`을 정상 적용한다."
+      },
+      {
+        "key": "C",
+        "content": "인터페이스가 많을수록 JVM 가비지 컬렉션이 중단된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "GC 중단 문제가 아니라 유지보수성과 코드 탐색 비용의 문제다."
+      },
+      {
+        "key": "D",
+        "content": "Spring에서는 모든 Bean이 반드시 하나 이상의 인터페이스를 구현해야 기동된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "구체 클래스 단독으로 Bean 등록과 생성자 주입이 완벽히 지원된다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "인터페이스는 외부 API 어댑터, 다중 전략 구현, 테스트 대체 경계처럼 실제 추상화 이점이 있을 때 도입해야 한다. 기계적인 `*Service`/`*ServiceImpl` 쌍은 결합을 줄이기보다 의례적 중복만 늘린다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.why.ioc-di.q3",
+    "promptMarkdown": "다음 두 코드 중 의존성 주입(Dependency Injection)에 해당하는 것과, 서비스 로케이터(Service Locator)에 해당하는 것을 올바르게 짝지은 것은?\n```java\n// 방식 1\nclass OrderService {\n    private final OrderRepository repo;\n    OrderService(ApplicationContext ctx) {\n        this.repo = ctx.getBean(OrderRepository.class);\n    }\n}\n\n// 방식 2\nclass OrderService {\n    private final OrderRepository repo;\n    OrderService(OrderRepository repo) {\n        this.repo = repo;\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.ioc-di"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "방식 1과 방식 2 모두 생성자를 쓰므로 완전히 동일한 의존성 주입이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "생성자로 `ApplicationContext`를 받아 내부에서 `getBean()`을 호출하면 실제 의존성(`OrderRepository`)이 시그니처에서 숨겨지고 프레임워크에 강결합된다."
+      },
+      {
+        "key": "B",
+        "content": "방식 2는 Spring 애노테이션이 없으므로 DI로 사용할 수 없다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "의존성 주입은 애노테이션 유무가 아니라 외부 조립자가 협력 객체를 전달하는 구조 자체를 의미한다."
+      },
+      {
+        "key": "C",
+        "content": "방식 1이 의존성 주입이고 방식 2가 서비스 로케이터다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "반대다. 방식 1은 `OrderService`가 `ApplicationContext`를 통해 직접 의존성을 조회(pull)하는 서비스 로케이터이고, 방식 2가 외부에서 협력 객체를 주입(push)받는 의존성 주입이다."
+      },
+      {
+        "key": "D",
+        "content": "방식 1은 컨테이너에 직접 조회하는 서비스 로케이터이고, 방식 2가 필요한 협력 객체를 외부에서 전달받는 의존성 주입이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "방식 2는 `OrderService`가 Spring `ApplicationContext`를 전혀 몰라도 되고, 생성자 시그니처만 보고 필요한 의존성을 즉시 파악·테스트할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "IoC/DI의 핵심은 업무 객체가 컨테이너 API(`ApplicationContext.getBean`)를 직접 호출해 의존성을 찾지 않고, 생성자를 통해 필요한 협력 객체만 선언해 외부로부터 전달받는 데 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.why.ioc-di.q4",
+    "promptMarkdown": "IoC(제어의 역전)를 “프레임워크가 내 코드를 호출한다”는 관점으로 볼 때, Spring 애플리케이션에서 제어권이 역전된 예로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.why.ioc-di"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "개발자가 `for` 루프를 직접 돌려 리스트 요소를 필터링한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "개발자가 반복 제어 흐름을 직접 소유하고 있으므로 IoC 사례가 아니다."
+      },
+      {
+        "key": "B",
+        "content": "개발자가 `try-with-resources`로 JDBC `Connection`을 직접 열고 닫는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "개발자가 자원 생명주기를 직접 제어하는 코드이며, Spring의 선언적 `@Transactional`과 대비된다."
+      },
+      {
+        "key": "C",
+        "content": "애플리케이션 코드가 `Math.max(a, b)` 유틸리티 메서드를 직접 호출한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "애플리케이션 코드가 라이브러리를 직접 호출해 제어권을 쥐고 있는 일반적인 라이브러리 호출이다."
+      },
+      {
+        "key": "D",
+        "content": "개발자는 `OrderService`와 `@GetMapping` 핸들러의 계약만 선언하고, 객체 생성·의존성 연결·HTTP 요청 라우팅·트랜잭션 경계 실행 시점은 Spring 컨테이너와 `DispatcherServlet`이 주도한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "제어 흐름과 객체 조립의 주도권이 개발자의 절차적 코드에서 프레임워크 컨테이너로 넘어간 것이 IoC의 본질이다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "라이브러리는 개발자 코드가 호출하지만, 프레임워크(IoC)는 객체 조립·요청 디스패치·생명주기 콜백·트랜잭션 경계 같은 전체 흐름을 프레임워크가 주도하고 개발자가 작성한 확장 지점을 호출한다."
   }
 ]

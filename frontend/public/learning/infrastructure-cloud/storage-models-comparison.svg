@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 460" width="840" height="460" role="img" aria-labelledby="title desc">
+  <title id="title">객체·블록·파일 저장소 선택과 메타데이터-본문 분리 경계</title>
+  <desc id="desc">객체(S3), 블록(EBS), 파일(EFS) 저장소의 접근 모델과 공유 특성을 비교하고 PostgreSQL 메타데이터와 객체 저장소 본문 분리 시 고아 객체 정합성 경계를 보여주는 도식</desc>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --card-muted: #f1f5f9;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --sub: #475569;
+      --blue-bg: #eff6ff;
+      --blue-bd: #3b82f6;
+      --blue-tx: #1d4ed8;
+      --purple-bg: #f5f3ff;
+      --purple-bd: #8b5cf6;
+      --purple-tx: #6d28d9;
+      --green-bg: #ecfdf5;
+      --green-bd: #10b981;
+      --green-tx: #047857;
+      --amber-bg: #fffbeb;
+      --amber-bd: #f59e0b;
+      --amber-tx: #b45309;
+      --red-bg: #fef2f2;
+      --red-bd: #ef4444;
+      --red-tx: #b91c1c;
+      --arrow: #64748b;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --card: #1e293b;
+        --card-muted: #0b1220;
+        --border: #334155;
+        --text: #f1f5f9;
+        --sub: #94a3b8;
+        --blue-bg: #172554;
+        --blue-bd: #60a5fa;
+        --blue-tx: #93c5fd;
+        --purple-bg: #2e1065;
+        --purple-bd: #a78bfa;
+        --purple-tx: #c4b5fd;
+        --green-bg: #064e3b;
+        --green-bd: #34d399;
+        --green-tx: #6ee7b7;
+        --amber-bg: #451a03;
+        --amber-bd: #fbbf24;
+        --amber-tx: #fcd34d;
+        --red-bg: #450a0a;
+        --red-bd: #f87171;
+        --red-tx: #fca5a5;
+        --arrow: #94a3b8;
+      }
+    }
+    text { font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .h1 { font-size: 17px; font-weight: 700; fill: var(--text); }
+    .h2 { font-size: 14px; font-weight: 700; }
+    .body { font-size: 12.5px; fill: var(--text); }
+    .sub { font-size: 11.5px; fill: var(--sub); }
+    .badge { font-size: 11px; font-weight: 700; }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--arrow)"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="840" height="460" rx="14" fill="var(--bg)"/>
+  <text x="28" y="34" class="h1">객체 · 블록 · 파일 저장소 모델 비교와 메타데이터 분리 경계</text>
+  <text x="28" y="54" class="sub">접근 단위(키 전체 vs 블록 임의 수정 vs 공유 디렉터리)와 부분 실패 시 정합성 전략을 함께 설계한다.</text>
+
+  <!-- Top Row: 3 Storage Models -->
+  <!-- Object Storage -->
+  <rect x="28" y="72" width="248" height="176" rx="10" fill="var(--card)" stroke="var(--blue-bd)" stroke-width="1.6"/>
+  <rect x="28" y="72" width="248" height="34" rx="10" fill="var(--blue-bg)"/>
+  <text x="44" y="94" class="h2" fill="var(--blue-tx)">객체 저장소 (Object / S3)</text>
+  <text x="44" y="126" class="body">• 접근: HTTP API + 객체 키·메타</text>
+  <text x="44" y="148" class="body">• 갱신: 객체 단위 덮어쓰기(불변)</text>
+  <text x="44" y="170" class="body">• 장점: 무한 확장·저비용·고내구성</text>
+  <rect x="44" y="188" width="216" height="44" rx="7" fill="var(--card-muted)" stroke="var(--border)" stroke-width="1"/>
+  <text x="54" y="207" class="badge" fill="var(--blue-tx)">적합 용도</text>
+  <text x="54" y="224" class="sub">이미지·동영상·업로드 파일·백업</text>
+
+  <!-- Block Storage -->
+  <rect x="296" y="72" width="248" height="176" rx="10" fill="var(--card)" stroke="var(--purple-bd)" stroke-width="1.6"/>
+  <rect x="296" y="72" width="248" height="34" rx="10" fill="var(--purple-bg)"/>
+  <text x="312" y="94" class="h2" fill="var(--purple-tx)">블록 저장소 (Block / EBS)</text>
+  <text x="312" y="126" class="body">• 접근: OS 블록 장치 마운트</text>
+  <text x="312" y="148" class="body">• 갱신: 저지연 랜덤 I/O 부분 수정</text>
+  <text x="312" y="170" class="body">• 제약: 보통 단일 인스턴스 연결</text>
+  <rect x="312" y="188" width="216" height="44" rx="7" fill="var(--card-muted)" stroke="var(--border)" stroke-width="1"/>
+  <text x="322" y="207" class="badge" fill="var(--purple-tx)">적합 용도</text>
+  <text x="322" y="224" class="sub">PostgreSQL·WAL·고 IOPS 볼륨</text>
+
+  <!-- File Storage -->
+  <rect x="564" y="72" width="248" height="176" rx="10" fill="var(--card)" stroke="var(--green-bd)" stroke-width="1.6"/>
+  <rect x="564" y="72" width="248" height="34" rx="10" fill="var(--green-bg)"/>
+  <text x="580" y="94" class="h2" fill="var(--green-tx)">파일 저장소 (File / EFS·NFS)</text>
+  <text x="580" y="126" class="body">• 접근: POSIX 디렉터리·파일 트리</text>
+  <text x="580" y="148" class="body">• 공유: 다수 호스트 동시 마운트</text>
+  <text x="580" y="170" class="body">• 주의: 네트워크 파일 락·지연 비용</text>
+  <rect x="580" y="188" width="216" height="44" rx="7" fill="var(--card-muted)" stroke="var(--border)" stroke-width="1"/>
+  <text x="590" y="207" class="badge" fill="var(--green-tx)">적합 용도</text>
+  <text x="590" y="224" class="sub">공유 CMS 자산·레거시 파일 공유</text>
+
+  <!-- Bottom Section: Metadata vs Binary Split & Atomicity Boundary -->
+  <rect x="28" y="268" width="784" height="172" rx="10" fill="var(--card)" stroke="var(--border)" stroke-width="1.4"/>
+  <text x="46" y="294" class="h2" fill="var(--text)">실무 패턴: 메타데이터(DB) + 본문(객체 저장소) 분리와 부분 실패 복구</text>
+
+  <!-- Step 1: DB PENDING -->
+  <rect x="46" y="310" width="212" height="110" rx="8" fill="var(--amber-bg)" stroke="var(--amber-bd)" stroke-width="1.4"/>
+  <text x="60" y="332" class="badge" fill="var(--amber-tx)">1. PostgreSQL 메타데이터</text>
+  <text x="60" y="354" class="body">• file_id, owner_id</text>
+  <text x="60" y="374" class="body">• object_key, content_type</text>
+  <text x="60" y="394" class="body">• status: PENDING → COMPLETE</text>
+  <text x="60" y="411" class="sub">권한·조회·트랜잭션 소유</text>
+
+  <!-- Step 2: Object Upload -->
+  <rect x="294" y="310" width="212" height="110" rx="8" fill="var(--blue-bg)" stroke="var(--blue-bd)" stroke-width="1.4"/>
+  <text x="308" y="332" class="badge" fill="var(--blue-tx)">2. 객체 저장소 본문 업로드</text>
+  <text x="308" y="354" class="body">• 실제 바이너리 스트림 저장</text>
+  <text x="308" y="374" class="body">• Pre-signed URL 직접 업로드</text>
+  <text x="308" y="394" class="body">• DB와 단일 트랜잭션 불가</text>
+  <text x="308" y="411" class="sub">대용량 I/O를 DB에서 분리</text>
+
+  <!-- Step 3: Orphan Reconciliation -->
+  <rect x="542" y="310" width="252" height="110" rx="8" fill="var(--red-bg)" stroke="var(--red-bd)" stroke-width="1.4"/>
+  <text x="556" y="332" class="badge" fill="var(--red-tx)">3. 부분 실패 · 고아 객체 재조정</text>
+  <text x="556" y="354" class="body">• 업로드 성공 + DB 커밋 실패 시</text>
+  <text x="556" y="374" class="body">  참조 없는 고아 객체(Orphan) 발생</text>
+  <text x="556" y="394" class="body">• 만료된 PENDING / 미참조 키를</text>
+  <text x="556" y="411" class="sub">  배치·수명주기 정책으로 정기 정리</text>
+
+  <!-- Arrows -->
+  <line x1="258" y1="365" x2="290" y2="365" stroke="var(--arrow)" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="506" y1="365" x2="538" y2="365" stroke="var(--arrow)" stroke-width="2" marker-end="url(#arr)"/>
+</svg>

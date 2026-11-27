@@ -1,8 +1,367 @@
 [
-  {"kind":"question","contentKey":"backend.core.bulk-batch.file-api.q1","promptMarkdown":"사용자가 보낸 multipart의 원래 파일 이름을 검증 없이 서버 저장 경로에 결합할 때 가장 직접적인 보안 위험은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["backend.core.bulk-batch.file-api"],"choices":[{"key":"A","content":"`Content-Type` 헤더만 신뢰하면 실제 파일 형식과 다른 내용을 허용할 수 있다.","displayOrder":0,"rationaleMarkdown":"`Content-Type`만 검사하는 것도 위험하지만 이 문제에서 직접 묻는 경로 이탈 문제와는 다르다. MIME type은 클라이언트가 선언할 수 있으므로 실제 파일 내용과도 별도로 대조해야 한다."},{"key":"B","content":"업로드 크기 제한이 없으면 큰 파일로 저장 공간이나 메모리를 압박할 수 있다.","displayOrder":1,"rationaleMarkdown":"크기 제한이 없으면 메모리나 저장 공간 고갈 위험이 있다. 하지만 이 선택지는 사용자가 파일 이름으로 저장 경로를 조작하는 문제를 설명하지 않는다."},{"key":"C","content":"`../`나 경로 구분자가 포함된 이름으로 의도한 업로드 루트 밖의 경로를 선택할 수 있다.","displayOrder":2,"rationaleMarkdown":"클라이언트 파일 이름을 서버 경로에 그대로 이어 붙이면 경로 이탈(path traversal)이 가능해질 수 있다. 서버가 실제 저장 식별자를 생성하고 원래 이름은 표시용 메타데이터로만 보관해야 한다."},{"key":"D","content":"동일한 파일 이름 정책이 없으면 기존 파일과 이름이 충돌할 수 있다.","displayOrder":3,"rationaleMarkdown":"이름 충돌도 별도 정책이 필요하지만 임의 경로 접근과는 다른 문제다. 안전한 저장 위치를 정한 뒤에도 고유 저장 식별자와 충돌 처리를 설계해야 한다."}],"correctChoiceKey":"C","explanationMarkdown":"원래 파일 이름은 클라이언트가 제공하는 입력이므로 서버 저장 경로를 직접 결정하게 해서는 안 된다. 특히 `../`나 경로 구분자를 그대로 결합하면 지정한 저장 루트 밖으로 벗어나는 경로 이탈이 가능해질 수 있다. 서버가 안전한 저장 식별자를 생성하고 원래 이름은 표시용 메타데이터로 분리하는 편이 안전하다."},
-  {"kind":"question","contentKey":"backend.core.bulk-batch.bulk-processing.q1","promptMarkdown":"JPA로 50만 건을 저장하면서 `save()`만 반복했더니 시간이 지날수록 메모리 사용량이 커졌다. 가장 먼저 확인할 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["backend.core.bulk-batch.bulk-processing"],"choices":[{"key":"A","content":"JDBC batch가 꺼져 있어 INSERT 네트워크 왕복 수가 많은지 먼저 확인한다.","displayOrder":0,"rationaleMarkdown":"JDBC batch가 꺼져 있으면 SQL 전송 횟수 때문에 처리 시간이 늘 수 있지만, 이것만 켠다고 트랜잭션 동안 영속성 컨텍스트에 쌓인 관리 상태 엔티티의 메모리 사용이 자동으로 사라지지는 않는다."},{"key":"B","content":"관리 상태 엔티티가 영속성 컨텍스트에 계속 쌓이는지와 `flush/clear` 경계를 확인한다.","displayOrder":1,"rationaleMarkdown":"하나의 영속성 컨텍스트가 처리한 엔티티를 계속 관리하면 heap 사용량과 dirty checking 대상이 커질 수 있다. 제한된 처리 단위마다 `flush/clear`하는 방식과 JDBC batch 설정을 함께 측정할 수 있다."},{"key":"C","content":"DB 인덱스 유지 비용 때문에 각 flush 시간이 길어지는지 먼저 확인한다.","displayOrder":2,"rationaleMarkdown":"인덱스 유지 비용은 쓰기 처리량을 낮출 수 있지만 heap 증가를 직접 설명하지는 않는다. 인덱스를 건드리기 전에 메모리 사용과 SQL 전송·flush 비용을 분리해 측정한다."},{"key":"D","content":"DB connection pool 대기로 작업 스레드가 쌓이는지 먼저 확인한다.","displayOrder":3,"rationaleMarkdown":"연결 풀 대기는 작업 시간을 늘릴 수 있지만 관리 상태 엔티티가 영속성 컨텍스트에 계속 쌓이는 현상과는 별개다. 두 지표를 따로 확인해야 한다."}],"correctChoiceKey":"B","explanationMarkdown":"반복 `save()`로 만들어진 관리 상태 엔티티가 하나의 트랜잭션과 영속성 컨텍스트에 계속 남으면 메모리와 dirty checking 비용이 증가할 수 있다. 처리 단위별 `flush/clear`와 JDBC batching을 실제 SQL·메모리 지표와 함께 측정해야 하며, EAGER 전환이나 인덱스 제거 같은 처방을 먼저 적용해서는 안 된다."},
-  {"kind":"question","contentKey":"backend.core.bulk-batch.batch-recovery.q1","promptMarkdown":"checkpoint와 멱등성의 차이를 설명하고 둘이 모두 필요한 배치 사례를 하나 들어라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["backend.core.bulk-batch.batch-recovery"],"modelAnswer":"checkpoint는 실패 뒤 어디서 다시 시작할지를 기록하고, 멱등성은 같은 항목이 다시 실행돼도 중복 부수 효과가 생기지 않게 한다. 예를 들어 대량 송금에서는 마지막 완료 위치를 checkpoint로 남기면서 각 송금의 비즈니스 식별자나 처리 기록으로 이미 완료된 송금을 다시 실행하지 않게 해야 한다.","explanationMarkdown":"checkpoint는 완료 위치를 알려 재시작 범위를 줄이지만, 실제 부수 효과와 checkpoint 기록 사이에서 프로세스가 죽으면 같은 항목이 다시 실행될 수 있다. 대량 송금처럼 중복이 치명적인 작업은 durable한 비즈니스 식별자·처리 기록과 함께 멱등 실행을 설계해야 한다."},
-  {"kind":"question","contentKey":"backend.core.bulk-batch.bulk-processing.q2","promptMarkdown":"다음 두 트랜잭션 단위를 비교하라.\n\n| 방식 | 단위 |\n| --- | ---: |\n| 하나의 트랜잭션 | 1,000,000건 |\n| 일정 처리 단위별 트랜잭션 | 1,000건 |\n\n질문: 두 방식의 트레이드오프를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["backend.core.bulk-batch.bulk-processing","backend.core.bulk-batch.batch-recovery"],"modelAnswer":"하나의 트랜잭션은 전체 성공·전체 실패 의미가 단순하지만 잠금 보유 시간, rollback 범위, 영속성 컨텍스트와 WAL 부담이 커질 수 있다. 일정 처리 단위별 commit은 자원과 재시작 범위를 줄이지만 일부 단위가 이미 commit된 부분 성공을 허용하므로 checkpoint, 멱등성, 실패 보고 정책이 필요하다.","explanationMarkdown":"전체를 한 트랜잭션으로 묶으면 중간 상태가 외부에 보이지 않고 실패 시 전체 rollback이라는 의미는 단순하지만 잠금·WAL·영속성 컨텍스트와 재처리 범위가 커질 수 있다. 1,000건씩 commit하면 자원 사용과 재처리 범위를 제한할 수 있지만 앞선 단위가 이미 확정된 부분 성공을 다뤄야 하므로 checkpoint·멱등성·부분 실패 보고를 함께 설계해야 한다."},
-  {"kind":"question","contentKey":"backend.core.bulk-batch.file-api.q2","promptMarkdown":"2GB 파일 업로드 API가 요청 하나를 15분 동안 점유한다. 업로드와 후처리 경계를 어떻게 바꿀지 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["backend.core.bulk-batch.file-api"],"modelAnswer":"파일 크기와 임시 저장 정책을 명시하고 업로드 완료와 데이터 처리 완료를 분리한다. 업로드가 끝나면 처리 식별자를 반환한 뒤 별도 작업에서 파싱·검증·import를 수행하고 진행 상태와 실패 원인을 조회할 수 있게 한다. 파일 저장 이름은 서버가 결정하고 처리 상태 조회에도 소유권·권한 검사를 적용하며 임시 자원 정리도 실패 경로에 포함한다.","explanationMarkdown":"2GB 파일 수신과 동기 파싱을 하나의 HTTP 요청에 묶으면 connection·작업 스레드·메모리·임시 저장 공간이 오래 점유되고 timeout 시 어느 단계까지 완료됐는지도 모호해진다. 업로드 완료를 확인해 안전하게 보관한 뒤 처리 식별자를 반환하고 별도 처리의 상태·실패 원인·권한·임시 파일 정리를 관리하는 경계를 둘 수 있다."},
-  {"kind":"question","contentKey":"backend.core.bulk-batch.batch-recovery.q2","promptMarkdown":"다음 배치 상태를 생각하자.\n\n1. 전체 10만 건 중 8만 건을 처리한다.\n2. 그 시점에 프로세스가 죽는다.\n3. 재시작 뒤 앞 8만 건의 외부 알림이 다시 전송될 수 있다.\n\n질문: 중복 알림을 피하려면 어떤 상태가 필요할까?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["backend.core.bulk-batch.batch-recovery"],"modelAnswer":"어디까지 읽었는지를 나타내는 durable checkpoint뿐 아니라 각 알림의 비즈니스 식별자나 처리 기록이 필요하다. checkpoint 경계 직전 항목이 실제로 전송됐지만 상태 기록 전에 프로세스가 죽는 경우를 고려해 외부 호출의 멱등성, 발송 예약 기록, 공급자 상태 조회 같은 복구 근거도 검토해야 한다.","explanationMarkdown":"프로세스는 외부 알림 성공과 checkpoint 저장 사이 어느 순간에도 죽을 수 있으므로 단순히 '8만 건까지 진행'이라는 숫자만 믿을 수 없다. durable checkpoint와 항목별 비즈니스 식별자·발송 상태를 함께 확인하고, 외부 시스템의 중복 방지 기능이나 발송 예약·상태 대조 경계를 통해 실제로 완료된 알림을 증명할 수 있어야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.file-api.q1",
+    "promptMarkdown": "사용자가 보낸 multipart의 원래 파일 이름을 검증 없이 서버 저장 경로에 결합할 때 가장 직접적인 보안 위험은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.file-api"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Content-Type` 헤더만 신뢰하면 실제 파일 형식과 다른 내용을 허용할 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`Content-Type`만 검사하는 것도 위험하지만 이 문제에서 직접 묻는 경로 이탈 문제와는 다르다. MIME type은 클라이언트가 선언할 수 있으므로 실제 파일 내용과도 별도로 대조해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "업로드 크기 제한이 없으면 큰 파일로 저장 공간이나 메모리를 압박할 수 있다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "크기 제한이 없으면 메모리나 저장 공간 고갈 위험이 있다. 하지만 이 선택지는 사용자가 파일 이름으로 저장 경로를 조작하는 문제를 설명하지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "`../`나 경로 구분자가 포함된 이름으로 의도한 업로드 루트 밖의 경로를 선택할 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "클라이언트 파일 이름을 서버 경로에 그대로 이어 붙이면 경로 이탈(path traversal)이 가능해질 수 있다. 서버가 실제 저장 식별자를 생성하고 원래 이름은 표시용 메타데이터로만 보관해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "동일한 파일 이름 정책이 없으면 기존 파일과 이름이 충돌할 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "이름 충돌도 별도 정책이 필요하지만 임의 경로 접근과는 다른 문제다. 안전한 저장 위치를 정한 뒤에도 고유 저장 식별자와 충돌 처리를 설계해야 한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "원래 파일 이름은 클라이언트가 제공하는 입력이므로 서버 저장 경로를 직접 결정하게 해서는 안 된다. 특히 `../`나 경로 구분자를 그대로 결합하면 지정한 저장 루트 밖으로 벗어나는 경로 이탈이 가능해질 수 있다. 서버가 안전한 저장 식별자를 생성하고 원래 이름은 표시용 메타데이터로 분리하는 편이 안전하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.bulk-processing.q1",
+    "promptMarkdown": "JPA로 50만 건을 저장하면서 `save()`만 반복했더니 시간이 지날수록 메모리 사용량이 커졌다. 가장 먼저 확인할 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.bulk-processing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JDBC batch가 꺼져 있어 INSERT 네트워크 왕복 수가 많은지 먼저 확인한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "JDBC batch가 꺼져 있으면 SQL 전송 횟수 때문에 처리 시간이 늘 수 있지만, 이것만 켠다고 트랜잭션 동안 영속성 컨텍스트에 쌓인 관리 상태 엔티티의 메모리 사용이 자동으로 사라지지는 않는다."
+      },
+      {
+        "key": "B",
+        "content": "관리 상태 엔티티가 영속성 컨텍스트에 계속 쌓이는지와 `flush/clear` 경계를 확인한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "하나의 영속성 컨텍스트가 처리한 엔티티를 계속 관리하면 heap 사용량과 dirty checking 대상이 커질 수 있다. 제한된 처리 단위마다 `flush/clear`하는 방식과 JDBC batch 설정을 함께 측정할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "DB 인덱스 유지 비용 때문에 각 flush 시간이 길어지는지 먼저 확인한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "인덱스 유지 비용은 쓰기 처리량을 낮출 수 있지만 heap 증가를 직접 설명하지는 않는다. 인덱스를 건드리기 전에 메모리 사용과 SQL 전송·flush 비용을 분리해 측정한다."
+      },
+      {
+        "key": "D",
+        "content": "DB connection pool 대기로 작업 스레드가 쌓이는지 먼저 확인한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "연결 풀 대기는 작업 시간을 늘릴 수 있지만 관리 상태 엔티티가 영속성 컨텍스트에 계속 쌓이는 현상과는 별개다. 두 지표를 따로 확인해야 한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "반복 `save()`로 만들어진 관리 상태 엔티티가 하나의 트랜잭션과 영속성 컨텍스트에 계속 남으면 메모리와 dirty checking 비용이 증가할 수 있다. 처리 단위별 `flush/clear`와 JDBC batching을 실제 SQL·메모리 지표와 함께 측정해야 하며, EAGER 전환이나 인덱스 제거 같은 처방을 먼저 적용해서는 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.batch-recovery.q1",
+    "promptMarkdown": "checkpoint와 멱등성의 차이를 설명하고 둘이 모두 필요한 배치 사례를 하나 들어라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.batch-recovery"
+    ],
+    "modelAnswer": "checkpoint는 실패 뒤 어디서 다시 시작할지를 기록하고, 멱등성은 같은 항목이 다시 실행돼도 중복 부수 효과가 생기지 않게 한다. 예를 들어 대량 송금에서는 마지막 완료 위치를 checkpoint로 남기면서 각 송금의 비즈니스 식별자나 처리 기록으로 이미 완료된 송금을 다시 실행하지 않게 해야 한다.",
+    "explanationMarkdown": "checkpoint는 완료 위치를 알려 재시작 범위를 줄이지만, 실제 부수 효과와 checkpoint 기록 사이에서 프로세스가 죽으면 같은 항목이 다시 실행될 수 있다. 대량 송금처럼 중복이 치명적인 작업은 durable한 비즈니스 식별자·처리 기록과 함께 멱등 실행을 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.bulk-processing.q2",
+    "promptMarkdown": "다음 두 트랜잭션 단위를 비교하라.\n\n| 방식 | 단위 |\n| --- | ---: |\n| 하나의 트랜잭션 | 1,000,000건 |\n| 일정 처리 단위별 트랜잭션 | 1,000건 |\n\n질문: 두 방식의 트레이드오프를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.bulk-processing",
+      "backend.core.bulk-batch.batch-recovery"
+    ],
+    "modelAnswer": "하나의 트랜잭션은 전체 성공·전체 실패 의미가 단순하지만 잠금 보유 시간, rollback 범위, 영속성 컨텍스트와 WAL 부담이 커질 수 있다. 일정 처리 단위별 commit은 자원과 재시작 범위를 줄이지만 일부 단위가 이미 commit된 부분 성공을 허용하므로 checkpoint, 멱등성, 실패 보고 정책이 필요하다.",
+    "explanationMarkdown": "전체를 한 트랜잭션으로 묶으면 중간 상태가 외부에 보이지 않고 실패 시 전체 rollback이라는 의미는 단순하지만 잠금·WAL·영속성 컨텍스트와 재처리 범위가 커질 수 있다. 1,000건씩 commit하면 자원 사용과 재처리 범위를 제한할 수 있지만 앞선 단위가 이미 확정된 부분 성공을 다뤄야 하므로 checkpoint·멱등성·부분 실패 보고를 함께 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.file-api.q2",
+    "promptMarkdown": "2GB 파일 업로드 API가 요청 하나를 15분 동안 점유한다. 업로드와 후처리 경계를 어떻게 바꿀지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.file-api"
+    ],
+    "modelAnswer": "파일 크기와 임시 저장 정책을 명시하고 업로드 완료와 데이터 처리 완료를 분리한다. 업로드가 끝나면 처리 식별자를 반환한 뒤 별도 작업에서 파싱·검증·import를 수행하고 진행 상태와 실패 원인을 조회할 수 있게 한다. 파일 저장 이름은 서버가 결정하고 처리 상태 조회에도 소유권·권한 검사를 적용하며 임시 자원 정리도 실패 경로에 포함한다.",
+    "explanationMarkdown": "2GB 파일 수신과 동기 파싱을 하나의 HTTP 요청에 묶으면 connection·작업 스레드·메모리·임시 저장 공간이 오래 점유되고 timeout 시 어느 단계까지 완료됐는지도 모호해진다. 업로드 완료를 확인해 안전하게 보관한 뒤 처리 식별자를 반환하고 별도 처리의 상태·실패 원인·권한·임시 파일 정리를 관리하는 경계를 둘 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.batch-recovery.q2",
+    "promptMarkdown": "다음 배치 상태를 생각하자.\n\n1. 전체 10만 건 중 8만 건을 처리한다.\n2. 그 시점에 프로세스가 죽는다.\n3. 재시작 뒤 앞 8만 건의 외부 알림이 다시 전송될 수 있다.\n\n질문: 중복 알림을 피하려면 어떤 상태가 필요할까?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.batch-recovery"
+    ],
+    "modelAnswer": "어디까지 읽었는지를 나타내는 durable checkpoint뿐 아니라 각 알림의 비즈니스 식별자나 처리 기록이 필요하다. checkpoint 경계 직전 항목이 실제로 전송됐지만 상태 기록 전에 프로세스가 죽는 경우를 고려해 외부 호출의 멱등성, 발송 예약 기록, 공급자 상태 조회 같은 복구 근거도 검토해야 한다.",
+    "explanationMarkdown": "프로세스는 외부 알림 성공과 checkpoint 저장 사이 어느 순간에도 죽을 수 있으므로 단순히 '8만 건까지 진행'이라는 숫자만 믿을 수 없다. durable checkpoint와 항목별 비즈니스 식별자·발송 상태를 함께 확인하고, 외부 시스템의 중복 방지 기능이나 발송 예약·상태 대조 경계를 통해 실제로 완료된 알림을 증명할 수 있어야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.batch-recovery.q3",
+    "promptMarkdown": "100만 건 정산 배치 잡이 43만 건 처리 중 OOM으로 중단되었다. 재실행 시 이미 완료된 43만 건의 중복 정산 없이 안전하게 이어서 복구하려면 어떤 설계 조합이 가장 적절한가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.batch-recovery"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "100만 건 전체를 하나의 거대한 DB 트랜잭션으로 묶어 실패 시 전부 롤백하고 처음부터 다시 돌린다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "100만 건 단일 트랜잭션은 UNDO/WAL 폭증, 장시간 락 점유, 복구 시간 급증을 일으켜 대용량 배치에서 실무적으로 불가능하다."
+      },
+      {
+        "key": "B",
+        "content": "애플리케이션 메모리 `static int processedCount`에 진행 건수를 저장해 재시작 시 건너뛴다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "OOM으로 JVM 프로세스가 종료되면 메모리 변수는 모두 소실되므로 재시작 복구 지점으로 전혀 쓸 수 없다."
+      },
+      {
+        "key": "C",
+        "content": "실패한 배치는 재실행하지 말고 누락된 57만 건은 다음 달 정산에 합산한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "정산 누락을 방치하는 것은 장애 복구가 아니라 데이터 정합성 포기다."
+      },
+      {
+        "key": "D",
+        "content": "결정적 정렬 기준(예: `id ASC`)의 청크 단위 체크포인트 커밋과 대상 레코드의 멱등 키(예: `(settlement_date, order_id)` 유니크 제약)를 함께 적용한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "청크 체크포인트로 재시작 위치를 줄이고, 마지막 미완료 청크가 재처리되더라도 DB 유니크 제약·멱등 상태 전이로 중복 정산을 차단하는 것이 배치 복구의 핵심이다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "배치 재시작 안전성은 '어디까지 커밋했는가(결정적 정렬 + 체크포인트)'와 '경계 청크가 두 번 돌아도 안전한가(멱등 키/상태 전이)'의 두 축으로 보장한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.batch-recovery.q4",
+    "promptMarkdown": "청크 크기 1,000건으로 CSV 주문을 적재하는 배치에서 1건의 잘못된 레코드(독성 레코드, Poison Pill) 때문에 청크 전체가 반복 롤백되고 있다. 실무에서 가장 올바른 격리·복구 전략은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.batch-recovery"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "무한 재시도 루프를 걸어 잘못된 CSV 형식이 스스로 고쳐질 때까지 대기한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "잘못된 데이터 형식은 permanent failure이므로 무한 재시도해도 절대 성공하지 않고 워커만 고갈시킨다."
+      },
+      {
+        "key": "B",
+        "content": "검증 실패 같은 비일시적 오류 레코드는 실패 사유·원본 행 번호와 함께 실패 테이블/DLQ에 기록(Skip)하고, 실패 건수 임계치 초과 시에만 잡을 중단해 운영자가 확인·재처리하게 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "독성 레코드 1건으로 나머지 999건까지 무한 실패시키지 않으면서도, 실패 레코드를 추적 가능하게 격리하고 임계치(skip limit)로 구조적 장애를 조기 차단하는 것이 표준 배치 복구 패턴이다."
+      },
+      {
+        "key": "C",
+        "content": "`catch (Exception e) {}`로 모든 예외를 삼키고 로그도 남기지 않은 채 배치를 성공으로 끝낸다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "예외를 조용히 삼키면 데이터 유실을 아무도 인지하지 못하며, DB 장애 같은 시스템 오류도 무시되어 심각한 사고로 이어진다."
+      },
+      {
+        "key": "D",
+        "content": "청크 크기를 100만 건으로 늘려 예외가 한 번만 발생하게 만든다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "청크를 키우면 단 1건의 오류로 더 많은 정상 레코드가 함께 롤백되어 피해 범위만 커진다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "배치에서 데이터 오류(Poison Pill)는 시스템 일시 장애와 분리해 실패 원인과 원본 키를 별도 저장소에 격리하고, 스킵 임계치로 대량 오염을 방지해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.bulk-processing.q3",
+    "promptMarkdown": "아래 Spring/JPA 대량 처리 코드가 50만 건 실행 중 점점 느려지다가 `OutOfMemoryError`로 종료되었다. 가장 직접적인 원인과 해결책은?\n\n```java\n@Transactional\npublic void expireOldCoupons(Instant now) {\n    List<Coupon> all = couponRepository.findAllExpired(now); // 500,000 rows\n    for (Coupon c : all) {\n        c.expire();\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.bulk-processing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Coupon` 엔티티에 `@Getter`를 빼면 메모리 사용량이 절반으로 줄어든다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "getter 메서드는 클래스 메타데이터 영역에 존재하며 인스턴스당 힙 메모리 크기와는 무관하다."
+      },
+      {
+        "key": "B",
+        "content": "50만 개 엔티티 전체를 한 번에 메모리에 올리고 영속성 컨텍스트가 스냅샷을 전부 보관하므로, 키셋 기반 청크 조회(예: 1,000건씩) + 청크별 트랜잭션 커밋 또는 벌크 UPDATE 쿼리로 분할해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "JPA 1차 캐시는 dirty checking을 위해 엔티티와 스냅샷을 메모리에 유지한다. 50만 건을 단일 트랜잭션으로 로드하면 힙 고갈과 장시간 락이 동시에 발생하므로 청크 분할이나 벌크 UPDATE가 필수다."
+      },
+      {
+        "key": "C",
+        "content": "`for` 문 대신 `parallelStream()`을 쓰면 영속성 컨텍스트 메모리 사용량이 0이 된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "JPA EntityManager는 thread-safe하지 않으며, 이미 50만 건 리스트를 힙에 올린 뒤 `parallelStream()`을 돌려도 메모리 문제는 해결되지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "`@Transactional(readOnly = true)`를 붙이면 UPDATE가 메모리 없이 빠르게 실행된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`readOnly = true`에서는 flush/dirty checking이 생략되어 상태 변경 자체가 DB에 반영되지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "대량 처리에서는 '한 번에 읽는 양(청크)', '영속성 컨텍스트 비우기(clear)', '트랜잭션 경계'를 모두 bounded하게 유지해야 메모리와 락 폭증을 막을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.bulk-processing.q4",
+    "promptMarkdown": "대량 데이터를 1,000건씩 청크로 처리할 때 `OFFSET 400000 LIMIT 1000` 대신 `WHERE id > :lastId ORDER BY id ASC LIMIT 1000` 키셋(Keyset) 조회를 선호하는 가장 큰 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.bulk-processing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "OFFSET은 뒤 페이지로 갈수록 앞선 수십만 행을 매번 읽고 버려 O(N)으로 느려지고 중간 삽입/삭제 시 행 누락·중복이 생기지만, 키셋 조회는 인덱스로 바로 시작점을 찾아 일정한 성능을 유지한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "깊은 OFFSET은 후반부 청크에서 심각한 성능 저하와 데이터 이동(drift)을 유발한다. PK 기반 키셋 조회는 인덱스 seek으로 매 청크를 일정한 비용으로 읽는다."
+      },
+      {
+        "key": "B",
+        "content": "SQL 표준에서 `OFFSET`은 10,000 이상의 숫자를 문법적으로 금지하기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "SQL 문법상 큰 OFFSET도 실행되지만, 성능이 선형으로 나빠지고 동시 변경에 취약해 대량 배치에 부적합한 것이다."
+      },
+      {
+        "key": "C",
+        "content": "키셋 조회를 쓰면 DB에 인덱스가 없어도 항상 1ms 안에 끝난다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "키셋 조회 역시 정렬 기준 컬럼(`id`)에 인덱스가 있어야 인덱스 범위 스캔 이점을 얻을 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "키셋 조회는 SELECT 결과를 자동으로 gzip 압축해 네트워크 대역폭을 줄인다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "키셋 페이지네이션은 쿼리 탐색 방식이지 네트워크 압축 기능이 아니다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "대량 배치 스캔에서 깊은 OFFSET은 O(N²) 총비용과 동시 변경 시 누락·중복을 일으키므로, 정렬 키 기반 키셋(cursor) 청크 조회가 표준이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.file-api.q3",
+    "promptMarkdown": "사용자가 최대 200MB 동영상 파일을 업로드하는 API를 설계할 때, 웹 애플리케이션 서버의 메모리·스레드 고갈을 막기 위한 가장 적절한 구조는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.file-api"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "업로드된 200MB 바이너리를 PostgreSQL `BYTEA` 컬럼에 직접 INSERT하고 트랜잭션을 열어둔다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "대용량 바이너리를 RDB에 직접 저장하면 WAL·백업·복제 지연·커넥션 점유가 급격히 악화된다."
+      },
+      {
+        "key": "B",
+        "content": "HTTP 요청 스레드 안에서 파일 업로드, 바이러스 스캔, 1080p 트랜스코딩까지 모두 동기 완료 후 `200 OK`를 반환한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "수 분 걸리는 후처리를 동기 HTTP 스레드에 묶으면 프록시 타임아웃과 워커 스레드 풀 고갈이 발생한다."
+      },
+      {
+        "key": "C",
+        "content": "애플리케이션 서버는 권한 검증·메타데이터(`PENDING`) 등록과 짧은 만료 시간의 Pre-signed URL만 발급하고, 클라이언트가 객체 저장소에 직접 업로드한 뒤 완료 콜백/비동기 워커로 후처리한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "대용량 바이너리 스트림을 앱 서버 JVM 메모리와 톰캣 워커 스레드에서 분리하면, 업로드 중 트래픽이 몰려도 핵심 API 응답성과 안정성을 유지할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "`byte[]` 필드가 있는 JSON 본문에 Base64로 인코딩해 일반 REST 요청으로 받는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Base64는 크기를 약 33% 키우고, 200MB JSON 전체를 JVM 힙에 파싱하면 동시 요청 몇 건만으로 OOM이 발생한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "대용량 파일 처리는 '제어 평면(권한·메타데이터·URL 발급)'과 '데이터 평면(객체 저장소 전송 + 비동기 후처리)'을 분리해 앱 서버 자원 고갈을 막아야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.bulk-batch.file-api.q4",
+    "promptMarkdown": "파일 업로드 API에서 클라이언트가 보낸 `Content-Type: image/png` 헤더와 파일 확장자 `.png`만 신뢰하면 위험한 이유와 서버 측 방어 조치는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.bulk-batch.file-api"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "클라이언트는 헤더와 파일명을 자유롭게 위조할 수 있으므로, 파일 크기 상한 제한·실제 바이트 시그니처(매직 넘버) 검증·서버 생성 랜덤 객체 키 저장·별도 도메인/다운로드 헤더(`Content-Disposition`) 제공을 적용해야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "확장자와 Content-Type은 쉽게 변조되므로 악성 스크립트나 실행 파일 업로드(Stored XSS, Path Traversal 등)를 막기 위해 서버가 직접 시그니처·크기·저장 경로를 통제해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "브라우저가 `Content-Type`을 암호화해 서명하므로 서버는 추가 검증이 필요 없다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "HTTP 요청 헤더는 curl이나 프록시로 누구나 임의 수정할 수 있으며 서명되지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "사용자가 보낸 원본 파일명(`../../etc/passwd`)을 그대로 로컬 디스크 경로에 결합해 저장하는 것이 디버깅에 유리하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "원본 파일명을 파일 경로에 그대로 쓰면 Path Traversal 취약점과 파일명 충돌·덮어쓰기가 발생한다."
+      },
+      {
+        "key": "D",
+        "content": "파일 크기를 무제한 허용해야 대용량 정상 사용자가 불편하지 않다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "크기 상한이 없으면 악의적 대용량 업로드 한 번으로 디스크·네트워크·스레드가 고갈되는 DoS에 노출된다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "파일 업로드 경계에서는 크기 제한, 실제 파일 내용(매직 바이트) 검증, 서버 생성 저장 키 사용, 원본 파일명 분리 저장이 필수 방어선이다."
+  }
 ]

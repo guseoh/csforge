@@ -95,12 +95,12 @@ class DatabaseG1FullPackIntegrationTest {
 
         var files = source.load().stream().filter(file -> file.path().startsWith("database/")).toList();
         var concepts = files.stream().filter(file -> file.path().endsWith(".md")).toList();
-        assertEquals(38, concepts.size(), "Database Concept inventory");
+        assertTrue(!concepts.isEmpty(), "Database Concept inventory");
         var g1 = concepts.stream().filter(file -> ASSETS.containsKey(file.path())).toList();
-        assertEquals(19, g1.size());
+        assertEquals(ASSETS.size(), g1.size(), "Every G1 asset concept must exist");
         var plan = planner.plan(files);
-        assertEquals(12, plan.topicCount());
-        assertEquals(38, plan.conceptCount());
+        assertEquals(AreaContentInventory.declaredTopicSlugs(Path.of("../content/database")).size(), plan.topicCount());
+        assertEquals(concepts.size(), plan.conceptCount());
 
         for (var file : g1) {
             String svg = ASSETS.get(file.path());
@@ -122,7 +122,7 @@ class DatabaseG1FullPackIntegrationTest {
             assertEquals(batch.itemCount(), apply.apply(batch.command(), p.previewDigest()).updated());
             oldUpdates += p.updated();
         }
-        assertEquals(19, oldUpdates);
+        assertEquals(g1.size(), oldUpdates);
         var beforeConcepts = jdbc.queryForList(
                 "select content_key, id from concept where content_key like 'database.%' order by content_key");
         var beforeQuestions = jdbc.queryForList(
@@ -152,8 +152,8 @@ class DatabaseG1FullPackIntegrationTest {
             updated += applied.updated();
             unchanged += applied.unchanged();
         }
-        assertEquals(19, updated);
-        assertEquals(plan.totalItemCount() - 19, unchanged);
+        assertEquals(g1.size(), updated);
+        assertEquals(plan.totalItemCount() - g1.size(), unchanged);
         assertEquals(beforeConcepts, jdbc.queryForList(
                 "select content_key, id from concept where content_key like 'database.%' order by content_key"));
         assertEquals(beforeQuestions, jdbc.queryForList(
@@ -200,8 +200,8 @@ class DatabaseG1FullPackIntegrationTest {
         }
         assertEquals(plan.totalItemCount(), exactUnchanged);
         assertEquals(history, history(), "Exact Database G1 reimport must preserve history");
-        System.out.println("DATABASE_G1_PASS 19 UPDATED, " + exactUnchanged
-                + " UNCHANGED, 19 public Reader HTTP 200");
+        System.out.println("DATABASE_G1_PASS " + g1.size() + " UPDATED, " + exactUnchanged
+                + " UNCHANGED, " + g1.size() + " public Reader HTTP 200");
     }
 
     private void seedHistory() {

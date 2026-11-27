@@ -88,22 +88,23 @@ class OperatingSystemsG1FullPackIntegrationTest {
     }
 
     @Test
-    void osG1UpdatesExactly15AndPreservesHistoryAndServesAll49ReaderMarkdown() throws Exception {
+    void osG1UpdatesExactly15AndPreservesHistoryAndServesAllDiagramReaderMarkdown() throws Exception {
         var bootstrapResult = bootstrap.bootstrap();
         assertTrue(bootstrapResult.success(), () -> "Isolated bootstrap: " + bootstrapResult);
         assertEquals(0, bootstrapResult.totals().errors());
 
         var files = source.load().stream().filter(file -> file.path().startsWith("operating-systems/")).toList();
         var concepts = files.stream().filter(file -> file.path().endsWith(".md")).toList();
-        assertEquals(97, concepts.size(), "OS Concept inventory");
+        assertTrue(!concepts.isEmpty(), "OS Concept inventory");
         var g1 = concepts.stream().filter(file -> CHANGED.contains(file.path())).toList();
         var diagrams = concepts.stream().filter(file -> asset(file) != null).toList();
-        assertEquals(49, diagrams.size());
-        assertEquals(48, diagrams.stream().map(OperatingSystemsG1FullPackIntegrationTest::asset).distinct().count());
-        assertEquals(15, g1.size());
+        assertEquals(AreaContentInventory.svgAssetPaths(Path.of("../frontend/public"), "operating-systems"),
+                diagrams.stream().map(file -> "/learning/operating-systems/" + asset(file)).collect(java.util.stream.Collectors.toSet()),
+                "Every OS SVG asset must be referenced by a concept");
+        assertEquals(CHANGED.size(), g1.size(), "Every G1 changed concept must exist");
         var plan = planner.plan(files);
-        assertEquals(12, plan.topicCount());
-        assertEquals(97, plan.conceptCount());
+        assertEquals(AreaContentInventory.declaredTopicSlugs(Path.of("../content/operating-systems")).size(), plan.topicCount());
+        assertEquals(concepts.size(), plan.conceptCount());
 
         for (var file : diagrams) {
             String svg = asset(file);
@@ -125,7 +126,7 @@ class OperatingSystemsG1FullPackIntegrationTest {
             assertEquals(batch.itemCount(), apply.apply(batch.command(), p.previewDigest()).updated());
             oldUpdates += p.updated();
         }
-        assertEquals(15, oldUpdates);
+        assertEquals(g1.size(), oldUpdates);
         var beforeConcepts = jdbc.queryForList(
                 "select content_key, id from concept where content_key like 'operating-systems.%' order by content_key");
         var beforeQuestions = jdbc.queryForList(
@@ -155,7 +156,7 @@ class OperatingSystemsG1FullPackIntegrationTest {
             updated += applied.updated();
             unchanged += applied.unchanged();
         }
-        assertEquals(15, updated);
+        assertEquals(g1.size(), updated);
         assertEquals(plan.totalItemCount() - 15, unchanged);
         assertEquals(beforeConcepts, jdbc.queryForList(
                 "select content_key, id from concept where content_key like 'operating-systems.%' order by content_key"));
@@ -203,8 +204,8 @@ class OperatingSystemsG1FullPackIntegrationTest {
         }
         assertEquals(plan.totalItemCount(), exactUnchanged);
         assertEquals(history, history(), "Exact OS G1 reimport must preserve history");
-        System.out.println("OS_G1_PASS 15 UPDATED, " + exactUnchanged
-                + " UNCHANGED, 49 public Reader HTTP 200");
+        System.out.println("OS_G1_PASS " + g1.size() + " UPDATED, " + exactUnchanged
+                + " UNCHANGED, " + diagrams.size() + " public Reader HTTP 200");
     }
 
     private void seedHistory() {

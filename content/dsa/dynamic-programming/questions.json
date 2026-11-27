@@ -1,1 +1,844 @@
-[{"kind":"question","contentKey":"dsa.core.dynamic-programming.overlapping-subproblems.q1","promptMarkdown":"단순 재귀 `fib(5)`에서 `fib(3)`이 여러 호출 경로에 반복해서 나타나는 현상을 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.overlapping-subproblems"],"choices":[{"key":"A","content":"중복 부분 문제(Overlapping Subproblems)","displayOrder":0,"rationaleMarkdown":"서로 다른 재귀 경로가 같은 상태 `fib(3)`을 다시 계산한다. 이렇게 같은 부분 문제가 반복되는 성질을 중복 부분 문제라고 한다."},{"key":"B","content":"각 재귀 호출이 서로 독립적인 분할 정복 부분 문제다.","displayOrder":1,"rationaleMarkdown":"부분 문제가 서로 독립적이라면 같은 상태를 반복해서 계산하지 않는다. 피보나치 재귀에서는 같은 인자 값의 호출이 여러 경로에 다시 나타난다."},{"key":"C","content":"최적 부분 구조(Optimal Substructure)가 있다는 뜻이다.","displayOrder":2,"rationaleMarkdown":"최적 부분 구조는 전체 최적해를 부분 문제의 최적해로 구성할 수 있는 성질이다. 같은 부분 문제가 반복되는 현상과는 다른 개념이다."},{"key":"D","content":"메모이제이션을 적용하면 모든 재귀 호출이 사라진다.","displayOrder":3,"rationaleMarkdown":"메모이제이션은 이미 계산한 상태의 결과를 재사용하지만 처음 계산하는 상태에 대한 재귀 호출까지 없애지는 않는다."}],"correctChoiceKey":"A","explanationMarkdown":"서로 다른 재귀 경로에서 동일한 상태를 다시 계산하므로 중복 부분 문제가 존재한다. 이런 중복 계산을 메모이제이션이나 테이블 방식으로 줄이는 것이 동적 계획법의 핵심 이점 중 하나다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.overlapping-subproblems.q2","promptMarkdown":"`solve(index=4, capacity=10)`과 `solve(index=4, capacity=3)`을 같은 메모 키 `4`로 저장하면 안 되는 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.overlapping-subproblems"],"modelAnswer":"남은 용량이 다르면 이후 선택 가능한 항목과 최적값이 달라질 수 있으므로 두 호출은 서로 다른 부분 문제다. 메모 키에는 결과를 결정하는 모든 상태 변수가 포함되어야 한다.","explanationMarkdown":"`index`만 키에 넣으면 서로 다른 남은 용량의 결과를 같은 상태로 취급하게 된다. 그 결과 한 상태의 답을 다른 상태에서 잘못 재사용할 수 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.overlapping-subproblems.q3","promptMarkdown":"재귀 호출 경로는 매우 많지만 서로 다른 상태가 `N×W`개뿐인 문제에 메모이제이션을 적용했다. 시간 복잡도를 추정할 때 전체 호출 트리 크기보다 무엇을 기준으로 보는 것이 적절한가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.overlapping-subproblems"],"modelAnswer":"실제로 계산하는 서로 다른 상태 수와 각 상태에서 수행하는 전이 수를 기준으로 분석한다. 이미 계산한 상태를 다시 방문하면 저장된 값을 재사용하므로 전체 재귀 호출 트리의 노드 수가 실제 계산량과 같지 않다.","explanationMarkdown":"메모이제이션 이후의 핵심 비용은 중복 호출 횟수 자체가 아니라 고유한 상태를 몇 개 계산하며 각 상태에서 얼마나 많은 전이를 검사하는지에 달려 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.optimal-substructure.q1","promptMarkdown":"최적 부분 구조(Optimal Substructure)를 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.optimal-substructure"],"choices":[{"key":"A","content":"모든 재귀 호출이 서로 다른 상태여야 한다.","displayOrder":0,"rationaleMarkdown":"상태가 반복되는지는 중복 부분 문제에 관한 조건이다. 최적 부분 구조와는 별개의 성질이다."},{"key":"B","content":"전체 최적해를 적절히 정의한 부분 문제의 최적해로 구성할 수 있다.","displayOrder":1,"rationaleMarkdown":"작은 부분 문제의 최적해를 이용해 더 큰 문제의 최적해를 구성할 수 있는 성질이 최적 부분 구조다."},{"key":"C","content":"항상 탐욕 선택 하나만 고르면 된다.","displayOrder":2,"rationaleMarkdown":"최적 부분 구조가 있다고 해서 탐욕 선택이 자동으로 안전해지는 것은 아니다. 동적 계획법은 여러 선택의 결과를 비교할 수 있다."},{"key":"D","content":"테이블을 2차원으로 만들면 자동으로 성립한다.","displayOrder":3,"rationaleMarkdown":"테이블의 차원은 상태 표현 방식일 뿐 문제의 수학적 구조를 바꾸지 않는다."}],"correctChoiceKey":"B","explanationMarkdown":"최적 부분 구조는 전체 문제의 최적해가 적절한 부분 문제의 최적해를 이용해 구성될 수 있다는 성질이다. 상태와 전이가 이 구조를 올바르게 표현해야 점화식이 성립한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.optimal-substructure.q2","promptMarkdown":"최단 경로 A→B→C→D에서 B→D 부분보다 더 짧은 경로가 존재한다면 원래 A→D 경로가 최단일 수 없는 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.optimal-substructure"],"modelAnswer":"원래 경로의 B→D 구간을 더 짧은 경로로 교체하면 A→B 구간은 그대로 둔 채 A→D 전체 비용을 더 줄일 수 있다. 따라서 원래 경로가 최단이었다는 가정과 모순된다.","explanationMarkdown":"전체 최단 경로 안의 부분 경로도 해당 두 정점 사이에서 최단이어야 한다. 그렇지 않으면 그 부분만 더 짧은 경로로 바꿔 전체 경로를 개선할 수 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.optimal-substructure.q3","promptMarkdown":"현재 정점만 DP 상태로 저장한 경로 문제에서 이미 방문한 정점 집합에 따라 이후 가능한 이동이 달라진다. 왜 최적 부분 구조를 그 상태에 바로 적용할 수 없는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.optimal-substructure"],"modelAnswer":"같은 현재 정점이라도 방문한 정점 집합이 다르면 이후 선택 가능한 이동이 달라져 같은 부분 문제라고 볼 수 없다. 이후의 답을 결정하는 데 방문 정보가 필요하다면 상태에 포함하거나 다른 모델을 사용해야 한다.","explanationMarkdown":"상태는 앞으로의 결과를 결정하는 정보를 충분히 담아야 한다. 필요한 정보를 빠뜨리면 서로 다른 부분 문제를 같은 상태로 합쳐 잘못된 결과를 재사용할 수 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.memoization.q1","promptMarkdown":"메모이제이션의 기본 계산 방식을 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.memoization"],"choices":[{"key":"A","content":"하향식으로 호출하지만 계산 결과를 상태별로 저장하지 않는다.","displayOrder":0,"rationaleMarkdown":"결과를 저장하지 않으면 같은 상태가 다시 등장할 때 중복 계산을 피할 수 없다."},{"key":"B","content":"가능한 모든 상태를 시작 상태부터 반드시 먼저 계산한다.","displayOrder":1,"rationaleMarkdown":"가능한 상태를 의존 순서에 따라 미리 채우는 방식은 일반적인 테이블 방식에 가깝다."},{"key":"C","content":"목표 상태에서 필요한 상태를 하향식으로 계산하고 결과를 상태별로 저장한다.","displayOrder":2,"rationaleMarkdown":"메모이제이션은 필요한 상태를 재귀적으로 계산하고 결과를 저장해 같은 상태의 재계산을 막는다."},{"key":"D","content":"호출 깊이만 캐시 키로 사용한다.","displayOrder":3,"rationaleMarkdown":"같은 깊이에 서로 다른 부분 문제가 존재할 수 있으므로 호출 깊이만으로는 상태를 올바르게 구분할 수 없다."}],"correctChoiceKey":"C","explanationMarkdown":"메모이제이션은 목표 상태에서 필요한 부분 문제를 하향식으로 계산하고 상태별 결과를 저장한다. 그래서 실제로 도달하지 않는 상태는 계산하지 않을 수 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.memoization.q2","promptMarkdown":"정상적인 DP 결과가 0일 수 있는데 `memo[state] == 0`을 미계산 상태 표시로 사용했다. 어떤 문제가 생길 수 있는가?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.memoization"],"modelAnswer":"실제로 계산된 결과 0과 아직 계산하지 않은 상태를 구분할 수 없다. 그 결과 이미 계산한 상태를 반복 계산하거나 잘못된 분기를 할 수 있으므로 별도의 방문 여부나 `UNCOMPUTED` 같은 구분 가능한 값을 사용해야 한다.","explanationMarkdown":"미계산 상태를 나타내는 값은 정상 결과와 충돌하지 않아야 한다. 값의 범위상 충돌할 수 있다면 별도 플래그나 명시적인 상태 표현이 필요하다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.memoization.q3","promptMarkdown":"전체 상태 수는 매우 크지만 목표 상태에서 실제로 도달하는 상태가 5%뿐이고 재귀 깊이는 안전하다. 전체 테이블을 채우는 방식보다 메모이제이션이 유리할 수 있는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.memoization"],"modelAnswer":"메모이제이션은 목표 상태에서 실제로 필요한 상태만 계산하므로 도달하지 않는 나머지 상태를 건너뛸 수 있다. 다만 상태 조회 비용과 재귀 호출 오버헤드는 별도로 비교해야 한다.","explanationMarkdown":"두 방식이 같은 점화식을 사용해도 실제 계산하는 상태 수가 다를 수 있다. 희소하게 도달하는 상태 공간에서는 필요한 상태만 계산하는 메모이제이션이 유리할 수 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.memoization.q4","promptMarkdown":"`solve(A)`를 계산하는 도중 아직 완료되지 않은 같은 `solve(A)`에 다시 진입한다. 단순히 캐시 미스로만 처리하면 어떤 문제가 생기며 무엇을 의심해야 하는가?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.memoization"],"modelAnswer":"완료되지 않은 동일 상태로 계속 재진입하면 무한 재귀가 발생할 수 있다. `COMPUTING` 같은 진행 중 상태를 별도로 두어 순환 의존을 감지하고, 점화식이나 상태 정의가 순환 없는 계산 구조를 만드는지 재검토해야 한다.","explanationMarkdown":"완료된 결과만 저장하는 일반적인 메모이제이션은 '아직 계산 중'인 상태와 '처음 방문한 상태'를 구분하지 못한다. 진행 중 상태를 추적하면 순환 의존을 감지하고 점화식 또는 상태 모델 문제로 처리할 수 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.tabulation.q1","promptMarkdown":"테이블 방식에서 `dp[i]`가 `dp[i-1]`, `dp[i-2]`를 참조한다면 일반적으로 적절한 계산 방향은?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.tabulation"],"acceptedAnswers":["작은 i에서 큰 i로","오름차순","bottom-up으로 i를 증가시킨다","상향식으로 i를 증가시킨다"],"explanationMarkdown":"현재 상태가 더 작은 인덱스의 상태에 의존하므로 필요한 이전 상태를 먼저 계산해야 한다. 작은 `i`부터 채우면 `dp[i]`를 계산할 때 두 값이 이미 준비되어 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.tabulation.q2","promptMarkdown":"메모이제이션과 테이블 방식이 같은 점화식을 계산할 수 있음에도 실행 방식이 어떻게 다른지 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.tabulation"],"modelAnswer":"메모이제이션은 목표 상태에서 필요한 상태를 하향식으로 계산하고, 테이블 방식은 기저 상태부터 의존성이 충족되는 순서로 상향식 계산을 진행한다. 같은 점화식을 사용해도 실제 방문하는 상태와 호출 방식이 달라질 수 있다.","explanationMarkdown":"차이는 점화식 자체보다 계산 순서와 실제 방문 상태에 있다. 메모이제이션은 필요한 상태만 방문할 수 있고, 테이블 방식은 정한 순서에 따라 상태를 차례로 채운다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.tabulation.q3","promptMarkdown":"`dp[l][r]`이 더 짧은 구간들의 값에 의존하는데 `l`을 0부터 증가시키고 `r`은 임의 순서로 계산했다. 아직 계산하지 않은 초기값을 읽을 수 있는 이유와 필요한 계산 순서를 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.tabulation"],"modelAnswer":"현재 구간이 참조하는 더 짧은 구간이 아직 계산되지 않았을 수 있기 때문이다. 구간 길이가 짧은 상태부터 긴 상태 순서처럼 모든 선행 상태가 먼저 계산되는 순서를 사용해야 한다.","explanationMarkdown":"테이블 방식에서는 전이가 참조하는 상태가 현재 상태보다 먼저 계산되어 있어야 한다. 구간 DP라면 보통 구간 길이를 기준으로 계산 순서를 정한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.state-definition.q1","promptMarkdown":"`dp[i][w]`를 0/1 배낭 문제의 상태로 정의할 때 가장 정확한 의미는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.state-definition"],"choices":[{"key":"A","content":"전체 입력과 무관하게 임의로 정한 캐시 키","displayOrder":0,"rationaleMarkdown":"DP 상태는 부분 문제의 제약과 입력 범위를 표현해야 한다. 임의의 키만으로는 어떤 문제의 답인지 알 수 없다."},{"key":"B","content":"i번째 물건 하나의 가치만 저장한다.","displayOrder":1,"rationaleMarkdown":"물건 하나의 가치만으로는 앞의 물건들을 어떻게 고려했는지와 용량 제약을 표현할 수 없다."},{"key":"C","content":"항상 선택한 물건의 개수만 저장한다.","displayOrder":2,"rationaleMarkdown":"`i`와 `w`는 고려할 물건 범위와 용량 제약을 나타내므로 상태 값이 선택한 개수로 고정되는 것은 아니다."},{"key":"D","content":"앞의 i개 물건을 고려하고 용량이 w일 때 얻을 수 있는 최대 가치","displayOrder":3,"rationaleMarkdown":"이 의미를 사용하면 i번째 물건을 선택하는 경우와 선택하지 않는 경우를 이전 상태로 표현할 수 있다."}],"correctChoiceKey":"D","explanationMarkdown":"`dp[i][w]`는 앞의 `i`개 물건만 사용할 수 있고 용량 한도가 `w`일 때 얻을 수 있는 최대 가치로 정의할 수 있다. 상태 의미가 명확해야 전이와 초기값도 일관되게 설계할 수 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.state-definition.q2","promptMarkdown":"0/1 배낭 문제에서 상태를 `dp[i]` 하나로 줄이고 용량 정보를 제거하면 왜 정확성이 깨질 수 있는가?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.state-definition"],"modelAnswer":"같은 `i`라도 남은 용량에 따라 이후 선택 가능한 물건과 얻을 수 있는 최적값이 달라진다. 용량 정보를 제거하면 서로 다른 부분 문제를 같은 상태로 합치게 된다.","explanationMarkdown":"상태에는 앞으로의 선택과 결과를 결정하는 정보가 들어 있어야 한다. 용량이 결과를 바꾸는 문제라면 이를 생략한 상태는 충분하지 않다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.state-definition.q3","promptMarkdown":"답이 `(index, capacity)`만으로 충분히 결정되는데 지금까지의 전체 선택 이력까지 상태 키에 포함했다. 결과의 정확성은 유지될 수 있어도 성능상 어떤 문제가 생길 수 있는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.state-definition"],"modelAnswer":"앞으로의 부분 문제가 같은 경우에도 과거 선택 이력이 다르다는 이유로 서로 다른 상태가 만들어진다. 중복 상태를 합치지 못해 상태 수와 메모리 사용량이 크게 늘고 메모이제이션의 이점이 줄어든다.","explanationMarkdown":"상태에는 답을 결정하는 데 필요한 정보만 포함하는 것이 중요하다. 불필요한 과거 이력은 같은 미래 문제를 여러 상태로 쪼개 상태 공간을 키운다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.state-definition.q4","promptMarkdown":"`N=500`, `W=100,000`인 `dp[i][w]` 상태를 전부 저장하려 한다. 대략 몇 개의 상태가 필요한지 계산하고 실제 자원 한도를 검토해야 하는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.state-definition"],"modelAnswer":"상태 수는 대략 `500 × 100,000 = 50,000,000`개다. 상태 하나가 차지하는 바이트 수와 각 상태에서 수행하는 전이 비용을 곱하면 메모리와 실행 시간이 매우 커질 수 있으므로 점화식의 정확성과 실제 실행 가능성을 별도로 확인해야 한다.","explanationMarkdown":"점화식이 논리적으로 맞아도 상태 수가 너무 많으면 메모리나 시간 한도를 초과할 수 있다. 상태 수와 상태당 저장 비용, 상태당 전이 비용을 함께 계산해야 한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.transition.q1","promptMarkdown":"0/1 배낭 문제의 `dp[i][w]`에서 i번째 물건을 선택하지 않는 분기가 참조하는 대표 상태는?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.transition"],"acceptedAnswers":["dp[i-1][w]","dp[i - 1][w]"],"explanationMarkdown":"i번째 물건을 선택하지 않으면 용량은 그대로이고 고려 대상만 앞의 `i-1`개 물건으로 줄어드므로 `dp[i-1][w]`를 참조한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.transition.q2","promptMarkdown":"i번째 물건의 가중치가 3, 가치가 5이고 `w=7`일 때 선택 분기가 참조하는 이전 상태와 더하는 값을 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.transition"],"acceptedAnswers":["dp[i-1][4] + 5","dp[i - 1][4] + 5","dp[i - 1][7 - 3] + 5"],"explanationMarkdown":"i번째 물건을 선택하면 남은 용량은 `7-3=4`가 된다. 0/1 제약을 지키려면 이전 물건 단계의 `dp[i-1][4]`에 현재 물건의 가치 5를 더한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.transition.q3","promptMarkdown":"0/1 배낭 문제의 전이에서 선택 분기가 `dp[i][w-weight[i]]`를 참조하도록 만들었다. 어떤 제약 위반이 생길 수 있는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.transition"],"modelAnswer":"같은 `i` 행에서 이번 물건을 사용해 방금 갱신한 값을 다시 참조하면 i번째 물건을 여러 번 선택한 효과가 생길 수 있다. 2차원 정의라면 이전 단계 `i-1`의 상태를 참조해야 한다.","explanationMarkdown":"0/1 배낭 문제에서는 각 물건을 최대 한 번만 사용할 수 있다. 같은 행의 갱신값을 다시 읽으면 현재 물건을 중복 사용해 0/1 제약을 깨뜨릴 수 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.transition.q4","promptMarkdown":"최소 비용 DP에서 도달할 수 없는 이전 상태를 비용 0으로 전이 후보에 포함했다. 결과가 왜 잘못될 수 있는지 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.transition"],"modelAnswer":"실제로 도달할 수 없는 분기가 비용 0인 정상 경로처럼 최소값으로 선택될 수 있다. 도달 불가능 상태는 `INF`나 별도 센티널로 표현하고 유효한 이전 상태만 전이 후보에 포함해야 한다.","explanationMarkdown":"도달 불가능 상태를 정상 비용과 구분하지 않으면 존재하지 않는 경로가 가장 좋은 후보로 선택될 수 있다. 전이 전에 도달 가능 여부를 확인해야 한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.initialization-order.q1","promptMarkdown":"최소 비용 DP에서 아직 도달할 수 없는 상태의 일반적인 초기 표현으로 가장 적절한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.initialization-order"],"choices":[{"key":"A","content":"정상 경로와 같은 작은 유한 비용","displayOrder":0,"rationaleMarkdown":"도달할 수 없는 상태가 정상 경로보다 더 좋아 보이면 잘못된 전이에 선택될 수 있다."},{"key":"B","content":"모든 상태를 무조건 0으로 둔다.","displayOrder":1,"rationaleMarkdown":"비용 0은 실제로 가능한 정상 결과일 수 있어 도달 불가능 상태와 구분되지 않는다."},{"key":"C","content":"항상 -1을 실제 최적 비용으로 사용한다.","displayOrder":2,"rationaleMarkdown":"`-1`이 문제의 정상 값이 될 수 있는지에 따라 충돌할 수 있으므로 무조건 사용할 수 있는 표현은 아니다."},{"key":"D","content":"정상 비용과 구분되는 `INF` 또는 별도의 도달 불가능 상태","displayOrder":3,"rationaleMarkdown":"정상 결과와 충돌하지 않는 값이나 별도 상태를 사용해야 최소값 계산에서 존재하지 않는 경로가 선택되지 않는다."}],"correctChoiceKey":"D","explanationMarkdown":"도달할 수 없는 상태는 정상 비용과 명확히 구분해야 한다. 최소 비용 문제에서는 `INF` 같은 센티널이나 별도 상태를 사용하고, 연산 시 오버플로가 발생하지 않도록 함께 처리한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.initialization-order.q2","promptMarkdown":"동전 `[3]`만 있을 때 금액 0, 1, 2, 3의 최소 동전 수 상태를 `0, INF, INF, 1`처럼 두는 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.initialization-order"],"modelAnswer":"금액 0은 동전을 하나도 사용하지 않고 만들 수 있으므로 비용 0이다. 금액 1과 2는 만들 수 없어 도달 불가능 상태로 표시하고, 금액 3은 동전 하나로 만들 수 있으므로 1이 된다.","explanationMarkdown":"도달 불가능한 금액을 0으로 두면 실제 비용 0인 상태와 구분할 수 없어 잘못된 전이가 생긴다. 초기값은 각 상태의 의미와 도달 가능성을 반영해야 한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.initialization-order.q3","promptMarkdown":"0/1 배낭 문제를 1차원 `dp`로 줄인 뒤 용량을 작은 값에서 큰 값으로 순회했더니 물건 하나가 여러 번 사용됐다. 계산 순서가 왜 원인인지 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.initialization-order"],"modelAnswer":"작은 용량부터 갱신하면 이번 물건으로 방금 갱신한 작은 용량의 값을 같은 순회에서 더 큰 용량이 다시 읽을 수 있다. 각 물건을 한 번만 사용하려면 용량을 큰 값에서 작은 값으로 순회해야 한다.","explanationMarkdown":"1차원 배열에서는 이전 행과 현재 행이 같은 배열을 공유한다. 역순 갱신을 해야 현재 물건으로 갱신한 값을 같은 물건의 다음 전이에서 다시 사용하는 일을 막을 수 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.space-optimization.q1","promptMarkdown":"`dp[i] = dp[i-1] + dp[i-2]`만 필요한 피보나치 계산에서 다음 값을 구하기 위해 보관해야 하는 최소 이전 상태 수는?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.space-optimization"],"acceptedAnswers":["2개","두 개","2"],"explanationMarkdown":"다음 값을 계산할 때 직전 두 값만 필요하므로 더 오래된 상태는 보관하지 않아도 된다. 다만 갱신 순서 때문에 아직 필요한 값을 먼저 덮어쓰지 않도록 주의해야 한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.space-optimization.q2","promptMarkdown":"2차원 배낭 DP에서 현재 행을 계산할 때 이전 행만 참조한다면 저장 공간을 어떻게 줄일 수 있는가?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.space-optimization"],"modelAnswer":"전체 `N×W` 테이블을 보관하지 않고 이전 행과 현재 행 두 개만 유지해 `O(W)` 공간으로 줄일 수 있다. 한 배열까지 줄이려면 갱신 순서가 전이의 의미를 보존하는지도 확인해야 한다.","explanationMarkdown":"앞으로 참조하지 않을 오래된 행은 버릴 수 있다. 공간을 줄일 때는 필요한 이전 값이 현재 계산으로 덮어써지지 않는지 함께 확인해야 한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.space-optimization.q3","promptMarkdown":"최대값만 필요할 때는 행을 순환해서 저장하는 방식으로 충분했지만, 이후에는 실제로 선택한 물건 목록도 반환해야 한다. 기존 공간 최적화를 그대로 유지하기 어려울 수 있는 이유를 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.space-optimization"],"modelAnswer":"행을 덮어쓰면 어떤 선택을 거쳐 최적값에 도달했는지 역추적할 과거 정보가 사라질 수 있다. 선택 경로 복원이 필요하면 이전 상태나 선택 정보를 별도로 저장하거나 필요한 범위의 테이블을 보존해야 한다.","explanationMarkdown":"최적값 하나를 계산하는 데 필요한 정보와 최적 선택 경로를 복원하는 데 필요한 정보는 다를 수 있다. 요구사항이 바뀌면 공간 최적화가 지운 정보를 다시 필요로 할 수 있다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.space-optimization.q4","promptMarkdown":"DP 공간을 `O(NW)`에서 `O(W)`로 줄였지만 계산하는 상태 수와 전이 수는 동일하다. 시간 복잡도도 자동으로 줄어드는가?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.space-optimization"],"acceptedAnswers":["아니다","아니오","no","시간은 동일한 O(NW)일 수 있고 공간만 O(W)로 줄어든다"],"explanationMarkdown":"저장하는 행 수만 줄이고 계산하는 상태와 전이 수가 그대로라면 시간 복잡도는 `O(NW)`로 유지될 수 있다. 줄어드는 것은 공간 복잡도다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.representative-dp-patterns.q1","promptMarkdown":"격자에서 `(r,c)`까지의 최소 비용이 위 `(r-1,c)`와 왼쪽 `(r,c-1)`에서만 올 수 있다. 이 비용을 저장할 대표적인 DP 상태를 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.representative-dp-patterns"],"acceptedAnswers":["dp[r][c]"],"explanationMarkdown":"`dp[r][c]`를 시작점에서 `(r,c)`까지의 최소 비용으로 정의하면 위와 왼쪽 상태의 최소값으로 전이를 만들 수 있다. 상태 의미를 먼저 정해야 초기값과 계산 순서도 결정된다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.representative-dp-patterns.q2","promptMarkdown":"같은 격자 문제에 `이전 이동 방향과 같은 방향이면 할인` 규칙이 추가됐다. 단순히 `(r,c)`만 상태로 사용하면 부족할 수 있는 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.representative-dp-patterns"],"modelAnswer":"같은 좌표에 도착해도 이전 이동 방향에 따라 다음 이동 비용이 달라질 수 있다. 따라서 좌표만으로 이후의 답이 결정되지 않으므로 이전 방향도 상태에 포함해 서로 다른 부분 문제를 구분해야 한다.","explanationMarkdown":"상태는 앞으로의 비용을 결정하는 정보를 모두 포함해야 한다. 이전 방향이 다음 비용에 영향을 준다면 같은 좌표라도 서로 다른 상태로 다뤄야 한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.representative-dp-patterns.q3","promptMarkdown":"어떤 문제를 배낭 문제 형태의 DP로 모델링했더니 상태가 `N×10^12`개가 된다. 점화식이 논리적으로 맞더라도 그대로 구현하면 안 되는 이유와 다음 판단을 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.representative-dp-patterns"],"modelAnswer":"상태 수가 너무 커 실제 메모리와 시간 한도를 초과할 수 있다. 입력 제약을 다시 보고 실제로 도달하는 상태만 저장하는 방법, 다른 상태 정의나 알고리즘, 문제에서 허용한다면 근사 또는 탐욕적 접근 등을 검토해야 한다.","explanationMarkdown":"DP는 점화식의 정확성만으로 실행 가능성이 보장되지 않는다. 상태 공간과 상태당 전이 비용이 자원 한도 안에 들어오는지 반드시 계산해야 한다."},{"kind":"question","contentKey":"dsa.core.dynamic-programming.representative-dp-patterns.q4","promptMarkdown":"새 DP를 설계한 뒤 작은 입력에서 완전 탐색으로 구한 답과 비교하는 것이 유용한 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["dsa.core.dynamic-programming.representative-dp-patterns"],"modelAnswer":"작은 입력에서는 완전 탐색으로 신뢰할 수 있는 기준 답을 만들 수 있다. 이를 DP 결과와 비교하면 상태 정보 누락, 전이 분기 누락, 초기값·계산 순서 오류 같은 문제를 반례로 빠르게 찾을 수 있고 공간 최적화 전후의 회귀도 확인할 수 있다.","explanationMarkdown":"완전 탐색은 작은 입력에서는 구현 가능한 독립적인 기준 답 역할을 한다. DP와 서로 다른 방식으로 계산한 결과를 비교하면 상태·전이·초기화 설계 오류를 찾는 데 도움이 된다."}]
+[
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.overlapping-subproblems.q1",
+    "promptMarkdown": "단순 재귀 `fib(5)`에서 `fib(3)`이 여러 호출 경로에 반복해서 나타나는 현상을 가장 정확히 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.overlapping-subproblems"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "중복 부분 문제(Overlapping Subproblems)",
+        "displayOrder": 0,
+        "rationaleMarkdown": "서로 다른 재귀 경로가 같은 상태 `fib(3)`을 다시 계산한다. 이렇게 같은 부분 문제가 반복되는 성질을 중복 부분 문제라고 한다."
+      },
+      {
+        "key": "B",
+        "content": "각 재귀 호출이 서로 독립적인 분할 정복 부분 문제다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "부분 문제가 서로 독립적이라면 같은 상태를 반복해서 계산하지 않는다. 피보나치 재귀에서는 같은 인자 값의 호출이 여러 경로에 다시 나타난다."
+      },
+      {
+        "key": "C",
+        "content": "최적 부분 구조(Optimal Substructure)가 있다는 뜻이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "최적 부분 구조는 전체 최적해를 부분 문제의 최적해로 구성할 수 있는 성질이다. 같은 부분 문제가 반복되는 현상과는 다른 개념이다."
+      },
+      {
+        "key": "D",
+        "content": "메모이제이션을 적용하면 모든 재귀 호출이 사라진다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "메모이제이션은 이미 계산한 상태의 결과를 재사용하지만 처음 계산하는 상태에 대한 재귀 호출까지 없애지는 않는다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "서로 다른 재귀 경로에서 동일한 상태를 다시 계산하므로 중복 부분 문제가 존재한다. 이런 중복 계산을 메모이제이션이나 테이블 방식으로 줄이는 것이 동적 계획법의 핵심 이점 중 하나다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.overlapping-subproblems.q2",
+    "promptMarkdown": "`solve(index=4, capacity=10)`과 `solve(index=4, capacity=3)`을 같은 메모 키 `4`로 저장하면 안 되는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.overlapping-subproblems"
+    ],
+    "modelAnswer": "남은 용량이 다르면 이후 선택 가능한 항목과 최적값이 달라질 수 있으므로 두 호출은 서로 다른 부분 문제다. 메모 키에는 결과를 결정하는 모든 상태 변수가 포함되어야 한다.",
+    "explanationMarkdown": "`index`만 키에 넣으면 서로 다른 남은 용량의 결과를 같은 상태로 취급하게 된다. 그 결과 한 상태의 답을 다른 상태에서 잘못 재사용할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.overlapping-subproblems.q3",
+    "promptMarkdown": "재귀 호출 경로는 매우 많지만 서로 다른 상태가 `N×W`개뿐인 문제에 메모이제이션을 적용했다. 시간 복잡도를 추정할 때 전체 호출 트리 크기보다 무엇을 기준으로 보는 것이 적절한가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.overlapping-subproblems"
+    ],
+    "modelAnswer": "실제로 계산하는 서로 다른 상태 수와 각 상태에서 수행하는 전이 수를 기준으로 분석한다. 이미 계산한 상태를 다시 방문하면 저장된 값을 재사용하므로 전체 재귀 호출 트리의 노드 수가 실제 계산량과 같지 않다.",
+    "explanationMarkdown": "메모이제이션 이후의 핵심 비용은 중복 호출 횟수 자체가 아니라 고유한 상태를 몇 개 계산하며 각 상태에서 얼마나 많은 전이를 검사하는지에 달려 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.optimal-substructure.q1",
+    "promptMarkdown": "최적 부분 구조(Optimal Substructure)를 가장 정확히 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.optimal-substructure"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 재귀 호출이 서로 다른 상태여야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "상태가 반복되는지는 중복 부분 문제에 관한 조건이다. 최적 부분 구조와는 별개의 성질이다."
+      },
+      {
+        "key": "B",
+        "content": "전체 최적해를 적절히 정의한 부분 문제의 최적해로 구성할 수 있다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "작은 부분 문제의 최적해를 이용해 더 큰 문제의 최적해를 구성할 수 있는 성질이 최적 부분 구조다."
+      },
+      {
+        "key": "C",
+        "content": "항상 탐욕 선택 하나만 고르면 된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "최적 부분 구조가 있다고 해서 탐욕 선택이 자동으로 안전해지는 것은 아니다. 동적 계획법은 여러 선택의 결과를 비교할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "테이블을 2차원으로 만들면 자동으로 성립한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "테이블의 차원은 상태 표현 방식일 뿐 문제의 수학적 구조를 바꾸지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "최적 부분 구조는 전체 문제의 최적해가 적절한 부분 문제의 최적해를 이용해 구성될 수 있다는 성질이다. 상태와 전이가 이 구조를 올바르게 표현해야 점화식이 성립한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.optimal-substructure.q2",
+    "promptMarkdown": "최단 경로 A→B→C→D에서 B→D 부분보다 더 짧은 경로가 존재한다면 원래 A→D 경로가 최단일 수 없는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.optimal-substructure"
+    ],
+    "modelAnswer": "원래 경로의 B→D 구간을 더 짧은 경로로 교체하면 A→B 구간은 그대로 둔 채 A→D 전체 비용을 더 줄일 수 있다. 따라서 원래 경로가 최단이었다는 가정과 모순된다.",
+    "explanationMarkdown": "전체 최단 경로 안의 부분 경로도 해당 두 정점 사이에서 최단이어야 한다. 그렇지 않으면 그 부분만 더 짧은 경로로 바꿔 전체 경로를 개선할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.optimal-substructure.q3",
+    "promptMarkdown": "현재 정점만 DP 상태로 저장한 경로 문제에서 이미 방문한 정점 집합에 따라 이후 가능한 이동이 달라진다. 왜 최적 부분 구조를 그 상태에 바로 적용할 수 없는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.optimal-substructure"
+    ],
+    "modelAnswer": "같은 현재 정점이라도 방문한 정점 집합이 다르면 이후 선택 가능한 이동이 달라져 같은 부분 문제라고 볼 수 없다. 이후의 답을 결정하는 데 방문 정보가 필요하다면 상태에 포함하거나 다른 모델을 사용해야 한다.",
+    "explanationMarkdown": "상태는 앞으로의 결과를 결정하는 정보를 충분히 담아야 한다. 필요한 정보를 빠뜨리면 서로 다른 부분 문제를 같은 상태로 합쳐 잘못된 결과를 재사용할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.memoization.q1",
+    "promptMarkdown": "메모이제이션의 기본 계산 방식을 가장 정확히 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.memoization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "하향식으로 호출하지만 계산 결과를 상태별로 저장하지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "결과를 저장하지 않으면 같은 상태가 다시 등장할 때 중복 계산을 피할 수 없다."
+      },
+      {
+        "key": "B",
+        "content": "가능한 모든 상태를 시작 상태부터 반드시 먼저 계산한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "가능한 상태를 의존 순서에 따라 미리 채우는 방식은 일반적인 테이블 방식에 가깝다."
+      },
+      {
+        "key": "C",
+        "content": "목표 상태에서 필요한 상태를 하향식으로 계산하고 결과를 상태별로 저장한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "메모이제이션은 필요한 상태를 재귀적으로 계산하고 결과를 저장해 같은 상태의 재계산을 막는다."
+      },
+      {
+        "key": "D",
+        "content": "호출 깊이만 캐시 키로 사용한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "같은 깊이에 서로 다른 부분 문제가 존재할 수 있으므로 호출 깊이만으로는 상태를 올바르게 구분할 수 없다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "메모이제이션은 목표 상태에서 필요한 부분 문제를 하향식으로 계산하고 상태별 결과를 저장한다. 그래서 실제로 도달하지 않는 상태는 계산하지 않을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.memoization.q2",
+    "promptMarkdown": "정상적인 DP 결과가 0일 수 있는데 `memo[state] == 0`을 미계산 상태 표시로 사용했다. 어떤 문제가 생길 수 있는가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.memoization"
+    ],
+    "modelAnswer": "실제로 계산된 결과 0과 아직 계산하지 않은 상태를 구분할 수 없다. 그 결과 이미 계산한 상태를 반복 계산하거나 잘못된 분기를 할 수 있으므로 별도의 방문 여부나 `UNCOMPUTED` 같은 구분 가능한 값을 사용해야 한다.",
+    "explanationMarkdown": "미계산 상태를 나타내는 값은 정상 결과와 충돌하지 않아야 한다. 값의 범위상 충돌할 수 있다면 별도 플래그나 명시적인 상태 표현이 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.memoization.q3",
+    "promptMarkdown": "전체 상태 수는 매우 크지만 목표 상태에서 실제로 도달하는 상태가 5%뿐이고 재귀 깊이는 안전하다. 전체 테이블을 채우는 방식보다 메모이제이션이 유리할 수 있는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.memoization"
+    ],
+    "modelAnswer": "메모이제이션은 목표 상태에서 실제로 필요한 상태만 계산하므로 도달하지 않는 나머지 상태를 건너뛸 수 있다. 다만 상태 조회 비용과 재귀 호출 오버헤드는 별도로 비교해야 한다.",
+    "explanationMarkdown": "두 방식이 같은 점화식을 사용해도 실제 계산하는 상태 수가 다를 수 있다. 희소하게 도달하는 상태 공간에서는 필요한 상태만 계산하는 메모이제이션이 유리할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.memoization.q4",
+    "promptMarkdown": "`solve(A)`를 계산하는 도중 아직 완료되지 않은 같은 `solve(A)`에 다시 진입한다. 단순히 캐시 미스로만 처리하면 어떤 문제가 생기며 무엇을 의심해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.memoization"
+    ],
+    "modelAnswer": "완료되지 않은 동일 상태로 계속 재진입하면 무한 재귀가 발생할 수 있다. `COMPUTING` 같은 진행 중 상태를 별도로 두어 순환 의존을 감지하고, 점화식이나 상태 정의가 순환 없는 계산 구조를 만드는지 재검토해야 한다.",
+    "explanationMarkdown": "완료된 결과만 저장하는 일반적인 메모이제이션은 '아직 계산 중'인 상태와 '처음 방문한 상태'를 구분하지 못한다. 진행 중 상태를 추적하면 순환 의존을 감지하고 점화식 또는 상태 모델 문제로 처리할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.tabulation.q1",
+    "promptMarkdown": "테이블 방식에서 `dp[i]`가 `dp[i-1]`, `dp[i-2]`를 참조한다면 일반적으로 적절한 계산 방향은?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.tabulation"
+    ],
+    "acceptedAnswers": [
+      "작은 i에서 큰 i로",
+      "오름차순",
+      "bottom-up으로 i를 증가시킨다",
+      "상향식으로 i를 증가시킨다"
+    ],
+    "explanationMarkdown": "현재 상태가 더 작은 인덱스의 상태에 의존하므로 필요한 이전 상태를 먼저 계산해야 한다. 작은 `i`부터 채우면 `dp[i]`를 계산할 때 두 값이 이미 준비되어 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.tabulation.q2",
+    "promptMarkdown": "메모이제이션과 테이블 방식이 같은 점화식을 계산할 수 있음에도 실행 방식이 어떻게 다른지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.tabulation"
+    ],
+    "modelAnswer": "메모이제이션은 목표 상태에서 필요한 상태를 하향식으로 계산하고, 테이블 방식은 기저 상태부터 의존성이 충족되는 순서로 상향식 계산을 진행한다. 같은 점화식을 사용해도 실제 방문하는 상태와 호출 방식이 달라질 수 있다.",
+    "explanationMarkdown": "차이는 점화식 자체보다 계산 순서와 실제 방문 상태에 있다. 메모이제이션은 필요한 상태만 방문할 수 있고, 테이블 방식은 정한 순서에 따라 상태를 차례로 채운다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.tabulation.q3",
+    "promptMarkdown": "`dp[l][r]`이 더 짧은 구간들의 값에 의존하는데 `l`을 0부터 증가시키고 `r`은 임의 순서로 계산했다. 아직 계산하지 않은 초기값을 읽을 수 있는 이유와 필요한 계산 순서를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.tabulation"
+    ],
+    "modelAnswer": "현재 구간이 참조하는 더 짧은 구간이 아직 계산되지 않았을 수 있기 때문이다. 구간 길이가 짧은 상태부터 긴 상태 순서처럼 모든 선행 상태가 먼저 계산되는 순서를 사용해야 한다.",
+    "explanationMarkdown": "테이블 방식에서는 전이가 참조하는 상태가 현재 상태보다 먼저 계산되어 있어야 한다. 구간 DP라면 보통 구간 길이를 기준으로 계산 순서를 정한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.state-definition.q1",
+    "promptMarkdown": "`dp[i][w]`를 0/1 배낭 문제의 상태로 정의할 때 가장 정확한 의미는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.state-definition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "전체 입력과 무관하게 임의로 정한 캐시 키",
+        "displayOrder": 0,
+        "rationaleMarkdown": "DP 상태는 부분 문제의 제약과 입력 범위를 표현해야 한다. 임의의 키만으로는 어떤 문제의 답인지 알 수 없다."
+      },
+      {
+        "key": "B",
+        "content": "i번째 물건 하나의 가치만 저장한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "물건 하나의 가치만으로는 앞의 물건들을 어떻게 고려했는지와 용량 제약을 표현할 수 없다."
+      },
+      {
+        "key": "C",
+        "content": "항상 선택한 물건의 개수만 저장한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`i`와 `w`는 고려할 물건 범위와 용량 제약을 나타내므로 상태 값이 선택한 개수로 고정되는 것은 아니다."
+      },
+      {
+        "key": "D",
+        "content": "앞의 i개 물건을 고려하고 용량이 w일 때 얻을 수 있는 최대 가치",
+        "displayOrder": 3,
+        "rationaleMarkdown": "이 의미를 사용하면 i번째 물건을 선택하는 경우와 선택하지 않는 경우를 이전 상태로 표현할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`dp[i][w]`는 앞의 `i`개 물건만 사용할 수 있고 용량 한도가 `w`일 때 얻을 수 있는 최대 가치로 정의할 수 있다. 상태 의미가 명확해야 전이와 초기값도 일관되게 설계할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.state-definition.q2",
+    "promptMarkdown": "0/1 배낭 문제에서 상태를 `dp[i]` 하나로 줄이고 용량 정보를 제거하면 왜 정확성이 깨질 수 있는가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.state-definition"
+    ],
+    "modelAnswer": "같은 `i`라도 남은 용량에 따라 이후 선택 가능한 물건과 얻을 수 있는 최적값이 달라진다. 용량 정보를 제거하면 서로 다른 부분 문제를 같은 상태로 합치게 된다.",
+    "explanationMarkdown": "상태에는 앞으로의 선택과 결과를 결정하는 정보가 들어 있어야 한다. 용량이 결과를 바꾸는 문제라면 이를 생략한 상태는 충분하지 않다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.state-definition.q3",
+    "promptMarkdown": "답이 `(index, capacity)`만으로 충분히 결정되는데 지금까지의 전체 선택 이력까지 상태 키에 포함했다. 결과의 정확성은 유지될 수 있어도 성능상 어떤 문제가 생길 수 있는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.state-definition"
+    ],
+    "modelAnswer": "앞으로의 부분 문제가 같은 경우에도 과거 선택 이력이 다르다는 이유로 서로 다른 상태가 만들어진다. 중복 상태를 합치지 못해 상태 수와 메모리 사용량이 크게 늘고 메모이제이션의 이점이 줄어든다.",
+    "explanationMarkdown": "상태에는 답을 결정하는 데 필요한 정보만 포함하는 것이 중요하다. 불필요한 과거 이력은 같은 미래 문제를 여러 상태로 쪼개 상태 공간을 키운다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.state-definition.q4",
+    "promptMarkdown": "`N=500`, `W=100,000`인 `dp[i][w]` 상태를 전부 저장하려 한다. 대략 몇 개의 상태가 필요한지 계산하고 실제 자원 한도를 검토해야 하는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.state-definition"
+    ],
+    "modelAnswer": "상태 수는 대략 `500 × 100,000 = 50,000,000`개다. 상태 하나가 차지하는 바이트 수와 각 상태에서 수행하는 전이 비용을 곱하면 메모리와 실행 시간이 매우 커질 수 있으므로 점화식의 정확성과 실제 실행 가능성을 별도로 확인해야 한다.",
+    "explanationMarkdown": "점화식이 논리적으로 맞아도 상태 수가 너무 많으면 메모리나 시간 한도를 초과할 수 있다. 상태 수와 상태당 저장 비용, 상태당 전이 비용을 함께 계산해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.transition.q1",
+    "promptMarkdown": "0/1 배낭 문제의 `dp[i][w]`에서 i번째 물건을 선택하지 않는 분기가 참조하는 대표 상태는?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.transition"
+    ],
+    "acceptedAnswers": [
+      "dp[i-1][w]",
+      "dp[i - 1][w]"
+    ],
+    "explanationMarkdown": "i번째 물건을 선택하지 않으면 용량은 그대로이고 고려 대상만 앞의 `i-1`개 물건으로 줄어드므로 `dp[i-1][w]`를 참조한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.transition.q2",
+    "promptMarkdown": "i번째 물건의 가중치가 3, 가치가 5이고 `w=7`일 때 선택 분기가 참조하는 이전 상태와 더하는 값을 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.transition"
+    ],
+    "acceptedAnswers": [
+      "dp[i-1][4] + 5",
+      "dp[i - 1][4] + 5",
+      "dp[i - 1][7 - 3] + 5"
+    ],
+    "explanationMarkdown": "i번째 물건을 선택하면 남은 용량은 `7-3=4`가 된다. 0/1 제약을 지키려면 이전 물건 단계의 `dp[i-1][4]`에 현재 물건의 가치 5를 더한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.transition.q3",
+    "promptMarkdown": "0/1 배낭 문제의 전이에서 선택 분기가 `dp[i][w-weight[i]]`를 참조하도록 만들었다. 어떤 제약 위반이 생길 수 있는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.transition"
+    ],
+    "modelAnswer": "같은 `i` 행에서 이번 물건을 사용해 방금 갱신한 값을 다시 참조하면 i번째 물건을 여러 번 선택한 효과가 생길 수 있다. 2차원 정의라면 이전 단계 `i-1`의 상태를 참조해야 한다.",
+    "explanationMarkdown": "0/1 배낭 문제에서는 각 물건을 최대 한 번만 사용할 수 있다. 같은 행의 갱신값을 다시 읽으면 현재 물건을 중복 사용해 0/1 제약을 깨뜨릴 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.transition.q4",
+    "promptMarkdown": "최소 비용 DP에서 도달할 수 없는 이전 상태를 비용 0으로 전이 후보에 포함했다. 결과가 왜 잘못될 수 있는지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.transition"
+    ],
+    "modelAnswer": "실제로 도달할 수 없는 분기가 비용 0인 정상 경로처럼 최소값으로 선택될 수 있다. 도달 불가능 상태는 `INF`나 별도 센티널로 표현하고 유효한 이전 상태만 전이 후보에 포함해야 한다.",
+    "explanationMarkdown": "도달 불가능 상태를 정상 비용과 구분하지 않으면 존재하지 않는 경로가 가장 좋은 후보로 선택될 수 있다. 전이 전에 도달 가능 여부를 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.initialization-order.q1",
+    "promptMarkdown": "최소 비용 DP에서 아직 도달할 수 없는 상태의 일반적인 초기 표현으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.initialization-order"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "정상 경로와 같은 작은 유한 비용",
+        "displayOrder": 0,
+        "rationaleMarkdown": "도달할 수 없는 상태가 정상 경로보다 더 좋아 보이면 잘못된 전이에 선택될 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "모든 상태를 무조건 0으로 둔다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "비용 0은 실제로 가능한 정상 결과일 수 있어 도달 불가능 상태와 구분되지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "항상 -1을 실제 최적 비용으로 사용한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`-1`이 문제의 정상 값이 될 수 있는지에 따라 충돌할 수 있으므로 무조건 사용할 수 있는 표현은 아니다."
+      },
+      {
+        "key": "D",
+        "content": "정상 비용과 구분되는 `INF` 또는 별도의 도달 불가능 상태",
+        "displayOrder": 3,
+        "rationaleMarkdown": "정상 결과와 충돌하지 않는 값이나 별도 상태를 사용해야 최소값 계산에서 존재하지 않는 경로가 선택되지 않는다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "도달할 수 없는 상태는 정상 비용과 명확히 구분해야 한다. 최소 비용 문제에서는 `INF` 같은 센티널이나 별도 상태를 사용하고, 연산 시 오버플로가 발생하지 않도록 함께 처리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.initialization-order.q2",
+    "promptMarkdown": "동전 `[3]`만 있을 때 금액 0, 1, 2, 3의 최소 동전 수 상태를 `0, INF, INF, 1`처럼 두는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.initialization-order"
+    ],
+    "modelAnswer": "금액 0은 동전을 하나도 사용하지 않고 만들 수 있으므로 비용 0이다. 금액 1과 2는 만들 수 없어 도달 불가능 상태로 표시하고, 금액 3은 동전 하나로 만들 수 있으므로 1이 된다.",
+    "explanationMarkdown": "도달 불가능한 금액을 0으로 두면 실제 비용 0인 상태와 구분할 수 없어 잘못된 전이가 생긴다. 초기값은 각 상태의 의미와 도달 가능성을 반영해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.initialization-order.q3",
+    "promptMarkdown": "0/1 배낭 문제를 1차원 `dp`로 줄인 뒤 용량을 작은 값에서 큰 값으로 순회했더니 물건 하나가 여러 번 사용됐다. 계산 순서가 왜 원인인지 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.initialization-order"
+    ],
+    "modelAnswer": "작은 용량부터 갱신하면 이번 물건으로 방금 갱신한 작은 용량의 값을 같은 순회에서 더 큰 용량이 다시 읽을 수 있다. 각 물건을 한 번만 사용하려면 용량을 큰 값에서 작은 값으로 순회해야 한다.",
+    "explanationMarkdown": "1차원 배열에서는 이전 행과 현재 행이 같은 배열을 공유한다. 역순 갱신을 해야 현재 물건으로 갱신한 값을 같은 물건의 다음 전이에서 다시 사용하는 일을 막을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.space-optimization.q1",
+    "promptMarkdown": "`dp[i] = dp[i-1] + dp[i-2]`만 필요한 피보나치 계산에서 다음 값을 구하기 위해 보관해야 하는 최소 이전 상태 수는?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.space-optimization"
+    ],
+    "acceptedAnswers": [
+      "2개",
+      "두 개",
+      "2"
+    ],
+    "explanationMarkdown": "다음 값을 계산할 때 직전 두 값만 필요하므로 더 오래된 상태는 보관하지 않아도 된다. 다만 갱신 순서 때문에 아직 필요한 값을 먼저 덮어쓰지 않도록 주의해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.space-optimization.q2",
+    "promptMarkdown": "2차원 배낭 DP에서 현재 행을 계산할 때 이전 행만 참조한다면 저장 공간을 어떻게 줄일 수 있는가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.space-optimization"
+    ],
+    "modelAnswer": "전체 `N×W` 테이블을 보관하지 않고 이전 행과 현재 행 두 개만 유지해 `O(W)` 공간으로 줄일 수 있다. 한 배열까지 줄이려면 갱신 순서가 전이의 의미를 보존하는지도 확인해야 한다.",
+    "explanationMarkdown": "앞으로 참조하지 않을 오래된 행은 버릴 수 있다. 공간을 줄일 때는 필요한 이전 값이 현재 계산으로 덮어써지지 않는지 함께 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.space-optimization.q3",
+    "promptMarkdown": "최대값만 필요할 때는 행을 순환해서 저장하는 방식으로 충분했지만, 이후에는 실제로 선택한 물건 목록도 반환해야 한다. 기존 공간 최적화를 그대로 유지하기 어려울 수 있는 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.space-optimization"
+    ],
+    "modelAnswer": "행을 덮어쓰면 어떤 선택을 거쳐 최적값에 도달했는지 역추적할 과거 정보가 사라질 수 있다. 선택 경로 복원이 필요하면 이전 상태나 선택 정보를 별도로 저장하거나 필요한 범위의 테이블을 보존해야 한다.",
+    "explanationMarkdown": "최적값 하나를 계산하는 데 필요한 정보와 최적 선택 경로를 복원하는 데 필요한 정보는 다를 수 있다. 요구사항이 바뀌면 공간 최적화가 지운 정보를 다시 필요로 할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.space-optimization.q4",
+    "promptMarkdown": "DP 공간을 `O(NW)`에서 `O(W)`로 줄였지만 계산하는 상태 수와 전이 수는 동일하다. 시간 복잡도도 자동으로 줄어드는가?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.space-optimization"
+    ],
+    "acceptedAnswers": [
+      "아니다",
+      "아니오",
+      "no",
+      "시간은 동일한 O(NW)일 수 있고 공간만 O(W)로 줄어든다"
+    ],
+    "explanationMarkdown": "저장하는 행 수만 줄이고 계산하는 상태와 전이 수가 그대로라면 시간 복잡도는 `O(NW)`로 유지될 수 있다. 줄어드는 것은 공간 복잡도다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.representative-dp-patterns.q1",
+    "promptMarkdown": "격자에서 `(r,c)`까지의 최소 비용이 위 `(r-1,c)`와 왼쪽 `(r,c-1)`에서만 올 수 있다. 이 비용을 저장할 대표적인 DP 상태를 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.representative-dp-patterns"
+    ],
+    "acceptedAnswers": [
+      "dp[r][c]"
+    ],
+    "explanationMarkdown": "`dp[r][c]`를 시작점에서 `(r,c)`까지의 최소 비용으로 정의하면 위와 왼쪽 상태의 최소값으로 전이를 만들 수 있다. 상태 의미를 먼저 정해야 초기값과 계산 순서도 결정된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.representative-dp-patterns.q2",
+    "promptMarkdown": "같은 격자 문제에 `이전 이동 방향과 같은 방향이면 할인` 규칙이 추가됐다. 단순히 `(r,c)`만 상태로 사용하면 부족할 수 있는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.representative-dp-patterns"
+    ],
+    "modelAnswer": "같은 좌표에 도착해도 이전 이동 방향에 따라 다음 이동 비용이 달라질 수 있다. 따라서 좌표만으로 이후의 답이 결정되지 않으므로 이전 방향도 상태에 포함해 서로 다른 부분 문제를 구분해야 한다.",
+    "explanationMarkdown": "상태는 앞으로의 비용을 결정하는 정보를 모두 포함해야 한다. 이전 방향이 다음 비용에 영향을 준다면 같은 좌표라도 서로 다른 상태로 다뤄야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.representative-dp-patterns.q3",
+    "promptMarkdown": "어떤 문제를 배낭 문제 형태의 DP로 모델링했더니 상태가 `N×10^12`개가 된다. 점화식이 논리적으로 맞더라도 그대로 구현하면 안 되는 이유와 다음 판단을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.representative-dp-patterns"
+    ],
+    "modelAnswer": "상태 수가 너무 커 실제 메모리와 시간 한도를 초과할 수 있다. 입력 제약을 다시 보고 실제로 도달하는 상태만 저장하는 방법, 다른 상태 정의나 알고리즘, 문제에서 허용한다면 근사 또는 탐욕적 접근 등을 검토해야 한다.",
+    "explanationMarkdown": "DP는 점화식의 정확성만으로 실행 가능성이 보장되지 않는다. 상태 공간과 상태당 전이 비용이 자원 한도 안에 들어오는지 반드시 계산해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.representative-dp-patterns.q4",
+    "promptMarkdown": "새 DP를 설계한 뒤 작은 입력에서 완전 탐색으로 구한 답과 비교하는 것이 유용한 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.representative-dp-patterns"
+    ],
+    "modelAnswer": "작은 입력에서는 완전 탐색으로 신뢰할 수 있는 기준 답을 만들 수 있다. 이를 DP 결과와 비교하면 상태 정보 누락, 전이 분기 누락, 초기값·계산 순서 오류 같은 문제를 반례로 빠르게 찾을 수 있고 공간 최적화 전후의 회귀도 확인할 수 있다.",
+    "explanationMarkdown": "완전 탐색은 작은 입력에서는 구현 가능한 독립적인 기준 답 역할을 한다. DP와 서로 다른 방식으로 계산한 결과를 비교하면 상태·전이·초기화 설계 오류를 찾는 데 도움이 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.initialization-order.q5",
+    "promptMarkdown": "0/1 배낭 문제(각 물건을 최대 1번만 선택)에서 1차원 DP 배열 `dp[w]`(무게 `w`에서의 최대 가치)를 갱신할 때, 아래와 같이 `w`를 작은 값에서 큰 값으로 순회하면 발생하는 버그는?\n\n```java\nfor (int i = 0; i < n; i++) {\n    for (int w = weight[i]; w <= W; w++) { // 오름차순 순회\n        dp[w] = Math.max(dp[w], dp[w - weight[i]] + value[i]);\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.initialization-order"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "같은 물건 `i`를 이미 반영한 `dp[w - weight[i]]`를 같은 루프 안에서 다시 참조하게 되어, 0/1 배낭이 아니라 무한 배낭(Unbounded Knapsack, 물건 중복 선택)이 되어 버린다. 0/1 배낭은 `w`를 `W`에서 `weight[i]`로 내림차순 순회해야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "DP 계산 순서는 상태 의존성(이전 단계 값 vs 현재 단계 값)을 지켜야 한다. 1차원 압축 0/1 배낭에서는 역순 순회해야 이전 물건까지의 `dp` 값만 참조한다."
+      },
+      {
+        "key": "B",
+        "content": "`ArrayIndexOutOfBoundsException`이 항상 발생한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`w`가 `weight[i]`부터 `W`까지 돌므로 인덱스 자체는 유효하며, 진짜 버그는 동일 물건 중복 사용이다."
+      },
+      {
+        "key": "C",
+        "content": "오름차순으로 돌면 시간 복잡도가 `O(N^2 W)`로 악화된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "시간 복잡도는 동일하게 `O(NW)`이며, 계산 순서 때문에 점화식 의미가 달라져 오답이 나온다."
+      },
+      {
+        "key": "D",
+        "content": "오름차순과 내림차순은 항상 정확히 같은 결과를 낸다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "오름차순은 같은 물건을 여러 번 담는 Unbounded Knapsack, 내림차순은 최대 1번 담는 0/1 Knapsack 결과를 낸다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "DP에서 반복문 순서는 단순 취향이 아니라 '이미 갱신된 현재 행을 쓸지, 이전 행 값을 쓸지'를 결정하는 정확성 조건이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.optimal-substructure.q5",
+    "promptMarkdown": "가중치 그래프에서 '최단 단순 경로(Shortest Path, 음수 사이클 없음)'에는 최적 부분 구조(Optimal Substructure)가 성립하지만, '최장 단순 경로(Longest Simple Path)'에는 일반적으로 최적 부분 구조가 성립하지 않는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.optimal-substructure"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "최장 단순 경로는 두 부분 경로가 정점을 공유하지 않아야 한다는 상호 의존 제약이 있어, 부분 문제의 최적해를 독립적으로 결합하면 정점이 중복되어 유효한 단순 경로가 깨질 수 있기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "최적 부분 구조는 부분 문제들이 서로 독립적이어서 부분 최적해를 합쳤을 때 전체 최적해가 구성되어야 성립한다. 최장 단순 경로는 정점 비중복 제약 때문에 부분 문제가 독립이 아니다."
+      },
+      {
+        "key": "B",
+        "content": "최장 경로는 덧셈 대신 곱셈으로 길이를 계산하기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "경로 길이는 최단 경로와 최장 경로 모두 동일하게 간선 가중치의 합으로 정의된다."
+      },
+      {
+        "key": "C",
+        "content": "그래프에는 정점이 최대 10개까지만 존재할 수 있기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "정점 개수 제한과는 무관하며, 정점 중복 금지 제약 때문에 부분 문제가 독립적이지 않다는 점이 본질이다."
+      },
+      {
+        "key": "D",
+        "content": "DAG(비순환 방향 그래프)에서도 최장 경로는 DP로 풀 수 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "DAG에는 사이클이 없어 정점 재방문이 원천 불가능하므로 위상 정렬 + DP로 최장 경로를 `O(V + E)`에 풀 수 있다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "DP 적용을 위해서는 '중복 부분 문제'뿐 아니라 부분 문제들이 독립적으로 결합 가능한 '최적 부분 구조'가 성립하는지 반드시 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.overlapping-subproblems.q5",
+    "promptMarkdown": "분할 정복(병합 정렬)과 동적 계획법(피보나치·LCS)을 구분 짓는 가장 결정적인 성질은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.overlapping-subproblems"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "DP는 항상 `O(N)` 시간이고 분할 정복은 항상 `O(N^2)` 시간이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "시간 복잡도는 문제 상태 수와 전이 비용에 따라 달라지며 고정되어 있지 않다."
+      },
+      {
+        "key": "B",
+        "content": "병합 정렬의 부분 문제(왼쪽 절반·오른쪽 절반)는 서로 겹치지 않지만(disjoint), DP 문제는 동일한 부분 상태가 반복 호출되므로(Overlapping Subproblems) 결과를 캐싱해 지수 시간을 다항 시간으로 줄일 수 있다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "같은 부분 문제가 여러 번 등장하지 않는다면 메모이제이션 테이블에 저장해도 재사용될 일이 없어 DP의 이점이 없다."
+      },
+      {
+        "key": "C",
+        "content": "DP는 항상 재귀를 금지하고 병합 정렬은 항상 반복문을 금지한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "DP도 하향식 메모이제이션 재귀로 구현할 수 있고 병합 정렬도 상향식 반복문으로 구현할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "병합 정렬은 배열을 쓰고 DP는 트리만 쓴다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "DP는 배열·격자·문자열·트리·비트마스크 등 다양한 상태 공간에 적용된다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "동일한 상태가 반복 계산되는 중복 부분 문제(Overlapping Subproblems)가 존재할 때 DP 메모이제이션/테이블화가 빛을 발한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.representative-dp-patterns.q5",
+    "promptMarkdown": "길이 `N = 100,000` 배열에서 최장 증가 부분 수열(LIS)의 길이를 구해야 한다. `O(N^2)` 기본 DP 대신 `O(N log N)`으로 푸는 핵심 기법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.representative-dp-patterns"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "이중 `for` 문에 `break` 한 줄만 넣으면 항상 `O(N log N)`이 된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "단순 `break`는 최악 케이스의 `O(N^2)` 복잡도를 바꾸지 못한다."
+      },
+      {
+        "key": "B",
+        "content": "해시맵에 모든 원소를 넣고 크기를 반환한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "원소 종류 수와 최장 증가 부분 수열의 길이는 전혀 다른 값이다."
+      },
+      {
+        "key": "C",
+        "content": "`tails[len]`에 '길이 `len`인 증가 부분 수열의 가능한 최소 마지막 값'을 유지하면 `tails`가 항상 오름차순 정렬 상태를 유지하므로, 각 원소마다 이진 탐색(`lower_bound`)으로 갱신 위치를 `O(log N)`에 찾는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "상태 정의를 '인덱스 `i`에서 끝나는 최대 길이'에서 '길이 `len`을 만드는 최소 끝값'으로 바꾸면 단조성이 생겨 이진 탐색을 결합할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "배열을 먼저 오름차순 정렬한 뒤 중복을 제거한 길이를 반환한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "부분 수열은 원래 배열의 상대적 순서를 유지해야 하므로 배열을 통째로 정렬하면 원래 순서 정보가 파괴된다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "대표 DP 패턴(LIS, LCS, 배낭, 구간 DP, 트리 DP)에서는 상태 정의를 바꾸거나 이진 탐색·단조 큐를 결합해 복잡도를 한 차수 낮출 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.space-optimization.q5",
+    "promptMarkdown": "두 문자열(길이 `N = 10,000`, `M = 10,000`)의 최장 공통 부분 수열(LCS) **길이만** 구할 때, `int[N+1][M+1]`(약 400MB) 대신 공간 복잡도를 `O(min(N, M))`으로 줄일 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.space-optimization"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 문자열이 길어도 LCS 길이는 항상 10 이하이기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "LCS 길이는 최대 `min(N, M)`까지 커질 수 있으며, 공간 절감 이유는 행 의존성 국소성이다."
+      },
+      {
+        "key": "B",
+        "content": "롤링 배열을 쓰면 실제 LCS 문자열 자체도 추가 작업 없이 그대로 역추적할 수 있다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "이전 행들을 덮어쓰므로 단순 롤링 배열만으로는 경로 역추적이 불가능하다(복원이 필요하면 전체 테이블이나 Hirschberg 분할 정복을 쓴다)."
+      },
+      {
+        "key": "C",
+        "content": "`int` 대신 `double` 배열을 쓰면 메모리가 절반으로 줄어든다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`double`은 8바이트로 `int`(4바이트)보다 오히려 메모리를 2배 더 쓴다."
+      },
+      {
+        "key": "D",
+        "content": "`dp[i][j]` 계산에는 오직 직전 행 `dp[i-1][...]`과 현재 행 `dp[i][j-1]`만 필요하므로, 전체 2차원 테이블 대신 2개 행(또는 1개 행 + 대각선 임시 변수 `prevDiag`)만 유지하면 된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "전이 의존성이 직전 행(`i-1`)에만 국한되므로 롤링 배열(Rolling Array)로 공간을 `O(NM)`에서 `O(min(N, M))`으로 크게 줄일 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "DP 전이가 직전 1~2개 단계에만 의존하고 최적값만 필요하다면 롤링 배열로 공간 복잡도를 한 차수 줄일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.tabulation.q5",
+    "promptMarkdown": "하향식 메모이제이션(Top-Down Memoization) 대비 상향식 테이블화(Bottom-Up Tabulation)의 실무적 장점으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.tabulation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "상향식 Tabulation은 점화식 없이도 동작한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "두 방식 모두 동일한 상태 정의와 점화식(Transition)에 기반한다."
+      },
+      {
+        "key": "B",
+        "content": "재귀 호출 스택을 쓰지 않아 깊은 입력(`N = 100,000` 등)에서도 `StackOverflowError` 위험이 없고, 반복문 순회로 캐시 지역성이 좋으며 롤링 배열 공간 최적화를 적용하기 쉽다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Java 기본 스레드 스택 크기는 제한적이어서 `N = 10^5` 선형 재귀는 쉽게 `StackOverflowError`가 난다. 상향식 Tabulation은 이를 피하고 공간 압축에도 유리하다."
+      },
+      {
+        "key": "C",
+        "content": "상향식 Tabulation은 도달하지 않는 희소 상태까지 건너뛰므로 항상 하향식보다 적은 상태를 계산한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "도달 가능한 상태만 필요에 따라(lazy) 계산하는 것은 하향식 메모이제이션의 장점이며, 상향식은 보통 테이블의 모든 상태를 순서대로 채운다."
+      },
+      {
+        "key": "D",
+        "content": "상향식 Tabulation은 기저 조건(Base Case)을 초기화할 필요가 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "상향식에서도 기저 조건 초기화(`dp[0]`, `INF` 등)와 의존성 순서는 반드시 정확히 설정해야 한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Bottom-Up Tabulation은 스택 오버플로 회피·반복문 오버헤드 절감·공간 압축에 강하고, Top-Down Memoization은 복잡한 상태 의존성이나 희소 상태 탐색에 직관적이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.dynamic-programming.transition.q5",
+    "promptMarkdown": "계단 오르기 문제에서 1칸 또는 2칸씩 올라갈 수 있되 '연속 3칸은 밟을 수 없다'는 제약이 추가되었다. `dp[i]`(i번째 계단까지 최대 점수)만으로는 전이가 모호할 때 올바른 상태 확장과 전이 설계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.dynamic-programming.transition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 계단을 밟는 경우만 `O(2^N)` 완전 탐색으로 구하는 것이 유일한 해법이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "연속 횟수를 상태 차원으로 추가하면 `O(N)` DP로 정확히 풀린다."
+      },
+      {
+        "key": "B",
+        "content": "제약을 상태에 포함해 `dp[i][1]`(i번을 연속 1번째로 밟음)과 `dp[i][2]`(i번을 연속 2번째로 밟음)으로 나누어 `dp[i][1] = max(dp[i-2][1], dp[i-2][2]) + score[i]`, `dp[i][2] = dp[i-1][1] + score[i]`로 전이한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "현재 선택의 허용 여부가 '직전에 몇 칸 연속 밟았는가'에 의존하므로, 그 이력 정보를 상태 차원에 추가해야 마르코프 성질(현재 상태만으로 미래 결정)이 성립한다."
+      },
+      {
+        "key": "C",
+        "content": "`dp[i] = max(dp[i-1], dp[i-2]) + score[i]`만 쓰면 연속 3칸 제약이 자동으로 지켜진다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`dp[i-1]`이 이미 2칸 연속 밟은 상태였는지 알 수 없어 3칸 연속 밟는 불법 전이를 막지 못한다."
+      },
+      {
+        "key": "D",
+        "content": "항상 점수가 더 큰 인접 계단만 고르는 그리디 알고리즘이 모든 입력에서 최적해를 보장한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "현재 큰 계단을 밟아 다음 두 큰 계단을 놓치는 반례가 쉽게 존재하므로 그리디가 성립하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "DP 전이가 이전 선택의 제약에 걸려 애매해지면, 의사결정에 필요한 최소 정보를 상태 차원(`dp[i][k]`)으로 명시적으로 끌어올려야 한다."
+  }
+]

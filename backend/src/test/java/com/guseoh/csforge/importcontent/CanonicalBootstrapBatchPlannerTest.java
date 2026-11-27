@@ -28,7 +28,7 @@ class CanonicalBootstrapBatchPlannerTest {
         CanonicalBootstrapPlan plan = planner.plan(source.files());
 
         assertEquals(CanonicalInventory.SOURCE_FILES, plan.sourceFileCount());
-        assertEquals(134, plan.topicCount());
+        assertEquals(CanonicalInventory.TOPICS, plan.topicCount());
         assertEquals(CanonicalInventory.CONCEPTS, plan.conceptCount());
         assertEquals(CanonicalInventory.QUESTIONS, plan.questionCount());
         assertEquals(CanonicalInventory.TOTAL_ITEMS, plan.totalItemCount());

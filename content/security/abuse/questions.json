@@ -1,10 +1,448 @@
 [
-  {"kind":"question","contentKey":"security.core.abuse.ssrf.q1","promptMarkdown":"사용자가 제공한 URL을 백엔드가 가져오는 기능에서 `https://trusted.example@127.0.0.1/admin` 같은 입력을 단순한 `startsWith` 검사로만 막는 것이 위험한 이유는?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.abuse.ssrf"],"modelAnswer":"문자열 접두부와 실제 URL 파서가 해석하는 호스트가 다를 수 있다. URL을 표준 방식으로 파싱한 뒤 스킴·호스트·포트를 허용 목록과 비교하고 DNS 조회와 리다이렉트 후 실제 목적지도 사설 네트워크나 메타데이터 서비스로 바뀌지 않는지 통제해야 한다.","explanationMarkdown":"`https://trusted.example@127.0.0.1/admin`에서 `trusted.example`은 사용자 정보이고 실제 호스트는 `127.0.0.1`이다. 접두부 비교만 하면 내부 주소 요청을 허용할 수 있으므로 URL을 파싱하고 실제 연결 목적지를 검증해야 한다."},
-  {"kind":"question","contentKey":"security.core.abuse.file-path.q1","promptMarkdown":"업로드 파일의 원래 이름 대신 서버가 생성한 저장 키를 쓰는 핵심 설계 원칙을 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.abuse.file-path"],"acceptedAnswers":["표시 이름과 실제 저장 경로를 분리한다","사용자 입력을 저장 경로로 사용하지 않는다","원래 파일 이름과 저장 경로를 분리한다"],"explanationMarkdown":"원래 파일 이름에 경로 구분자나 `..`가 들어가면 저장 위치를 사용자가 바꿀 수 있다. 표시용 이름은 보관하더라도 실제 저장 경로는 서버가 생성한 키로 결정해야 한다."},
-  {"kind":"question","contentKey":"security.core.abuse.rate-limit.q1","promptMarkdown":"단일 로컬 우선 인스턴스에서 로그인 요청 속도 제한을 구현하려고 한다. 여러 인스턴스가 될지도 모른다는 이유만으로 처음부터 Redis 분산 카운터가 필수인가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.abuse.rate-limit"],"choices":[{"key":"A","content":"아니다. 인스턴스가 여러 개로 늘어나도 각 인스턴스가 독립 카운터를 가지면 전역 한도가 자동으로 유지된다.","displayOrder":0,"rationaleMarkdown":"프로세스별 카운터는 각 인스턴스 안에서만 누적되므로 인스턴스가 여러 개면 요청이 분산될 때 전체 한도를 함께 강제하지 못한다. 분산 카운터가 실제로 필요한 규모와 배포 요구가 확인될 때 공유 저장소나 상태 공유를 검토해야 한다."},{"key":"B","content":"아니다. 현재 단일 인스턴스에서만 운영한다면 메모리 기반 속도 제한도 가능하고 실제 분산 한도 요구가 생길 때 공유 상태 관리를 검토한다.","displayOrder":1,"rationaleMarkdown":"단일 인스턴스 운영 범위에서는 프로세스 내 속도 제한으로 요청 빈도를 제한하는 선택이 가능하다. 재시작 후 상태 유지나 여러 인스턴스에 걸친 전역 한도가 제품 요구가 될 때 영속 저장 또는 공유 상태 관리의 필요성을 따로 평가하면 된다."},{"key":"C","content":"그렇다. 로그인 속도 제한 장치 상태는 프로세스 재시작을 견뎌야 하므로 단일 인스턴스에서도 공유 Redis 카운터가 필수다.","displayOrder":2,"rationaleMarkdown":"프로세스 메모리 상태는 재시작 시 사라질 수 있지만, 이것만으로 모든 단일 인스턴스 로그인 제한에 Redis가 필수라고 결론낼 수는 없다. 지속성이 보안·제품 요구인지 먼저 정하고 그 요구에 맞는 저장 범위를 선택해야 한다."},{"key":"D","content":"아니다. IP 기준 제한 하나만 두면 여러 IP에서 이루어지는 계정 공격과 탈취한 자격 증명의 대량 재사용까지 충분히 제어할 수 있다.","displayOrder":3,"rationaleMarkdown":"IP 하나만 기준으로 삼으면 공격자가 주소를 바꾸거나 여러 주소를 사용하는 경우를 충분히 묶지 못하고, 공유 IP 사용자의 정상 로그인을 함께 제한할 수도 있다. 계정·IP·기기 신호와 점진 지연, MFA 등은 위협 모델과 오탐 비용에 맞게 조합해야 한다."}],"correctChoiceKey":"B","explanationMarkdown":"단일 인스턴스에서는 프로세스 안의 카운터로 요청 횟수를 제한할 수 있다. 여러 인스턴스에 걸친 하나의 한도가 필요해질 때 공유 상태가 필요하며, 그 저장소가 반드시 Redis일 이유는 없다."},
-  {"kind":"question","contentKey":"security.core.abuse.secret-logging.q1","promptMarkdown":"`Authorization` 헤더를 중앙 로그 SaaS에 그대로 전송하는 것이 왜 DB에 비밀번호를 안전하게 해시한 것과 별개로 큰 위험인가?","questionType":"SCENARIO","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["security.core.abuse.secret-logging"],"modelAnswer":"소지한 사람이 그대로 사용할 수 있는 토큰은 원문을 얻은 사람이 유효기간 동안 그대로 인증에 재사용할 수 있다. 로그는 여러 시스템에 복제되고 더 많은 운영자가 접근할 수 있으므로 자격 증명 원문을 수집하지 않고 민감정보 제거 또는 단방향 지문을 사용해야 한다.","explanationMarkdown":"비밀번호가 해시되어 있어도 로그에 남은 유효한 토큰은 이를 얻은 사람이 그대로 사용할 수 있다. 중앙 로그의 복제·접근 범위를 고려해 자격 증명 원문을 수집하지 않아야 한다."},
-  {"kind":"question","contentKey":"security.core.abuse.ssrf.q2","promptMarkdown":"SSRF 방어가 다음 단계 중 첫 단계만 검증한다.\n\n1. 최초 URL 호스트를 허용 목록과 비교한다.\n2. 리다이렉트 후 목적지는 확인하지 않는다.\n3. DNS 조회 결과도 확인하지 않는다.\n\n어떤 우회 위험이 생기는가?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["security.core.abuse.ssrf"],"modelAnswer":"허용된 호스트가 리다이렉트하거나 DNS가 사설·루프백·클라우드 메타데이터 주소로 해석되면 서버가 실제로 연결하는 목적지가 허용 목록 밖으로 바뀔 수 있다. 각 리다이렉트와 DNS 조회 단계의 스킴·호스트·포트·IP를 정책으로 제한하고 리다이렉트 횟수와 응답 크기도 제한해야 한다.","explanationMarkdown":"처음 허용된 호스트도 리다이렉트하거나 DNS 결과가 내부 주소로 바뀌면 실제 연결 목적지는 달라진다. 리다이렉트와 주소 조회 후의 목적지까지 정책으로 제한해야 한다."},
-  {"kind":"question","contentKey":"security.core.abuse.file-path.q2","promptMarkdown":"파일 업로드 API가 다음 두 조건만 적용한다.\n\n- 확장자가 `jpg`인지 확인한다.\n- 사용자가 지정한 파일 이름을 저장 경로로 사용한다.\n\n어떤 추가 위험과 방어를 검토해야 하는가?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.abuse.file-path"],"modelAnswer":"파일 이름에 포함된 경로 구분자·인코딩·동일 이름 충돌과 파일 유형 위조로 허용된 디렉터리 밖 쓰기나 실행 가능한 파일 저장이 생길 수 있다. 서버가 생성한 키와 고정된 저장소 루트를 사용하고 정규화된 경로 검증, 실제 파일 내용 검사, 크기·권한·다운로드 응답 정책을 함께 둔다.","explanationMarkdown":"`jpg` 확장자는 실제 파일 내용이나 안전한 저장 경로를 보장하지 않는다. 서버가 저장 이름을 정하고 정규화된 경로·파일 내용·크기·다운로드 권한을 각각 확인해야 한다."},
-  {"kind":"question","contentKey":"security.core.abuse.rate-limit.q2","promptMarkdown":"로그인 실패를 다음 단일 기준으로 제한한다.\n\n- 제한 기준: IP 주소 하나\n- 제한 횟수: 분당 5회\n\n이 정책만으로 공격 방어가 충분하지 않은 이유와 보완할 축을 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.abuse.rate-limit"],"modelAnswer":"공격자는 여러 IP를 쓰거나 한 계정만 집중 공격할 수 있어 IP 기준 제한을 우회한다. IP·계정·기기 식별 정보·네트워크 신호를 개인정보 보호와 오탐 비용을 고려해 조합하고, 제한 시간 구간과 응답 정책을 관측하며 분산 배포라면 공유 카운터 필요성을 검토한다.","explanationMarkdown":"IP 하나만 기준으로 하면 공격자가 여러 주소로 시도를 분산할 수 있고, 반대로 한 IP를 공유하는 정상 사용자까지 막을 수 있다. 계정·IP 등의 기준과 제한 시간 구간을 위협 모델에 맞게 조합해야 한다."},
-  {"kind":"question","contentKey":"security.core.abuse.secret-logging.q2","promptMarkdown":"액세스 토큰을 로그에서 앞 8글자만 남기는 민감정보 제거도 항상 안전하다고 볼 수 없는 이유는?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.abuse.secret-logging"],"modelAnswer":"부분값도 다른 로그·요청 ID·시간과 결합해 자격 증명을 추측하거나 민감한 사용자 식별자로 악용될 수 있고, 토큰 형식에 따라 앞부분이 의미를 가질 수 있다. 원문을 수집하지 않는 설계를 우선하고 필요하면 단방향 지문과 접근 제한·보관 기간 정책을 사용한다.","explanationMarkdown":"토큰 앞부분도 형식 정보나 다른 로그와 결합할 수 있는 식별자가 될 수 있다. 필요한 관측 값만 별도로 기록하고 토큰 원문이나 임의의 부분 문자열을 남기지 않는 편이 안전하다."}
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.ssrf.q1",
+    "promptMarkdown": "사용자가 제공한 URL을 백엔드가 가져오는 기능에서 `https://trusted.example@127.0.0.1/admin` 같은 입력을 단순한 `startsWith` 검사로만 막는 것이 위험한 이유는?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.ssrf"
+    ],
+    "modelAnswer": "문자열 접두부와 실제 URL 파서가 해석하는 호스트가 다를 수 있다. URL을 표준 방식으로 파싱한 뒤 스킴·호스트·포트를 허용 목록과 비교하고 DNS 조회와 리다이렉트 후 실제 목적지도 사설 네트워크나 메타데이터 서비스로 바뀌지 않는지 통제해야 한다.",
+    "explanationMarkdown": "`https://trusted.example@127.0.0.1/admin`에서 `trusted.example`은 사용자 정보이고 실제 호스트는 `127.0.0.1`이다. 접두부 비교만 하면 내부 주소 요청을 허용할 수 있으므로 URL을 파싱하고 실제 연결 목적지를 검증해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.file-path.q1",
+    "promptMarkdown": "업로드 파일의 원래 이름 대신 서버가 생성한 저장 키를 쓰는 핵심 설계 원칙을 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.file-path"
+    ],
+    "acceptedAnswers": [
+      "표시 이름과 실제 저장 경로를 분리한다",
+      "사용자 입력을 저장 경로로 사용하지 않는다",
+      "원래 파일 이름과 저장 경로를 분리한다"
+    ],
+    "explanationMarkdown": "원래 파일 이름에 경로 구분자나 `..`가 들어가면 저장 위치를 사용자가 바꿀 수 있다. 표시용 이름은 보관하더라도 실제 저장 경로는 서버가 생성한 키로 결정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.rate-limit.q1",
+    "promptMarkdown": "단일 로컬 우선 인스턴스에서 로그인 요청 속도 제한을 구현하려고 한다. 여러 인스턴스가 될지도 모른다는 이유만으로 처음부터 Redis 분산 카운터가 필수인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.rate-limit"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "아니다. 인스턴스가 여러 개로 늘어나도 각 인스턴스가 독립 카운터를 가지면 전역 한도가 자동으로 유지된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "프로세스별 카운터는 각 인스턴스 안에서만 누적되므로 인스턴스가 여러 개면 요청이 분산될 때 전체 한도를 함께 강제하지 못한다. 분산 카운터가 실제로 필요한 규모와 배포 요구가 확인될 때 공유 저장소나 상태 공유를 검토해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "아니다. 현재 단일 인스턴스에서만 운영한다면 메모리 기반 속도 제한도 가능하고 실제 분산 한도 요구가 생길 때 공유 상태 관리를 검토한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "단일 인스턴스 운영 범위에서는 프로세스 내 속도 제한으로 요청 빈도를 제한하는 선택이 가능하다. 재시작 후 상태 유지나 여러 인스턴스에 걸친 전역 한도가 제품 요구가 될 때 영속 저장 또는 공유 상태 관리의 필요성을 따로 평가하면 된다."
+      },
+      {
+        "key": "C",
+        "content": "그렇다. 로그인 속도 제한 장치 상태는 프로세스 재시작을 견뎌야 하므로 단일 인스턴스에서도 공유 Redis 카운터가 필수다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "프로세스 메모리 상태는 재시작 시 사라질 수 있지만, 이것만으로 모든 단일 인스턴스 로그인 제한에 Redis가 필수라고 결론낼 수는 없다. 지속성이 보안·제품 요구인지 먼저 정하고 그 요구에 맞는 저장 범위를 선택해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "아니다. IP 기준 제한 하나만 두면 여러 IP에서 이루어지는 계정 공격과 탈취한 자격 증명의 대량 재사용까지 충분히 제어할 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "IP 하나만 기준으로 삼으면 공격자가 주소를 바꾸거나 여러 주소를 사용하는 경우를 충분히 묶지 못하고, 공유 IP 사용자의 정상 로그인을 함께 제한할 수도 있다. 계정·IP·기기 신호와 점진 지연, MFA 등은 위협 모델과 오탐 비용에 맞게 조합해야 한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "단일 인스턴스에서는 프로세스 안의 카운터로 요청 횟수를 제한할 수 있다. 여러 인스턴스에 걸친 하나의 한도가 필요해질 때 공유 상태가 필요하며, 그 저장소가 반드시 Redis일 이유는 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.secret-logging.q1",
+    "promptMarkdown": "`Authorization` 헤더를 중앙 로그 SaaS에 그대로 전송하는 것이 왜 DB에 비밀번호를 안전하게 해시한 것과 별개로 큰 위험인가?",
+    "questionType": "SCENARIO",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.secret-logging"
+    ],
+    "modelAnswer": "소지한 사람이 그대로 사용할 수 있는 토큰은 원문을 얻은 사람이 유효기간 동안 그대로 인증에 재사용할 수 있다. 로그는 여러 시스템에 복제되고 더 많은 운영자가 접근할 수 있으므로 자격 증명 원문을 수집하지 않고 민감정보 제거 또는 단방향 지문을 사용해야 한다.",
+    "explanationMarkdown": "비밀번호가 해시되어 있어도 로그에 남은 유효한 토큰은 이를 얻은 사람이 그대로 사용할 수 있다. 중앙 로그의 복제·접근 범위를 고려해 자격 증명 원문을 수집하지 않아야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.ssrf.q2",
+    "promptMarkdown": "SSRF 방어가 다음 단계 중 첫 단계만 검증한다.\n\n1. 최초 URL 호스트를 허용 목록과 비교한다.\n2. 리다이렉트 후 목적지는 확인하지 않는다.\n3. DNS 조회 결과도 확인하지 않는다.\n\n어떤 우회 위험이 생기는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.ssrf"
+    ],
+    "modelAnswer": "허용된 호스트가 리다이렉트하거나 DNS가 사설·루프백·클라우드 메타데이터 주소로 해석되면 서버가 실제로 연결하는 목적지가 허용 목록 밖으로 바뀔 수 있다. 각 리다이렉트와 DNS 조회 단계의 스킴·호스트·포트·IP를 정책으로 제한하고 리다이렉트 횟수와 응답 크기도 제한해야 한다.",
+    "explanationMarkdown": "처음 허용된 호스트도 리다이렉트하거나 DNS 결과가 내부 주소로 바뀌면 실제 연결 목적지는 달라진다. 리다이렉트와 주소 조회 후의 목적지까지 정책으로 제한해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.file-path.q2",
+    "promptMarkdown": "파일 업로드 API가 다음 두 조건만 적용한다.\n\n- 확장자가 `jpg`인지 확인한다.\n- 사용자가 지정한 파일 이름을 저장 경로로 사용한다.\n\n어떤 추가 위험과 방어를 검토해야 하는가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.file-path"
+    ],
+    "modelAnswer": "파일 이름에 포함된 경로 구분자·인코딩·동일 이름 충돌과 파일 유형 위조로 허용된 디렉터리 밖 쓰기나 실행 가능한 파일 저장이 생길 수 있다. 서버가 생성한 키와 고정된 저장소 루트를 사용하고 정규화된 경로 검증, 실제 파일 내용 검사, 크기·권한·다운로드 응답 정책을 함께 둔다.",
+    "explanationMarkdown": "`jpg` 확장자는 실제 파일 내용이나 안전한 저장 경로를 보장하지 않는다. 서버가 저장 이름을 정하고 정규화된 경로·파일 내용·크기·다운로드 권한을 각각 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.rate-limit.q2",
+    "promptMarkdown": "로그인 실패를 다음 단일 기준으로 제한한다.\n\n- 제한 기준: IP 주소 하나\n- 제한 횟수: 분당 5회\n\n이 정책만으로 공격 방어가 충분하지 않은 이유와 보완할 축을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.rate-limit"
+    ],
+    "modelAnswer": "공격자는 여러 IP를 쓰거나 한 계정만 집중 공격할 수 있어 IP 기준 제한을 우회한다. IP·계정·기기 식별 정보·네트워크 신호를 개인정보 보호와 오탐 비용을 고려해 조합하고, 제한 시간 구간과 응답 정책을 관측하며 분산 배포라면 공유 카운터 필요성을 검토한다.",
+    "explanationMarkdown": "IP 하나만 기준으로 하면 공격자가 여러 주소로 시도를 분산할 수 있고, 반대로 한 IP를 공유하는 정상 사용자까지 막을 수 있다. 계정·IP 등의 기준과 제한 시간 구간을 위협 모델에 맞게 조합해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.secret-logging.q2",
+    "promptMarkdown": "액세스 토큰을 로그에서 앞 8글자만 남기는 민감정보 제거도 항상 안전하다고 볼 수 없는 이유는?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.secret-logging"
+    ],
+    "modelAnswer": "부분값도 다른 로그·요청 ID·시간과 결합해 자격 증명을 추측하거나 민감한 사용자 식별자로 악용될 수 있고, 토큰 형식에 따라 앞부분이 의미를 가질 수 있다. 원문을 수집하지 않는 설계를 우선하고 필요하면 단방향 지문과 접근 제한·보관 기간 정책을 사용한다.",
+    "explanationMarkdown": "토큰 앞부분도 형식 정보나 다른 로그와 결합할 수 있는 식별자가 될 수 있다. 필요한 관측 값만 별도로 기록하고 토큰 원문이나 임의의 부분 문자열을 남기지 않는 편이 안전하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.file-path.q4",
+    "promptMarkdown": "아래 파일 다운로드 컨트롤러 코드가 가진 가장 치명적인 취약점과 정확한 방어책은?\n\n```java\n@GetMapping(\"/files\")\npublic Resource download(@RequestParam String name) {\n    Path target = Path.of(\"/var/app/uploads\", name);\n    return new FileSystemResource(target);\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.file-path"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Path.of(...)`는 자바 표준 API이므로 `..` 문자를 자동으로 차단한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`Path.of`는 경로 문자열을 조합할 뿐 상위 디렉터리 탈출 여부를 검증하지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "URL 쿼리 파라미터 대신 HTTP 요청 본문(JSON)으로 파일명을 받으면 Path Traversal이 사라진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "입력 채널(쿼리·헤더·JSON)과 무관하게 신뢰할 수 없는 문자열을 파일 경로에 결합하면 동일한 취약점이 발생한다."
+      },
+      {
+        "key": "C",
+        "content": "`name=../../etc/passwd` 입력으로 업로드 디렉터리 밖의 서버 파일을 읽는 Path Traversal 취약점이 발생한다. 클라이언트에 파일 경로를 받지 말고 DB ID/랜덤 객체 키로 조회하거나, 불가피하면 `baseDir.resolve(name).normalize()` 결과가 반드시 `startsWith(baseDir)`인지 검증해야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "사용자 입력을 파일 시스템 경로에 직접 결합하면 `../` 상대 경로로 임의 파일을 읽거나 덮어쓸 수 있다. 서버 생성 ID로 간접 참조하고 정규화 후 상위 디렉터리 경계를 강제 검증해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "`name.replace(\"../\", \"\")` 한 번만 호출하면 모든 경로 순회 공격이 100% 차단된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`....//` 같은 중첩 패턴은 `../`를 한 번 제거하면 다시 `../`가 생성되어 쉽게 우회된다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Path Traversal 방어의 정석은 사용자 입력을 파일 경로로 쓰지 않는 것(DB 메타데이터 ID → 서버 생성 랜덤 키)이며, 경로 조합이 필요하면 `toRealPath()`/`normalize()` 후 기준 디렉터리 `startsWith` 검증을 수행한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.file-path.q5",
+    "promptMarkdown": "사용자가 프로필 이미지 업로드를 통해 악성 HTML/JS 파일이나 실행 스크립트를 심으려 할 때, 서버가 적용해야 할 다층 방어(Defense-in-Depth) 조합으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.file-path"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "업로드된 파일을 메인 API와 같은 출처(Origin)에서 `text/html`로 바로 렌더링한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "같은 Origin에서 사용자 업로드 HTML/SVG를 렌더링하면 세션 쿠키를 탈취하는 Stored XSS로 직결된다."
+      },
+      {
+        "key": "B",
+        "content": "허용 확장자 화이트리스트 + 실제 파일 매직 바이트(시그니처) 검증 + 크기 상한 + 서버 생성 랜덤 키 저장 + 웹 루트 밖/별도 객체 스토리지 도메인 제공 + `X-Content-Type-Options: nosniff` 적용",
+        "displayOrder": 1,
+        "rationaleMarkdown": "확장자나 Content-Type 헤더는 쉽게 위조되므로, 실제 파일 헤더 검증·실행 불가 저장 위치·별도 도메인 서빙·`nosniff` 헤더를 조합해야 Stored XSS와 원격 코드 실행을 막을 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "프론트엔드 `<input type=\"file\" accept=\"image/*\">` 속성만 붙이면 서버 검증은 생략해도 된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`accept` 속성은 브라우저 파일 선택창 필터일 뿐이며 curl이나 프록시로 아무 파일이나 전송할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "`.exe`와 `.jsp` 두 개만 블랙리스트로 막고 나머지 모든 확장자는 허용한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "블랙리스트는 `.html`, `.svg`, `.phtml` 등 수많은 우회 확장자를 놓치므로 반드시 허용 화이트리스트를 써야 한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "파일 업로드 보안은 허용 타입 화이트리스트, 실제 바이트 검증, 랜덤 키 저장, 비실행 스토리지/별도 도메인 서빙, `nosniff` 응답 헤더를 함께 적용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.rate-limit.q4",
+    "promptMarkdown": "로그인 엔드포인트(`POST /api/login`)에 대한 크리덴셜 스터핑(Credential Stuffing)과 무차별 대입 공격을 방어할 때, IP 단일 기준 Rate Limiting만으로 부족한 이유와 보완 설계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.rate-limit"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "멀티 인스턴스 서버에서 각 인스턴스 로컬 `ConcurrentHashMap`으로만 카운트하면 클러스터 전체 정확한 합산 한도가 보장된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "로컬 메모리 카운터는 인스턴스가 N대일 때 실제 허용량이 N배로 늘어나므로 전역 한도가 필요하면 Redis 같은 중앙 저장소(또는 게이트웨이)를 쓴다."
+      },
+      {
+        "key": "B",
+        "content": "공격자가 분산 봇넷 IP로 한 계정을 집중 공격하거나(IP 우회), 반대로 회사/대학 공용 NAT IP에서 정상 사용자 전체가 차단될 수 있으므로 IP 기준과 계정(email/username) 기준 한도·점진적 지연/CAPTCHA/MFA를 함께 적용한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "IP 단일 한도는 분산 공격에 무력하고 공유 NAT 오탐을 만든다. IP + 계정 식별자 복합 키와 실패 누적 기반 지수 백오프·`429 Too Many Requests` + `Retry-After`를 조합해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "클라이언트가 보낸 `X-Forwarded-For` 헤더의 첫 번째 값을 무조건 신뢰해 Rate Limit 키로 쓰면 위조가 불가능하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "신뢰하는 리버스 프록시가 덮어쓰지 않은 `X-Forwarded-For` 값은 공격자가 매 요청마다 랜덤 IP로 위조해 Rate Limit을 손쉽게 우회한다."
+      },
+      {
+        "key": "D",
+        "content": "한도 초과 시 `200 OK`를 반환해야 공격자가 차단 사실을 모른다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "한도 초과는 표준 `429 Too Many Requests`와 `Retry-After` 헤더로 명확히 응답해 정상 클라이언트와 모니터링이 상태를 인지하도록 해야 한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "남용 방어 Rate Limiting은 신뢰할 수 있는 클라이언트 IP 추출 + 계정/토큰 복합 키 + `429 Retry-After` 응답 + 분산 환경 공유 카운터를 함께 고려해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.rate-limit.q5",
+    "promptMarkdown": "Fixed Window(고정 시간 창) Rate Limiter가 `분당 100회`로 설정되어 있을 때, 경계 버스트(Boundary Burst) 취약점이 발생하는 시나리오는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.rate-limit"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "고정 시간 창은 초당 1회 이상의 요청을 아예 처리할 수 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "카운터 상한 내에서는 초당 수십~수백 요청도 정상 통과하며, 문제는 창 경계에서 2배 버스트가 허용된다는 점이다."
+      },
+      {
+        "key": "B",
+        "content": "Sliding Window를 쓰면 `429` 상태 코드를 반환할 수 없게 된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "알고리즘(Fixed/Sliding/Token Bucket)과 무관하게 한도 초과 시 `429 Too Many Requests`를 반환한다."
+      },
+      {
+        "key": "C",
+        "content": "12:00:59에 100회, 12:01:00에 100회를 연속 요청해 실제 2초 동안 허용 한도의 2배인 200회가 통과될 수 있으며, Sliding Window 또는 Token Bucket으로 완화한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "고정 창은 분 경계 직전과 직후에 카운터가 리셋되므로 짧은 2초 구간에 2배 트래픽이 몰리는 경계 버스트를 허용한다."
+      },
+      {
+        "key": "D",
+        "content": "고정 시간 창은 매 요청마다 1분씩 스레드를 강제로 sleep시킨다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Fixed Window는 창 구간 내 카운터를 증가시킬 뿐 정상 요청을 1분간 재우지 않는다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Fixed Window는 구현이 단순하지만 창 경계에서 2배 버스트를 허용하므로, 정밀한 제어가 필요하면 Sliding Window Log/Counter나 Token Bucket을 선택한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.secret-logging.q4",
+    "promptMarkdown": "운영 장애 분석을 위해 HTTP 요청/응답 로깅 필터를 추가했다가 보안 사고가 발생했다. 아래 중 로그에 남기면 **절대 안 되는** 민감 정보와 안전한 로깅 원칙은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.secret-logging"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "장애 디버깅이 최우선이므로 `DEBUG` 레벨에서 모든 요청 헤더(`Authorization`, `Cookie`)와 원문 비밀번호를 그대로 기록한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "디버깅 편의를 이유로 비밀정보를 평문 로깅하면 로그 열람 권한자나 로그 유출 시 전체 사용자 계정이 즉시 탈취된다."
+      },
+      {
+        "key": "B",
+        "content": "로그 파일은 서버 디스크에만 저장되므로 보안 위험이 전혀 없다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "로그는 백업·수집기·모니터링 대시보드·장애 티켓으로 복제되기 때문에 DB 못지않은 민감 자산이다."
+      },
+      {
+        "key": "C",
+        "content": "예외가 발생했을 때 `JdbcUrl`과 DB 마스터 비밀번호를 오류 로그와 API 응답에 함께 출력한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "DB 접속 자격 증명이 로그나 응답에 노출되면 인프라 전체 침해로 확대된다."
+      },
+      {
+        "key": "D",
+        "content": "`Authorization` 헤더(Bearer JWT/API 키), `Cookie`/`Set-Cookie` 세션 ID, 로그인 요청의 비밀번호, 카드 번호/주민번호는 로그에서 마스킹·제외하고, 추적에는 `traceId`·사용자 ID·마스킹된 토큰 접두사 정도만 남긴다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "중앙 로그 저장소(ELK/Loki/S3)는 DB보다 접근 권한이 넓고 장기 보관되는 경우가 많아, 원문 토큰이나 비밀번호가 로그에 남으면 세션 하이재킹·계정 탈취로 직결된다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "로깅 필터와 예외 핸들러는 `Authorization`, `Cookie`, 비밀번호, 개인식별정보(PII)를 구조적으로 마스킹·차단하고 `traceId` 기반 상관관계만 남겨야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.secret-logging.q5",
+    "promptMarkdown": "Java/Spring 애플리케이션에서 실수로 비밀정보가 로그에 새어 나가는 대표 경로와 이를 예방하는 가장 효과적인 코딩 습관은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.secret-logging"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "API 키를 `GET /api/data?secret_key=sk_live_1234`처럼 URL 쿼리 스트링에 넣으면 액세스 로그에 기록되지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "웹 서버(Nginx/ALB) 기본 액세스 로그는 요청 URI와 쿼리 스트링 전체를 평문으로 기록한다."
+      },
+      {
+        "key": "B",
+        "content": "모든 엔티티에 Lombok `@Data`를 붙이면 비밀번호 필드가 자동으로 `****` 마스킹된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Lombok `@Data`는 모든 필드를 그대로 출력하는 `toString()`을 생성하므로 민감 정보가 그대로 로그에 노출된다."
+      },
+      {
+        "key": "C",
+        "content": "로그를 JSON 형식으로 바꾸면 비밀정보가 자동으로 암호화된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "JSON 구조화 로깅은 파싱 편의성을 높일 뿐 민감 필드를 자동 암호화하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "비밀번호/토큰 필드가 포함된 DTO·엔티티에 `@ToString`이나 `record` 기본 `toString()`을 그대로 로깅하거나 URL 쿼리 파라미터(`?api_key=...`)로 시크릿을 전달하는 것이 대표 누출 경로다. 시크릿은 헤더로 전달하고, 민감 필드는 `toString()` 마스킹과 로그 필터를 적용한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "URL 쿼리에 토큰을 넣으면 리버스 프록시/CDN/브라우저 히스토리/액세스 로그에 자동 기록되며, `@ToString` 남용은 객체 전체를 로그에 덤프한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "시크릿을 URL 쿼리에 넣지 않고, 민감 객체의 `toString()` 출력을 제어하며, 로깅 프레임워크/게이트웨이에서 민감 헤더·필드를 일괄 마스킹해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.ssrf.q4",
+    "promptMarkdown": "사용자가 입력한 URL의 웹페이지 미리보기(Open Graph 메타 태그)를 서버가 대신 조회해 반환하는 기능에서, 아래 코드가 노출된 SSRF(Server-Side Request Forgery) 위험과 핵심 방어책은?\n\n```java\npublic String fetchPreview(String userUrl) {\n    return restClient.get().uri(userUrl).retrieve().body(String.class);\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.ssrf"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "CORS 헤더를 설정하면 서버에서 나가는 `RestClient` SSRF 요청이 자동으로 차단된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "CORS는 브라우저의 교차 출처 정책일 뿐이며 서버 측 HTTP 클라이언트의 아웃바운드 요청을 막지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "`https://`만 허용하면 내부망 공격이 원천 불가능하다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "사설망 내부 HTTPS 서비스나 외부 HTTPS URL에서 `http://169.254.169.254`로 302 리다이렉트하는 공격을 막지 못한다."
+      },
+      {
+        "key": "C",
+        "content": "공격자가 `http://169.254.169.254/latest/meta-data/`(클라우드 메타데이터)나 `http://127.0.0.1:8080/actuator` 같은 내부 주소를 넣어 내부 자격 증명·관리 API를 탈취할 수 있다. `http/https` 스킴 제한, DNS 해석 결과 IP의 사설/루프백/링크로컬 대역 차단, 리다이렉트 재검증, 아웃바운드 프록시 격리를 적용해야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "서버는 내부망과 클라우드 메타데이터 서비스에 접근 가능하므로, 사용자 제공 URL을 그대로 요청하면 내부망 프록시로 악용된다. 해석된 실제 IP 검증과 리다이렉트 차단이 핵심이다."
+      },
+      {
+        "key": "D",
+        "content": "URL 문자열에 `\"localhost\"`나 `\"127.0.0.1\"`이 포함되어 있는지만 `contains()`로 막으면 SSRF는 완벽히 차단된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`http://2130706433/`, `http://[::1]/`, `http://0.0.0.0/`, 또는 외부 도메인이 127.0.0.1로 A 레코드를 반환하는 DNS 리바인딩·302 리다이렉트로 문자열 필터는 손쉽게 우회된다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "SSRF 방어는 문자열 블랙리스트가 아니라 '허용 도메인/스킴 화이트리스트 + DNS 해석 후 실제 접속 IP가 공인 대역인지 검증 + 리다이렉트 비활성화(또는 매 홉 재검증) + AWS IMDSv2 + 네트워크 이그레스 격리'로 구성한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.abuse.ssrf.q5",
+    "promptMarkdown": "SSRF 방어를 위해 요청 전에 URL의 도메인을 DNS 조회해 공인 IP임을 확인한 뒤 HTTP 클라이언트에 원래 도메인 URL을 넘겼는데도, 공격자가 내부 IP(`169.254.169.254`) 접근에 성공했다. 가능한 우회 기법 2가지는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.abuse.ssrf"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "브라우저의 SameSite 쿠키 설정이 빠져서 서버가 내부 IP로 접속했다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "SameSite 쿠키는 브라우저 CSRF 방어 속성이며 서버 측 SSRF와는 무관하다."
+      },
+      {
+        "key": "B",
+        "content": "JSON 직렬화 라이브러리가 숫자를 문자열로 바꾸었기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "JSON 직렬화와 SSRF 리다이렉트/DNS Rebinding 우회는 무관하다."
+      },
+      {
+        "key": "C",
+        "content": "HTTP 302 리다이렉트로 내부 IP URL로 유도하거나, 검증 시점과 실제 소켓 연결 시점 사이에 TTL=0 DNS 응답이 바뀌는 DNS Rebinding 공격으로 우회할 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "검증 시점과 연결 시점이 분리된 TOCTOU(DNS Rebinding)와 자동 리다이렉트 추적은 대표적인 SSRF 우회 경로다. 검증한 IP로 직접 연결(또는 커스텀 DnsResolver에서 연결 시점 차단)하고 자동 리다이렉트를 꺼야 한다."
+      },
+      {
+        "key": "D",
+        "content": "SQL Injection과 XSS를 조합해 DNS 캐시를 조작했다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "SSRF의 URL 검증 우회는 SQLi/XSS가 아니라 리다이렉트 추적과 DNS Rebinding(TOCTOU)이 핵심 원인이다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "안전한 SSRF 방어는 검증 시점과 연결 시점을 일치시키고(소켓 연결 직전 IP 검증 또는 전용 아웃바운드 프록시), HTTP 자동 리다이렉트를 비활성화한다."
+  }
 ]
