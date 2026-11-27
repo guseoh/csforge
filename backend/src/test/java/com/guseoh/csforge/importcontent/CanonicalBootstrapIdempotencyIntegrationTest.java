@@ -6,6 +6,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.guseoh.csforge.importcontent.application.CanonicalBootstrapBatch;
 import com.guseoh.csforge.importcontent.application.CanonicalBootstrapBatchPlanner;
@@ -154,11 +156,17 @@ class CanonicalBootstrapIdempotencyIntegrationTest {
         assertEquals(1, applyService.apply(canonicalCommand, canonicalPreview.previewDigest()).updated());
     }
 
+    // 콘텐츠 JSON은 한 줄 형식과 들여쓰기 형식이 함께 쓰이므로 키와 값 사이 공백에 의존하지 않는다.
+    private static final Pattern REVISED_QUESTION_KEY = Pattern.compile(
+            "\"contentKey\"\\s*:\\s*\"network-http\\.core\\.http-methods\\.idempotent-method\\.q2\"");
+
     private static ImportFilesCommand revisedQuestionCommand(CanonicalContentFile questionPack) {
         String json = new String(questionPack.content(), StandardCharsets.UTF_8);
-        String contentKey = "\"contentKey\":\"network-http.core.http-methods.idempotent-method.q2\"";
-        int questionStart = json.indexOf(contentKey);
-        if (questionStart < 0) throw new IllegalArgumentException("Question not found: " + contentKey);
+        Matcher question = REVISED_QUESTION_KEY.matcher(json);
+        if (!question.find()) {
+            throw new IllegalArgumentException("Question not found: " + REVISED_QUESTION_KEY.pattern());
+        }
+        int questionStart = question.start();
 
         int fieldStart = json.indexOf("\"explanationMarkdown\"", questionStart);
         int valueStart = json.indexOf(':', fieldStart) + 1;
