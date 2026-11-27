@@ -19,6 +19,8 @@ import com.guseoh.csforge.quiz.application.QuizSessionCreator;
 import com.guseoh.csforge.quiz.domain.QuizSessionSource;
 import com.guseoh.csforge.review.domain.ReviewSchedule;
 import com.guseoh.csforge.review.domain.ReviewScheduleRepository;
+import com.guseoh.csforge.review.domain.ReviewScheduleStatus;
+import com.guseoh.csforge.review.infrastructure.ReviewScheduleSearchRepository;
 
 /**
  * 복습 일정 생성과 REVIEW source 퀴즈 시작을 처리한다.
@@ -27,7 +29,10 @@ import com.guseoh.csforge.review.domain.ReviewScheduleRepository;
 @RequiredArgsConstructor
 public class ReviewCommandService {
 
+    private static final long UPCOMING_WINDOW_SECONDS = 604_800L;
+
     private final ReviewScheduleRepository scheduleRepository;
+    private final ReviewScheduleSearchRepository scheduleSearchRepository;
     private final QuestionRepository questionRepository;
     private final QuizSessionCreator sessionCreator;
     private final Clock clock;
@@ -59,10 +64,16 @@ public class ReviewCommandService {
         if (existing.isPresent()) return existing.orElseThrow();
 
         Instant now = Instant.now(clock);
-        List<Long> questionIds = scheduleRepository.findEligibleQuestionIds(
-                com.guseoh.csforge.review.domain.ReviewScheduleStatus.SCHEDULED,
-                now,
-                PageRequest.of(0, command.count()));
+        List<Long> questionIds;
+        if (command.hasFiltersOrUpcoming()) {
+            Instant cutoff = command.includeUpcoming() ? now.plusSeconds(UPCOMING_WINDOW_SECONDS) : now;
+            questionIds = scheduleSearchRepository.findEligibleQuestionIds(command, cutoff);
+        } else {
+            questionIds = scheduleRepository.findEligibleQuestionIds(
+                    ReviewScheduleStatus.SCHEDULED,
+                    now,
+                    PageRequest.of(0, command.count()));
+        }
         if (questionIds.isEmpty()) throw new NoDueReviewsException();
         return sessionCreator.create(questionIds, now, null, QuizSessionSource.REVIEW, creationIdentity);
     }

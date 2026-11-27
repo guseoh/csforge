@@ -2,6 +2,7 @@ package com.guseoh.csforge.quiz.application.grading;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.regex.Pattern;
 
 import org.springframework.stereotype.Component;
 
@@ -12,10 +13,12 @@ import com.guseoh.csforge.question.domain.QuestionType;
 import com.guseoh.csforge.quiz.domain.Attempt;
 
 /**
- * 단답형 답안을 trim과 대소문자 정규화 후 허용 답안과 비교해 자동 채점하는 전략이다.
+ * 단답형 답안을 공백·구분자·백틱 및 대소문자 정규화 후 허용 답안과 비교해 자동 채점하는 전략이다.
  */
 @Component
 public class ShortAnswerGradingStrategy implements QuestionGradingStrategy {
+
+    private static final Pattern DELIMITERS = Pattern.compile("[\\s_-]+");
 
     @Override
     public boolean supports(Question question) {
@@ -34,6 +37,16 @@ public class ShortAnswerGradingStrategy implements QuestionGradingStrategy {
     }
 
     private String normalize(String answer) {
-        return answer == null || answer.isBlank() ? null : answer.trim().toLowerCase(Locale.ROOT);
+        if (answer == null || answer.isBlank()) {
+            return null;
+        }
+        String trimmed = answer.trim();
+        if (trimmed.length() >= 2 && trimmed.startsWith("`") && trimmed.endsWith("`")) {
+            trimmed = trimmed.substring(1, trimmed.length() - 1).trim();
+        }
+        if (trimmed.isEmpty()) {
+            return null;
+        }
+        return DELIMITERS.matcher(trimmed).replaceAll(" ").toLowerCase(Locale.ROOT);
     }
 }

@@ -11,16 +11,32 @@ import com.guseoh.csforge.question.domain.QuestionType;
 public record QuizSetupRequest(
         List<String> areaSlugs,
         List<Long> conceptIds,
+        List<Long> topicIds,
+        Long bookmarkCategoryId,
         List<Short> levels,
         List<QuestionDifficulty> difficulties,
         List<QuestionType> questionTypes,
         QuizQuestionState state,
         int count,
-        Integer timeLimitSeconds) {
+        Integer timeLimitSeconds,
+        boolean shuffle) {
+
+    public QuizSetupRequest(
+            List<String> areaSlugs,
+            List<Long> conceptIds,
+            List<Short> levels,
+            List<QuestionDifficulty> difficulties,
+            List<QuestionType> questionTypes,
+            QuizQuestionState state,
+            int count,
+            Integer timeLimitSeconds) {
+        this(areaSlugs, conceptIds, List.of(), null, levels, difficulties, questionTypes, state, count, timeLimitSeconds, false);
+    }
 
     public QuizSetupRequest {
         areaSlugs = areaSlugs == null ? List.of() : List.copyOf(areaSlugs);
         conceptIds = conceptIds == null ? List.of() : List.copyOf(conceptIds);
+        topicIds = topicIds == null ? List.of() : List.copyOf(topicIds);
         levels = levels == null ? List.of() : List.copyOf(levels);
         difficulties = difficulties == null ? List.of() : List.copyOf(difficulties);
         questionTypes = questionTypes == null ? List.of() : List.copyOf(questionTypes);
@@ -34,6 +50,7 @@ public record QuizSetupRequest(
     }
 
     public QuizQuestionSelectionCriteria criteria() {
-        return new QuizQuestionSelectionCriteria(areaSlugs, conceptIds, levels, difficulties, questionTypes, state);
+        return new QuizQuestionSelectionCriteria(
+                areaSlugs, conceptIds, topicIds, bookmarkCategoryId, levels, difficulties, questionTypes, state, shuffle);
     }
 }

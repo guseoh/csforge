@@ -77,6 +77,9 @@ public class QuizSessionCommandService {
     public QuizSubmissionResult submit(long quizId) {
         QuizSessionData data = dataLoader.loadForGrading(quizId);
         Instant now = Instant.now(clock);
+        if (data.session().getStatus() == QuizSessionStatus.ABANDONED) {
+            data.session().submit(now);
+        }
         if (data.session().getStatus() == QuizSessionStatus.IN_PROGRESS) {
             data.session().submit(now);
             for (QuizQuestion quizQuestion : data.quizQuestions()) {
@@ -122,6 +125,12 @@ public class QuizSessionCommandService {
             session.complete(now);
         }
         return new QuizSelfCheckResult(quizId, questionId, attempt.getCorrect(), session.getStatus());
+    }
+
+    @Transactional
+    public void abandon(long quizId) {
+        QuizSession session = requireSession(quizId);
+        session.abandon();
     }
 
     private void saveAnswerByType(
