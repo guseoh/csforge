@@ -6,12 +6,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.multicore-shared-memory"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.multicore-shared-memory"
+    ],
     "choices": [
-      {"key": "A", "content": "공유 메모리에서는 모든 load/store가 하나의 중앙 레지스터에서 프로그램 순서대로만 실행된다.", "displayOrder": 0, "rationaleMarkdown": "공유 메모리 시스템은 하나의 중앙 레지스터에서 모든 코어의 load/store를 순차 실행하지 않는다. 코어마다 레지스터와 전용 캐시를 둘 수 있고 메모리 시스템과 ISA가 관찰 순서를 정의한다."},
-      {"key": "B", "content": "여러 코어가 같은 물리 메모리에 접근할 수 있지만 각 코어의 레지스터와 캐시는 전용일 수 있어 일관성과 순서 규칙이 필요하다.", "displayOrder": 1, "rationaleMarkdown": "코어들은 같은 물리 메모리를 읽고 쓸 수 있지만 레지스터와 전용 캐시 상태는 각각 다를 수 있다. 같은 라인의 복사본을 맞추는 캐시 일관성과 여러 접근의 관찰 순서를 다루는 규칙이 함께 필요하다."},
-      {"key": "C", "content": "캐시 일관성이 있으면 모든 read-modify-write 연산이 자동으로 원자적이 된다.", "displayOrder": 2, "rationaleMarkdown": "캐시 일관성은 보통 같은 메모리 위치나 라인의 복사본 관계를 다루지만 read-modify-write 전체를 분리 불가능하게 만들지는 않는다. 원자성은 ISA의 원자적 명령어나 동기화 기능이 제공해야 한다."},
-      {"key": "D", "content": "여러 코어가 같은 메모리를 사용하면 소프트웨어 동기화는 필요하지 않다.", "displayOrder": 3, "rationaleMarkdown": "공유 메모리는 데이터 교환 통로를 제공할 뿐 경쟁 상태를 막는 동기화를 자동으로 넣지 않는다. 동시에 접근하는 변경 가능한 상태에는 언어·ISA가 정한 동기화가 필요하다."}
+      {
+        "key": "A",
+        "content": "공유 메모리에서는 모든 load/store가 하나의 중앙 레지스터에서 프로그램 순서대로만 실행된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "공유 메모리 시스템은 하나의 중앙 레지스터에서 모든 코어의 load/store를 순차 실행하지 않는다. 코어마다 레지스터와 전용 캐시를 둘 수 있고 메모리 시스템과 ISA가 관찰 순서를 정의한다."
+      },
+      {
+        "key": "B",
+        "content": "여러 코어가 같은 물리 메모리에 접근할 수 있지만 각 코어의 레지스터와 캐시는 전용일 수 있어 일관성과 순서 규칙이 필요하다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "코어들은 같은 물리 메모리를 읽고 쓸 수 있지만 레지스터와 전용 캐시 상태는 각각 다를 수 있다. 같은 라인의 복사본을 맞추는 캐시 일관성과 여러 접근의 관찰 순서를 다루는 규칙이 함께 필요하다."
+      },
+      {
+        "key": "C",
+        "content": "캐시 일관성이 있으면 모든 read-modify-write 연산이 자동으로 원자적이 된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "캐시 일관성은 보통 같은 메모리 위치나 라인의 복사본 관계를 다루지만 read-modify-write 전체를 분리 불가능하게 만들지는 않는다. 원자성은 ISA의 원자적 명령어나 동기화 기능이 제공해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "여러 코어가 같은 메모리를 사용하면 소프트웨어 동기화는 필요하지 않다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "공유 메모리는 데이터 교환 통로를 제공할 뿐 경쟁 상태를 막는 동기화를 자동으로 넣지 않는다. 동시에 접근하는 변경 가능한 상태에는 언어·ISA가 정한 동기화가 필요하다."
+      }
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "공유 메모리 멀티코어에서는 여러 코어가 같은 물리 메모리에 접근할 수 있지만 레지스터와 전용 캐시 상태는 코어별로 다를 수 있다. 따라서 캐시 복사본의 일관성과 서로 다른 위치의 관찰 순서 및 동기화에는 별도 규칙이 필요하다."
@@ -23,7 +45,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.multicore-shared-memory"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.multicore-shared-memory"
+    ],
     "modelAnswer": "캐시 일관성은 같은 메모리 위치나 캐시 라인의 여러 복사본이 최신 값과 쓰기 순서를 모순되게 보지 않도록 하는 문제다. 메모리 순서는 서로 다른 load/store가 다른 관찰자에게 어떤 순서로 보장되어야 하는지 정한다. 원자성은 read-modify-write 같은 여러 단계의 상태 전이를 다른 스레드가 중간에 끼어들지 못하는 하나의 연산처럼 만들 수 있는지를 다룬다.",
     "explanationMarkdown": "세 개념은 서로 다른 보장을 다룬다. 캐시 일관성은 같은 위치의 복사본, 메모리 순서는 서로 다른 메모리 연산의 관찰 순서, 원자성은 여러 단계의 read-modify-write를 하나의 분리 불가능한 연산처럼 만드는 문제다."
   },
@@ -34,7 +58,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.multicore-shared-memory"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.multicore-shared-memory"
+    ],
     "modelAnswer": "두 스레드가 모두 x=0을 읽고 각각 1을 계산한 뒤 차례로 1을 쓸 수 있다. 캐시 일관성은 두 쓰기가 같은 위치에 대해 일관되게 전달되도록 할 수 있지만 `read → add → write` 전체를 하나의 원자적 트랜잭션으로 묶지 않는다. 최종 값 2를 보장하려면 원자적 RMW나 lock처럼 소프트웨어·언어 계약이 제공하는 원자성이 필요하다.",
     "explanationMarkdown": "초기값 0을 두 스레드가 각각 읽고 1을 계산한 뒤 모두 1을 기록하는 실행 교차가 가능하다. 캐시 일관성은 공유 캐시 라인의 복사본이 일관되도록 하는 하드웨어 성질이지, **별도의 read/add/write 전체에 대한 원자적 RMW 보장**이 아니다. 따라서 두 증가 연산을 모두 반영하려면 원자적 RMW·락 등 해당 언어와 실행 환경의 적절한 동기화 계약이 필요하다."
   },
@@ -45,12 +71,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.private-shared-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.private-shared-cache"
+    ],
     "choices": [
-      {"key": "A", "content": "모든 CPU가 반드시 동일한 전용/공유 캐시 구조를 사용하기 때문이다.", "displayOrder": 0, "rationaleMarkdown": "전용 L1과 공유 하위 캐시는 흔한 설계 선택이지만 모든 CPU가 같은 구조를 쓰도록 ISA가 요구하지 않는다. 구현마다 단계, 용량, 공유 범위가 다를 수 있다."},
-      {"key": "B", "content": "전용 캐시를 사용하면 캐시 일관성이 완전히 필요 없어지기 때문이다.", "displayOrder": 1, "rationaleMarkdown": "전용 캐시에 같은 메모리 라인의 복사본이 생길 수 있어 캐시 일관성 문제는 여전히 존재한다. 전용이라는 말은 접근 지연과 소유 범위를 설명하며 일관성 프로토콜의 필요성을 없애지 않는다."},
-      {"key": "C", "content": "공유 캐시는 한 코어만 접근할 수 있어 자원 경쟁이 없기 때문이다.", "displayOrder": 2, "rationaleMarkdown": "공유 캐시는 여러 코어가 접근하므로 동시에 몰리면 뱅크, 포트, 대역폭 같은 자원을 두고 경쟁할 수 있다. 공유는 데이터 교환과 용량 효율을 돕지만 경쟁이 없음을 보장하지 않는다."},
-      {"key": "D", "content": "전용 캐시로 코어별 낮은 지연 시간을 얻고 공유 하위 계층으로 용량과 코어 간 데이터 공유를 보완할 수 있다.", "displayOrder": 3, "rationaleMarkdown": "전용 L1은 코어 가까이에서 낮은 지연 시간과 독립 접근을 제공하고, 공유 하위 계층은 더 큰 용량과 코어 간 재사용을 지원할 수 있다. 실제 효과는 캐시 구조와 작업 부하의 공유·경쟁 특성에 달려 있다."}
+      {
+        "key": "A",
+        "content": "모든 CPU가 반드시 동일한 전용/공유 캐시 구조를 사용하기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "전용 L1과 공유 하위 캐시는 흔한 설계 선택이지만 모든 CPU가 같은 구조를 쓰도록 ISA가 요구하지 않는다. 구현마다 단계, 용량, 공유 범위가 다를 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "전용 캐시를 사용하면 캐시 일관성이 완전히 필요 없어지기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "전용 캐시에 같은 메모리 라인의 복사본이 생길 수 있어 캐시 일관성 문제는 여전히 존재한다. 전용이라는 말은 접근 지연과 소유 범위를 설명하며 일관성 프로토콜의 필요성을 없애지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "공유 캐시는 한 코어만 접근할 수 있어 자원 경쟁이 없기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "공유 캐시는 여러 코어가 접근하므로 동시에 몰리면 뱅크, 포트, 대역폭 같은 자원을 두고 경쟁할 수 있다. 공유는 데이터 교환과 용량 효율을 돕지만 경쟁이 없음을 보장하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "전용 캐시로 코어별 낮은 지연 시간을 얻고 공유 하위 계층으로 용량과 코어 간 데이터 공유를 보완할 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "전용 L1은 코어 가까이에서 낮은 지연 시간과 독립 접근을 제공하고, 공유 하위 계층은 더 큰 용량과 코어 간 재사용을 지원할 수 있다. 실제 효과는 캐시 구조와 작업 부하의 공유·경쟁 특성에 달려 있다."
+      }
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "전용 L1은 코어 가까이에서 낮은 지연 시간으로 접근하게 하고, 공유 하위 캐시는 더 큰 공유 용량과 코어 간 데이터 재사용을 지원할 수 있다. 구체적인 계층 구조와 자원 경쟁은 프로세서 구현과 작업 부하에 따라 달라진다."
@@ -62,7 +110,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.private-shared-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.private-shared-cache"
+    ],
     "modelAnswer": "이전 코어의 전용 캐시에는 스레드가 반복 사용하던 작업 집합이 이미 적재된 상태로 남아 있을 수 있다. 다른 코어로 이동하면 새 코어의 전용 캐시에는 그 라인이 없어 하위 캐시나 다른 코어에서 다시 가져와야 할 수 있다. 캐시 일관성은 올바른 값을 제공하지만 이미 적재된 캐시 지역성의 손실까지 없애지는 않는다.",
     "explanationMarkdown": "코어 이동은 값의 정확성보다 지역성에 영향을 준다. 이전 코어의 이미 적재된 전용 캐시를 잃으면 새 코어에서 같은 작업 집합을 다시 가져와야 하므로 미스와 데이터 이동이 늘 수 있다."
   },
@@ -73,7 +123,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.private-shared-cache"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.private-shared-cache"
+    ],
     "modelAnswer": "CPU affinity는 전용 캐시 지역성과 코어 이동 비용을 줄일 수 있지만 스케줄러의 부하 분산을 제한하고 특정 코어·캐시·NUMA 노드에 작업 부하를 몰아 경쟁을 높일 수 있다. 실제 효과는 코어 이동 빈도, 캐시 미스, CPU 사용률, 처리량과 꼬리 지연 시간을 적용 전후 비교해야 하며 하드웨어 구조와 작업 부하에 따라 달라진다.",
     "explanationMarkdown": "CPU affinity는 코어 이동을 줄여 지역성을 얻을 수 있지만 스케줄러의 부하 분산과 하드웨어 구조 활용을 제한할 수도 있다. 따라서 코어 고정 효과는 캐시 미스뿐 아니라 CPU 불균형·NUMA·꼬리 지연 시간까지 실제 작업 부하에서 비교해야 한다."
   },
@@ -84,12 +136,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.cache-coherence-problem"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.cache-coherence-problem"
+    ],
     "choices": [
-      {"key": "A", "content": "같은 메모리 라인의 여러 캐시 복사본이 쓰기 이후 서로 모순된 최신 값을 계속 사용하는 문제", "displayOrder": 0, "rationaleMarkdown": "한 메모리 라인의 복사본이 여러 코어 캐시에 있을 때 한 코어의 쓰기 뒤 다른 코어가 오래된 유효 복사본을 읽지 않게 하는 것이 캐시 일관성의 핵심이다. 프로토콜은 동일 위치에 대한 관찰 가능한 쓰기 순서를 관리한다."},
-      {"key": "B", "content": "서로 다른 두 주소의 모든 접근을 소스 코드 순서 그대로 보장하는 언어 수준 문제", "displayOrder": 1, "rationaleMarkdown": "캐시 일관성은 같은 위치의 복사본을 다루고, 서로 다른 주소의 접근 순서 보장은 메모리 모델과 동기화 문제다. 캐시 일관성만으로 모든 소스 코드 순서를 언어 수준에서 강제하지 않는다."},
-      {"key": "C", "content": "DB 트랜잭션을 영속 저장장치에 커밋하는 문제", "displayOrder": 2, "rationaleMarkdown": "캐시 일관성은 휘발성 메모리 계층 안의 복사본 일관성을 다룬다. 데이터베이스 트랜잭션의 커밋과 영속 저장 보장은 DBMS와 저장장치 계층의 책임으로 별개다."},
-      {"key": "D", "content": "read-modify-write 연산 전체를 무조건 원자적으로 만드는 문제", "displayOrder": 3, "rationaleMarkdown": "여러 캐시의 라인 상태를 맞추는 것과 여러 load/modify/store를 하나의 분리 불가능한 연산으로 보이게 하는 것은 다르다. 원자적 read-modify-write에는 별도의 원자적 명령어나 동기화가 필요하다."}
+      {
+        "key": "A",
+        "content": "같은 메모리 라인의 여러 캐시 복사본이 쓰기 이후 서로 모순된 최신 값을 계속 사용하는 문제",
+        "displayOrder": 0,
+        "rationaleMarkdown": "한 메모리 라인의 복사본이 여러 코어 캐시에 있을 때 한 코어의 쓰기 뒤 다른 코어가 오래된 유효 복사본을 읽지 않게 하는 것이 캐시 일관성의 핵심이다. 프로토콜은 동일 위치에 대한 관찰 가능한 쓰기 순서를 관리한다."
+      },
+      {
+        "key": "B",
+        "content": "서로 다른 두 주소의 모든 접근을 소스 코드 순서 그대로 보장하는 언어 수준 문제",
+        "displayOrder": 1,
+        "rationaleMarkdown": "캐시 일관성은 같은 위치의 복사본을 다루고, 서로 다른 주소의 접근 순서 보장은 메모리 모델과 동기화 문제다. 캐시 일관성만으로 모든 소스 코드 순서를 언어 수준에서 강제하지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "DB 트랜잭션을 영속 저장장치에 커밋하는 문제",
+        "displayOrder": 2,
+        "rationaleMarkdown": "캐시 일관성은 휘발성 메모리 계층 안의 복사본 일관성을 다룬다. 데이터베이스 트랜잭션의 커밋과 영속 저장 보장은 DBMS와 저장장치 계층의 책임으로 별개다."
+      },
+      {
+        "key": "D",
+        "content": "read-modify-write 연산 전체를 무조건 원자적으로 만드는 문제",
+        "displayOrder": 3,
+        "rationaleMarkdown": "여러 캐시의 라인 상태를 맞추는 것과 여러 load/modify/store를 하나의 분리 불가능한 연산으로 보이게 하는 것은 다르다. 원자적 read-modify-write에는 별도의 원자적 명령어나 동기화가 필요하다."
+      }
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "같은 메모리 라인이 여러 코어 캐시에 복제된 상태에서 한 코어가 값을 수정해도 다른 코어가 오래된 복사본을 계속 유효하게 사용하면 서로 다른 값을 관찰할 수 있다. 캐시 일관성은 이런 동일 라인의 복사본 사이에서 쓰기가 반영되는 규칙을 제공하며, 원자성이나 거짓 공유 같은 별도 문제까지 자동으로 해결하는 것은 아니다."
@@ -101,7 +175,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.cache-coherence-problem"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.cache-coherence-problem"
+    ],
     "modelAnswer": "A가 자기 복사본만 수정하면 B가 이전 라인을 계속 유효한 값으로 읽을 수 있다. 그래서 A는 쓰기 권한이나 소유권을 얻는 과정에서 B의 복사본을 무효화하는 등의 캐시 일관성 트랜잭션을 수행해야 한다. 이후 B가 다시 읽으면 최신 라인을 새로 받아야 해 같은 메모리 위치의 값이 일관되게 유지된다.",
     "explanationMarkdown": "한 코어가 공유 라인을 쓰려면 다른 코어가 가진 오래된 복사본이 계속 유효하지 않도록 조정해야 한다. 무효화 기반 프로토콜은 쓰기 소유권을 얻는 과정에서 다른 공유자의 복사본을 무효화해 이후 읽기가 최신 데이터를 다시 받게 한다."
   },
@@ -112,7 +188,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.cache-coherence-problem"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.cache-coherence-problem"
+    ],
     "modelAnswer": "모든 코어가 같은 카운터가 있는 캐시 라인을 쓰면 원자적 연산의 정확성과 별개로 쓰기 소유권이 코어 사이를 반복 이동할 수 있다. 무효화, 캐시 간 전송, 직렬화와 인터커넥트 트래픽이 늘어 확장성이 제한될 수 있다. 코어별 집계나 분할된 상태를 검토하되 캐시 간 전송량과 처리량으로 원인을 확인해야 한다.",
     "explanationMarkdown": "원자적 카운터는 갱신 손실을 막아도 같은 캐시 라인에 대한 쓰기 소유권 경쟁까지 없애지는 못한다. 코어가 늘수록 라인 전송과 무효화가 직렬화 지점이 되어 처리량 확장을 제한할 수 있다."
   },
@@ -123,12 +201,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.coherence-protocol-model"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.coherence-protocol-model"
+    ],
     "choices": [
-      {"key": "A", "content": "캐시 라인 상태가 Java `volatile`의 언어 의미를 직접 정의한다고 보는 것", "displayOrder": 0, "rationaleMarkdown": "MESI는 하드웨어의 캐시 라인 상태 프로토콜이고 Java `volatile`은 언어/JVM 수준에서 관찰되는 메모리 의미다. 구현이 캐시 일관성 프로토콜을 사용해도 그것이 Java 계약을 직접 정의하지는 않는다."},
-      {"key": "B", "content": "모든 CPU가 MESI 네 상태만 정확히 동일하게 사용한다고 외우는 것", "displayOrder": 1, "rationaleMarkdown": "MESI는 캐시 일관성 상태를 설명하는 대표 모델이지 모든 ISA와 CPU가 동일한 네 이름과 구현을 사용한다는 약속이 아니다. 실제 프로토콜에는 확장 상태나 다른 상태 전이가 있을 수 있다."},
-      {"key": "C", "content": "해당 캐시 라인의 최신 데이터와 읽기·쓰기 권한을 어느 캐시가 가지고 있는지 추적하는 것", "displayOrder": 2, "rationaleMarkdown": "캐시 일관성 상태를 볼 때는 해당 캐시 라인의 데이터가 유효한지, 최신 복사본이 어디 있는지, 어떤 코어가 읽거나 쓸 권한을 갖는지 추적한다. 이 관점은 상태 이름보다 전이와 권한의 의미를 이해하게 한다."},
-      {"key": "D", "content": "캐시 일관성 상태가 디스크 영속성까지 나타낸다고 보는 것", "displayOrder": 3, "rationaleMarkdown": "캐시 일관성은 휘발성 메모리의 캐시 복사본과 접근 권한을 다룬다. 전원 장애 뒤 디스크에 남는 영속성이나 파일 시스템 영속성은 별도 저장 계약이다."}
+      {
+        "key": "A",
+        "content": "캐시 라인 상태가 Java `volatile`의 언어 의미를 직접 정의한다고 보는 것",
+        "displayOrder": 0,
+        "rationaleMarkdown": "MESI는 하드웨어의 캐시 라인 상태 프로토콜이고 Java `volatile`은 언어/JVM 수준에서 관찰되는 메모리 의미다. 구현이 캐시 일관성 프로토콜을 사용해도 그것이 Java 계약을 직접 정의하지는 않는다."
+      },
+      {
+        "key": "B",
+        "content": "모든 CPU가 MESI 네 상태만 정확히 동일하게 사용한다고 외우는 것",
+        "displayOrder": 1,
+        "rationaleMarkdown": "MESI는 캐시 일관성 상태를 설명하는 대표 모델이지 모든 ISA와 CPU가 동일한 네 이름과 구현을 사용한다는 약속이 아니다. 실제 프로토콜에는 확장 상태나 다른 상태 전이가 있을 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "해당 캐시 라인의 최신 데이터와 읽기·쓰기 권한을 어느 캐시가 가지고 있는지 추적하는 것",
+        "displayOrder": 2,
+        "rationaleMarkdown": "캐시 일관성 상태를 볼 때는 해당 캐시 라인의 데이터가 유효한지, 최신 복사본이 어디 있는지, 어떤 코어가 읽거나 쓸 권한을 갖는지 추적한다. 이 관점은 상태 이름보다 전이와 권한의 의미를 이해하게 한다."
+      },
+      {
+        "key": "D",
+        "content": "캐시 일관성 상태가 디스크 영속성까지 나타낸다고 보는 것",
+        "displayOrder": 3,
+        "rationaleMarkdown": "캐시 일관성은 휘발성 메모리의 캐시 복사본과 접근 권한을 다룬다. 전원 장애 뒤 디스크에 남는 영속성이나 파일 시스템 영속성은 별도 저장 계약이다."
+      }
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "MESI 같은 상태는 캐시 라인의 유효성·최신 복사본과 읽기·쓰기 권한 또는 소유권 관계를 추적한다. 이는 같은 라인의 일관성을 위한 모델이며 서로 다른 주소의 전체 순서나 언어 동기화를 대신하지 않는다."
@@ -140,7 +240,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.coherence-protocol-model"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.coherence-protocol-model"
+    ],
     "modelAnswer": "스누핑 모델은 공유 인터커넥트의 캐시 일관성 트랜잭션을 여러 캐시가 관찰해 자기 라인과 관련 있는지 확인하는 방식으로 설명할 수 있다. 디렉터리 방식은 특정 메타데이터가 공유자와 소유자 정보를 추적해 필요한 참여자에게 요청이나 무효화를 보내는 식으로 전체 브로드캐스트 범위를 줄일 수 있다. 실제 하드웨어 구조와 프로토콜 세부사항은 마이크로아키텍처마다 다르다.",
     "explanationMarkdown": "스누핑은 공유 인터커넥트의 캐시 일관성 트래픽을 여러 캐시가 관찰하는 방식이고 디렉터리는 공유자·소유자 메타데이터를 이용해 필요한 참여자를 찾는다. 차이는 같은 일관성 목표를 어떤 구조와 메타데이터로 구현하느냐에 있다."
   },
@@ -151,7 +253,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.coherence-protocol-model"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.coherence-protocol-model"
+    ],
     "modelAnswer": "처음에는 두 코어가 읽기 가능한 공유 복사본을 가질 수 있다. A가 쓰려면 다른 공유자인 B의 복사본을 무효화하고 쓰기 권한을 얻는다. A가 수정한 뒤 B의 기존 라인은 사용할 수 없으므로 B의 다음 읽기는 캐시 일관성 미스나 요청을 발생시키고 최신 데이터를 A 또는 메모리 계층의 최신 소스에서 받아 다시 읽기 가능한 상태로 전환한다. 정확한 상태 이름과 메시지는 프로토콜마다 다를 수 있다.",
     "explanationMarkdown": "공유 복사본 상태에서 A가 쓰려면 B의 복사본을 더 이상 유효하게 두지 않고 쓰기 권한을 얻어야 한다. 이후 B의 읽기는 일관성 요청을 통해 최신 라인을 다시 받아야 하며 세부 상태 이름은 프로토콜마다 달라질 수 있다."
   },
@@ -162,12 +266,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.false-sharing"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.false-sharing"
+    ],
     "choices": [
-      {"key": "A", "content": "거짓 공유가 발생하면 캐시 일관성 정확성이 깨져 반드시 잘못된 값이 반환된다.", "displayOrder": 0, "rationaleMarkdown": "거짓 공유는 캐시 일관성 프로토콜이 같은 라인의 쓰기를 올바르게 전파하는 중에 불필요한 무효화와 소유권 이동을 만들어 성능을 낮추는 현상이다. 값이 틀려야 발생하는 정확성 실패는 아니다."},
-      {"key": "B", "content": "같은 변수에 대한 데이터 경쟁이 있을 때만 발생한다.", "displayOrder": 1, "rationaleMarkdown": "두 스레드가 서로 다른 필드를 써도 그 필드들이 한 캐시 라인에 놓이면 라인 단위 소유권을 경쟁할 수 있다. 따라서 같은 변수에 대한 언어 수준 데이터 경쟁이 있어야만 생기는 현상이 아니다."},
-      {"key": "C", "content": "서로 다른 쓰기 가능한 변수라도 같은 캐시 라인에 있으면 독립 스레드의 쓰기가 캐시 일관성 소유권을 경쟁할 수 있다.", "displayOrder": 2, "rationaleMarkdown": "캐시 일관성은 보통 바이트 필드가 아니라 캐시 라인 단위로 권한을 관리한다. 독립 변수의 쓰기라도 같은 라인을 갱신하면 라인 소유권이 코어 사이에서 이동해 거짓 공유가 생길 수 있다."},
-      {"key": "D", "content": "읽기 전용 데이터만 여러 코어가 읽을 때 라인 소유권이 계속 왕복하는 현상이다.", "displayOrder": 3, "rationaleMarkdown": "읽기 전용 복사본은 여러 코어에 동시에 남아도 되므로 일반적으로 쓰기 소유권을 주고받지 않는다. 지속적인 왕복은 서로 다른 쓰기 가능한 데이터가 같은 라인에 놓여 각 코어가 번갈아 수정할 때 생긴다."}
+      {
+        "key": "A",
+        "content": "거짓 공유가 발생하면 캐시 일관성 정확성이 깨져 반드시 잘못된 값이 반환된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "거짓 공유는 캐시 일관성 프로토콜이 같은 라인의 쓰기를 올바르게 전파하는 중에 불필요한 무효화와 소유권 이동을 만들어 성능을 낮추는 현상이다. 값이 틀려야 발생하는 정확성 실패는 아니다."
+      },
+      {
+        "key": "B",
+        "content": "같은 변수에 대한 데이터 경쟁이 있을 때만 발생한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "두 스레드가 서로 다른 필드를 써도 그 필드들이 한 캐시 라인에 놓이면 라인 단위 소유권을 경쟁할 수 있다. 따라서 같은 변수에 대한 언어 수준 데이터 경쟁이 있어야만 생기는 현상이 아니다."
+      },
+      {
+        "key": "C",
+        "content": "서로 다른 쓰기 가능한 변수라도 같은 캐시 라인에 있으면 독립 스레드의 쓰기가 캐시 일관성 소유권을 경쟁할 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "캐시 일관성은 보통 바이트 필드가 아니라 캐시 라인 단위로 권한을 관리한다. 독립 변수의 쓰기라도 같은 라인을 갱신하면 라인 소유권이 코어 사이에서 이동해 거짓 공유가 생길 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "읽기 전용 데이터만 여러 코어가 읽을 때 라인 소유권이 계속 왕복하는 현상이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "읽기 전용 복사본은 여러 코어에 동시에 남아도 되므로 일반적으로 쓰기 소유권을 주고받지 않는다. 지속적인 왕복은 서로 다른 쓰기 가능한 데이터가 같은 라인에 놓여 각 코어가 번갈아 수정할 때 생긴다."
+      }
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "서로 다른 변수라도 같은 캐시 일관성 단위인 캐시 라인에 있으면 각 코어의 독립적인 쓰기가 라인 소유권 이전과 무효화를 일으킬 수 있다. 논리적으로 같은 값을 공유하지 않아도 라인 단위 일관성 트래픽 때문에 성능이 떨어지는 현상이다."
@@ -179,7 +305,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.false-sharing"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.false-sharing"
+    ],
     "modelAnswer": "실제 공유는 여러 스레드가 실제 같은 논리 값을 공유하는 것이고 데이터 경쟁은 언어가 요구하는 동기화 없이 충돌하는 접근이 발생하는 정확성 문제다. 거짓 공유는 서로 다른 독립 값이 우연히 같은 캐시 라인에 배치되어 쓰기 소유권을 경쟁하는 하드웨어 성능 문제다. 각각의 변수 접근이 원자적이거나 동기화되어 정확성이 맞아도 라인 단위 때문에 캐시 일관성 트래픽이 증가할 수 있다.",
     "explanationMarkdown": "거짓 공유는 서로 다른 변수인데 같은 캐시 라인이라는 이유로 캐시 일관성 트래픽이 생기는 성능 문제다. 같은 논리 값을 공유하는 실제 공유나 동기화 없는 데이터 경쟁과 구분해야 하며, 정확성이 맞는 코드에서도 발생할 수 있다."
   },
@@ -190,7 +318,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.false-sharing"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.false-sharing"
+    ],
     "modelAnswer": "캐시 간 전송량, 무효화·거짓 공유 프로파일러, 코어 수 증가에 따른 성능 변화와 실제 객체·배열 배치를 확인해 같은 라인의 쓰기 경쟁이 줄었는지 검증해야 한다. 잠금 경쟁이나 스케줄러 변화도 함께 배제한다. 패딩은 라인 경쟁을 줄일 수 있지만 메모리 사용량과 캐시 용량 압박을 늘리므로 처리량·꼬리 지연 시간·메모리 사용량을 함께 비교해야 한다.",
     "explanationMarkdown": "패딩 뒤 빨라졌다는 사실만으로 거짓 공유를 확정할 수는 없다. 실제 배치와 캐시 간 전송·무효화 지표를 확인해 라인 경쟁이 줄었는지 보고, 늘어난 메모리 사용량과 캐시 압박 비용도 함께 비교해야 한다."
   },
@@ -201,12 +331,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.hardware-memory-reordering"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.hardware-memory-reordering"
+    ],
     "choices": [
-      {"key": "A", "content": "CPU가 모든 명령어를 무조건 소스 코드의 역순으로 실행한다는 뜻이다.", "displayOrder": 0, "rationaleMarkdown": "약한 순서는 모든 명령어가 소스 코드 순서의 정반대로 실행된다는 뜻이 아니다. 아키텍처가 보존한다고 정한 의존성과 순서는 유지되고, 나머지 관찰 순서에만 제약이 약할 수 있다."},
-      {"key": "B", "content": "아키텍처가 반드시 보존한다고 정한 순서 외에는 다른 코어가 일부 메모리 연산을 프로그램 순서와 다르게 관찰할 수 있다.", "displayOrder": 1, "rationaleMarkdown": "아키텍처가 보장하는 순서 밖의 메모리 연산은 다른 코어에서 프로그램 순서와 다르게 관찰될 수 있다. 필요한 순서는 ISA fence 또는 acquire/release 같은 동기화 계약으로 요청해야 한다."},
-      {"key": "C", "content": "캐시 일관성이 존재하지 않는 CPU에서만 가능한 현상이다.", "displayOrder": 2, "rationaleMarkdown": "캐시 일관성과 메모리 순서는 다른 문제다. CPU가 각 주소의 캐시 복사본을 일관성 규칙에 맞게 유지하면서도 서로 다른 주소의 접근 순서에는 약한 보장을 제공할 수 있다."},
-      {"key": "D", "content": "Java happens-before 관계와 ISA 메모리 모델이 완전히 같은 규칙이라는 뜻이다.", "displayOrder": 3, "rationaleMarkdown": "Java happens-before는 언어/JMM 수준에서 허용되는 관찰을 정하고 ISA 메모리 모델은 하드웨어 명령어 순서를 정한다. JVM은 둘을 연결해 구현하지만 두 계약 자체가 동일한 것은 아니다."}
+      {
+        "key": "A",
+        "content": "CPU가 모든 명령어를 무조건 소스 코드의 역순으로 실행한다는 뜻이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "약한 순서는 모든 명령어가 소스 코드 순서의 정반대로 실행된다는 뜻이 아니다. 아키텍처가 보존한다고 정한 의존성과 순서는 유지되고, 나머지 관찰 순서에만 제약이 약할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "아키텍처가 반드시 보존한다고 정한 순서 외에는 다른 코어가 일부 메모리 연산을 프로그램 순서와 다르게 관찰할 수 있다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "아키텍처가 보장하는 순서 밖의 메모리 연산은 다른 코어에서 프로그램 순서와 다르게 관찰될 수 있다. 필요한 순서는 ISA fence 또는 acquire/release 같은 동기화 계약으로 요청해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "캐시 일관성이 존재하지 않는 CPU에서만 가능한 현상이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "캐시 일관성과 메모리 순서는 다른 문제다. CPU가 각 주소의 캐시 복사본을 일관성 규칙에 맞게 유지하면서도 서로 다른 주소의 접근 순서에는 약한 보장을 제공할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "Java happens-before 관계와 ISA 메모리 모델이 완전히 같은 규칙이라는 뜻이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Java happens-before는 언어/JMM 수준에서 허용되는 관찰을 정하고 ISA 메모리 모델은 하드웨어 명령어 순서를 정한다. JVM은 둘을 연결해 구현하지만 두 계약 자체가 동일한 것은 아니다."
+      }
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "약한 순서 모델에서는 아키텍처가 보존한다고 약속한 관계 밖의 서로 다른 메모리 연산을 다른 코어가 프로그램 순서와 다르게 관찰할 수 있다. ISA fence나 release/acquire와 언어 수준 happens-before는 각 계층의 계약에 맞게 구분해야 한다."
@@ -218,7 +370,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.hardware-memory-reordering"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.hardware-memory-reordering"
+    ],
     "modelAnswer": "캐시 일관성은 주로 같은 메모리 위치의 캐시 복사본과 쓰기를 일관되게 만드는 문제지만 `data`와 `ready`는 서로 다른 위치다. 둘 사이의 관찰 순서를 보장하려면 아키텍처 메모리 모델의 순서 보장 기능 또는 언어 수준 release/acquire·happens-before가 필요하다. 캐시 일관성이 존재한다는 사실만으로 모든 주소 사이의 프로그램 순서가 공개 순서로 보존되지는 않는다.",
     "explanationMarkdown": "캐시 일관성은 같은 위치의 값 일관성만으로 서로 다른 `data`와 `ready`의 공개 순서를 보장하지 않는다. 올바른 공개에는 아키텍처·언어 메모리 모델이 제공하는 순서 보장 또는 happens-before가 필요하다."
   },
@@ -229,8 +383,244 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["computer-architecture.core.multicore-memory.hardware-memory-reordering"],
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.hardware-memory-reordering"
+    ],
     "modelAnswer": "Java 프로그램의 정확성은 Java Memory Model이 정의하는 happens-before와 데이터 경쟁 규칙으로 판단해야 한다. JVM/JIT는 대상 아키텍처의 메모리 순서 강도에 따라 fence나 명령어 선택을 최적화할 수 있지만 소스 코드 수준 동기화 계약이 CPU에 따라 임의로 사라지는 것은 아니다. `volatile`, lock, atomic 등 필요한 언어 기능 없이 하드웨어 특성에 기대면 컴파일러 최적화와 다른 아키텍처에서 보장이 깨질 수 있다.",
     "explanationMarkdown": "Java 동시성 정확성은 x86의 비교적 강한 메모리 순서에 기대는 것이 아니라 Java Memory Model의 happens-before 규칙으로 판단해야 한다. `volatile`, lock, atomic 같은 소스 코드 수준 계약을 생략하면 JIT 최적화나 다른 아키텍처에서 보장이 깨질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.cache-coherence-problem.q5",
+    "promptMarkdown": "멀티코어 CPU에서 각 코어가 독립된 L1/L2 사설 캐시를 가질 때 발생하는 '캐시 일관성 문제(Cache Coherence Problem)'의 본질은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.cache-coherence-problem"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "하드웨어 캐시 일관성만 있으면 Java에서 `count++` 같은 복합 연산에 `synchronized`나 `AtomicInteger`가 전혀 필요 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "캐시 일관성은 단일 주소의 최신 값 전파를 보장할 뿐, Read-Modify-Write(`count++`)의 원자성이나 여러 변수 간 순서 보장을 대신하지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "코어 0과 코어 1이 같은 메모리 주소 `X`를 각자 사설 캐시에 복사해 둔 상태에서 코어 0이 `X`를 수정했을 때, 일관성 프로토콜이 없다면 코어 1이 자신의 캐시에 남은 오래된(stale) `X` 값을 계속 읽게 되는 문제다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "하드웨어 캐시 일관성(MESI 등)은 '단일 메모리 주소에 대한 모든 코어의 관점이 일관되도록' 보장하며, 서로 다른 주소들 간의 순서 규칙은 메모리 일관성 모델(Memory Consistency)이 담당한다."
+      },
+      {
+        "key": "C",
+        "content": "두 코어가 서로 다른 메모리 주소 `A`와 `B`를 동시에 읽을 수 없는 문제다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "서로 다른 주소의 동시 읽기는 아무 문제가 없으며, 동일 메모리 위치의 캐시 사본 불일치가 캐시 일관성 문제다."
+      },
+      {
+        "key": "D",
+        "content": "단일 코어 CPU에서도 사설 캐시가 1개뿐인데 캐시 일관성 문제가 항상 발생한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "사설 캐시를 가진 주체가 둘 이상(멀티코어 또는 CPU+DMA)일 때 동일 주소 사본 간 불일치가 생긴다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "캐시 일관성(Coherence)은 멀티코어 사설 캐시 간 동일 주소의 최신성 불일치를 하드웨어 프로토콜로 해결한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.coherence-protocol-model.q5",
+    "promptMarkdown": "MESI(Modified, Exclusive, Shared, Invalid) 캐시 일관성 프로토콜에서, 여러 코어가 `Shared(S)` 상태로 공유 중인 캐시 라인에 코어 0이 쓰기를 수행할 때 일어나는 동작은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.coherence-protocol-model"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Exclusive(E)` 상태의 라인에 쓸 때도 반드시 모든 코어에 무효화 브로드캐스트를 보내야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`Exclusive(E)`는 오직 자신만 깨끗한 사본을 보유함을 뜻하므로, 버스 트래픽 없이 즉시 `Modified(M)`로 전환해 쓸 수 있는 것이 `E` 상태의 존재 이유다."
+      },
+      {
+        "key": "B",
+        "content": "코어 0이 버스/인터커넥트로 무효화 요청(Invalidate / RFO)을 보내 다른 코어들의 해당 캐시 라인을 `Invalid(I)` 상태로 만든 뒤, 자신의 라인을 `Modified(M)` 상태로 전환하고 값을 쓴다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "쓰기 전 다른 사본을 모두 무효화(Write-Invalidate)해 '단일 쓰기 소유자(Single-Writer) 또는 다중 읽기 공유자(Multiple-Reader)' 불변식을 유지한다."
+      },
+      {
+        "key": "C",
+        "content": "코어 0이 다른 코어들의 상태를 건드리지 않고 조용히 `Shared(S)` 상태 그대로 값을 덮어쓴다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "다른 코어 사본을 무효화하지 않으면 코어마다 서로 다른 값을 보게 되어 일관성이 깨진다."
+      },
+      {
+        "key": "D",
+        "content": "읽기만 하는 여러 코어도 매번 서로의 캐시 라인을 `Invalid(I)`로 무효화해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "읽기 전용 공유 상태(`Shared`)에서는 여러 코어가 각자 L1 캐시에서 무효화 없이 병렬로 빠르게 읽을 수 있다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "MESI는 SWMR(Single-Writer Multiple-Reader) 불변식을 유지하며, `E → M` 무통신 전환과 `S → M` 무효화 요청이 멀티코어 쓰기 경합 비용의 핵심 원인이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.false-sharing.q5",
+    "promptMarkdown": "아래 Java 멀티스레드 카운터 코드에서 스레드 0은 `counts[0]`만, 스레드 1은 `counts[1]`만 독립적으로 1억 번 증가시키는데도 단일 스레드보다 오히려 훨씬 느려졌다. 가장 정확한 원인과 해결책은?\n\n```java\nvolatile long[] counts = new long[2];\n// Thread 0: counts[0]++;  (논리적으로 완전히 독립된 변수)\n// Thread 1: counts[1]++;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.false-sharing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 스레드가 같은 변수 `counts[0]`을 동시에 수정해 데드락이 걸렸기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "서로 다른 인덱스(`0`과 `1`)를 수정하므로 데드락도 논리적 데이터 공유도 아니며, 물리 캐시 라인 공유(거짓 공유)가 원인이다."
+      },
+      {
+        "key": "B",
+        "content": "`long` 대신 `int` 배열로 바꾸면 거짓 공유가 사라진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`int`(4B)는 더 작으므로 `counts[0]`과 `counts[1]`이 여전히 같은 64B 캐시 라인에 함께 들어가 거짓 공유가 그대로 발생한다."
+      },
+      {
+        "key": "C",
+        "content": "배열 길이를 `new long[4]`로만 늘리고 여전히 `counts[0]`과 `counts[1]`을 쓰면 해결된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "인접한 인덱스 `0`과 `1`을 쓰는 한 같은 64B 라인 안에 있으므로 최소 8개 `long`(64바이트) 이상 간격으로 띄워야 다른 캐시 라인에 배치된다."
+      },
+      {
+        "key": "D",
+        "content": "거짓 공유(False Sharing) — `counts[0]`과 `counts[1]`이 인접해 같은 64B CPU 캐시 라인에 놓이므로, 두 코어가 서로의 캐시 라인을 계속 `Invalid`로 무효화하며 캐시 핑퐁(Cache Line Bouncing)을 일으킨다. 64B 이상 패딩(`@Contended` 또는 `LongAdder` 사용)으로 서로 다른 캐시 라인에 분리해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "소프트웨어상 독립 변수라도 물리적으로 같은 64B 캐시 라인을 공유하면 MESI 일관성 단위가 라인 단위이므로 치명적인 멀티코어 확장성 저하가 발생한다. Java `LongAdder`가 내부적으로 `@Contended` 셀 패딩을 쓰는 이유다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "거짓 공유(False Sharing)는 논리적으로 독립된 변수가 같은 64B 캐시 라인을 공유해 캐시 무효화 핑퐁을 일으키는 현상이며, 캐시 라인 패딩이나 `LongAdder`로 해결한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.hardware-memory-reordering.q5",
+    "promptMarkdown": "두 코어가 공유 변수 `x = 0, y = 0`에 대해 코어 0은 `x = 1; r1 = y;`, 코어 1은 `y = 1; r2 = x;`를 실행했을 때, 현대 x86-64/ARM CPU에서 `r1 == 0 && r2 == 0` 결과가 실제로 관측될 수 있는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.hardware-memory-reordering"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "L1 캐시 일관성(MESI)이 켜져 있으면 Store-Load 재배치는 절대 발생하지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "MESI는 캐시 계층의 일관성이고, Store Buffer는 코어와 L1 캐시 사이에 위치하므로 MESI만으로 Store-Load 재배치가 막히지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "각 코어의 쓰기 버퍼(Store Buffer)에 `x = 1`, `y = 1` 쓰기가 머무는 동안 후속 읽기(`r1 = y`, `r2 = x`)가 먼저 실행(Store-Load 재배치)될 수 있기 때문이다. Java `volatile`이나 메모리 배리어(Fence)로 가시성과 순서를 강제해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "강한 메모리 모델인 x86-64(TSO)에서도 Store Buffer 때문에 Store-Load 재배치가 허용되며, ARM 같은 약한 모델은 더 많은 재배치를 허용한다. 그래서 동기화 없는 공유 플래그 패턴은 깨진다."
+      },
+      {
+        "key": "C",
+        "content": "하드웨어 오류(방사선 비트 플립)가 아니면 `r1 == 0 && r2 == 0`은 어떤 CPU에서도 절대 나올 수 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Store Buffer에 의한 Store-Load 재배치는 x86-64와 ARM 모두에서 정상 스펙상 허용되며 실제 테스트에서도 빈번히 관측된다."
+      },
+      {
+        "key": "D",
+        "content": "컴파일러 최적화만 끄면(`-O0`) CPU 하드웨어의 메모리 재배치까지 모두 사라진다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "컴파일러 재배치와 별개로 CPU 하드웨어 자체(Store Buffer, 비순차 실행)가 메모리 접근을 재배치하므로 메모리 배리어(`volatile`/lock)가 필요하다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "컴파일러 최적화와 CPU Store Buffer/OoO 재배치 때문에 멀티스레드 공유 변수는 반드시 `volatile`, `Atomic*`, 또는 락의 happens-before 보장을 통해 동기화해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.multicore-shared-memory.q5",
+    "promptMarkdown": "멀티 소켓 서버의 NUMA(Non-Uniform Memory Access) 환경에서, 스레드가 자신이 실행 중인 CPU 소켓의 로컬 메모리 대신 원격 소켓 메모리에 계속 접근할 때 발생하는 성능 영향은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.multicore-shared-memory"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "NUMA에서는 모든 코어에서 모든 메모리 주소까지의 물리 접근 지연이 완벽히 동일하다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "접근 지연이 균일한 구조는 UMA(Uniform Memory Access)이며, NUMA는 이름 그대로 비균일(Non-Uniform) 접근 지연을 가진다."
+      },
+      {
+        "key": "B",
+        "content": "NUMA는 네트워크 이더넷 카드의 속도 단위다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "NUMA는 네트워크 이더넷 단위가 아니라 멀티 소켓 공유 메모리 서버의 메모리 접근 아키텍처다."
+      },
+      {
+        "key": "C",
+        "content": "원격 소켓 간 인터커넥트(UPI/Infinity Fabric)를 거쳐야 하므로 메모리 접근 지연이 늘어나고 대역폭 병목이 생긴다. 대용량 DB/JVM에서는 NUMA-aware 메모리 할당(`-XX:+UseNUMA`, `numactl`)으로 로컬 노드 접근 비율을 높인다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "NUMA는 모든 메모리가 하나의 공유 주소 공간으로 보이지만 물리 위치(로컬 vs 원격 소켓)에 따라 접근 지연과 대역폭이 비균일하다."
+      },
+      {
+        "key": "D",
+        "content": "원격 소켓 메모리는 아예 접근이 금지되어 즉시 `SIGSEGV`가 발생한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "NUMA도 논리적으로는 단일 공유 메모리이므로 접근 자체는 투명하게 가능하지만 지연과 대역폭 비용이 더 크다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "NUMA 멀티 소켓 서버에서는 스레드와 데이터가 같은 소켓(로컬 메모리)에 배치되도록 NUMA-aware 할당을 고려해야 지연과 대역폭 손실을 줄일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "computer-architecture.core.multicore-memory.private-shared-cache.q5",
+    "promptMarkdown": "현대 멀티코어 CPU가 L1/L2 캐시는 코어별 사설(Private)로 두고 L3(LLC) 캐시는 코어 간 공유(Shared)로 설계하는 가장 합리적인 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "computer-architecture.core.multicore-memory.private-shared-cache"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "L1/L2는 각 코어에 밀착 배치해 타 코어 경합 없이 최저 지연(1~4ns)으로 접근하고, 용량이 큰 L3는 공유해 읽기 전용 코드·공유 데이터의 중복 저장을 피하며 코어 간 통신을 메인 메모리(DRAM)까지 가지 않고 빠르게 중계하기 위해서다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "사설 L1/L2의 저지연·무경합 이점과 공유 L3의 용량 효율·코어 간 데이터 교환 효율을 결합한 계층 설계다."
+      },
+      {
+        "key": "B",
+        "content": "L1 캐시를 모든 64개 코어가 단일 공유 SRAM으로 묶으면 접근 지연이 더 짧아지기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "64개 코어가 하나의 L1을 공유하면 물리 거리·포트 경합·지연이 폭증해 L1의 1ns 속도를 전혀 유지할 수 없다."
+      },
+      {
+        "key": "C",
+        "content": "공유 L3 캐시는 한 코어가 오염시켜도 다른 코어의 캐시 성능에 전혀 영향을 주지 않는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "L3는 공유 자원이므로 대량 스트리밍 스캔을 도는 한 코어가 L3를 밀어내면 같은 소켓의 다른 코어 캐시 적중률에도 영향을 줄 수 있다(Noisy Neighbor)."
+      },
+      {
+        "key": "D",
+        "content": "L3 캐시는 메인 메모리(DRAM)보다 접근 속도가 항상 느리다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "L3 SRAM(약 10~20ns)은 DRAM(약 60~100ns)보다 훨씬 빠르다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "사설 L1/L2(저지연·독립성) + 공유 L3(중복 제거·동적 용량 공유·빠른 코어 간 데이터 전달)가 현대 멀티코어 캐시 토폴로지의 표준이다."
   }
 ]
