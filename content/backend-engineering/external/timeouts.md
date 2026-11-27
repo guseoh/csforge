@@ -74,14 +74,7 @@ client ◀──── 응답 지연 또는 유실
 
 상위 API가 1초 안에 끝나야 하는데 하위 호출마다 800ms timeout을 세 번 사용하면 전체 요청은 쉽게 1초를 넘습니다.
 
-```text
-전체 deadline: 1000ms
-
-DB 조회       150ms 사용
-외부 호출     남은 budget 안에서 수행
-retry         남은 시간이 충분할 때만
-응답 생성     deadline 이전 종료
-```
+![외부 호출 Timeout 예산과 상위 Deadline 전파](/learning/backend-engineering/timeout-budget-deadline-propagation.svg)
 
 상위 요청의 남은 시간보다 하위 client가 더 오래 기다리면 사용자는 이미 timeout을 받았는데 서버에서는 worker가 계속 외부 응답을 기다리는 상황이 생길 수 있습니다. 그래서 여러 dependency를 거치는 시스템에서는 **remaining time budget을 아래 호출로 전달하는 설계**가 중요할 수 있습니다.
 

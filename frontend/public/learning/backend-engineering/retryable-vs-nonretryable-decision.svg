@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 420" width="840" height="420" role="img" aria-labelledby="title desc">
+  <title id="title">재시도 가능(Transient) vs 즉시 중단(Permanent) 의사결정 흐름</title>
+  <desc id="desc">실패 발생 시 일시적 오류 여부, 작업의 멱등·재실행 안전성, 남은 Deadline 예산의 3단계 관문을 거쳐 재시도 여부를 결정하는 도식</desc>
+  <style>
+    :root { --bg:#f8fafc; --card:#ffffff; --muted:#f1f5f9; --bd:#cbd5e1; --tx:#0f172a; --sub:#475569; --blue-bg:#eff6ff; --blue-bd:#3b82f6; --blue-tx:#1d4ed8; --amber-bg:#fffbeb; --amber-bd:#f59e0b; --amber-tx:#b45309; --green-bg:#ecfdf5; --green-bd:#10b981; --green-tx:#047857; --red-bg:#fef2f2; --red-bd:#ef4444; --red-tx:#b91c1c; --arr:#64748b; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#0f172a; --card:#1e293b; --muted:#0b1220; --bd:#334155; --tx:#f1f5f9; --sub:#94a3b8; --blue-bg:#172554; --blue-bd:#60a5fa; --blue-tx:#93c5fd; --amber-bg:#451a03; --amber-bd:#fbbf24; --amber-tx:#fcd34d; --green-bg:#064e3b; --green-bd:#34d399; --green-tx:#6ee7b7; --red-bg:#450a0a; --red-bd:#f87171; --red-tx:#fca5a5; --arr:#94a3b8; } }
+    text { font-family: "Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .h1 { font-size:17px; font-weight:700; fill:var(--tx); }
+    .h2 { font-size:13.5px; font-weight:700; }
+    .b { font-size:12px; fill:var(--tx); }
+    .s { font-size:11px; fill:var(--sub); }
+    .k { font-size:11.5px; font-weight:700; }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--arr)"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="840" height="420" rx="14" fill="var(--bg)"/>
+  <text x="28" y="34" class="h1">재시도(Retry) 가능 실패 판별 3단계 관문</text>
+  <text x="28" y="54" class="s">오류가 났다고 무조건 재시도하지 않고, 일시성 · 재실행 안전성 · 남은 시간 예산을 모두 확인한다.</text>
+
+  <!-- 3 Gates -->
+  <rect x="28" y="78" width="236" height="172" rx="10" fill="var(--card)" stroke="var(--blue-bd)" stroke-width="1.6"/>
+  <rect x="28" y="78" width="236" height="32" rx="10" fill="var(--blue-bg)"/>
+  <text x="42" y="99" class="h2" fill="var(--blue-tx)">관문 1. 일시적(Transient)?</text>
+  <text x="42" y="130" class="b" font-weight="700">YES (재시도 후보)</text>
+  <text x="42" y="150" class="s">• 503, 429(Retry-After),</text>
+  <text x="42" y="166" class="s">  커넥션 리셋, 직렬화 충돌</text>
+  <text x="42" y="196" class="k" fill="var(--red-tx)">NO → 즉시 중단 (Permanent)</text>
+  <text x="42" y="214" class="s">• 400 검증, 401/403 권한,</text>
+  <text x="42" y="230" class="s">  422 비즈니스 규칙 위반</text>
+
+  <rect x="302" y="78" width="236" height="172" rx="10" fill="var(--card)" stroke="var(--amber-bd)" stroke-width="1.6"/>
+  <rect x="302" y="78" width="236" height="32" rx="10" fill="var(--amber-bg)"/>
+  <text x="316" y="99" class="h2" fill="var(--amber-tx)">관문 2. 재실행 안전한가?</text>
+  <text x="316" y="130" class="b" font-weight="700">YES (안전)</text>
+  <text x="316" y="150" class="s">• 멱등 연산(GET/PUT/DELETE)</text>
+  <text x="316" y="166" class="s">• Idempotency-Key + 상태 조회</text>
+  <text x="316" y="196" class="k" fill="var(--red-tx)">NO → 자동 재시도 금지</text>
+  <text x="316" y="214" class="s">• 멱등 키 없는 결제 POST</text>
+  <text x="316" y="230" class="s">  Read-Timeout (중복 과금 위험)</text>
+
+  <rect x="576" y="78" width="236" height="172" rx="10" fill="var(--card)" stroke="var(--green-bd)" stroke-width="1.6"/>
+  <rect x="576" y="78" width="236" height="32" rx="10" fill="var(--green-bg)"/>
+  <text x="590" y="99" class="h2" fill="var(--green-tx)">관문 3. 남은 예산 있는가?</text>
+  <text x="590" y="130" class="b" font-weight="700">YES → Backoff + Jitter 실행</text>
+  <text x="590" y="150" class="s">• 상위 Deadline 여유 충분</text>
+  <text x="590" y="166" class="s">• Retry Budget 한도 이내</text>
+  <text x="590" y="196" class="k" fill="var(--red-tx)">NO → Fail-Fast 종료</text>
+  <text x="590" y="214" class="s">• 호출자가 이미 타임아웃</text>
+  <text x="590" y="230" class="s">• 재시도 폭풍(Retry Storm) 차단</text>
+
+  <!-- Arrows -->
+  <line x1="264" y1="164" x2="298" y2="164" stroke="var(--arr)" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="538" y1="164" x2="572" y2="164" stroke="var(--arr)" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Bottom Summary -->
+  <rect x="28" y="274" width="784" height="122" rx="10" fill="var(--card)" stroke="var(--bd)" stroke-width="1.4"/>
+  <text x="46" y="300" class="h2" fill="var(--tx)">왜 "재시도하지 않는 것"도 핵심 복구 전략인가?</text>
+  <text x="46" y="324" class="b">• Permanent 실패(잘못된 입력·권한 오류)를 빠르게 종료해야 스레드·커넥션·큐 용량을 정상 요청에 양보한다.</text>
+  <text x="46" y="346" class="b">• HTTP 상태 코드만으로 기계적으로 결정하지 않고, 실제 벤더 계약(예: 429 Retry-After, 비일시 5xx)을 확인한다.</text>
+  <text x="46" y="370" class="s">핵심 공식: Retry = Transient 가능성  AND  Operation 재실행 안전성(멱등)  AND  Remaining Deadline · Retry Budget</text>
+</svg>

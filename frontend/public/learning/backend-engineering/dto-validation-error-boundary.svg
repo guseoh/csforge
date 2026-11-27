@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 410" width="840" height="410" role="img" aria-labelledby="title desc">
+  <title id="title">요청·응답 DTO 번역 경계와 내부 모델 보호</title>
+  <desc id="desc">외부 JSON 요청이 Request DTO, Application Command, Domain/Entity, Response DTO를 거치며 Mass Assignment와 내부 구조 노출을 차단하는 흐름 도식</desc>
+  <style>
+    :root { --bg:#f8fafc; --card:#ffffff; --muted:#f1f5f9; --bd:#cbd5e1; --tx:#0f172a; --sub:#475569; --blue-bg:#eff6ff; --blue-bd:#3b82f6; --blue-tx:#1d4ed8; --purple-bg:#f5f3ff; --purple-bd:#8b5cf6; --purple-tx:#6d28d9; --green-bg:#ecfdf5; --green-bd:#10b981; --green-tx:#047857; --red-bg:#fef2f2; --red-bd:#ef4444; --red-tx:#b91c1c; --arr:#64748b; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#0f172a; --card:#1e293b; --muted:#0b1220; --bd:#334155; --tx:#f1f5f9; --sub:#94a3b8; --blue-bg:#172554; --blue-bd:#60a5fa; --blue-tx:#93c5fd; --purple-bg:#2e1065; --purple-bd:#a78bfa; --purple-tx:#c4b5fd; --green-bg:#064e3b; --green-bd:#34d399; --green-tx:#6ee7b7; --red-bg:#450a0a; --red-bd:#f87171; --red-tx:#fca5a5; --arr:#94a3b8; } }
+    text { font-family: "Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .h1 { font-size:17px; font-weight:700; fill:var(--tx); }
+    .h2 { font-size:13.5px; font-weight:700; }
+    .b { font-size:12px; fill:var(--tx); }
+    .s { font-size:11px; fill:var(--sub); }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--arr)"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="840" height="410" rx="14" fill="var(--bg)"/>
+  <text x="28" y="34" class="h1">요청·응답 DTO 번역 경계 (외부 계약 ↔ 내부 도메인·영속 모델 분리)</text>
+  <text x="28" y="54" class="s">외부 JSON과 JPA Entity를 분리해 쓰기 권한 오염(Mass Assignment)과 스키마 결합을 차단한다.</text>
+
+  <!-- 4 Pipeline Boxes -->
+  <rect x="28" y="78" width="172" height="176" rx="10" fill="var(--card)" stroke="var(--blue-bd)" stroke-width="1.6"/>
+  <rect x="28" y="78" width="172" height="32" rx="10" fill="var(--blue-bg)"/>
+  <text x="42" y="99" class="h2" fill="var(--blue-tx)">1. Request DTO</text>
+  <text x="42" y="130" class="b" font-weight="700">CreateOrderRequest</text>
+  <text x="42" y="152" class="b">• items, couponCode</text>
+  <text x="42" y="172" class="b">• Bean Validation</text>
+  <text x="42" y="194" class="s">클라이언트 허용 입력만</text>
+  <text x="42" y="210" class="s">선언 (role·status 제외)</text>
+
+  <rect x="232" y="78" width="172" height="176" rx="10" fill="var(--card)" stroke="var(--purple-bd)" stroke-width="1.6"/>
+  <rect x="232" y="78" width="172" height="32" rx="10" fill="var(--purple-bg)"/>
+  <text x="246" y="99" class="h2" fill="var(--purple-tx)">2. App Command</text>
+  <text x="246" y="130" class="b" font-weight="700">CreateOrderCommand</text>
+  <text x="246" y="152" class="b">• HTTP·JSON 무관</text>
+  <text x="246" y="172" class="b">• 권한·유스케이스 조정</text>
+  <text x="246" y="194" class="s">API 표현 변경이 내부로</text>
+  <text x="246" y="210" class="s">전파되는 범위를 축소</text>
+
+  <rect x="436" y="78" width="172" height="176" rx="10" fill="var(--card)" stroke="var(--green-bd)" stroke-width="1.6"/>
+  <rect x="436" y="78" width="172" height="32" rx="10" fill="var(--green-bg)"/>
+  <text x="450" y="99" class="h2" fill="var(--green-tx)">3. Domain / Entity</text>
+  <text x="450" y="130" class="b" font-weight="700">Order.place(...)</text>
+  <text x="450" y="152" class="b">• 상태 전이·불변식 보호</text>
+  <text x="450" y="172" class="b">• DB 제약 무결성</text>
+  <text x="450" y="194" class="s">Lazy 연관·감사 필드 등</text>
+  <text x="450" y="210" class="s">영속 세부사항 캡슐화</text>
+
+  <rect x="640" y="78" width="172" height="176" rx="10" fill="var(--card)" stroke="var(--blue-bd)" stroke-width="1.6"/>
+  <rect x="640" y="78" width="172" height="32" rx="10" fill="var(--blue-bg)"/>
+  <text x="654" y="99" class="h2" fill="var(--blue-tx)">4. Response DTO</text>
+  <text x="654" y="130" class="b" font-weight="700">OrderSummaryResponse</text>
+  <text x="654" y="152" class="b">• id, status, total</text>
+  <text x="654" y="172" class="b">• Query Projection 가능</text>
+  <text x="654" y="194" class="s">약속된 출력 필드만 노출</text>
+  <text x="654" y="210" class="s">(순환 참조·지연 로딩 차단)</text>
+
+  <!-- Arrows -->
+  <line x1="200" y1="166" x2="228" y2="166" stroke="var(--arr)" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="404" y1="166" x2="432" y2="166" stroke="var(--arr)" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="608" y1="166" x2="636" y2="166" stroke="var(--arr)" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Bottom Anti-Pattern Warning -->
+  <rect x="28" y="278" width="784" height="108" rx="10" fill="var(--red-bg)" stroke="var(--red-bd)" stroke-width="1.4"/>
+  <text x="46" y="304" class="h2" fill="var(--red-tx)">안티패턴: @RequestBody MemberEntity 직접 바인딩 &amp; Entity 직접 반환</text>
+  <text x="46" y="328" class="b">• 입력 위험: 요청 JSON에 "role": "ADMIN" 등을 주입하는 Mass Assignment 취약점 발생</text>
+  <text x="46" y="349" class="b">• 출력 위험: LazyInitializationException, 양방향 순환 참조, 내부 민감 컬럼(passwordHash 등) 유출</text>
+  <text x="46" y="370" class="s">※ 단, DTO가 권한 검사·도메인 규칙·DB 제약을 대체하지는 않으며 각 계층의 방어선과 함께 동작한다.</text>
+</svg>
