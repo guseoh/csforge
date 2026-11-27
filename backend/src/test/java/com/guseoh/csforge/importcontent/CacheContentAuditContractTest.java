@@ -48,8 +48,7 @@ class CacheContentAuditContractTest {
                 }
             });
         }
-        assertEquals(10, concepts.size());
-        assertEquals(3, questionFiles.size());
+        AreaContentInventory.assertMatchesDeclaredTopics(CONTENT, concepts, questionFiles);
 
         Set<String> conceptKeys = new HashSet<>();
         Set<String> referencedSvgs = new HashSet<>();
@@ -99,7 +98,8 @@ class CacheContentAuditContractTest {
             }
             assertTrue(conceptSvgCount >= 1, () -> "Concept has no static SVG visual: " + key);
         }
-        assertEquals(14, referencedSvgs.size());
+        assertEquals(AreaContentInventory.svgAssetPaths(PUBLIC_DIR, "cache"), referencedSvgs,
+                "Every area SVG asset must be referenced by a concept");
 
         Set<String> questionKeys = new HashSet<>();
         Set<String> normalizedPrompts = new HashSet<>();

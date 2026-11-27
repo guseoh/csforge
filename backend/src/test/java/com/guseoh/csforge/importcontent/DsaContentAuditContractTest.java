@@ -39,8 +39,7 @@ class DsaContentAuditContractTest {
                 }
             });
         }
-        assertEquals(84, concepts.size());
-        assertEquals(12, questionFiles.size());
+        AreaContentInventory.assertMatchesDeclaredTopics(CONTENT, concepts, questionFiles);
 
         Set<String> conceptKeys = new HashSet<>();
         for (Path path : concepts) {

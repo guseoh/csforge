@@ -39,8 +39,7 @@ class JavaContentAuditContractTest {
                 }
             });
         }
-        assertEquals(145, concepts.size());
-        assertEquals(18, questionFiles.size());
+        AreaContentInventory.assertMatchesDeclaredTopics(CONTENT, concepts, questionFiles);
 
         Set<String> conceptKeys = new HashSet<>();
         int vizBlocks = 0;

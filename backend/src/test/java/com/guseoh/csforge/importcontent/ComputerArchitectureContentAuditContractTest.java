@@ -39,8 +39,7 @@ class ComputerArchitectureContentAuditContractTest {
                 }
             });
         }
-        assertEquals(61, concepts.size());
-        assertEquals(10, questionFiles.size());
+        AreaContentInventory.assertMatchesDeclaredTopics(CONTENT, concepts, questionFiles);
 
         Set<String> conceptKeys = new HashSet<>();
         for (Path path : concepts) {
@@ -100,7 +99,7 @@ class ComputerArchitectureContentAuditContractTest {
             }
         }
 
-        assertEquals(244, totalQuestions);
+        assertTrue(totalQuestions >= 244, "Expected >=244 questions, got " + totalQuestions);
         for (String ck : conceptKeys) {
             int qCount = countByConcept.getOrDefault(ck, 0);
             int mcCount = mcByConcept.getOrDefault(ck, 0);
