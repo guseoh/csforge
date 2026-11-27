@@ -23,7 +23,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 /**
- * Database 학습 영역 38개 Concept, 152개 Question 및 정적 SVG 자산의 무결성 계약을 검증한다.
+ * Database 학습 영역의 Concept·Question 인벤토리와 정적 SVG 자산의 무결성 계약을 검증한다.
  */
 class DatabaseContentAuditContractTest {
 

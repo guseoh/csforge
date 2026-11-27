@@ -20,7 +20,7 @@ import org.junit.jupiter.api.Test;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
-/** Network 127 Concept·383 Question의 연결·정답 계약과 ECDHE 수학을 검증한다. */
+/** Network 학습 영역 Concept·Question의 연결·정답 계약과 ECDHE 수학을 검증한다. */
 class NetworkContentAuditContractTest {
     private static final Path CONTENT = Path.of("../content/network-http");
     private final ObjectMapper mapper = new ObjectMapper();
