@@ -33,25 +33,7 @@ ORDER BY avg_salary DESC;
 
 개념적으로는 다음 순서로 읽을 수 있습니다.
 
-```text
-FROM / JOIN
-   │  입력 row 집합 구성
-   ▼
-WHERE
-   │  개별 row 필터
-   ▼
-GROUP BY
-   │  그룹 형성
-   ▼
-HAVING
-   │  그룹 필터
-   ▼
-SELECT
-   │  출력 expression 계산
-   ▼
-ORDER BY
-      최종 정렬
-```
+![SQL SELECT 논리 처리 순서와 alias·집계 사용 시점](/learning/database/sql-select-logical-order.svg)
 
 그래서 aggregate 결과를 `WHERE AVG(salary) > ...`처럼 사용할 수 없습니다. WHERE 단계에서는 아직 그룹 aggregate가 만들어지지 않았기 때문입니다. 그룹 결과를 필터링하려면 HAVING이 필요합니다.
 

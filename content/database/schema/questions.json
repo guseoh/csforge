@@ -1,8 +1,361 @@
 [
-  {"kind":"question","contentKey":"database.core.schema.primary-key.q1","promptMarkdown":"회원 이메일은 변경될 수 있지만 같은 회원의 식별자는 유지되어야 한다. 이메일을 기본 키로 쓸 때 생기는 설계 부담을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.schema.primary-key"],"modelAnswer":"식별 키 자체가 업무 속성 변경과 함께 바뀌어 모든 참조와 외부 계약에 변경이 전파될 수 있다. 변경되지 않는 대체 키(surrogate key)를 내부 식별자로 두고 이메일은 별도 UNIQUE 업무 키로 관리하는 선택을 검토할 수 있다.","explanationMarkdown":"이메일을 기본 키로 삼으면 주소 변경이 식별자 변경이 되어 외래 키와 외부 참조를 함께 갱신해야 할 수 있다. 변경 가능한 업무 속성은 별도 UNIQUE로 두고 안정적인 대체 키를 식별자로 선택하는 방안을 비교하되, 자연 키가 실제로 불변이라면 반드시 나쁜 선택은 아니다."},
-  {"kind":"question","contentKey":"database.core.schema.primary-key.q2","promptMarkdown":"기본 키가 제공하는 핵심 식별자 역할을 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["database.core.schema.primary-key"],"acceptedAnswers":["row를 다른 row와 구분하고 foreign key와 외부 참조가 안정적으로 가리킬 identity를 제공하기 때문이다","row를 유일하게 식별해 참조 무결성과 lifecycle의 기준이 되기 때문이다","stable row identity","row identity","안정적인 row identity","행을 다른 행과 구분하고 외래 키와 외부 참조가 안정적으로 가리킬 식별자를 제공하기 때문이다","행을 유일하게 식별해 참조 무결성과 생명주기의 기준이 되기 때문이다","안정적인 행 식별자"],"explanationMarkdown":"기본 키는 중복 방지뿐 아니라 행을 식별하고 NULL이 아닌 참조 기준을 제공해 외래 키와 생명주기의 대상이 된다. 따라서 변경 가능한 업무 속성의 유일성과 안정적인 식별자를 같은 선택 문제로 섞지 않아야 한다."},
-  {"kind":"question","contentKey":"database.core.schema.foreign-key.q1","promptMarkdown":"다음 경쟁 상황을 생각하자.\n\n1. 서비스가 부모 행의 존재 여부를 SELECT한다.\n2. 그 직후 다른 트랜잭션이 부모 행을 삭제한다.\n3. 서비스가 자식 행 INSERT를 시도한다.\n\n질문: 이 경쟁 상황에서도 존재하지 않는 부모를 참조하는 INSERT를 막는 DB 장치는?","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["database.core.schema.foreign-key"],"acceptedAnswers":["foreign key constraint","외래 키 제약","외래 키 제약 조건"],"explanationMarkdown":"서비스의 사전 SELECT와 자식 행 INSERT 사이에 부모 행이 삭제될 수 있으므로 존재 확인만으로는 경쟁 조건을 닫지 못한다. FOREIGN KEY가 자식 행 쓰기와 부모 행 삭제의 참조 무결성을 DB 경계에서 검사하며, 애플리케이션 검사는 사용자 친화적인 오류를 보완하는 역할이다."},
-  {"kind":"question","contentKey":"database.core.schema.foreign-key.q2","promptMarkdown":"PostgreSQL에서 `orders.member_id`에 FOREIGN KEY를 선언하면 회원별 주문 조회를 위한 인덱스도 자동으로 생긴다고 단정할 수 있는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.schema.foreign-key"],"choices":[{"key":"A","content":"외래 키는 인덱스와 완전히 같은 기능이다.","displayOrder":0,"rationaleMarkdown":"FOREIGN KEY는 부모 행의 존재를 강제하는 참조 무결성 규칙이다. 특정 조회 패턴에 필요한 빠른 탐색 구조를 제공하는 인덱스와 역할이 다르다."},{"key":"B","content":"그렇다. 모든 외래 키 컬럼에는 자동으로 B-tree 인덱스가 생긴다.","displayOrder":1,"rationaleMarkdown":"참조되는 키의 UNIQUE/PRIMARY KEY 인덱스와 달리 PostgreSQL은 자식 테이블의 참조 컬럼 인덱스를 자동으로 생성하지 않는다. 필요성은 자식 조회와 부모 삭제·갱신 접근 패턴을 보고 결정한다."},{"key":"C","content":"아니다. 참조 컬럼 인덱스는 접근 패턴에 따라 별도로 생성해야 할 수 있다.","displayOrder":2,"rationaleMarkdown":"외래 키 선언은 참조 무결성은 제공하지만 자식 쪽 조회용 인덱스 선택까지 대신하지 않는다. 주문 조회나 부모 행 연쇄 작업 비용이 중요하면 별도 인덱스 후보를 실제 작업 부하로 검증한다."},{"key":"D","content":"외래 키가 있으면 JOIN 자체가 필요 없다.","displayOrder":3,"rationaleMarkdown":"외래 키는 부모와 자식 행 사이의 참조 무결성을 검사할 뿐 쿼리를 실행하거나 JOIN 결과를 자동으로 만들지 않는다. 실제 행 결합은 애플리케이션 쿼리가 명시해야 한다."}],"correctChoiceKey":"C","explanationMarkdown":"부모의 PRIMARY KEY나 UNIQUE 키에는 유일성을 지원하는 인덱스가 있지만 자식의 `orders.member_id`에는 PostgreSQL이 조회용 인덱스를 자동으로 만들지 않는다. 자식 조회나 부모 삭제 성능이 중요하면 해당 접근 패턴에 맞는 인덱스를 별도로 설계해야 한다."},
-  {"kind":"question","contentKey":"database.core.schema.unique-check.q1","promptMarkdown":"두 가입 요청이 다음 순서로 실행된다.\n\n- 요청 A: 같은 이메일이 없음을 확인 → INSERT 시도\n- 요청 B: 같은 이메일이 없음을 확인 → INSERT 시도\n\n질문: 중복 INSERT를 최종적으로 막기 위해 필요한 핵심 스키마 계약은?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.schema.unique-check"],"acceptedAnswers":["email에 UNIQUE constraint를 둔다","UNIQUE 제약으로 DB에서 중복을 막는다","이메일에 UNIQUE 제약 조건을 둔다","UNIQUE 제약 조건으로 DB에서 중복을 막는다"],"explanationMarkdown":"두 요청이 모두 사전 SELECT에서 값이 없음을 확인해도 그 뒤 INSERT가 경쟁할 수 있으므로 애플리케이션 검사만으로는 부족하다. 이메일의 UNIQUE 제약 조건이 최종 쓰기 경계에서 한 요청만 통과시키며, 서비스는 unique violation을 적절한 충돌 결과로 변환해야 한다."},
-  {"kind":"question","contentKey":"database.core.schema.unique-check.q2","promptMarkdown":"`CHECK (ended_at >= started_at)`만 있고 `ended_at`이 NULL 가능할 때, `ended_at`이 반드시 존재해야 한다는 규칙까지 보장된다고 볼 수 있는가? 이유를 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.schema.unique-check"],"modelAnswer":"그렇지 않다. NULL이 포함된 비교는 UNKNOWN이 될 수 있고 PostgreSQL의 CHECK는 결과가 FALSE가 아니면 통과할 수 있다. 종료 시각 자체가 필수라면 NOT NULL 등 별도 제약 조건이 필요하다.","explanationMarkdown":"`ended_at >= started_at`에서 `ended_at`이 NULL이면 비교 결과가 UNKNOWN이 될 수 있고 PostgreSQL의 CHECK는 FALSE가 아닌 경우를 통과시킬 수 있다. 종료 시각의 존재를 불변 조건으로 요구한다면 `NOT NULL`을 별도로 선언하고, 시간 순서 검사는 CHECK로 나누어 표현해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.primary-key.q1",
+    "promptMarkdown": "회원 이메일은 변경될 수 있지만 같은 회원의 식별자는 유지되어야 한다. 이메일을 기본 키로 쓸 때 생기는 설계 부담을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.primary-key"
+    ],
+    "modelAnswer": "식별 키 자체가 업무 속성 변경과 함께 바뀌어 모든 참조와 외부 계약에 변경이 전파될 수 있다. 변경되지 않는 대체 키(surrogate key)를 내부 식별자로 두고 이메일은 별도 UNIQUE 업무 키로 관리하는 선택을 검토할 수 있다.",
+    "explanationMarkdown": "이메일을 기본 키로 삼으면 주소 변경이 식별자 변경이 되어 외래 키와 외부 참조를 함께 갱신해야 할 수 있다. 변경 가능한 업무 속성은 별도 UNIQUE로 두고 안정적인 대체 키를 식별자로 선택하는 방안을 비교하되, 자연 키가 실제로 불변이라면 반드시 나쁜 선택은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.primary-key.q2",
+    "promptMarkdown": "기본 키가 제공하는 핵심 식별자 역할을 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.primary-key"
+    ],
+    "acceptedAnswers": [
+      "row를 다른 row와 구분하고 foreign key와 외부 참조가 안정적으로 가리킬 identity를 제공하기 때문이다",
+      "row를 유일하게 식별해 참조 무결성과 lifecycle의 기준이 되기 때문이다",
+      "stable row identity",
+      "row identity",
+      "안정적인 row identity",
+      "행을 다른 행과 구분하고 외래 키와 외부 참조가 안정적으로 가리킬 식별자를 제공하기 때문이다",
+      "행을 유일하게 식별해 참조 무결성과 생명주기의 기준이 되기 때문이다",
+      "안정적인 행 식별자"
+    ],
+    "explanationMarkdown": "기본 키는 중복 방지뿐 아니라 행을 식별하고 NULL이 아닌 참조 기준을 제공해 외래 키와 생명주기의 대상이 된다. 따라서 변경 가능한 업무 속성의 유일성과 안정적인 식별자를 같은 선택 문제로 섞지 않아야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.foreign-key.q1",
+    "promptMarkdown": "다음 경쟁 상황을 생각하자.\n\n1. 서비스가 부모 행의 존재 여부를 SELECT한다.\n2. 그 직후 다른 트랜잭션이 부모 행을 삭제한다.\n3. 서비스가 자식 행 INSERT를 시도한다.\n\n질문: 이 경쟁 상황에서도 존재하지 않는 부모를 참조하는 INSERT를 막는 DB 장치는?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.foreign-key"
+    ],
+    "acceptedAnswers": [
+      "foreign key constraint",
+      "외래 키 제약",
+      "외래 키 제약 조건"
+    ],
+    "explanationMarkdown": "서비스의 사전 SELECT와 자식 행 INSERT 사이에 부모 행이 삭제될 수 있으므로 존재 확인만으로는 경쟁 조건을 닫지 못한다. FOREIGN KEY가 자식 행 쓰기와 부모 행 삭제의 참조 무결성을 DB 경계에서 검사하며, 애플리케이션 검사는 사용자 친화적인 오류를 보완하는 역할이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.foreign-key.q2",
+    "promptMarkdown": "PostgreSQL에서 `orders.member_id`에 FOREIGN KEY를 선언하면 회원별 주문 조회를 위한 인덱스도 자동으로 생긴다고 단정할 수 있는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.foreign-key"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "외래 키는 인덱스와 완전히 같은 기능이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "FOREIGN KEY는 부모 행의 존재를 강제하는 참조 무결성 규칙이다. 특정 조회 패턴에 필요한 빠른 탐색 구조를 제공하는 인덱스와 역할이 다르다."
+      },
+      {
+        "key": "B",
+        "content": "그렇다. 모든 외래 키 컬럼에는 자동으로 B-tree 인덱스가 생긴다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "참조되는 키의 UNIQUE/PRIMARY KEY 인덱스와 달리 PostgreSQL은 자식 테이블의 참조 컬럼 인덱스를 자동으로 생성하지 않는다. 필요성은 자식 조회와 부모 삭제·갱신 접근 패턴을 보고 결정한다."
+      },
+      {
+        "key": "C",
+        "content": "아니다. 참조 컬럼 인덱스는 접근 패턴에 따라 별도로 생성해야 할 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "외래 키 선언은 참조 무결성은 제공하지만 자식 쪽 조회용 인덱스 선택까지 대신하지 않는다. 주문 조회나 부모 행 연쇄 작업 비용이 중요하면 별도 인덱스 후보를 실제 작업 부하로 검증한다."
+      },
+      {
+        "key": "D",
+        "content": "외래 키가 있으면 JOIN 자체가 필요 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "외래 키는 부모와 자식 행 사이의 참조 무결성을 검사할 뿐 쿼리를 실행하거나 JOIN 결과를 자동으로 만들지 않는다. 실제 행 결합은 애플리케이션 쿼리가 명시해야 한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "부모의 PRIMARY KEY나 UNIQUE 키에는 유일성을 지원하는 인덱스가 있지만 자식의 `orders.member_id`에는 PostgreSQL이 조회용 인덱스를 자동으로 만들지 않는다. 자식 조회나 부모 삭제 성능이 중요하면 해당 접근 패턴에 맞는 인덱스를 별도로 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.unique-check.q1",
+    "promptMarkdown": "두 가입 요청이 다음 순서로 실행된다.\n\n- 요청 A: 같은 이메일이 없음을 확인 → INSERT 시도\n- 요청 B: 같은 이메일이 없음을 확인 → INSERT 시도\n\n질문: 중복 INSERT를 최종적으로 막기 위해 필요한 핵심 스키마 계약은?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.unique-check"
+    ],
+    "acceptedAnswers": [
+      "email에 UNIQUE constraint를 둔다",
+      "UNIQUE 제약으로 DB에서 중복을 막는다",
+      "이메일에 UNIQUE 제약 조건을 둔다",
+      "UNIQUE 제약 조건으로 DB에서 중복을 막는다"
+    ],
+    "explanationMarkdown": "두 요청이 모두 사전 SELECT에서 값이 없음을 확인해도 그 뒤 INSERT가 경쟁할 수 있으므로 애플리케이션 검사만으로는 부족하다. 이메일의 UNIQUE 제약 조건이 최종 쓰기 경계에서 한 요청만 통과시키며, 서비스는 unique violation을 적절한 충돌 결과로 변환해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.unique-check.q2",
+    "promptMarkdown": "`CHECK (ended_at >= started_at)`만 있고 `ended_at`이 NULL 가능할 때, `ended_at`이 반드시 존재해야 한다는 규칙까지 보장된다고 볼 수 있는가? 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.unique-check"
+    ],
+    "modelAnswer": "그렇지 않다. NULL이 포함된 비교는 UNKNOWN이 될 수 있고 PostgreSQL의 CHECK는 결과가 FALSE가 아니면 통과할 수 있다. 종료 시각 자체가 필수라면 NOT NULL 등 별도 제약 조건이 필요하다.",
+    "explanationMarkdown": "`ended_at >= started_at`에서 `ended_at`이 NULL이면 비교 결과가 UNKNOWN이 될 수 있고 PostgreSQL의 CHECK는 FALSE가 아닌 경우를 통과시킬 수 있다. 종료 시각의 존재를 불변 조건으로 요구한다면 `NOT NULL`을 별도로 선언하고, 시간 순서 검사는 CHECK로 나누어 표현해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.primary-key.q3",
+    "promptMarkdown": "PostgreSQL에서 대용량 테이블의 기본 키로 순차 증가 ID(`BIGINT GENERATED ALWAYS AS IDENTITY` 또는 `UUIDv7`) 대신 완전 무작위 `UUIDv4`를 선택했을 때 B-tree 인덱스에서 발생하는 대표적 쓰기 비용은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.primary-key",
+      "database.core.index.btree"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`UUIDv4`는 크기가 1바이트라 오히려 `BIGINT`보다 항상 인덱스가 작다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`UUID`는 16바이트로 `BIGINT`(8바이트)의 2배이며 모든 보조 인덱스·외래 키 크기도 함께 늘어난다."
+      },
+      {
+        "key": "B",
+        "content": "`UUIDv4`는 `SELECT ... WHERE id = ?` 동등 조회를 지원하지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "단건 동등 조회 자체는 정상 동작하지만 대량 삽입 시 리프 페이지 지역성(locality)이 크게 떨어진다."
+      },
+      {
+        "key": "C",
+        "content": "새 행이 B-tree 리프 페이지 전체에 무작위로 흩어져 삽입되므로 빈번한 페이지 분할(page split), 인덱스 bloat, 랜덤 버퍼 I/O 증가가 발생한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "순차 키는 B-tree 맨 오른쪽 리프에만 추가되어 캐시 적중률이 높지만, 무작위 `UUIDv4`는 매 INSERT마다 서로 다른 리프 페이지를 건드려 페이지 분할과 디스크 랜덤 쓰기를 키운다."
+      },
+      {
+        "key": "D",
+        "content": "PostgreSQL은 `UUID` 타입에 `PRIMARY KEY` 제약을 걸 수 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "PostgreSQL은 네이티브 16바이트 `uuid` 타입과 `PRIMARY KEY`를 정상 지원한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "외부 노출 식별자가 필요하더라도 내부 PK·FK에는 8바이트 순차 `BIGINT` 또는 시간 정렬성이 있는 `UUIDv7`을 쓰면 B-tree 페이지 분할과 버퍼 캐시 오염을 크게 줄일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.primary-key.q4",
+    "promptMarkdown": "회원 테이블의 기본 키로 `email` 같은 자연 키(natural key) 대신 불변 대리 키(`id BIGINT`)를 두고 `email`에는 별도 `UNIQUE` 제약을 거는 편이 백엔드에서 선호되는 핵심 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.primary-key"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "대리 키를 쓰면 `email` 중복 검사를 아예 하지 않아도 되기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "업무상 이메일 유일성이 필요하면 대리 키 PK와 별도로 `email`에 `UNIQUE` 제약을 반드시 두어야 한다."
+      },
+      {
+        "key": "B",
+        "content": "JPA는 `String` 타입 `@Id`를 아예 지원하지 않기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "JPA는 `String` PK도 지원하지만 변경 가능성과 FK 크기·조인 비용 때문에 불변 대리 키가 선호된다."
+      },
+      {
+        "key": "C",
+        "content": "회원이 이메일을 변경할 때 `orders`, `payments`, `audit_logs` 등 수많은 자식 테이블의 외래 키와 인덱스를 연쇄 수정할 필요가 없고, 키 크기도 고정 8바이트로 작게 유지된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "자연 키가 업무 요구로 변경되면 이를 참조하는 모든 FK에 `ON UPDATE CASCADE` 대량 쓰기와 잠금이 전파된다. 불변 대리 키를 PK로 쓰고 `email`은 `UNIQUE`로 분리하면 변경 파급이 1행으로 제한된다."
+      },
+      {
+        "key": "D",
+        "content": "문자열 컬럼에는 `UNIQUE` 제약을 걸 수 없기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "문자열 컬럼에도 `UNIQUE` 제약은 정상적으로 선언할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "기본 키는 행의 불변 정체성이므로 업무상 바뀔 수 있는 값(이메일, 전화번호)은 PK가 아니라 별도 `UNIQUE` 제약으로 두고, PK에는 작은 불변 대리 키를 쓰는 것이 변경 비용과 인덱스 효율 모두 유리하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.foreign-key.q3",
+    "promptMarkdown": "PostgreSQL에서 `orders(member_id)`에 `REFERENCES members(id)` 외래 키를 선언했지만 `orders(member_id)`에 별도 인덱스를 만들지 않았다. 부모 `members` 행을 `DELETE`할 때 발생할 수 있는 성능 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.foreign-key",
+      "database.core.index.btree"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "PostgreSQL이 `FOREIGN KEY` 선언 시 자동으로 `orders(member_id)`에 B-tree 인덱스를 생성하므로 성능 문제가 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "PostgreSQL은 부모의 PK/UNIQUE 인덱스는 요구하지만 자식 테이블의 FK 컬럼 인덱스는 자동 생성하지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "인덱스가 없으면 외래 키 제약 검사가 비활성화되어 고아 행이 생긴다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "제약 검사는 정상 동작하지만 인덱스가 없어 매번 느린 풀 스캔을 수행한다."
+      },
+      {
+        "key": "C",
+        "content": "`DELETE`가 항상 `0 rows`를 반환하고 아무 일도 하지 않는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "참조 자식이 없으면 느린 스캔 후 삭제되고, 자식이 있으면 `RESTRICT`/`CASCADE` 정책대로 동작한다."
+      },
+      {
+        "key": "D",
+        "content": "PostgreSQL은 FK 참조 컬럼(`orders.member_id`)에 인덱스를 자동 생성하지 않으므로, 부모 삭제/PK 수정 시 자식 `orders` 테이블 전체를 `Seq Scan`하며 참조 행 존재 여부를 확인하게 된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "MySQL InnoDB와 달리 PostgreSQL은 외래 키 자식 컬럼에 인덱스를 자동 생성하지 않는다. 따라서 부모 삭제 시 참조 무결성 검사 및 회원별 주문 조회를 위해 자식 FK 컬럼에 명시적으로 인덱스를 생성해야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "PostgreSQL에서는 자식 테이블의 외래 키 컬럼에 인덱스가 자동 생성되지 않는다. 부모 삭제 성능과 조인 성능을 위해 거의 모든 FK 컬럼에 명시적 인덱스(또는 선두 FK 복합 인덱스)를 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.foreign-key.q4",
+    "promptMarkdown": "자식 테이블 `order_items`의 외래 키에 `ON DELETE CASCADE`를 무조건 모든 테이블에 적용했을 때 운영에서 주의해야 할 가장 큰 위험은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.foreign-key"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`ON DELETE CASCADE`는 트랜잭션 롤백이 불가능하다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "트랜잭션 내 롤백은 가능하지만 일단 커밋되면 대규모 연쇄 삭제로 복구 비용이 막대하다."
+      },
+      {
+        "key": "B",
+        "content": "실수로 부모(예: `member`) 1행을 삭제했을 때 정산·주문·결제 이력까지 연쇄 삭제되어 복구가 어려운 대량 데이터 유실과 장시간 잠금이 발생할 수 있다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "종속 수명 객체(예: 임시 장바구니 항목)가 아닌 독립 감사·정산 이력 테이블에 `ON DELETE CASCADE`를 걸면 의도치 않은 연쇄 삭제 사고로 이어진다. 기본 `RESTRICT`/`NO ACTION`으로 보호하고 명시적 삭제 정책을 세워야 한다."
+      },
+      {
+        "key": "C",
+        "content": "`ON DELETE CASCADE`는 PostgreSQL에서 지원하지 않는 구문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "PostgreSQL이 정식 지원하는 표준 SQL 외래 키 옵션이다."
+      },
+      {
+        "key": "D",
+        "content": "`ON DELETE CASCADE`를 쓰면 자식 테이블에 `INSERT`가 불가능해진다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "삽입은 정상 동작하며 부모 삭제 시 연쇄 삭제 동작만 결정한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`ON DELETE CASCADE`는 부모와 운명을 완전히 같이하는 종속 데이터에만 신중히 적용하고, 결제·주문·이력처럼 보존해야 하는 데이터는 `RESTRICT`로 보호해 실수 삭제를 막아야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.unique-check.q3",
+    "promptMarkdown": "다음 DDL에 `INSERT INTO coupons (code, discount_rate) VALUES ('FREE', NULL);`을 실행했을 때 PostgreSQL의 동작으로 옳은 것은?\n```sql\nCREATE TABLE coupons (\n    id BIGINT PRIMARY KEY,\n    code TEXT NOT NULL UNIQUE,\n    discount_rate INT CHECK (discount_rate >= 0 AND discount_rate <= 100)\n);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.unique-check",
+      "database.core.model.null-three-valued"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`discount_rate`가 자동으로 `0`으로 변환되어 삽입된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`DEFAULT 0` 선언이 없으므로 `NULL` 그대로 저장된다."
+      },
+      {
+        "key": "B",
+        "content": "`UNIQUE` 제약 때문에 `code = 'FREE'`가 실패한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "테이블에 기존 중복 코드가 없다면 `code = 'FREE'`는 `UNIQUE` 제약을 정상 통과하며 `CHECK` 역시 `UNKNOWN`을 허용한다."
+      },
+      {
+        "key": "C",
+        "content": "`CHECK` 조건이 `NULL`에 대해 `UNKNOWN`으로 평가되므로 `CHECK` 제약을 통과해 **삽입에 성공**한다. `NULL`을 막으려면 `NOT NULL`을 별도로 선언해야 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`WHERE` 절은 `TRUE`만 통과시키지만, SQL `CHECK` 제약은 `FALSE`일 때만 거부하고 `TRUE`와 `UNKNOWN`을 모두 허용한다! 따라서 `NULL` 금지는 반드시 `NOT NULL`을 함께 붙여야 한다."
+      },
+      {
+        "key": "D",
+        "content": "`discount_rate >= 0`이 `TRUE`가 아니므로 `CHECK` 제약 위반으로 삽입이 거부된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`CHECK` 제약은 `WHERE`와 반대로 `UNKNOWN`을 위반으로 간주하지 않는다. 이 차이를 모르면 `NULL`이 스며드는 스키마 버그를 만든다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`WHERE`는 `TRUE`만 허용하지만 `CHECK` 제약은 `FALSE`만 거부한다(`UNKNOWN` 허용). 따라서 `CHECK`가 걸린 컬럼에 `NULL`을 허용하지 않으려면 반드시 `NOT NULL`을 함께 선언해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.schema.unique-check.q4",
+    "promptMarkdown": "애플리케이션에서 `if (!userRepository.existsByEmail(email)) { userRepository.save(user); }`만 작성하고 DB `UNIQUE` 제약을 두지 않았을 때 발생하는 문제와 올바른 패턴은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.schema.unique-check"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 동시 요청이 모두 `existsByEmail=false`를 통과해 중복 이메일이 저장되는 TOCTOU 경쟁 조건이 발생한다. DB `UNIQUE` 제약을 최종 보루로 두고 충돌 예외(`23505`)를 409 API 오류로 번역해야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "애플리케이션 사전 조회는 사용자 안내 UX에는 유용하지만 동시성 보장을 못 한다. DB `UNIQUE` 제약이 원자적 유일성을 보장하고, 서비스/컨트롤러는 `DataIntegrityViolationException`을 409로 처리해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "`@Transactional`만 붙이면 `existsByEmail`이 자동으로 존재하지 않는 이메일을 잠가 중복이 100% 막힌다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "PostgreSQL `READ COMMITTED`의 `SELECT`는 존재하지 않는 행을 잠그지 않으므로 동시 중복 삽입을 막지 못한다."
+      },
+      {
+        "key": "C",
+        "content": "DB `UNIQUE` 제약은 성능을 10배 느리게 하므로 운영 DB에서는 제거하는 것이 표준이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`UNIQUE` 제약은 B-tree 인덱스로 빠르게 검증되며 데이터 무결성의 핵심 장치다."
+      },
+      {
+        "key": "D",
+        "content": "JPA `@Column(unique = true)`는 Java 런타임 메모리에서 자동으로 중복을 막아 DB DDL이 필요 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`@Column(unique = true)`는 DDL 자동 생성 힌트일 뿐이며 운영 Flyway 마이그레이션에 실제 `UNIQUE` 제약이 있어야 동작한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "애플리케이션의 `existsBy...` 검사는 동시 요청 사이에서 깨진다. 유일성 불변식은 반드시 DB `UNIQUE` 제약(Flyway DDL)으로 강제하고, 충돌 예외를 의미 있는 도메인/HTTP 409 응답으로 변환해야 한다."
+  }
 ]

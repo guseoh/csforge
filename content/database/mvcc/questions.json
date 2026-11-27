@@ -1,9 +1,351 @@
 [
-  {"kind":"question","contentKey":"database.core.mvcc.versions.q1","promptMarkdown":"T2가 UPDATE를 커밋한 뒤에도 T1의 오래된 스냅샷이 이전 값을 볼 수 있게 하는 핵심 메커니즘을 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["database.core.mvcc.versions"],"acceptedAnswers":["MVCC가 여러 row version을 공존시키고 snapshot에 따라 visible version을 선택하기 때문이다","MVCC가 여러 행 버전을 공존시키고 스냅샷에 따라 보이는 버전을 선택하기 때문이다","이전 tuple version이 남아 있고 T1 snapshot에서는 그것이 visible하기 때문이다","이전 튜플 버전이 남아 있고 T1 스냅샷에서는 그것이 보이기 때문이다","MVCC와 snapshot visibility","MVCC와 스냅샷 가시성","row version과 snapshot visibility","행 버전과 스냅샷 가시성","multiple row versions와 snapshot visibility"],"explanationMarkdown":"T2의 UPDATE가 새 튜플 버전을 만들더라도 T1의 오래된 스냅샷에 맞는 이전 버전은 즉시 사라지지 않는다. MVCC는 스냅샷과 버전 가시성을 이용해 읽을 행 버전을 고르므로 UPDATE를 모든 읽기 트랜잭션 앞에서 기존 값을 즉시 교체하는 것으로 보면 안 된다."},
-  {"kind":"question","contentKey":"database.core.mvcc.versions.q2","promptMarkdown":"오래 유지되는 스냅샷이 있는 동안 같은 행이 여러 번 UPDATE되었다. MVCC 버전이 계속 남을 수 있는 이유와 운영상 확인할 대상을 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.mvcc.versions"],"modelAnswer":"오래된 스냅샷이 이전 버전을 볼 가능성이 있어 해당 버전을 즉시 회수할 수 없다. 오래 실행되는 트랜잭션과 xmin 가시성 범위, dead tuple 증가 및 VACUUM 지연을 함께 확인한다.","explanationMarkdown":"오래된 스냅샷이 이전 튜플을 볼 가능성이 남아 있으면 VACUUM은 그 버전을 안전하게 제거할 수 없다. 따라서 오래 실행되는 트랜잭션, xmin 가시성 범위, dead tuple 증가와 VACUUM 지연을 함께 확인해야 하며, 단순히 UPDATE 횟수만으로 보존 기간을 판단하면 안 된다."},
-  {"kind":"question","contentKey":"database.core.mvcc.visibility.q1","promptMarkdown":"READ COMMITTED와 REPEATABLE READ에서 같은 트랜잭션의 두 SELECT가 다른 트랜잭션의 중간 커밋을 보는 방식이 어떻게 다른가?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.mvcc.visibility"],"modelAnswer":"READ COMMITTED는 각 SQL 문 시작 시 스냅샷을 얻어 두 번째 SELECT가 중간 커밋을 볼 수 있다. PostgreSQL REPEATABLE READ는 트랜잭션 스냅샷을 유지하므로 같은 트랜잭션의 후속 SELECT가 그 새 커밋을 보지 않는다.","explanationMarkdown":"READ COMMITTED에서는 두 SELECT가 각각 SQL 문 스냅샷을 얻으므로 사이에 커밋된 변경이 두 번째 결과에 들어갈 수 있다. PostgreSQL REPEATABLE READ에서는 첫 쿼리 시 확정된 트랜잭션 스냅샷을 후속 SELECT가 유지하므로 그 뒤 커밋은 같은 트랜잭션의 일반 SELECT에 보이지 않는다."},
-  {"kind":"question","contentKey":"database.core.mvcc.visibility.q2","promptMarkdown":"PostgreSQL 16에서 다른 트랜잭션의 행 버전 `xmin=T20`, `xmax=0`을 발견했다. xmin 값만 보고 현재 스냅샷에서 이 행이 보인다고 판단할 수 있는가? T20의 진행 중·커밋·롤백 상태와 스냅샷 관계를 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.mvcc.visibility"],"modelAnswer":"판단할 수 없다. T20이 진행 중이거나 롤백했다면 다른 트랜잭션의 일반 SELECT에는 이 새 버전이 보이지 않는다. T20이 커밋했더라도 현재 스냅샷이 T20의 결과를 포함해야 한다. 또한 xmax는 잠금이나 MultiXact 정보를 나타낼 수 있으므로 xmin·xmax의 숫자만 비교하는 것은 충분하지 않다.","explanationMarkdown":"PostgreSQL의 MVCC 가시성은 행 버전의 생성·삭제 관련 정보, 트랜잭션의 상태 및 스냅샷에 의해 결정된다. 다른 트랜잭션의 일반 SELECT를 전제로 진행 중이거나 중단된 생성 트랜잭션의 버전은 보이지 않는다. 커밋된 생성 트랜잭션이라도 스냅샷이 오래됐다면 보이지 않을 수 있다. 자신의 변경을 읽는 경우에는 별도 가시성 규칙이 적용된다."},
-  {"kind":"question","contentKey":"database.core.mvcc.cleanup.q1","promptMarkdown":"UPDATE가 많은 테이블에서 autovacuum이 돌고 있는데도 dead tuple이 오래 남는다. `idle in transaction` 상태의 오래된 트랜잭션이 하나 있다면 왜 원인이 될 수 있는가?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["database.core.mvcc.cleanup"],"modelAnswer":"그 트랜잭션이 오래된 스냅샷이나 xmin 가시성 범위를 유지하면 이전 튜플 버전이 아직 보일 가능성이 있어 VACUUM이 안전하게 회수하지 못할 수 있다. 오래 실행되는 트랜잭션을 확인하고 트랜잭션 생명주기 관리와 VACUUM 지표를 함께 점검해야 한다.","explanationMarkdown":"`idle in transaction` 세션이 오래된 스냅샷 또는 xmin 가시성 범위를 붙잡고 있다면 VACUUM이 아직 어떤 읽기 트랜잭션에 필요할 수 있는 오래된 튜플을 제거하지 못할 수 있다. 그 결과 dead tuple과 테이블 팽창이 늘 수 있으므로 세션의 트랜잭션 생명주기, VACUUM 진행·지연 지표를 함께 확인해야 한다."},
-  {"kind":"question","contentKey":"database.core.mvcc.cleanup.q2","promptMarkdown":"일반 `VACUUM`을 실행하면 테이블 파일 크기가 항상 즉시 크게 줄어든다고 기대해도 되는가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["database.core.mvcc.cleanup"],"choices":[{"key":"A","content":"아니다. 일반 VACUUM은 주로 dead tuple 공간을 내부에서 재사용 가능하게 만들며 파일 축소와는 다르다.","displayOrder":0,"rationaleMarkdown":"일반 VACUUM은 더 이상 보이지 않는 튜플 공간을 테이블 내부에서 재사용 가능하게 정리한다. 보통 테이블 전체를 새로 쓰지 않으므로 OS에 반환되는 파일 크기가 곧바로 크게 줄지 않는다."},{"key":"B","content":"그렇다. 매번 테이블 전체를 새 파일로 재작성한다.","displayOrder":1,"rationaleMarkdown":"테이블 전체를 새 파일로 재작성하는 것은 `VACUUM FULL`의 방식이고 더 큰 I/O와 강한 잠금 비용이 따른다. 일반 `VACUUM`의 동작과 섞으면 안 된다."},{"key":"C","content":"그렇다. VACUUM은 인덱스만 삭제한다.","displayOrder":2,"rationaleMarkdown":"dead tuple 정리와 공간 재사용은 힙·테이블에도 적용된다. VACUUM은 인덱스 통계만 지우는 명령이 아니라 MVCC 튜플 정리와 유지보수 작업이다."},{"key":"D","content":"아니다. VACUUM은 MVCC와 관계없는 통계 명령일 뿐이다.","displayOrder":3,"rationaleMarkdown":"UPDATE/DELETE 뒤 오래된 버전이 남는 이유가 MVCC 가시성과 연결되므로 VACUUM은 그 버전이 더는 필요 없는 시점을 기준으로 정리한다. 통계 갱신만을 뜻하지 않는다."}],"correctChoiceKey":"A","explanationMarkdown":"일반 VACUUM은 dead tuple 공간을 다시 사용할 수 있게 만드는 것이 주목적이라 테이블 파일을 매번 재작성해 축소하지 않는다. 파일을 적극적으로 줄이는 VACUUM FULL은 별도 동작과 더 큰 잠금·I/O 비용이 있으므로 둘의 목적을 구분해야 한다."},
-  {"kind":"question","contentKey":"database.core.mvcc.visibility.q3","promptMarkdown":"**결과 예측 — PostgreSQL 16의 일반 `SELECT`, 잠금 읽기 없음.** 테이블에는 처음에 `wallet(id=1, balance=10)`이 한 행 있습니다. T1은 `BEGIN` 이후 첫 SELECT를 실행했으며, 그 직후 T2가 같은 행을 `balance=12`로 UPDATE하고 COMMIT했습니다.\n\n```text\nT1                                  T2\n───────────────────────────         ───────────────────────\nBEGIN (격리 수준은 아래 비교)\nSELECT balance -> 10\n                                    UPDATE wallet SET balance=12 WHERE id=1\n                                    COMMIT\nSELECT balance -> ?\nCOMMIT\n```\n\nT1을 (가) `READ COMMITTED`, (나) `REPEATABLE READ`로 각각 처음부터 시작했다면 **두 번째 SELECT 결과**는 각각 얼마인가요? 각 실험은 독립된 초기 데이터에서 수행합니다.","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.mvcc.visibility"],"choices":[{"key":"A","content":"(가) `10`, (나) `12`","displayOrder":0,"rationaleMarkdown":"`READ COMMITTED`는 다음 SQL 문에서 새로 커밋된 값을 볼 수 있고, `REPEATABLE READ`는 첫 읽기에 확정된 스냅샷을 유지한다. 제시한 쌍은 그 관계가 반대다."},{"key":"B","content":"(가) `12`, (나) `12`","displayOrder":1,"rationaleMarkdown":"두 격리 수준 모두 매번 새 스냅샷을 얻는다고 가정했다. PostgreSQL `REPEATABLE READ`는 첫 읽기 이후의 다른 트랜잭션 커밋을 같은 트랜잭션의 일반 SELECT에서 보지 않는다."},{"key":"C","content":"(가) `10`, (나) `10`","displayOrder":2,"rationaleMarkdown":"`READ COMMITTED`가 트랜잭션 전체에서 처음 읽은 값을 고정한다는 가정이 틀렸다. T2 COMMIT 이후 시작한 다음 SELECT는 새 스냅샷을 얻는다."},{"key":"D","content":"(가) `12`, (나) `10`","displayOrder":3,"rationaleMarkdown":"`READ COMMITTED`는 문장별 스냅샷으로 두 번째 SELECT에서 12를 보고, PostgreSQL `REPEATABLE READ`는 첫 SELECT의 스냅샷을 유지해 10을 본다."}],"correctChoiceKey":"D","explanationMarkdown":"첫 번째 읽기에서 T1이 보는 값은 두 경우 모두 10이다. T2는 별도 트랜잭션에서 `balance=12`를 커밋했지만, 그 변경이 T1의 두 번째 읽기에 보일지는 **T1 스냅샷의 유효 범위**가 결정한다.\n\n`READ COMMITTED`에서는 T1의 각 일반 SELECT가 SQL 문 시작 시점의 새 스냅샷을 사용할 수 있으므로 T2 커밋 뒤 두 번째 읽기는 12다. PostgreSQL `REPEATABLE READ`에서는 첫 SELECT에서 확정된 트랜잭션 스냅샷을 후속 일반 SELECT가 유지하므로 두 번째 읽기는 10이다.\n\n이 결과는 PostgreSQL의 해당 격리 수준과 제시된 실행 순서의 보장이다. 다른 DBMS의 `REPEATABLE READ` 구현이나 T1 자신의 UPDATE가 포함된 시나리오에 무조건 일반화하면 안 된다."}
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.versions.q1",
+    "promptMarkdown": "T2가 UPDATE를 커밋한 뒤에도 T1의 오래된 스냅샷이 이전 값을 볼 수 있게 하는 핵심 메커니즘을 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.versions"
+    ],
+    "acceptedAnswers": [
+      "MVCC가 여러 row version을 공존시키고 snapshot에 따라 visible version을 선택하기 때문이다",
+      "MVCC가 여러 행 버전을 공존시키고 스냅샷에 따라 보이는 버전을 선택하기 때문이다",
+      "이전 tuple version이 남아 있고 T1 snapshot에서는 그것이 visible하기 때문이다",
+      "이전 튜플 버전이 남아 있고 T1 스냅샷에서는 그것이 보이기 때문이다",
+      "MVCC와 snapshot visibility",
+      "MVCC와 스냅샷 가시성",
+      "row version과 snapshot visibility",
+      "행 버전과 스냅샷 가시성",
+      "multiple row versions와 snapshot visibility"
+    ],
+    "explanationMarkdown": "T2의 UPDATE가 새 튜플 버전을 만들더라도 T1의 오래된 스냅샷에 맞는 이전 버전은 즉시 사라지지 않는다. MVCC는 스냅샷과 버전 가시성을 이용해 읽을 행 버전을 고르므로 UPDATE를 모든 읽기 트랜잭션 앞에서 기존 값을 즉시 교체하는 것으로 보면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.versions.q2",
+    "promptMarkdown": "오래 유지되는 스냅샷이 있는 동안 같은 행이 여러 번 UPDATE되었다. MVCC 버전이 계속 남을 수 있는 이유와 운영상 확인할 대상을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.versions"
+    ],
+    "modelAnswer": "오래된 스냅샷이 이전 버전을 볼 가능성이 있어 해당 버전을 즉시 회수할 수 없다. 오래 실행되는 트랜잭션과 xmin 가시성 범위, dead tuple 증가 및 VACUUM 지연을 함께 확인한다.",
+    "explanationMarkdown": "오래된 스냅샷이 이전 튜플을 볼 가능성이 남아 있으면 VACUUM은 그 버전을 안전하게 제거할 수 없다. 따라서 오래 실행되는 트랜잭션, xmin 가시성 범위, dead tuple 증가와 VACUUM 지연을 함께 확인해야 하며, 단순히 UPDATE 횟수만으로 보존 기간을 판단하면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.visibility.q1",
+    "promptMarkdown": "READ COMMITTED와 REPEATABLE READ에서 같은 트랜잭션의 두 SELECT가 다른 트랜잭션의 중간 커밋을 보는 방식이 어떻게 다른가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.visibility"
+    ],
+    "modelAnswer": "READ COMMITTED는 각 SQL 문 시작 시 스냅샷을 얻어 두 번째 SELECT가 중간 커밋을 볼 수 있다. PostgreSQL REPEATABLE READ는 트랜잭션 스냅샷을 유지하므로 같은 트랜잭션의 후속 SELECT가 그 새 커밋을 보지 않는다.",
+    "explanationMarkdown": "READ COMMITTED에서는 두 SELECT가 각각 SQL 문 스냅샷을 얻으므로 사이에 커밋된 변경이 두 번째 결과에 들어갈 수 있다. PostgreSQL REPEATABLE READ에서는 첫 쿼리 시 확정된 트랜잭션 스냅샷을 후속 SELECT가 유지하므로 그 뒤 커밋은 같은 트랜잭션의 일반 SELECT에 보이지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.visibility.q2",
+    "promptMarkdown": "PostgreSQL 16에서 다른 트랜잭션의 행 버전 `xmin=T20`, `xmax=0`을 발견했다. xmin 값만 보고 현재 스냅샷에서 이 행이 보인다고 판단할 수 있는가? T20의 진행 중·커밋·롤백 상태와 스냅샷 관계를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.visibility"
+    ],
+    "modelAnswer": "판단할 수 없다. T20이 진행 중이거나 롤백했다면 다른 트랜잭션의 일반 SELECT에는 이 새 버전이 보이지 않는다. T20이 커밋했더라도 현재 스냅샷이 T20의 결과를 포함해야 한다. 또한 xmax는 잠금이나 MultiXact 정보를 나타낼 수 있으므로 xmin·xmax의 숫자만 비교하는 것은 충분하지 않다.",
+    "explanationMarkdown": "PostgreSQL의 MVCC 가시성은 행 버전의 생성·삭제 관련 정보, 트랜잭션의 상태 및 스냅샷에 의해 결정된다. 다른 트랜잭션의 일반 SELECT를 전제로 진행 중이거나 중단된 생성 트랜잭션의 버전은 보이지 않는다. 커밋된 생성 트랜잭션이라도 스냅샷이 오래됐다면 보이지 않을 수 있다. 자신의 변경을 읽는 경우에는 별도 가시성 규칙이 적용된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.cleanup.q1",
+    "promptMarkdown": "UPDATE가 많은 테이블에서 autovacuum이 돌고 있는데도 dead tuple이 오래 남는다. `idle in transaction` 상태의 오래된 트랜잭션이 하나 있다면 왜 원인이 될 수 있는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.cleanup"
+    ],
+    "modelAnswer": "그 트랜잭션이 오래된 스냅샷이나 xmin 가시성 범위를 유지하면 이전 튜플 버전이 아직 보일 가능성이 있어 VACUUM이 안전하게 회수하지 못할 수 있다. 오래 실행되는 트랜잭션을 확인하고 트랜잭션 생명주기 관리와 VACUUM 지표를 함께 점검해야 한다.",
+    "explanationMarkdown": "`idle in transaction` 세션이 오래된 스냅샷 또는 xmin 가시성 범위를 붙잡고 있다면 VACUUM이 아직 어떤 읽기 트랜잭션에 필요할 수 있는 오래된 튜플을 제거하지 못할 수 있다. 그 결과 dead tuple과 테이블 팽창이 늘 수 있으므로 세션의 트랜잭션 생명주기, VACUUM 진행·지연 지표를 함께 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.cleanup.q2",
+    "promptMarkdown": "일반 `VACUUM`을 실행하면 테이블 파일 크기가 항상 즉시 크게 줄어든다고 기대해도 되는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.cleanup"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "아니다. 일반 VACUUM은 주로 dead tuple 공간을 내부에서 재사용 가능하게 만들며 파일 축소와는 다르다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "일반 VACUUM은 더 이상 보이지 않는 튜플 공간을 테이블 내부에서 재사용 가능하게 정리한다. 보통 테이블 전체를 새로 쓰지 않으므로 OS에 반환되는 파일 크기가 곧바로 크게 줄지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "그렇다. 매번 테이블 전체를 새 파일로 재작성한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "테이블 전체를 새 파일로 재작성하는 것은 `VACUUM FULL`의 방식이고 더 큰 I/O와 강한 잠금 비용이 따른다. 일반 `VACUUM`의 동작과 섞으면 안 된다."
+      },
+      {
+        "key": "C",
+        "content": "그렇다. VACUUM은 인덱스만 삭제한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "dead tuple 정리와 공간 재사용은 힙·테이블에도 적용된다. VACUUM은 인덱스 통계만 지우는 명령이 아니라 MVCC 튜플 정리와 유지보수 작업이다."
+      },
+      {
+        "key": "D",
+        "content": "아니다. VACUUM은 MVCC와 관계없는 통계 명령일 뿐이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "UPDATE/DELETE 뒤 오래된 버전이 남는 이유가 MVCC 가시성과 연결되므로 VACUUM은 그 버전이 더는 필요 없는 시점을 기준으로 정리한다. 통계 갱신만을 뜻하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "일반 VACUUM은 dead tuple 공간을 다시 사용할 수 있게 만드는 것이 주목적이라 테이블 파일을 매번 재작성해 축소하지 않는다. 파일을 적극적으로 줄이는 VACUUM FULL은 별도 동작과 더 큰 잠금·I/O 비용이 있으므로 둘의 목적을 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.visibility.q3",
+    "promptMarkdown": "**결과 예측 — PostgreSQL 16의 일반 `SELECT`, 잠금 읽기 없음.** 테이블에는 처음에 `wallet(id=1, balance=10)`이 한 행 있습니다. T1은 `BEGIN` 이후 첫 SELECT를 실행했으며, 그 직후 T2가 같은 행을 `balance=12`로 UPDATE하고 COMMIT했습니다.\n\n```text\nT1                                  T2\n───────────────────────────         ───────────────────────\nBEGIN (격리 수준은 아래 비교)\nSELECT balance -> 10\n                                    UPDATE wallet SET balance=12 WHERE id=1\n                                    COMMIT\nSELECT balance -> ?\nCOMMIT\n```\n\nT1을 (가) `READ COMMITTED`, (나) `REPEATABLE READ`로 각각 처음부터 시작했다면 **두 번째 SELECT 결과**는 각각 얼마인가요? 각 실험은 독립된 초기 데이터에서 수행합니다.",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.visibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "(가) `10`, (나) `12`",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`READ COMMITTED`는 다음 SQL 문에서 새로 커밋된 값을 볼 수 있고, `REPEATABLE READ`는 첫 읽기에 확정된 스냅샷을 유지한다. 제시한 쌍은 그 관계가 반대다."
+      },
+      {
+        "key": "B",
+        "content": "(가) `12`, (나) `12`",
+        "displayOrder": 1,
+        "rationaleMarkdown": "두 격리 수준 모두 매번 새 스냅샷을 얻는다고 가정했다. PostgreSQL `REPEATABLE READ`는 첫 읽기 이후의 다른 트랜잭션 커밋을 같은 트랜잭션의 일반 SELECT에서 보지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "(가) `10`, (나) `10`",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`READ COMMITTED`가 트랜잭션 전체에서 처음 읽은 값을 고정한다는 가정이 틀렸다. T2 COMMIT 이후 시작한 다음 SELECT는 새 스냅샷을 얻는다."
+      },
+      {
+        "key": "D",
+        "content": "(가) `12`, (나) `10`",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`READ COMMITTED`는 문장별 스냅샷으로 두 번째 SELECT에서 12를 보고, PostgreSQL `REPEATABLE READ`는 첫 SELECT의 스냅샷을 유지해 10을 본다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "첫 번째 읽기에서 T1이 보는 값은 두 경우 모두 10이다. T2는 별도 트랜잭션에서 `balance=12`를 커밋했지만, 그 변경이 T1의 두 번째 읽기에 보일지는 **T1 스냅샷의 유효 범위**가 결정한다.\n\n`READ COMMITTED`에서는 T1의 각 일반 SELECT가 SQL 문 시작 시점의 새 스냅샷을 사용할 수 있으므로 T2 커밋 뒤 두 번째 읽기는 12다. PostgreSQL `REPEATABLE READ`에서는 첫 SELECT에서 확정된 트랜잭션 스냅샷을 후속 일반 SELECT가 유지하므로 두 번째 읽기는 10이다.\n\n이 결과는 PostgreSQL의 해당 격리 수준과 제시된 실행 순서의 보장이다. 다른 DBMS의 `REPEATABLE READ` 구현이나 T1 자신의 UPDATE가 포함된 시나리오에 무조건 일반화하면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.versions.q3",
+    "promptMarkdown": "PostgreSQL에서 `UPDATE orders SET status = 'PAID' WHERE id = 10;`을 실행할 때 내부 MVCC 저장 동작으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.versions"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "기존 힙 튜플의 컬럼 값을 제자리에서(in-place) 덮어쓰고 이전 값은 별도 undo 테이블스페이스로 옮긴다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "그것은 MySQL InnoDB의 undo log 기반 MVCC 방식이다. PostgreSQL은 기존 튜플의 `xmax`를 표시하고 힙에 새 튜플 버전(`xmin`)을 추가하는 append-style 버전 관리를 사용한다."
+      },
+      {
+        "key": "B",
+        "content": "기존 튜플에 `xmax`를 기록해 만료 표시하고 새 튜플 버전(`xmin`)을 힙에 삽입하므로, 진행 중인 오래된 스냅샷도 기존 버전을 잠금 없이 계속 읽을 수 있다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "PostgreSQL MVCC는 `UPDATE`를 논리적으로 `DELETE(xmax 설정) + INSERT(새 버전 생성)`처럼 처리하며, 이후 아무 스냅샷도 보지 않는 구 버전(dead tuple)을 `VACUUM`이 회수한다."
+      },
+      {
+        "key": "C",
+        "content": "트랜잭션이 커밋되기 전에는 기존 튜플을 모든 `SELECT`로부터 배타 잠금한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "MVCC의 핵심 가치는 쓰기 중에도 일반 `SELECT`가 이전 커밋 버전을 잠금 없이 읽는 것이다."
+      },
+      {
+        "key": "D",
+        "content": "`UPDATE`가 성공하는 즉시 이전 튜플 물리 공간이 OS 파일 시스템으로 반환된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "이전 버전은 dead tuple로 남아 있다가 `VACUUM`을 거쳐 재사용 가능 공간으로 표시된다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "PostgreSQL의 MVCC는 `UPDATE` 시 새 튜플 버전을 생성하고 기존 튜플을 dead tuple로 남긴다. 이 구조 덕분에 읽기가 쓰기를 막지 않지만, 대신 `VACUUM` 관리가 운영의 핵심이 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.versions.q4",
+    "promptMarkdown": "PostgreSQL에서 인덱스가 걸리지 않은 컬럼(`last_seen_at`)만 `UPDATE`할 때, 같은 힙 페이지 안에 여유 공간이 있으면 인덱스 엔트리를 새로 추가하지 않고 힙 내부 포인터 체인으로 연결하는 최적화는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.versions",
+      "database.core.mvcc.cleanup"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Index-Only Scan",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Index-Only Scan은 읽기 쿼리에서 힙 접근을 생략하는 조회 최적화다."
+      },
+      {
+        "key": "B",
+        "content": "Two-Phase Commit (2PC)",
+        "displayOrder": 1,
+        "rationaleMarkdown": "2PC는 분산 트랜잭션 합의 프로토콜로 단일 DB 힙 업데이트 최적화와 무관하다."
+      },
+      {
+        "key": "C",
+        "content": "Parallel Hash Join",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Parallel Hash Join은 다중 워커 기반 조인 실행 알고리즘이며 단일 테이블 MVCC 튜플 저장 최적화와는 무관하다."
+      },
+      {
+        "key": "D",
+        "content": "HOT (Heap-Only Tuple) 업데이트",
+        "displayOrder": 3,
+        "rationaleMarkdown": "HOT 업데이트는 인덱스 키 컬럼이 변경되지 않고 동일 힙 페이지에 새 버전을 둘 공간(`fillfactor`)이 있을 때 인덱스 쓰기 증폭과 인덱스 bloat를 크게 줄여 준다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "PostgreSQL의 HOT(Heap-Only Tuple) 최적화 덕분에 인덱스에 포함되지 않은 컬럼만 자주 갱신되는 테이블은 적절한 `fillfactor`(예: 80~90)를 두어 인덱스 쓰기 증폭을 크게 줄일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.visibility.q4",
+    "promptMarkdown": "PostgreSQL 16에서 초기 행 `account(id=1, balance=100)`이 있다. T1이 `REPEATABLE READ`로 시작해 첫 `SELECT`로 `100`을 읽었다. 그 뒤 T2가 `balance=200`으로 `UPDATE` 후 `COMMIT`했다. T1이 같은 트랜잭션 안에서 두 번째 `SELECT`를 실행하면 무엇이 보이는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.visibility"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`200` — T2가 이미 커밋했으므로 즉시 반영된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "그것은 문장마다 새 스냅샷을 잡는 `READ COMMITTED`의 결과다. `REPEATABLE READ`는 첫 쿼리 시점에 고정된 트랜잭션 스냅샷을 유지한다."
+      },
+      {
+        "key": "B",
+        "content": "`100` — T1은 첫 쿼리 시점의 트랜잭션 스냅샷을 유지하므로 이후 커밋된 T2의 새 버전은 보이지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`REPEATABLE READ` 스냅샷은 T1의 첫 쿼리 시점에 이미 커밋된 트랜잭션만 가시 대상으로 삼으므로, 그 이후 커밋된 T2의 변경은 T1 종료까지 보이지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "`NULL` — 동시 수정으로 행이 숨겨진다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "MVCC는 이전 버전(`balance=100`)을 그대로 보존해 반환한다."
+      },
+      {
+        "key": "D",
+        "content": "T1의 두 번째 `SELECT`에서 즉시 `40001` 예외가 발생한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "단순 `SELECT`는 기존 스냅샷 버전을 읽을 뿐 `40001` 동시 갱신 오류를 발생시키지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "PostgreSQL에서 `READ COMMITTED`는 문장별 스냅샷, `REPEATABLE READ`는 트랜잭션 첫 쿼리 시점의 고정 스냅샷을 사용한다. 이 차이가 반복 읽기 결과를 결정한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.cleanup.q3",
+    "promptMarkdown": "UPDATE가 매우 잦은 주문 테이블에서 `autovacuum`이 계속 돌고 있는데도 dead tuple이 수백만 건 줄어들지 않고 테이블 bloat가 악화되고 있다. `pg_stat_activity`에서 가장 먼저 찾아야 할 원인은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.cleanup"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`CHECKPOINT`를 수동 실행하면 모든 dead tuple이 즉시 제거된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`CHECKPOINT`는 dirty 버퍼를 디스크로 flush할 뿐 MVCC dead tuple을 회수하지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "오래 열려 있는 `idle in transaction` 세션, 장기 실행 조회 쿼리, 또는 소비가 멈춘 logical/hot_standby_feedback replication slot이 구 스냅샷 xmin horizon을 붙잡고 있는지 확인한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "VACUUM은 현재 활성 스냅샷 중 가장 오래된 `xmin`보다 새로운 dead tuple은 아직 누군가 볼 수 있으므로 회수할 수 없다. 장기 `idle in transaction` 1개만 있어도 전체 테이블의 dead tuple 정리가 막힌다."
+      },
+      {
+        "key": "C",
+        "content": "테이블에 `PRIMARY KEY`가 너무 작아서 `VACUUM`이 건너뛰었는지 확인한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "PK 크기 때문에 `VACUUM`이 dead tuple 회수를 거부하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "`SELECT` 쿼리가 너무 적어서 `VACUUM`이 동작하지 않는지 확인한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`autovacuum`은 dead tuple 누적량(`n_dead_tup`)을 기준으로 트리거되며 `SELECT` 부족으로 막히지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "장기 `idle in transaction`이나 오래된 스냅샷은 PostgreSQL의 `xmin` horizon을 묶어 두어 `autovacuum`이 dead tuple을 회수하지 못하게 만든다. `idle_in_transaction_session_timeout` 설정과 장기 세션 모니터링이 필수다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.mvcc.cleanup.q4",
+    "promptMarkdown": "운영 중인 대용량 테이블에서 bloat를 줄이려고 일반 `VACUUM` 대신 `VACUUM FULL`을 피크 타임에 실행했을 때 발생하는 가장 심각한 운영 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.mvcc.cleanup"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`VACUUM FULL`은 일반 `VACUUM`과 잠금 수준이 완전히 동일하다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "일반 `VACUUM`은 `SHARE UPDATE EXCLUSIVE`로 일반 DML/조회를 허용하지만 `VACUUM FULL`은 `ACCESS EXCLUSIVE`를 획득한다."
+      },
+      {
+        "key": "B",
+        "content": "`VACUUM FULL`은 테이블 전체를 새 파일로 재작성하는 동안 `ACCESS EXCLUSIVE` 잠금을 잡아 모든 `SELECT`·`INSERT`·`UPDATE`를 차단해 서비스 장애를 일으킨다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "일반 `VACUUM`은 읽기/쓰기와 병행 가능하지만 `VACUUM FULL`은 테이블 전체를 배타 잠금하고 디스크 공간도 추가로 요구하므로 피크 타임 운영 테이블에 직접 실행하면 전면 중단이 발생한다."
+      },
+      {
+        "key": "C",
+        "content": "`VACUUM FULL`은 테이블의 모든 데이터를 삭제해 빈 테이블로 만든다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "살아 있는(live) 튜플은 보존하며 테이블을 압축 재작성할 뿐 데이터를 삭제하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "`VACUUM FULL`은 `SELECT`만 허용하고 `INSERT`만 막는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`ACCESS EXCLUSIVE` 잠금은 `SELECT`를 포함한 모든 접근을 차단한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "일반 `VACUUM`은 운영 중 안전하게 공간을 재사용 가능(FSM)하게 만들고, OS 파일 크기 자체를 무중단으로 줄여야 할 때는 `VACUUM FULL` 대신 `pg_repack` 같은 온라인 재구성 도구나 점검 창을 검토한다."
+  }
 ]
