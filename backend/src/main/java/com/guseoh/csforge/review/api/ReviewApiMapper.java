@@ -3,6 +3,8 @@ package com.guseoh.csforge.review.api;
 import org.springframework.stereotype.Component;
 
 import com.guseoh.csforge.learning.api.PageMetadataResponse;
+import com.guseoh.csforge.review.application.ReviewHistoryItemView;
+import com.guseoh.csforge.review.application.ReviewHistoryPageView;
 import com.guseoh.csforge.review.application.ReviewListItemView;
 import com.guseoh.csforge.review.application.ReviewPageView;
 import com.guseoh.csforge.review.application.ReviewScheduledView;
@@ -31,6 +33,33 @@ public class ReviewApiMapper {
 
     public ReviewQuizCreatedResponse toResponse(QuizCreatedResult result) {
         return new ReviewQuizCreatedResponse(result.quizId(), result.status(), result.questionCount(), result.startedAt(), result.expiresAt(), result.lastPosition(), result.source());
+    }
+
+    public ReviewHistoryPageResponse toResponse(ReviewHistoryPageView view) {
+        return new ReviewHistoryPageResponse(
+                view.items().stream().map(this::toHistoryItem).toList(),
+                new PageMetadataResponse(
+                        view.page(),
+                        view.size(),
+                        view.totalElements(),
+                        (int) Math.ceil((double) view.totalElements() / view.size()),
+                        (view.page() + 1L) * view.size() < view.totalElements(),
+                        view.page() > 0));
+    }
+
+    private ReviewHistoryItemResponse toHistoryItem(ReviewHistoryItemView item) {
+        return new ReviewHistoryItemResponse(
+                item.historyId(),
+                item.questionId(),
+                item.promptMarkdown(),
+                item.questionType(),
+                item.difficulty(),
+                item.quizId(),
+                item.result(),
+                item.stageBefore(),
+                item.stageAfter(),
+                item.reviewedAt(),
+                item.nextDueAt());
     }
 
     private ReviewListItemResponse toItem(ReviewListItemView item) {

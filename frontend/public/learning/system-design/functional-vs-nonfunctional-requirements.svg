@@ -1,0 +1,108 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 430" width="840" height="430" role="img" aria-labelledby="title desc">
+  <title id="title">기능 요구와 비기능(품질) 요구의 구조화 및 아키텍처 연결</title>
+  <desc id="desc">기능 요구(What)와 측정 가능한 품질 요구(SLO·제약)를 분리해 불변 조건과 트레이드오프를 아키텍처 선택으로 연결하는 도식</desc>
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --card-muted: #f1f5f9;
+      --border: #cbd5e1;
+      --text: #0f172a;
+      --sub: #475569;
+      --blue-bg: #eff6ff;
+      --blue-bd: #3b82f6;
+      --blue-tx: #1d4ed8;
+      --amber-bg: #fffbeb;
+      --amber-bd: #f59e0b;
+      --amber-tx: #b45309;
+      --green-bg: #ecfdf5;
+      --green-bd: #10b981;
+      --green-tx: #047857;
+      --arrow: #64748b;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #0f172a;
+        --card: #1e293b;
+        --card-muted: #0b1220;
+        --border: #334155;
+        --text: #f1f5f9;
+        --sub: #94a3b8;
+        --blue-bg: #172554;
+        --blue-bd: #60a5fa;
+        --blue-tx: #93c5fd;
+        --amber-bg: #451a03;
+        --amber-bd: #fbbf24;
+        --amber-tx: #fcd34d;
+        --green-bg: #064e3b;
+        --green-bd: #34d399;
+        --green-tx: #6ee7b7;
+        --arrow: #94a3b8;
+      }
+    }
+    text { font-family: "Pretendard", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+    .h1 { font-size: 17px; font-weight: 700; fill: var(--text); }
+    .h2 { font-size: 14px; font-weight: 700; }
+    .body { font-size: 12.5px; fill: var(--text); }
+    .sub { font-size: 11.5px; fill: var(--sub); }
+    .badge { font-size: 11px; font-weight: 700; }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--arrow)"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="840" height="430" rx="14" fill="var(--bg)"/>
+  <text x="28" y="34" class="h1">기능 요구(What) vs 품질 요구(Measurable Constraints) → 아키텍처 선택</text>
+  <text x="28" y="54" class="sub">모호한 형용사("빠르게·고가용성")를 수치화된 SLO·격리 경계로 변환해야 설계 트레이드오프가 결정된다.</text>
+
+  <!-- Left Column: Functional -->
+  <rect x="28" y="76" width="248" height="232" rx="10" fill="var(--card)" stroke="var(--blue-bd)" stroke-width="1.6"/>
+  <rect x="28" y="76" width="248" height="36" rx="10" fill="var(--blue-bg)"/>
+  <text x="44" y="99" class="h2" fill="var(--blue-tx)">1. 기능 요구 (Functional)</text>
+  <text x="44" y="132" class="body" font-weight="700">사용자가 수행하는 행동 (What)</text>
+  <text x="44" y="156" class="body">• 키워드로 게시물 검색</text>
+  <text x="44" y="178" class="body">• 최신순 / 관련도순 정렬</text>
+  <text x="44" y="200" class="body">• 작성자·태그 필터 적용</text>
+  <rect x="44" y="222" width="216" height="70" rx="8" fill="var(--card-muted)" stroke="var(--border)" stroke-width="1"/>
+  <text x="56" y="244" class="badge" fill="var(--blue-tx)">한계</text>
+  <text x="56" y="264" class="sub">기능 명세만으로는 QPS·지연·</text>
+  <text x="56" y="281" class="sub">stale 허용·장애 격리를 못 정함</text>
+
+  <!-- Middle Column: Non-Functional -->
+  <rect x="302" y="76" width="268" height="232" rx="10" fill="var(--card)" stroke="var(--amber-bd)" stroke-width="1.6"/>
+  <rect x="302" y="76" width="268" height="36" rx="10" fill="var(--amber-bg)"/>
+  <text x="318" y="99" class="h2" fill="var(--amber-tx)">2. 품질 요구 (Non-Functional)</text>
+  <text x="318" y="132" class="body" font-weight="700">측정 가능한 SLO·제약 (How well)</text>
+  <text x="318" y="156" class="body">• 처리량: Peak 500 QPS</text>
+  <text x="318" y="178" class="body">• 지연: 유효 검색 p99 &lt; 300 ms</text>
+  <text x="318" y="200" class="body">• 최신성: 색인 수 초 stale 허용</text>
+  <text x="318" y="222" class="body">• 격리: 검색 장애 ≠ 쓰기 중단</text>
+  <rect x="318" y="240" width="236" height="52" rx="8" fill="var(--card-muted)" stroke="var(--border)" stroke-width="1"/>
+  <text x="330" y="261" class="badge" fill="var(--amber-tx)">핵심 원칙</text>
+  <text x="330" y="280" class="sub">Invariant(불변) vs Preference 구분</text>
+
+  <!-- Right Column: Architecture Decisions -->
+  <rect x="596" y="76" width="216" height="232" rx="10" fill="var(--card)" stroke="var(--green-bd)" stroke-width="1.6"/>
+  <rect x="596" y="76" width="216" height="36" rx="10" fill="var(--green-bg)"/>
+  <text x="612" y="99" class="h2" fill="var(--green-tx)">3. 아키텍처 선택</text>
+  <text x="612" y="132" class="body" font-weight="700">제약에 대한 공학적 해답</text>
+  <text x="612" y="156" class="body">• 비동기 색인 파이프라인</text>
+  <text x="612" y="178" class="body">• 읽기 전용 검색 저장소 분리</text>
+  <text x="612" y="200" class="body">• 타임아웃·폴백 격리 경계</text>
+  <text x="612" y="222" class="body">• p99 기반 카나리 롤백 게이트</text>
+  <rect x="612" y="240" width="184" height="52" rx="8" fill="var(--card-muted)" stroke="var(--border)" stroke-width="1"/>
+  <text x="624" y="261" class="badge" fill="var(--green-tx)">검증 가능성</text>
+  <text x="624" y="280" class="sub">부하 테스트·SLI로 합격 판정</text>
+
+  <!-- Arrows -->
+  <line x1="276" y1="192" x2="298" y2="192" stroke="var(--arrow)" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="570" y1="192" x2="592" y2="192" stroke="var(--arrow)" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Bottom Bar: Trade-off Triangle Summary -->
+  <rect x="28" y="328" width="784" height="78" rx="10" fill="var(--card)" stroke="var(--border)" stroke-width="1.2"/>
+  <text x="46" y="354" class="body" font-weight="700">요구사항 검증 체크리스트 (Acceptance Conditions)</text>
+  <text x="46" y="377" class="sub">1) "빠르게" 대신 p95/p99 목표치 지정   2) 허용 stale·RPO/RTO 명시   3) 장애 시 반드시 유지할 핵심 경로(Invariant)와 축소 가능 경로 분리</text>
+  <text x="46" y="395" class="sub">4) 가용성·지연·내구성·비용은 동시에 극대화할 수 없으므로 우선순위와 예산 상한을 문서화한다.</text>
+</svg>

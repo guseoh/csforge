@@ -1,11 +1,421 @@
 [
-  {"kind":"question","contentKey":"system-design.core.reliability.failure-budget.q1","promptMarkdown":"장애 중에도 지켜야 할 흐름과 생략하거나 늦춰도 되는 기능을 각각 무엇이라 부르는가? 순서대로 두 범주를 쉼표로 구분해 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["system-design.core.reliability.failure-budget"],"acceptedAnswers":["절대 지켜야 하는 핵심 workflow와 장애 때 생략하거나 stale로 제공할 optional feature를 구분한다","canonical write·권한 같은 core와 recommendation·enrichment 같은 optional 기능을 구분한다","core workflow, optional feature","핵심 기능 / 선택 기능","핵심 workflow와 optional feature","핵심 흐름은 반드시 지키고, 선택 기능은 장애 중 생략하거나 오래된 값으로 제공한다","핵심 기능, 선택 기능","핵심 기능과 선택 기능","핵심 흐름, 선택 기능","필수 기능, 부가 기능","핵심 기능 / 부가 기능","핵심 기능,선택 기능","핵심 흐름,선택 기능","핵심 기능,부가 기능","핵심 기능과 부가 기능"],"explanationMarkdown":"기능 축소는 모든 오류를 숨기는 일이 아니다. 핵심 불변 조건을 지키면서 일부 기능의 품질을 의도적으로 낮추는 선택이다."},
-  {"kind":"question","contentKey":"system-design.core.reliability.failure-budget.q2","promptMarkdown":"추천 기능이 의존하는 시스템에 장애가 났지만, 추천을 제외해도 핵심 상품 조회는 계속할 수 있다.\n\n이 대체 처리가 안전하려면 다음 경계를 어떻게 확인해야 하는가?\n\n- 핵심 상품 데이터와 권한 불변 조건\n- 원본 서비스가 감당할 수 있는 부하\n- 일부 결과만 반환하는 계약\n- 기능 축소를 시작하고 해제하는 조건","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["system-design.core.reliability.failure-budget"],"modelAnswer":"추천은 선택 기능이므로 추천 의존 대상이 없어도 상품 조회·권한 확인·기준 데이터 접근이 SLO를 지키는지 확인한다. 시간 제한·회로 차단·오래된 결과 대체 처리가 민감 데이터 노출이나 원본 과부하를 만들지 않게 한다. 일부 결과임을 사용자에게 알리고 기능 축소의 시작·해제·복구와 오류 예산 소비를 관측한다.","explanationMarkdown":"기능을 축소해도 핵심 불변 조건을 지키고 원본 시스템에 감당할 수 없는 부하를 만들지 않아야 한다."},
-  {"kind":"question","contentKey":"system-design.core.reliability.failure-budget.q3","promptMarkdown":"서비스 수준 목표(SLO)와 오류 예산을 다음 아키텍처 정책에 반영하는 방법을 설명하라.\n\n- 기능 축소의 시작과 해제\n- 핵심 사용자 흐름 보호\n- 배포 중단과 재개\n- 파생 뷰와 의존 서비스 복구","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["system-design.core.reliability.failure-budget"],"modelAnswer":"사용자가 체감하는 SLI와 SLO를 정하고 오류 예산 소비율이 기준을 넘으면 위험한 배포를 멈추고 신뢰성 개선 작업을 우선한다. 의존 대상에 장애가 나면 핵심 읽기·쓰기를 보호하고 캐시·검색·추천은 오래된 값이나 생략 상태로 낮춘다. 503·부분 결과·처리 중 상태와 대체 경로의 보호 조건을 정의한다. 예산 회복과 파생 뷰 정합성을 확인한 뒤 기능을 단계적으로 복원한다.","explanationMarkdown":"오류 예산은 대시보드의 숫자에 그치지 않는다. 배포 속도, 기능 축소, 복구 우선순위를 조정하는 운영 정책이다."},
-  {"kind":"question","contentKey":"system-design.core.reliability.failure-isolation.q1","promptMarkdown":"격벽(bulkhead)의 주된 목적은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["system-design.core.reliability.failure-isolation"],"choices":[{"key":"A","content":"무제한 queue로 모든 요청을 보존한다.","displayOrder":0,"rationaleMarkdown":"제한 없는 대기열은 입력을 계속 쌓아 메모리와 대기 시간을 고갈시킬 수 있다. 격벽은 자원 한도를 두어 한 경로의 과부하가 다른 경로로 번지지 않게 한다."},{"key":"B","content":"한 workload나 dependency가 shared thread·connection·queue를 모두 고갈시키지 못하게 자원을 분리한다.","displayOrder":1,"rationaleMarkdown":"의존 대상이나 작업 유형별로 스레드·연결·대기열 예산을 나누면 한쪽 정체가 공유 자원을 모두 차지하지 못한다. 한도 초과 시 거절·대기 정책도 함께 설계해야 한다."},{"key":"C","content":"모든 dependency 실패를 성공 응답으로 바꾼다.","displayOrder":2,"rationaleMarkdown":"격리는 장애 범위를 줄일 뿐 실패한 의존 대상을 정상으로 만들지는 않는다. 호출자는 거절·시간 초과·대체 처리 가운데 실제 계약에 맞는 결과를 받아야 한다."},{"key":"D","content":"timeout 없이 remote call을 끝까지 기다리게 한다.","displayOrder":3,"rationaleMarkdown":"원격 호출을 무기한 기다리면 제한된 작업자와 연결이 묶여 다른 요청도 막힌다. 격벽은 시간 제한과 함께 자원 점유의 상한을 두는 데 쓰인다."}],"correctChoiceKey":"B","explanationMarkdown":"격벽은 자원 고갈이 발생해도 장애가 번지는 범위를 제한하는 격리 기법이다."},
-  {"kind":"question","contentKey":"system-design.core.reliability.failure-isolation.q2","promptMarkdown":"선택 기능인 보고서 API가 느린 외부 API를 호출하면서 핵심 웹 요청과 같은 연결 풀(connection pool)을 사용한다.\n\n예상되는 장애 전파 경로와 각 경계에 둘 보호장치를 설명하라.\n\n- 보고서 요청 처리\n- 공유 연결 풀\n- 외부 API\n- 핵심 요청","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["system-design.core.reliability.failure-isolation"],"modelAnswer":"보고서 요청이 연결 풀과 스레드를 오래 점유하면 핵심 요청이 대기하거나 시간 초과되고 재시도가 부하를 키울 수 있다. 별도 연결 풀·격벽·제한된 동시성·마감 시간·취소·요청 제한을 둔다. 보고서 작업은 대기열에 넣어 처리 중 상태로 응답하거나 부하가 높을 때 거절한다. 풀별 용량과 하위 서비스의 할당량이 맞는지 관측한다.","explanationMarkdown":"선택 기능이 공유 자원을 제한 없이 쓰면 작은 의존 대상 장애가 전체 서비스 중단으로 번질 수 있다."},
-  {"kind":"question","contentKey":"system-design.core.reliability.failure-isolation.q3","promptMarkdown":"한 시스템에 다음 보호 기법을 배치하려 한다.\n\n- 시간 제한(timeout)\n- 요청 제한(rate limit)\n- 역압(backpressure)\n- 부하 차단(load shedding)\n\n각 기법의 역할과 전체 요청 경로를 보호하는 계약을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["system-design.core.reliability.failure-isolation"],"modelAnswer":"시간 제한/deadline은 대기 예산을 제한하지만 실제 자원 해제는 작업이 취소를 관찰하고 안전하게 종료해야 달성된다. 요청 제한은 유입률을 제어하고, 역압은 생산자가 소비 능력을 넘지 않도록 흐름을 조절한다. 격벽은 공유 자원의 장애 범위를 제한한다. 부하 차단은 감당할 수 없는 작업을 명확히 미접수 거절(예: 429/503)하고 재시도 계약을 제공한다. stale/partial 응답은 품질 축소를 표시하는 조회이며 거절과 다르다. 비동기 접수는 내구성 있는 작업 기록과 operation ID/PENDING 상태, 최종 결과 확인 책임이 필요하다. 각 구간의 deadline, 연결·대기열 예산, 재시도·취소, 이미 확정된 효과의 조회·대사를 맞춰 하위 서비스 과부하를 방지한다.","explanationMarkdown":"미접수 거절, 품질 축소 조회, 내구성 있는 지연 접수의 의미를 구분한다. 202를 반환한다고 작업의 내구성이나 완료가 자동 보장되지 않는다. timeout 이후 실제 자원 회수까지 확인하고 보호할 자원과 사용자 계약을 연결해야 한다."},
-  {"kind":"question","contentKey":"system-design.core.reliability.rollout-observability.q1","promptMarkdown":"점진적 배포에서 새 버전을 일부에 먼저 적용하는 카나리(canary)를 사용하는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["system-design.core.reliability.rollout-observability"],"choices":[{"key":"A","content":"health check 하나만으로 안정성을 증명하기 위해서","displayOrder":0,"rationaleMarkdown":"상태 확인 통과는 프로세스가 응답한다는 제한된 신호다. 실제 요청의 오류·지연·업무 결과까지 안정적이라는 증거는 아니므로 일부 대상에 먼저 적용하고 여러 지표를 봐야 한다."},{"key":"B","content":"canary가 production telemetry를 볼 수 없게 하기 위해서","displayOrder":1,"rationaleMarkdown":"카나리는 실제 서비스 조건에서 동작을 관측하도록 제한된 트래픽을 받는다. 관측 데이터를 막으면 버전별 차이를 판단할 근거가 사라진다."},{"key":"C","content":"schema migration과 외부 side effect를 자동 rollback하기 위해서","displayOrder":2,"rationaleMarkdown":"트래픽 비율을 되돌려도 이미 적용한 스키마 변경이나 외부 결제 같은 부수 효과는 자동으로 취소되지 않는다. 호환성과 복구 절차를 별도로 설계해야 한다."},{"key":"D","content":"blast radius를 줄이고 version별 SLO·error·지연 시간·business correctness를 비교하기 위해서","displayOrder":3,"rationaleMarkdown":"일부 사용자부터 노출 범위를 늘리면 결함 영향을 제한하면서 새 버전과 기존 버전의 서비스 목표·오류·지연·업무 정확성을 비교할 수 있다. 비교 가능한 지표와 중단 기준이 필요하다."}],"correctChoiceKey":"D","explanationMarkdown":"일부 대상에서 근거를 모으고 검증 기준을 통과할 때만 새 버전의 노출 범위를 늘린다."},
-  {"kind":"question","contentKey":"system-design.core.reliability.rollout-observability.q2","promptMarkdown":"새 버전을 일부에 먼저 배포한 결과 다음 신호가 관측됐다.\n\n| 신호 | 결과 |\n| --- | --- |\n| 프로세스 상태 확인 | 통과 |\n| 특정 테넌트의 p99 지연 시간 | 증가 |\n| 업무 오류 | 증가 |\n\n배포 판단을 위해 어떤 관측값과 판정 기준을 보완해야 하는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["system-design.core.reliability.rollout-observability"],"modelAnswer":"프로세스 상태만 보면 특정 테넌트·데이터 집합의 꼬리 지연이나 업무 실패를 놓칠 수 있다. 동일한 요청 구성을 기준으로 카나리와 기존 버전의 테넌트·경로·버전별 p95/p99, 오류·시간 초과·자원 포화와 업무 정합성을 비교한다. SLO·오류 예산 기준을 넘으면 배포를 멈춘다. 스키마·이벤트·외부 부수 효과가 남을 때를 대비해 애플리케이션 버전 롤백 외에 정합성 대사 절차도 마련한다.","explanationMarkdown":"배포 지표는 프로세스 생존만이 아니라 사용자 결과와 변경이 미친 실제 영향 범위까지 확인해야 한다."},
-  {"kind":"question","contentKey":"system-design.core.reliability.rollout-observability.q3","promptMarkdown":"다음 데이터 계약이 함께 바뀌는 아키텍처 변경을 점진적으로 배포하고 되돌릴 계획을 설명하라.\n\n- 스키마\n- 이벤트 계약\n- 캐시 키\n\n적용 순서, 관측 기준, 코드를 되돌린 뒤 남아 있는 상태의 복구 방법을 포함해야 한다.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["system-design.core.reliability.rollout-observability"],"modelAnswer":"먼저 이전 버전과 호환되는 확장/축소(expand/contract) 스키마와 버전이 있는 이벤트를 배포한다. 기능 플래그·이중 읽기/쓰기 또는 소규모 카나리 그룹으로 일부 트래픽을 보낸다. 버전·그룹·경로별 SLO·오류·꼬리 지연·갱신 지연·업무 불변 조건·비용을 비교해 확대 기준을 적용한다. 코드 롤백만으로 데이터베이스 변경·발행한 이벤트·캐시 채우기·외부 부수 효과는 취소되지 않는다. 중단·트래픽 전환·보상·정합성 대사·파생 뷰 재구성까지 운영 절차에 포함한다.","explanationMarkdown":"점진적으로 노출하고 되돌릴 수 있는 데이터 계약을 마련해야 실제 롤백이 안전해진다."}
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.failure-budget.q1",
+    "promptMarkdown": "장애 중에도 지켜야 할 흐름과 생략하거나 늦춰도 되는 기능을 각각 무엇이라 부르는가? 순서대로 두 범주를 쉼표로 구분해 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.failure-budget"
+    ],
+    "acceptedAnswers": [
+      "절대 지켜야 하는 핵심 workflow와 장애 때 생략하거나 stale로 제공할 optional feature를 구분한다",
+      "canonical write·권한 같은 core와 recommendation·enrichment 같은 optional 기능을 구분한다",
+      "core workflow, optional feature",
+      "핵심 기능 / 선택 기능",
+      "핵심 workflow와 optional feature",
+      "핵심 흐름은 반드시 지키고, 선택 기능은 장애 중 생략하거나 오래된 값으로 제공한다",
+      "핵심 기능, 선택 기능",
+      "핵심 기능과 선택 기능",
+      "핵심 흐름, 선택 기능",
+      "필수 기능, 부가 기능",
+      "핵심 기능 / 부가 기능",
+      "핵심 기능,선택 기능",
+      "핵심 흐름,선택 기능",
+      "핵심 기능,부가 기능",
+      "핵심 기능과 부가 기능"
+    ],
+    "explanationMarkdown": "기능 축소는 모든 오류를 숨기는 일이 아니다. 핵심 불변 조건을 지키면서 일부 기능의 품질을 의도적으로 낮추는 선택이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.failure-budget.q2",
+    "promptMarkdown": "추천 기능이 의존하는 시스템에 장애가 났지만, 추천을 제외해도 핵심 상품 조회는 계속할 수 있다.\n\n이 대체 처리가 안전하려면 다음 경계를 어떻게 확인해야 하는가?\n\n- 핵심 상품 데이터와 권한 불변 조건\n- 원본 서비스가 감당할 수 있는 부하\n- 일부 결과만 반환하는 계약\n- 기능 축소를 시작하고 해제하는 조건",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.failure-budget"
+    ],
+    "modelAnswer": "추천은 선택 기능이므로 추천 의존 대상이 없어도 상품 조회·권한 확인·기준 데이터 접근이 SLO를 지키는지 확인한다. 시간 제한·회로 차단·오래된 결과 대체 처리가 민감 데이터 노출이나 원본 과부하를 만들지 않게 한다. 일부 결과임을 사용자에게 알리고 기능 축소의 시작·해제·복구와 오류 예산 소비를 관측한다.",
+    "explanationMarkdown": "기능을 축소해도 핵심 불변 조건을 지키고 원본 시스템에 감당할 수 없는 부하를 만들지 않아야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.failure-budget.q3",
+    "promptMarkdown": "서비스 수준 목표(SLO)와 오류 예산을 다음 아키텍처 정책에 반영하는 방법을 설명하라.\n\n- 기능 축소의 시작과 해제\n- 핵심 사용자 흐름 보호\n- 배포 중단과 재개\n- 파생 뷰와 의존 서비스 복구",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.failure-budget"
+    ],
+    "modelAnswer": "사용자가 체감하는 SLI와 SLO를 정하고 오류 예산 소비율이 기준을 넘으면 위험한 배포를 멈추고 신뢰성 개선 작업을 우선한다. 의존 대상에 장애가 나면 핵심 읽기·쓰기를 보호하고 캐시·검색·추천은 오래된 값이나 생략 상태로 낮춘다. 503·부분 결과·처리 중 상태와 대체 경로의 보호 조건을 정의한다. 예산 회복과 파생 뷰 정합성을 확인한 뒤 기능을 단계적으로 복원한다.",
+    "explanationMarkdown": "오류 예산은 대시보드의 숫자에 그치지 않는다. 배포 속도, 기능 축소, 복구 우선순위를 조정하는 운영 정책이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.failure-isolation.q1",
+    "promptMarkdown": "격벽(bulkhead)의 주된 목적은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.failure-isolation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "무제한 queue로 모든 요청을 보존한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "제한 없는 대기열은 입력을 계속 쌓아 메모리와 대기 시간을 고갈시킬 수 있다. 격벽은 자원 한도를 두어 한 경로의 과부하가 다른 경로로 번지지 않게 한다."
+      },
+      {
+        "key": "B",
+        "content": "한 workload나 dependency가 shared thread·connection·queue를 모두 고갈시키지 못하게 자원을 분리한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "의존 대상이나 작업 유형별로 스레드·연결·대기열 예산을 나누면 한쪽 정체가 공유 자원을 모두 차지하지 못한다. 한도 초과 시 거절·대기 정책도 함께 설계해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "모든 dependency 실패를 성공 응답으로 바꾼다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "격리는 장애 범위를 줄일 뿐 실패한 의존 대상을 정상으로 만들지는 않는다. 호출자는 거절·시간 초과·대체 처리 가운데 실제 계약에 맞는 결과를 받아야 한다."
+      },
+      {
+        "key": "D",
+        "content": "timeout 없이 remote call을 끝까지 기다리게 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "원격 호출을 무기한 기다리면 제한된 작업자와 연결이 묶여 다른 요청도 막힌다. 격벽은 시간 제한과 함께 자원 점유의 상한을 두는 데 쓰인다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "격벽은 자원 고갈이 발생해도 장애가 번지는 범위를 제한하는 격리 기법이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.failure-isolation.q2",
+    "promptMarkdown": "선택 기능인 보고서 API가 느린 외부 API를 호출하면서 핵심 웹 요청과 같은 연결 풀(connection pool)을 사용한다.\n\n예상되는 장애 전파 경로와 각 경계에 둘 보호장치를 설명하라.\n\n- 보고서 요청 처리\n- 공유 연결 풀\n- 외부 API\n- 핵심 요청",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.failure-isolation"
+    ],
+    "modelAnswer": "보고서 요청이 연결 풀과 스레드를 오래 점유하면 핵심 요청이 대기하거나 시간 초과되고 재시도가 부하를 키울 수 있다. 별도 연결 풀·격벽·제한된 동시성·마감 시간·취소·요청 제한을 둔다. 보고서 작업은 대기열에 넣어 처리 중 상태로 응답하거나 부하가 높을 때 거절한다. 풀별 용량과 하위 서비스의 할당량이 맞는지 관측한다.",
+    "explanationMarkdown": "선택 기능이 공유 자원을 제한 없이 쓰면 작은 의존 대상 장애가 전체 서비스 중단으로 번질 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.failure-isolation.q3",
+    "promptMarkdown": "한 시스템에 다음 보호 기법을 배치하려 한다.\n\n- 시간 제한(timeout)\n- 요청 제한(rate limit)\n- 역압(backpressure)\n- 부하 차단(load shedding)\n\n각 기법의 역할과 전체 요청 경로를 보호하는 계약을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.failure-isolation"
+    ],
+    "modelAnswer": "시간 제한/deadline은 대기 예산을 제한하지만 실제 자원 해제는 작업이 취소를 관찰하고 안전하게 종료해야 달성된다. 요청 제한은 유입률을 제어하고, 역압은 생산자가 소비 능력을 넘지 않도록 흐름을 조절한다. 격벽은 공유 자원의 장애 범위를 제한한다. 부하 차단은 감당할 수 없는 작업을 명확히 미접수 거절(예: 429/503)하고 재시도 계약을 제공한다. stale/partial 응답은 품질 축소를 표시하는 조회이며 거절과 다르다. 비동기 접수는 내구성 있는 작업 기록과 operation ID/PENDING 상태, 최종 결과 확인 책임이 필요하다. 각 구간의 deadline, 연결·대기열 예산, 재시도·취소, 이미 확정된 효과의 조회·대사를 맞춰 하위 서비스 과부하를 방지한다.",
+    "explanationMarkdown": "미접수 거절, 품질 축소 조회, 내구성 있는 지연 접수의 의미를 구분한다. 202를 반환한다고 작업의 내구성이나 완료가 자동 보장되지 않는다. timeout 이후 실제 자원 회수까지 확인하고 보호할 자원과 사용자 계약을 연결해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.rollout-observability.q1",
+    "promptMarkdown": "점진적 배포에서 새 버전을 일부에 먼저 적용하는 카나리(canary)를 사용하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.rollout-observability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "health check 하나만으로 안정성을 증명하기 위해서",
+        "displayOrder": 0,
+        "rationaleMarkdown": "상태 확인 통과는 프로세스가 응답한다는 제한된 신호다. 실제 요청의 오류·지연·업무 결과까지 안정적이라는 증거는 아니므로 일부 대상에 먼저 적용하고 여러 지표를 봐야 한다."
+      },
+      {
+        "key": "B",
+        "content": "canary가 production telemetry를 볼 수 없게 하기 위해서",
+        "displayOrder": 1,
+        "rationaleMarkdown": "카나리는 실제 서비스 조건에서 동작을 관측하도록 제한된 트래픽을 받는다. 관측 데이터를 막으면 버전별 차이를 판단할 근거가 사라진다."
+      },
+      {
+        "key": "C",
+        "content": "schema migration과 외부 side effect를 자동 rollback하기 위해서",
+        "displayOrder": 2,
+        "rationaleMarkdown": "트래픽 비율을 되돌려도 이미 적용한 스키마 변경이나 외부 결제 같은 부수 효과는 자동으로 취소되지 않는다. 호환성과 복구 절차를 별도로 설계해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "blast radius를 줄이고 version별 SLO·error·지연 시간·business correctness를 비교하기 위해서",
+        "displayOrder": 3,
+        "rationaleMarkdown": "일부 사용자부터 노출 범위를 늘리면 결함 영향을 제한하면서 새 버전과 기존 버전의 서비스 목표·오류·지연·업무 정확성을 비교할 수 있다. 비교 가능한 지표와 중단 기준이 필요하다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "일부 대상에서 근거를 모으고 검증 기준을 통과할 때만 새 버전의 노출 범위를 늘린다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.rollout-observability.q2",
+    "promptMarkdown": "새 버전을 일부에 먼저 배포한 결과 다음 신호가 관측됐다.\n\n| 신호 | 결과 |\n| --- | --- |\n| 프로세스 상태 확인 | 통과 |\n| 특정 테넌트의 p99 지연 시간 | 증가 |\n| 업무 오류 | 증가 |\n\n배포 판단을 위해 어떤 관측값과 판정 기준을 보완해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.rollout-observability"
+    ],
+    "modelAnswer": "프로세스 상태만 보면 특정 테넌트·데이터 집합의 꼬리 지연이나 업무 실패를 놓칠 수 있다. 동일한 요청 구성을 기준으로 카나리와 기존 버전의 테넌트·경로·버전별 p95/p99, 오류·시간 초과·자원 포화와 업무 정합성을 비교한다. SLO·오류 예산 기준을 넘으면 배포를 멈춘다. 스키마·이벤트·외부 부수 효과가 남을 때를 대비해 애플리케이션 버전 롤백 외에 정합성 대사 절차도 마련한다.",
+    "explanationMarkdown": "배포 지표는 프로세스 생존만이 아니라 사용자 결과와 변경이 미친 실제 영향 범위까지 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.rollout-observability.q3",
+    "promptMarkdown": "다음 데이터 계약이 함께 바뀌는 아키텍처 변경을 점진적으로 배포하고 되돌릴 계획을 설명하라.\n\n- 스키마\n- 이벤트 계약\n- 캐시 키\n\n적용 순서, 관측 기준, 코드를 되돌린 뒤 남아 있는 상태의 복구 방법을 포함해야 한다.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.rollout-observability"
+    ],
+    "modelAnswer": "먼저 이전 버전과 호환되는 확장/축소(expand/contract) 스키마와 버전이 있는 이벤트를 배포한다. 기능 플래그·이중 읽기/쓰기 또는 소규모 카나리 그룹으로 일부 트래픽을 보낸다. 버전·그룹·경로별 SLO·오류·꼬리 지연·갱신 지연·업무 불변 조건·비용을 비교해 확대 기준을 적용한다. 코드 롤백만으로 데이터베이스 변경·발행한 이벤트·캐시 채우기·외부 부수 효과는 취소되지 않는다. 중단·트래픽 전환·보상·정합성 대사·파생 뷰 재구성까지 운영 절차에 포함한다.",
+    "explanationMarkdown": "점진적으로 노출하고 되돌릴 수 있는 데이터 계약을 마련해야 실제 롤백이 안전해진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.failure-budget.q4",
+    "promptMarkdown": "이커머스 상품 상세 페이지가 ① 상품 기본 정보/가격(필수), ② 개인화 추천 목록(선택, 외부 추천 서비스 의존)을 함께 렌더링한다. 추천 서비스에 장애가 났을 때 가장 이상적인 Graceful Degradation 동작은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.failure-budget"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "짧은 타임아웃과 서킷 브레이커로 추천 호출을 빠르게 차단하고, 추천 영역만 빈 목록 또는 캐시된 인기 상품으로 대체하여 핵심 상품 조회·구매 흐름은 정상 유지한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "핵심 경로(상품 조회·결제)와 비핵심 선택 기능(개인화 추천)을 격리해, 선택 기능 장애가 전체 페이지 500 장애로 번지지 않도록 우아하게 기능을 축소해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "추천 서비스가 복구될 때까지 상품 상세 페이지 전체를 `503 Service Unavailable`로 차단한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "비핵심 부가 기능의 장애 때문에 핵심 매출 경로(상품 조회·장바구니·결제)까지 중단되는 잘못된 강한 결합이다."
+      },
+      {
+        "key": "C",
+        "content": "추천 서비스 응답이 올 때까지 30초간 동기 대기한 뒤 500을 반환한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "30초 대기는 전체 웹 서버 스레드 풀을 고갈시켜 다른 무관한 API까지 연쇄 마비시킨다."
+      },
+      {
+        "key": "D",
+        "content": "결제 금액 계산이 실패해도 임의의 0원으로 대체해 결제를 통과시킨다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "핵심 불변식(가격·결제·권한)은 절대 기능 축소/임의 대체 대상이 아니며 fail-closed로 보호해야 한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Graceful Degradation은 '비핵심 기능을 안전하게 축소·대체해 핵심 사용자 흐름을 살리는 전략'이며, 반대로 인증·권한·결제 금액 같은 핵심 불변식은 fail-closed로 지켜야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.failure-budget.q5",
+    "promptMarkdown": "기능 축소(Graceful Degradation)를 운영에 도입할 때, 장애 시 실제로 작동하는지 확신하기 위해 함께 준비해야 할 항목으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.failure-budget"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "축소 모드를 켜기 위해서는 항상 전체 코드 재빌드와 배포가 필요하게 만든다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "장애 시에는 배포 없이도 자동(서킷 브레이커) 또는 즉시(런타임 기능 플래그) 축소할 수 있어야 한다."
+      },
+      {
+        "key": "B",
+        "content": "축소 모드 발동/해제 기준(서킷 브레이커·기능 플래그), 축소 중임을 알리는 전용 메트릭·알림, 그리고 스테이징/장애 훈련에서의 폴백 경로 사전 검증",
+        "displayOrder": 1,
+        "rationaleMarkdown": "한 번도 테스트하지 않은 폴백 코드는 실제 장애 때 NPE나 잘못된 응답으로 오히려 2차 장애를 내기 쉽다. 발동 관측 지표와 정기적 폴백 검증이 필수다."
+      },
+      {
+        "key": "C",
+        "content": "축소 모드가 켜지면 어떤 로그나 메트릭도 남기지 않아 운영자가 모르게 숨긴다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "기능 축소 상태가 관측되지 않으면 하위 서비스 장애가 며칠째 방치되는 사각지대가 생긴다."
+      },
+      {
+        "key": "D",
+        "content": "폴백 경로가 원래 장애 난 동일한 외부 추천 API를 다시 호출하게 만든다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "폴백이 같은 장애 의존성에 다시 기대면 격리가 성립하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "검증되지 않은 폴백은 장애 시 동작하지 않는다. 기능 축소 경로는 자동/수동 전환 스위치, 축소 상태 관측 메트릭, 그리고 독립된 안전한 대체 데이터를 함께 설계·훈련해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.failure-isolation.q4",
+    "promptMarkdown": "주문 API와 느린 외부 리포트 다운로드 API가 하나의 공통 HTTP 클라이언트 커넥션 풀(최대 50개)을 공유하고 있다. 외부 리포트 서버가 느려지자 주문 API까지 전면 마비되었다. 이를 구조적으로 막는 패턴은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.failure-isolation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "격벽(Bulkhead) 패턴으로 리포트 클라이언트와 주문 클라이언트의 스레드/커넥션 풀을 분리해, 리포트 쪽 풀이 가득 차도 주문 API의 자원은 침범하지 못하게 격리한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "선박의 방수 격벽처럼 의존성별 커넥션 풀·스레드 풀·세마포어 상한을 분리하면 한쪽의 느린 I/O가 전체 애플리케이션 자원을 독점해 연쇄 장애를 일으키는 것을 차단할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "공유 풀 크기를 50에서 500으로만 늘리면 느린 리포트가 주문 풀을 절대 침범하지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "공유 풀은 크기를 늘려도 느린 요청이 유입되면 500개 전부를 리포트 요청이 채워 버릴 수 있어 근본 격리가 안 된다."
+      },
+      {
+        "key": "C",
+        "content": "리포트 요청의 재시도 횟수를 5회로 늘려 빠르게 성공하게 만든다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "느린 외부 의존성에 재시도를 추가하면 공유 풀 점유 시간만 5배 늘어나 주문 API가 더 빨리 마비된다."
+      },
+      {
+        "key": "D",
+        "content": "주문 API와 리포트 API를 같은 `@Transactional`로 묶는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "서로 무관한 유스케이스를 묶으면 오히려 DB 커넥션 풀까지 함께 고갈된다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "격벽(Bulkhead)은 서로 다른 중요도·지연 특성을 가진 의존성끼리 스레드 풀·커넥션 풀을 공유하지 않도록 자원 상한을 분리해 장애 반경(blast radius)을 국한하는 핵심 패턴이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.failure-isolation.q5",
+    "promptMarkdown": "서킷 브레이커(Circuit Breaker)의 세 상태(`CLOSED` → `OPEN` → `HALF_OPEN`) 전이에서 `HALF_OPEN` 상태의 정확한 역할은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.failure-isolation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`OPEN` 대기 시간 후 소수의 시험 요청만 제한적으로 하류에 보내 복구 여부를 확인하고, 성공하면 `CLOSED`로 복귀하고 실패하면 다시 `OPEN`으로 전환한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "장애 직후 전체 트래픽을 한꺼번에 하류에 쏟아부으면 막 복구 중인 서버가 다시 쓰러진다. `HALF_OPEN`은 소수 프로브 요청으로 안전하게 정상 복귀를 검증하는 완충 단계다."
+      },
+      {
+        "key": "B",
+        "content": "트래픽의 정확히 50%를 영구적으로 드롭하는 로드밸런서 모드다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`HALF_OPEN`은 영구 50% 드롭이 아니라 복구 탐지를 위한 짧은 시험 통과 상태다."
+      },
+      {
+        "key": "C",
+        "content": "모든 요청의 타임아웃을 절반으로 줄여 재시도하는 상태다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "타임아웃 단축이 아니라 제한된 수의 프로브 호출로 하류 회복을 확인하는 상태다."
+      },
+      {
+        "key": "D",
+        "content": "서킷 브레이커가 영구 비활성화되어 장애를 감지하지 않는 상태다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "장애 감지 후 `OPEN`을 거쳐 복구를 검증하는 핵심 활성 상태다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "서킷 브레이커는 실패율이 임계를 넘으면 `OPEN`으로 빠르게 실패(fail-fast)해 하류와 호출자 자원을 보호하고, 일정 시간 뒤 `HALF_OPEN`에서 소수 요청으로 안전하게 회복을 확인한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.rollout-observability.q4",
+    "promptMarkdown": "카나리(Canary) 배포에서 전체 트래픽의 5%를 신규 버전으로 보냈다. 신규 Pod의 `/actuator/health/readiness`는 `200 UP`이지만, 결제 완료 API의 p99 지연이 `180ms → 950ms`로 뛰고 오류율이 `0.1% → 1.8%`로 올랐다. 올바른 자동/운영 판단은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.rollout-observability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "5% 트래픽은 적으므로 일주일간 그대로 두고 관측한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "명확한 회귀가 감지된 카나리를 방치하면 5% 사용자가 계속 결제 실패를 겪게 된다."
+      },
+      {
+        "key": "B",
+        "content": "오류율 메트릭 대시보드를 끄고 배포를 완료한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "관측 피드백은 점진적 배포의 안전장치이며 이를 끄면 카나리의 의미가 사라진다."
+      },
+      {
+        "key": "C",
+        "content": "프로세스 헬스체크 통과만으로 정상이라 보지 않고, 비즈니스/SLI 지표(p99·5xx·결제 성공률) 악화에 따라 즉시 카나리 트래픽을 0%로 되돌려(자동 롤백) 95% 사용자를 보호한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Readiness는 프로세스가 요청을 받을 준비가 됐다는 최소 신호일 뿐이다. 카나리 승격·중단 기준은 반드시 사용자 영향 SLI(오류율, p99, 핵심 비즈니스 성공률)와 연결되어야 한다."
+      },
+      {
+        "key": "D",
+        "content": "Readiness가 `200 UP`이므로 문제가 없다고 보고 즉시 100%로 전체 배포한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "카나리에서 이미 포착된 1.8% 오류와 5배 지연 악화를 100% 전체 사용자로 확대하는 치명적 판단이다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "점진적 배포(Canary/Blue-Green)의 가치는 소수 트래픽에서 SLI 회귀를 조기 포착해 전체 장애 전에 자동 롤백하는 데 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "system-design.core.reliability.rollout-observability.q5",
+    "promptMarkdown": "Blue-Green 또는 Canary 배포에서 신규 버전과 구 버전이 **동시에 공존**하는 구간 동안 반드시 지켜야 하는 하위 호환성 계약으로 옳지 **않은** 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "system-design.core.reliability.rollout-observability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "공유 Redis 캐시 직렬화 포맷이 바뀌면 캐시 키에 버전 접두사(`v2:`)를 붙여 구/신 버전 간 역직렬화 충돌을 방지한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "같은 Redis 키에 서로 다른 JSON/직렬화 구조를 쓰면 공존 구간에서 즉시 역직렬화 예외가 터지므로 키 버전 분리가 필수다."
+      },
+      {
+        "key": "B",
+        "content": "신규 버전 배포와 동시에 구 버전이 참조하던 DB 컬럼과 이벤트 필드를 즉시 `DROP`해 스키마를 깔끔하게 정리한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "구 버전이 아직 트래픽을 처리 중이거나 롤백 가능성이 남아 있는 시점에 컬럼/필드를 즉시 삭제하면 구 버전 전체가 즉시 장애에 빠지고 롤백도 불가능해진다."
+      },
+      {
+        "key": "C",
+        "content": "메시지/이벤트 스키마는 구 컨슈머와 신 컨슈머가 공존해도 역직렬화 실패가 없도록 호환성 규칙을 지킨다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "카나리 구간에서는 신 프로듀서 메시지를 구 컨슈머가 읽을 수 있으므로 이벤트 스키마 호환성이 필수다."
+      },
+      {
+        "key": "D",
+        "content": "DB 스키마 변경은 구 버전 코드가 읽고 쓰는 컬럼을 유지하는 Expand-and-Contract 방식을 따른다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "구 버전과 신 버전이 같은 DB를 동시에 바라보므로 스키마 하위 호환은 필수다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "무중단 점진적 배포의 공존 구간에서는 DB 스키마, 공유 캐시 키, 이벤트 스키마, 세션 포맷 모두가 직전 버전과 양립 가능해야 안전한 전환과 즉각적 롤백이 성립한다."
+  }
 ]

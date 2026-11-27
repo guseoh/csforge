@@ -20,19 +20,7 @@ references:
 
 리플리카가 늦는다고 할 때 단순히 네트워크 ping만 떠올리면 부족합니다. 프라이머리에서 WAL이 생성된 뒤 리플리카가 그 변경을 실제 쿼리에서 보이게 하기까지 여러 단계가 있습니다.
 
-```text
-Primary: WAL 생성 (변경 및 커밋 레코드)
-          │
-          ├─ 로컬 커밋에 필요한 WAL flush → 성공 응답
-          │
-          └─ WAL 전송 ───────► Standby: receive/write
-                                      │
-                                      flush
-                                      │
-                                      replay
-                                      ▼
-                             이후 적절한 스냅샷에서 visible
-```
+![비동기 복제 지연(Replication Lag)과 쓰기 직후 읽기 불일치](/learning/database/replication-lag-read-your-writes.svg)
 
 위 흐름은 기본 비동기 복제에서 로컬 커밋 경계와 원격 복제 단계를 구분한 모델입니다. WAL 전송은 로컬 커밋 응답 이후에만 시작되는 것이 아니며, 재생 후에도 이미 유지 중인 오래된 읽기 스냅샷에는 변경이 보이지 않을 수 있습니다. 네트워크 지연뿐 아니라 리플리카의 CPU/I/O 부족, 오래 실행되는 쿼리로 인한 복구 충돌, WAL 생성량 급증도 재실행 지연을 키울 수 있습니다.
 

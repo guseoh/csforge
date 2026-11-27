@@ -1,8 +1,370 @@
 [
-  {"kind":"question","contentKey":"spring.core.injection.constructor-injection.q1","promptMarkdown":"필수 의존성에 생성자 주입을 적용했을 때 얻는 핵심 성질은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.injection.constructor-injection"],"choices":[{"key":"A","content":"객체를 먼저 만든 뒤 프레임워크가 필요할 때만 필드를 채운다.","displayOrder":0,"rationaleMarkdown":"생성자 주입은 필요한 협력 객체를 객체 생성 시점에 함께 전달한다. 컨테이너가 객체를 먼저 만든 뒤 나중에 필수 필드를 채우는 방식을 전제로 하지 않는다."},{"key":"B","content":"모든 의존성이 자동으로 prototype scope가 된다.","displayOrder":1,"rationaleMarkdown":"주입 방식과 Bean scope는 서로 다른 선택이다. 생성자로 주입해도 각 의존 객체의 수명은 해당 Bean 정의의 scope와 설정을 따른다."},{"key":"C","content":"객체 생성 시 필요한 협력 객체가 함께 제공되어 필수 의존성이 생성자에 명시된다.","displayOrder":2,"rationaleMarkdown":"필수 협력 객체가 생성자 매개변수에 나타나므로 의존성이 빠지면 유효한 객체를 만들 수 없다. 테스트에서도 대체 구현을 명시적으로 전달할 수 있다."},{"key":"D","content":"생성자 매개변수가 많아져도 클래스 책임이 많다는 설계 신호는 사라진다.","displayOrder":3,"rationaleMarkdown":"필수 협력 객체가 계속 늘어난다면 한 클래스가 너무 많은 책임을 가진 신호일 수 있다. 주입 방식을 바꾼다고 그 설계 문제가 없어지는 것은 아니다."}],"correctChoiceKey":"C","explanationMarkdown":"생성자가 필수 협력 객체를 받게 하면 생성 직후 사용할 수 있는 객체만 만들 수 있고 테스트에서도 가짜 구현을 명시적으로 전달할 수 있다. 생성자 주입이 Bean scope를 바꾸거나 순환 의존성·트랜잭션 문제를 자동으로 해결하는 것은 아니다."},
-  {"kind":"question","contentKey":"spring.core.injection.constructor-injection.q2","promptMarkdown":"한 서비스 생성자가 repository/client/policy 등 12개 의존성을 요구한다. 필드 주입으로 바꾸면 해결되는 문제인지, 먼저 무엇을 검토해야 하는지 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.injection.constructor-injection"],"modelAnswer":"필드 주입은 의존성 수를 숨길 뿐 줄이지 않는다. 서비스가 너무 많은 책임을 가져 여러 협력 객체를 필요로 하는지, 기능 조정·도메인·인프라 책임을 나눌 수 있는지 먼저 검토한다.","explanationMarkdown":"필드 주입으로 바꾸면 12개의 의존성이 사라지는 것이 아니라 생성자에서 보이지 않게 될 뿐이다. 숫자만으로 결함을 단정하지는 않되 서로 다른 변경 이유와 기능이 한 서비스에 모였는지 확인하고, 분리 가능한 책임이 있다면 응집도를 높이는 방향으로 나눈다."},
-  {"kind":"question","contentKey":"spring.core.injection.optional-dependency.q1","promptMarkdown":"반드시 존재해야 하는 PaymentGateway Bean이 누락되어 시작이 실패했다. 가장 적절한 대응은?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.injection.optional-dependency"],"choices":[{"key":"A","content":"`required=false`로 바꿔 null인 채 애플리케이션을 시작한다.","displayOrder":0,"rationaleMarkdown":"결제 기능에 반드시 필요한 Bean을 선택적으로 바꾸면 시작 시 드러나던 설정 오류가 실제 결제 요청까지 늦춰질 수 있다. 필수 의존성이라면 누락된 등록 문제를 고쳐야 한다."},{"key":"B","content":"ApplicationContext를 static 필드로 두고 필요할 때 직접 찾는다.","displayOrder":1,"rationaleMarkdown":"static ApplicationContext 조회는 의존성을 생성자 밖에 숨기고 업무 코드가 컨테이너 API에 결합되게 한다. 누락된 필수 Bean의 등록 오류를 해결하는 방법도 아니다."},{"key":"C","content":"모든 의존성을 Optional로 바꾼다.","displayOrder":2,"rationaleMarkdown":"모든 의존성을 Optional로 감싸면 필수 기능과 실제 선택 기능의 차이가 흐려진다. 정말 없어도 정상인 협력 객체만 부재 처리 정책과 함께 선택적으로 모델링해야 한다."},{"key":"D","content":"결제 기능에 필수인지 확인하고, 필수라면 Bean 등록·설정 오류를 수정해 시작 단계에서 계속 실패하도록 둔다.","displayOrder":3,"rationaleMarkdown":"PaymentGateway가 필수라면 필수 생성자 의존성을 유지해 잘못된 구성에서 시작을 실패시키는 편이 안전하다. 그래야 설정 오류가 실제 결제 요청 중에 늦게 드러나는 일을 막을 수 있다."}],"correctChoiceKey":"D","explanationMarkdown":"PaymentGateway가 없으면 핵심 결제 기능을 수행할 수 없으므로 필수 생성자 의존성을 유지하고 Bean 등록·설정 오류를 시작 단계에서 드러내야 한다. `required=false`나 Service Locator로 숨기면 실제 실패 시점만 요청 처리 중으로 늦춰진다."},
-  {"kind":"question","contentKey":"spring.core.injection.optional-dependency.q2","promptMarkdown":"알림 기능이 꺼진 환경에서도 주문은 정상 처리되어야 한다. 여러 메서드에 `if (notifier != null)`가 반복된다. 구조를 단순화할 수 있는 대안 하나와 주의점을 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.injection.optional-dependency"],"modelAnswer":"예를 들어 `NoopNotifier`를 조립해 항상 같은 인터페이스를 호출하게 만들 수 있다. 다만 알림 부재가 정상적인 제품 동작일 때만 적합하며, 반드시 있어야 하는 협력 객체의 누락이나 실제 전송 실패를 숨겨서는 안 된다.","explanationMarkdown":"설정 단계에서 `NoopNotifier`를 선택하면 서비스는 항상 유효한 `Notifier`를 호출하므로 각 메서드의 null 분기가 사라진다. 그러나 알림 생략이 제품상 허용되는 경우에만 이 정책을 사용하고, 필수 의존성의 설정 누락이나 실패를 noop으로 감춰서는 안 된다."},
-  {"kind":"question","contentKey":"spring.core.injection.circular-dependency.q1","promptMarkdown":"생성자 A→B, B→A 구조 때문에 컨테이너가 객체 생성에 실패하는 직접 원인을 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.injection.circular-dependency"],"acceptedAnswers":["A를 완성하려면 B가 먼저 필요하지만 B를 완성하려면 아직 완성되지 않은 A가 필요해 객체 생성 순환이 생긴다","두 객체 모두 생성 전에 서로를 필요로 해 어느 쪽도 먼저 완성할 수 없다","생성자 의존성이 순환해 객체 그래프를 완성할 수 없다"],"explanationMarkdown":"A의 생성자를 끝내려면 B가 필요하고 B의 생성자를 끝내려면 A가 필요하므로 컨테이너가 어느 쪽도 완성된 협력 객체로 먼저 만들 수 없다. 이는 annotation 하나의 누락이 아니라 객체 그래프의 생성 순환 문제다."},
-  {"kind":"question","contentKey":"spring.core.injection.circular-dependency.q2","promptMarkdown":"OrderService와 PaymentService가 서로 주입된다. `@Lazy`를 붙이면 시작은 되지만 실행 중에도 두 서비스가 서로 전체 서비스를 호출한다. 이 상태에서 추가로 검토해야 할 설계 위험을 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.injection.circular-dependency"],"modelAnswer":"lazy proxy는 객체 생성 순환만 늦출 수 있고 책임 순환을 없애지는 않는다. 상호 호출로 재귀 호출, 트랜잭션 경계 혼란, 상태 전이 순서 문제가 남을 수 있으므로 상위 조정 객체나 더 작은 인터페이스로 책임을 재분리할 수 있는지 검토한다.","explanationMarkdown":"`@Lazy` proxy는 실제 객체 생성 시점을 늦출 뿐 `OrderService`와 `PaymentService`의 상호 책임과 호출 방향을 바꾸지 않는다. 실행 중에 서로 다시 호출하면 재귀 호출이나 트랜잭션·상태 전이 순서 혼란이 남을 수 있으므로, 상위 조정 계층이 순서를 소유하거나 더 작은 경계로 책임을 분리할 수 있는지 검토해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.constructor-injection.q1",
+    "promptMarkdown": "필수 의존성에 생성자 주입을 적용했을 때 얻는 핵심 성질은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.constructor-injection"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "객체를 먼저 만든 뒤 프레임워크가 필요할 때만 필드를 채운다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "생성자 주입은 필요한 협력 객체를 객체 생성 시점에 함께 전달한다. 컨테이너가 객체를 먼저 만든 뒤 나중에 필수 필드를 채우는 방식을 전제로 하지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "모든 의존성이 자동으로 prototype scope가 된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "주입 방식과 Bean scope는 서로 다른 선택이다. 생성자로 주입해도 각 의존 객체의 수명은 해당 Bean 정의의 scope와 설정을 따른다."
+      },
+      {
+        "key": "C",
+        "content": "객체 생성 시 필요한 협력 객체가 함께 제공되어 필수 의존성이 생성자에 명시된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "필수 협력 객체가 생성자 매개변수에 나타나므로 의존성이 빠지면 유효한 객체를 만들 수 없다. 테스트에서도 대체 구현을 명시적으로 전달할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "생성자 매개변수가 많아져도 클래스 책임이 많다는 설계 신호는 사라진다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "필수 협력 객체가 계속 늘어난다면 한 클래스가 너무 많은 책임을 가진 신호일 수 있다. 주입 방식을 바꾼다고 그 설계 문제가 없어지는 것은 아니다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "생성자가 필수 협력 객체를 받게 하면 생성 직후 사용할 수 있는 객체만 만들 수 있고 테스트에서도 가짜 구현을 명시적으로 전달할 수 있다. 생성자 주입이 Bean scope를 바꾸거나 순환 의존성·트랜잭션 문제를 자동으로 해결하는 것은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.constructor-injection.q2",
+    "promptMarkdown": "한 서비스 생성자가 repository/client/policy 등 12개 의존성을 요구한다. 필드 주입으로 바꾸면 해결되는 문제인지, 먼저 무엇을 검토해야 하는지 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.constructor-injection"
+    ],
+    "modelAnswer": "필드 주입은 의존성 수를 숨길 뿐 줄이지 않는다. 서비스가 너무 많은 책임을 가져 여러 협력 객체를 필요로 하는지, 기능 조정·도메인·인프라 책임을 나눌 수 있는지 먼저 검토한다.",
+    "explanationMarkdown": "필드 주입으로 바꾸면 12개의 의존성이 사라지는 것이 아니라 생성자에서 보이지 않게 될 뿐이다. 숫자만으로 결함을 단정하지는 않되 서로 다른 변경 이유와 기능이 한 서비스에 모였는지 확인하고, 분리 가능한 책임이 있다면 응집도를 높이는 방향으로 나눈다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.optional-dependency.q1",
+    "promptMarkdown": "반드시 존재해야 하는 PaymentGateway Bean이 누락되어 시작이 실패했다. 가장 적절한 대응은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.optional-dependency"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`required=false`로 바꿔 null인 채 애플리케이션을 시작한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "결제 기능에 반드시 필요한 Bean을 선택적으로 바꾸면 시작 시 드러나던 설정 오류가 실제 결제 요청까지 늦춰질 수 있다. 필수 의존성이라면 누락된 등록 문제를 고쳐야 한다."
+      },
+      {
+        "key": "B",
+        "content": "ApplicationContext를 static 필드로 두고 필요할 때 직접 찾는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "static ApplicationContext 조회는 의존성을 생성자 밖에 숨기고 업무 코드가 컨테이너 API에 결합되게 한다. 누락된 필수 Bean의 등록 오류를 해결하는 방법도 아니다."
+      },
+      {
+        "key": "C",
+        "content": "모든 의존성을 Optional로 바꾼다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "모든 의존성을 Optional로 감싸면 필수 기능과 실제 선택 기능의 차이가 흐려진다. 정말 없어도 정상인 협력 객체만 부재 처리 정책과 함께 선택적으로 모델링해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "결제 기능에 필수인지 확인하고, 필수라면 Bean 등록·설정 오류를 수정해 시작 단계에서 계속 실패하도록 둔다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "PaymentGateway가 필수라면 필수 생성자 의존성을 유지해 잘못된 구성에서 시작을 실패시키는 편이 안전하다. 그래야 설정 오류가 실제 결제 요청 중에 늦게 드러나는 일을 막을 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "PaymentGateway가 없으면 핵심 결제 기능을 수행할 수 없으므로 필수 생성자 의존성을 유지하고 Bean 등록·설정 오류를 시작 단계에서 드러내야 한다. `required=false`나 Service Locator로 숨기면 실제 실패 시점만 요청 처리 중으로 늦춰진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.optional-dependency.q2",
+    "promptMarkdown": "알림 기능이 꺼진 환경에서도 주문은 정상 처리되어야 한다. 여러 메서드에 `if (notifier != null)`가 반복된다. 구조를 단순화할 수 있는 대안 하나와 주의점을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.optional-dependency"
+    ],
+    "modelAnswer": "예를 들어 `NoopNotifier`를 조립해 항상 같은 인터페이스를 호출하게 만들 수 있다. 다만 알림 부재가 정상적인 제품 동작일 때만 적합하며, 반드시 있어야 하는 협력 객체의 누락이나 실제 전송 실패를 숨겨서는 안 된다.",
+    "explanationMarkdown": "설정 단계에서 `NoopNotifier`를 선택하면 서비스는 항상 유효한 `Notifier`를 호출하므로 각 메서드의 null 분기가 사라진다. 그러나 알림 생략이 제품상 허용되는 경우에만 이 정책을 사용하고, 필수 의존성의 설정 누락이나 실패를 noop으로 감춰서는 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.circular-dependency.q1",
+    "promptMarkdown": "생성자 A→B, B→A 구조 때문에 컨테이너가 객체 생성에 실패하는 직접 원인을 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.circular-dependency"
+    ],
+    "acceptedAnswers": [
+      "A를 완성하려면 B가 먼저 필요하지만 B를 완성하려면 아직 완성되지 않은 A가 필요해 객체 생성 순환이 생긴다",
+      "두 객체 모두 생성 전에 서로를 필요로 해 어느 쪽도 먼저 완성할 수 없다",
+      "생성자 의존성이 순환해 객체 그래프를 완성할 수 없다"
+    ],
+    "explanationMarkdown": "A의 생성자를 끝내려면 B가 필요하고 B의 생성자를 끝내려면 A가 필요하므로 컨테이너가 어느 쪽도 완성된 협력 객체로 먼저 만들 수 없다. 이는 annotation 하나의 누락이 아니라 객체 그래프의 생성 순환 문제다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.circular-dependency.q2",
+    "promptMarkdown": "OrderService와 PaymentService가 서로 주입된다. `@Lazy`를 붙이면 시작은 되지만 실행 중에도 두 서비스가 서로 전체 서비스를 호출한다. 이 상태에서 추가로 검토해야 할 설계 위험을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.circular-dependency"
+    ],
+    "modelAnswer": "lazy proxy는 객체 생성 순환만 늦출 수 있고 책임 순환을 없애지는 않는다. 상호 호출로 재귀 호출, 트랜잭션 경계 혼란, 상태 전이 순서 문제가 남을 수 있으므로 상위 조정 객체나 더 작은 인터페이스로 책임을 재분리할 수 있는지 검토한다.",
+    "explanationMarkdown": "`@Lazy` proxy는 실제 객체 생성 시점을 늦출 뿐 `OrderService`와 `PaymentService`의 상호 책임과 호출 방향을 바꾸지 않는다. 실행 중에 서로 다시 호출하면 재귀 호출이나 트랜잭션·상태 전이 순서 혼란이 남을 수 있으므로, 상위 조정 계층이 순서를 소유하거나 더 작은 경계로 책임을 분리할 수 있는지 검토해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.constructor-injection.q3",
+    "promptMarkdown": "다음 두 클래스 구현을 비교할 때 생성자 주입(B)이 필드 주입(A)보다 구조적으로 우월한 이유로 가장 정확한 것은?\n```java\n// A\n@Service class ServiceA { @Autowired private OrderRepository repo; }\n\n// B\n@Service class ServiceB {\n    private final OrderRepository repo;\n    ServiceB(OrderRepository repo) { this.repo = repo; }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.constructor-injection"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "생성자 주입은 `@Autowired`를 붙이면 예외가 발생해 반드시 생략해야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "단일 생성자에서는 `@Autowired`를 생략할 수 있을 뿐, 명시해도 정상 동작한다."
+      },
+      {
+        "key": "B",
+        "content": "생성자 주입을 사용하면 순환 의존성이 발생해도 Spring이 자동으로 모두 해결해 준다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "오히려 생성자 주입은 순환 의존성을 기동 시점에 즉시 드러내 설계 문제를 고치게 유도한다."
+      },
+      {
+        "key": "C",
+        "content": "필드 주입은 Spring 컨테이너가 `singleton` Bean으로 등록할 수 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "필드 주입도 singleton Bean으로 등록되지만 불변성(`final`), 순환 참조 조기 탐지, 순수 단위 테스트 편의성에서 불리하다."
+      },
+      {
+        "key": "D",
+        "content": "생성자 주입은 필수 의존성을 `final`로 불변 보장하고, Spring 없이 `new ServiceB(fakeRepo)`로 테스트 가능하며, 의존성 누락·순환을 컴파일/기동 시점에 즉시 드러낸다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "생성자 주입은 객체 생성 시점에 필수 협력 객체를 강제해 불완전한 객체 생성을 막고, 리플렉션 없이 순수 Java 단위 테스트를 작성할 수 있게 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "생성자 주입은 `final` 불변성, 필수 의존성 계약 명시, 프레임워크 비의존 단위 테스트, 과도한 의존성 수 가시화, 순환 의존성 조기 탐지라는 핵심 이점을 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.constructor-injection.q4",
+    "promptMarkdown": "다음 클래스처럼 생성자가 2개 정의되어 있고 어느 생성자에도 `@Autowired`가 붙어 있지 않을 때 Spring 컨테이너의 동작은?\n```java\n@Service\npublic class ReportService {\n    private final ReportRepository repository;\n    private final Clock clock;\n\n    public ReportService(ReportRepository repository) {\n        this(repository, Clock.systemUTC());\n    }\n\n    public ReportService(ReportRepository repository, Clock clock) {\n        this.repository = repository;\n        this.clock = clock;\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.constructor-injection"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "매개변수가 가장 많은 생성자를 항상 자동 선택해 오류 없이 주입한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "생성자가 2개 이상이고 기본 생성자도 없으면 Spring은 어느 생성자를 써야 할지 결정하지 못해 `BeanInstantiationException`으로 실패한다."
+      },
+      {
+        "key": "B",
+        "content": "생성자가 둘 이상이라 자동 선택 규칙이 모호해지므로, Spring이 사용할 주 생성자에 `@Autowired`를 명시하거나 생성자를 하나로 정리해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "단일 생성자일 때만 암묵적 `@Autowired`가 적용된다. 생성자가 여러 개면 사용할 생성자에 `@Autowired`를 붙이거나 보조 생성자를 정적 팩토리로 옮겨 단일 생성자를 유지하는 것이 깔끔하다."
+      },
+      {
+        "key": "C",
+        "content": "첫 번째 선언된 생성자만 무조건 선택해 `Clock` Bean은 무시한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "선언 순서로 임의 선택하지 않으며 명시적 `@Autowired`가 없으면 생성자 결정에 실패한다."
+      },
+      {
+        "key": "D",
+        "content": "두 생성자를 순서대로 모두 호출해 두 개의 Bean을 만든다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "단일 Bean 정의에 대해 컨테이너가 생성자를 두 번 호출해 중복 인스턴스를 만드는 동작은 존재하지 않으며, 생성자 선택 단계에서 실패한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "암묵적 생성자 주입은 생성자가 정확히 하나일 때만 적용된다. 생성자가 2개 이상이라면 Spring이 사용할 생성자에 `@Autowired`를 명시하거나, 프로덕션 생성자 하나만 두고 테스트용 편의 생성은 정적 팩토리나 테스트 헬퍼로 분리하는 편이 명확하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.optional-dependency.q3",
+    "promptMarkdown": "선택적 기능인 `AuditPublisher` Bean이 환경에 따라 등록되지 않을 수도 있다. 호출부마다 `if (publisher != null)` 분기를 반복하지 않고 가장 깔끔하게 설계하는 패턴은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.optional-dependency"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "필수 DB Repository까지 포함해 앱의 모든 주입 지점에 `@Autowired(required = false)`를 일괄 적용한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "필수 의존성에 `required = false`를 남용하면 기동 시점에 잡아야 할 설정 누락이 운영 요청 시점의 NPE로 미뤄진다."
+      },
+      {
+        "key": "B",
+        "content": "`ApplicationContext.getBean()`을 메서드 안에서 매번 호출해 예외를 무시한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "서비스 로케이터 안티패턴으로 프레임워크 결합이 강해지고 테스트가 어려워진다."
+      },
+      {
+        "key": "C",
+        "content": "필수 의존성인 것처럼 그대로 두고 `NullPointerException`을 `try/catch`로 매번 잡는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "예외를 정상 제어 흐름으로 쓰면 의도가 흐려지고 실제 버그까지 삼킬 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "아무 동작도 하지 않는 `NoOpAuditPublisher` 기본 구현 Bean(`@ConditionalOnMissingBean` 등)을 제공하거나 `ObjectProvider.ifAvailable(...)`로 명시적으로 다룬다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Null Object 패턴(`NoOpAuditPublisher`)을 기본 Bean으로 두면 호출부가 null 검사를 전혀 몰라도 되고, 선택적 동작이 진짜 필요할 때는 `ObjectProvider`나 `Optional<T>`로 선택성을 타입에 명시할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "선택적 협력 객체가 반복적인 `null` 체크를 만든다면 `NoOp` 기본 구현(Null Object 패턴)을 등록해 호출부 분기를 없애거나, `ObjectProvider<T>`·`Optional<T>`로 선택적 계약을 타입에 분명히 표현해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.optional-dependency.q4",
+    "promptMarkdown": "다음 코드에서 `ObjectProvider<NotificationSender>`를 생성자로 주입받았을 때의 장점으로 가장 정확한 것은?\n```java\n@Service\npublic class OrderNotifier {\n    private final ObjectProvider<NotificationSender> senderProvider;\n\n    public OrderNotifier(ObjectProvider<NotificationSender> senderProvider) {\n        this.senderProvider = senderProvider;\n    }\n\n    public void notifyPlaced(long orderId) {\n        senderProvider.ifAvailable(sender -> sender.send(orderId));\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.optional-dependency"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`ObjectProvider`를 쓰면 `NotificationSender`가 여러 개 등록되어 있어도 `ifAvailable()`이 항상 모두 실행한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`ifAvailable()`은 후보가 2개 이상이고 `@Primary`가 없으면 `NoUniqueBeanDefinitionException`을 발생시킨다. 다중 Bean 순회는 `orderedStream()` 또는 `List<T>` 주입을 써야 한다."
+      },
+      {
+        "key": "B",
+        "content": "`ObjectProvider`는 자동으로 비동기 스레드에서 `sender.send()`를 실행한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`ObjectProvider`는 Bean 조회 추상화일 뿐 비동기 실행(`@Async`) 기능은 제공하지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "`ObjectProvider`는 반드시 `prototype` scope Bean에만 사용할 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`singleton`, `prototype`, 선택적 Bean 등 모든 scope에서 사용할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "`NotificationSender` Bean이 없어도 기동이 실패하지 않고, 필요 시점에 안전하게 조회(`ifAvailable`)하거나 지연 조회할 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`ObjectProvider`는 대상 Bean이 없을 때 안전하게 건너뛰는 `ifAvailable()`, 기본값을 쓰는 `getIfAvailable(Supplier)`, 지연 조회 및 다중 스트림 순회(`orderedStream()`)를 타입 안전하게 제공한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`ObjectProvider<T>`는 선택적 Bean 존재 여부 처리(`ifAvailable`), 지연 조회, `prototype` Bean 조회를 `ApplicationContext`에 직접 의존하지 않고 깔끔하게 표현하는 Spring 표준 추상화다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.circular-dependency.q3",
+    "promptMarkdown": "다음 두 서비스가 생성자로 서로를 주입받고 있어 기동 시 `BeanCurrentlyInCreationException`이 발생했다. 가장 근본적인 해결 방향은?\n```java\n@Service class OrderService {\n    OrderService(PaymentService paymentService) { ... }\n}\n@Service class PaymentService {\n    PaymentService(OrderService orderService) { ... }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.circular-dependency"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 클래스를 모두 `@Transactional`로 감싸면 프록시가 순환을 제거한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`@Transactional`은 순환 의존성 해결 수단이 아니다."
+      },
+      {
+        "key": "B",
+        "content": "`spring.main.allow-circular-references: true`만 켜면 설계 문제가 완전히 해결된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "생성자 기반 순환은 `allow-circular-references: true`로도 해결되지 않으며, 필드 주입으로 우회하더라도 결합된 책임 구조는 그대로 남는다."
+      },
+      {
+        "key": "C",
+        "content": "두 서비스가 공유하는 책임을 제3의 서비스/조회 컴포넌트로 추출하거나 도메인 이벤트로 의존 방향을 단방향화한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "순환 의존성은 대부분 책임 경계가 뒤섞였다는 설계 신호다. 공통 조회·규칙을 분리하거나 단방향 흐름(또는 이벤트 발행)으로 재구성해야 그래프가 단순하고 변경에 강해진다."
+      },
+      {
+        "key": "D",
+        "content": "두 클래스 모두에 `@Scope(\"prototype\")`을 붙인다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`prototype` scope에서도 생성자 순환은 해결되지 않고 동일하게 실패한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Spring Boot 2.6+부터 순환 참조는 기본 금지되며 생성자 주입 순환은 아예 객체 생성 자체가 불가능하다. `@Lazy` 우회보다 공통 책임을 새 컴포넌트로 빼내거나 도메인 이벤트로 단방향 의존 그래프를 복원하는 것이 근본 해법이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.injection.circular-dependency.q4",
+    "promptMarkdown": "순환 의존성을 임시로 회피하기 위해 한쪽 생성자 매개변수에 `@Lazy`를 붙였을 때 발생하는 동작과 한계로 가장 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.injection.circular-dependency"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`@Lazy`가 붙은 의존성은 절대 호출되지 않도록 차단된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "메서드가 실제로 호출되는 순간 프록시가 실제 대상 Bean을 찾아 위임 실행한다."
+      },
+      {
+        "key": "B",
+        "content": "`@Lazy`를 붙이면 두 서비스의 트랜잭션 경계가 항상 하나로 합쳐진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`@Lazy`는 주입 지연 프록시일 뿐 트랜잭션 전파 규칙을 바꾸지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "기동 시점에 실제 대상 대신 지연 프록시가 주입되어 컨테이너 시작은 통과하지만, 두 서비스 간의 강한 양방향 결합과 런타임 상호 호출 복잡도는 그대로 남는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`@Lazy`는 생성 시점 데드락만 프록시로 우회할 뿐, 실제로 A가 B를 부르고 B가 다시 A를 부르는 설계 결합이나 런타임 재귀 위험을 제거하지 못한다."
+      },
+      {
+        "key": "D",
+        "content": "`@Lazy`를 붙이면 Spring이 컴파일 타임에 두 클래스를 하나로 자동 병합한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`@Lazy`는 런타임 지연 프록시를 주입할 뿐 클래스를 병합하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "생성자 매개변수의 `@Lazy`는 임시 응급 처치로는 기동을 통과시킬 수 있지만, 양방향 결합이라는 구조적 부채를 숨길 뿐이다. 가능하면 책임 분리로 순환 자체를 없애야 한다."
+  }
 ]

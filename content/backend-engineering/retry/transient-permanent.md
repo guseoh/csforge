@@ -40,15 +40,7 @@ HTTP 상태 코드만으로 이 분류를 기계적으로 결정하지는 않습
 
 결제 요청이 응답 timeout으로 끝났다면 일시적인 통신 문제일 수 있지만, 상대 결제사는 이미 승인했을 수 있습니다. 이 상태에서 같은 POST를 다시 보내는 것은 중복 결제를 만들 수 있습니다.
 
-```text
-transient 가능성
-      +
-operation 재실행 안전성
-      +
-remaining deadline
-      ↓
-retry 여부 결정
-```
+![재시도 가능(Transient) vs 즉시 중단(Permanent) 의사결정 흐름](/learning/backend-engineering/retryable-vs-nonretryable-decision.svg)
 
 Idempotent operation이거나 idempotency key로 동일 작업을 식별할 수 있고, 결과 조회·reconciliation 경로가 있다면 retry 설계가 훨씬 안전해집니다.
 

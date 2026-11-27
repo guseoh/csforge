@@ -35,4 +35,21 @@ class QuestionSelectionRepositoryTest {
 
         assertEquals(List.of(1L, 2L, 3L), selected);
     }
+
+    @Test
+    void shuffledSubsetAlwaysShufflesEvenWhenAllCandidatesAreSelected() {
+        Random alwaysZero = new Random() {
+            @Override
+            public int nextInt(int bound) {
+                return 0;
+            }
+        };
+
+        List<Long> selected = QuestionSelectionRepository.shuffledSubset(
+                List.of(1L, 2L, 3L),
+                3,
+                alwaysZero);
+
+        assertEquals(List.of(2L, 3L, 1L), selected);
+    }
 }

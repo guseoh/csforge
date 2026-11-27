@@ -82,6 +82,8 @@ public class DashboardQueryRepository {
                         where attempt.gradingStatus in (
                             com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
                             com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
+                          and attempt.answeredAt is not null
+                          and attempt.quizSession.status <> com.guseoh.csforge.quiz.domain.QuizSessionStatus.IN_PROGRESS
                           and attempt.gradedAt >= :from
                           and attempt.gradedAt < :until
                         order by attempt.gradedAt asc, attempt.id asc
@@ -114,6 +116,8 @@ public class DashboardQueryRepository {
                         where attempt.gradingStatus in (
                             com.guseoh.csforge.quiz.domain.AttemptGradingStatus.GRADED,
                             com.guseoh.csforge.quiz.domain.AttemptGradingStatus.SELF_CHECKED)
+                          and attempt.answeredAt is not null
+                          and attempt.quizSession.status <> com.guseoh.csforge.quiz.domain.QuizSessionStatus.IN_PROGRESS
                           and attempt.gradedAt >= :from
                           and attempt.gradedAt <= :until
                           and question.status = com.guseoh.csforge.question.domain.QuestionStatus.PUBLISHED

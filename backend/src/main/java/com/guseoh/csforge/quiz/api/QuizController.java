@@ -25,6 +25,7 @@ import com.guseoh.csforge.quiz.application.QuizQuestionSelectionCriteria;
 import com.guseoh.csforge.quiz.application.QuizQuestionState;
 import com.guseoh.csforge.quiz.application.QuizSessionCommandService;
 import com.guseoh.csforge.quiz.application.QuizSetupService;
+import com.guseoh.csforge.quiz.domain.QuizSessionSource;
 import jakarta.validation.Valid;
 
 /**
@@ -40,16 +41,41 @@ public class QuizController {
     private final QuizSessionCommandService commandService;
     private final QuizApiMapper apiMapper;
 
+    @GetMapping
+    public QuizHistoryPageResponse history(
+            @RequestParam(required = false) QuizSessionSource source,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        if (page < 0) {
+            throw new IllegalArgumentException("page must not be negative");
+        }
+        if (size < 1 || size > 50) {
+            throw new IllegalArgumentException("size must be between 1 and 50");
+        }
+        return apiMapper.toResponse(queryService.history(source, page, size));
+    }
+
     @GetMapping("/availability")
     public QuizAvailabilityResponse availability(
             @RequestParam(name = "area", required = false) List<String> areas,
+            @RequestParam(name = "topic", required = false) List<Long> topics,
             @RequestParam(name = "concept", required = false) List<Long> concepts,
             @RequestParam(name = "level", required = false) List<Short> levels,
             @RequestParam(name = "difficulty", required = false) List<QuestionDifficulty> difficulties,
             @RequestParam(name = "questionType", required = false) List<QuestionType> questionTypes,
+            @RequestParam(name = "bookmarkCategoryId", required = false) Long bookmarkCategoryId,
             @RequestParam(name = "state", defaultValue = "ALL") QuizQuestionState state) {
         long count = setupService.availability(
-                new QuizQuestionSelectionCriteria(areas, concepts, levels, difficulties, questionTypes, state));
+                new QuizQuestionSelectionCriteria(
+                        areas,
+                        concepts,
+                        topics,
+                        bookmarkCategoryId,
+                        levels,
+                        difficulties,
+                        questionTypes,
+                        state,
+                        false));
         return new QuizAvailabilityResponse(count);
     }
 
@@ -97,6 +123,12 @@ public class QuizController {
     @PostMapping("/{quizId}/submit")
     public QuizSubmissionResponse submit(@PathVariable long quizId) {
         return apiMapper.toResponse(commandService.submit(quizId));
+    }
+
+    @PostMapping("/{quizId}/abandon")
+    public ResponseEntity<Void> abandon(@PathVariable long quizId) {
+        commandService.abandon(quizId);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{quizId}/result")

@@ -1,8 +1,344 @@
 [
-  {"kind":"question","contentKey":"security.core.tokens-oauth.jwt-structure.q1","promptMarkdown":"JWT 페이로드를 base64url 디코딩할 수 있으므로 그 안의 `role=ADMIN`을 서명 검증 없이 신뢰해도 되는가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["security.core.tokens-oauth.jwt-structure"],"choices":[{"key":"A","content":"아니다. 인코딩은 신뢰를 제공하지 않으며 허용된 알고리즘과 키로 서명과 발급자·대상·만료 등을 검증해야 한다.","displayOrder":0,"rationaleMarkdown":"base64url은 표현 인코딩일 뿐 내용의 출처나 무결성을 인증하지 않는다. 신뢰하려면 허용된 알고리즘과 키로 서명을 검증하고 발급자, 대상, 만료 등 토큰이 현재 용도에 맞는지도 확인해야 한다."},{"key":"B","content":"그렇다. JWS 내용이 base64url로 인코딩되어 있으면 내용 변조 여부도 인코딩 단계에서 검증된다.","displayOrder":1,"rationaleMarkdown":"인코딩은 데이터를 다른 문자 집합으로 표현할 뿐 변조를 탐지하는 암호학적 증거를 만들지 않는다. JWS 서명 검증은 지정된 서명 키와 알고리즘에 따라 별도로 수행해야 한다."},{"key":"C","content":"그렇다. `role`은 인가 클레임이므로 토큰 서명 검증과 무관하게 애플리케이션이 그대로 신뢰할 수 있다.","displayOrder":2,"rationaleMarkdown":"`role`이라는 클레임은 내용에 적혀 있다는 이유만으로 신뢰할 수 없고, 서명 검증과 발급자·대상·만료 조건 확인이 먼저 필요하다. 검증이 끝난 클레임을 실제 권한으로 매핑하는 애플리케이션 정책도 별도 적용된다."},{"key":"D","content":"그렇다. 서명만 유효하면 발급자·대상·만료 같은 클레임 검증은 생략해도 된다.","displayOrder":3,"rationaleMarkdown":"서명이 유효해도 토큰이 이 서비스와 현재 시점에 사용 가능한지는 별도 검증해야 한다. 발급자, 대상, 만료와 토큰 유형 같은 조건을 생략하면 다른 대상용 또는 만료된 토큰을 잘못 받아들일 수 있다."}],"correctChoiceKey":"A","explanationMarkdown":"base64url 디코딩은 토큰 내용을 읽는 단계일 뿐 발급자나 무결성을 증명하지 않는다. 허용된 알고리즘·키로 서명을 확인하고 발급자·대상·시간 클레임도 검증해야 `role`을 판단 근거로 사용할 수 있다."},
-  {"kind":"question","contentKey":"security.core.tokens-oauth.jwt-lifecycle.q1","promptMarkdown":"사용자 권한 상태가 다음 순서로 바뀌었다.\n\n1. `USER` 역할로 15분짜리 JWT 액세스 토큰을 발급한다.\n2. 사용자 역할을 `SUSPENDED`로 변경한다.\n3. 기존 토큰으로 API 호출이 계속 성공한다.\n\n왜 가능하며 어떤 선택지가 있는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.tokens-oauth.jwt-lifecycle"],"modelAnswer":"리소스 서버가 매 요청 중앙 상태를 조회하지 않으면 토큰 발급 시점의 클레임을 만료 시각까지 신뢰할 수 있다. 짧은 유효 기간으로 지연 구간을 제한하거나 즉시 폐기가 필요하면 폐기 목록·토큰 버전·유효성 조회 같은 서버 상태 유지 방식을 검토한다.","explanationMarkdown":"리소스 서버가 중앙 계정 상태를 다시 조회하지 않으면 이미 발급된 토큰의 `USER` 클레임은 만료 전까지 유효할 수 있다. 즉시 회수가 필요하면 서버 상태를 확인하는 폐기 정책을 추가해야 한다."},
-  {"kind":"question","contentKey":"security.core.tokens-oauth.oauth-oidc.q1","promptMarkdown":"인가 코드 + OIDC 로그인에서 액세스 토큰과 ID 토큰의 주 목적을 각각 짧게 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.tokens-oauth.oauth-oidc"],"acceptedAnswers":["액세스 토큰은 리소스 서버의 API 접근에 사용하고 ID 토큰은 클라이언트가 사용자 인증 결과를 확인하는 데 사용한다","액세스 토큰: API 접근, ID 토큰: 사용자 인증 결과","액세스 토큰은 API 접근용이고 ID 토큰은 사용자 신원 확인용이다"],"explanationMarkdown":"액세스 토큰은 리소스 서버 API 접근에 사용하고 ID 토큰은 클라이언트가 사용자 인증 결과를 확인하는 데 사용한다. 두 토큰의 소비자와 대상이 다르므로 서로 바꿔 사용하면 안 된다."},
-  {"kind":"question","contentKey":"security.core.tokens-oauth.jwt-structure.q2","promptMarkdown":"JWT에 다음 값이 들어 있어도 리소스 서버가 서명만 확인하면 충분하지 않은 이유는?\n\n- JOSE 헤더: `alg`\n- 클레임 집합: `iss`, `aud`, `exp`","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.tokens-oauth.jwt-structure"],"modelAnswer":"서명이 유효해도 허용한 알고리즘과 키인지, 발급자와 대상이 현재 리소스 서버에 맞는지, exp·nbf 같은 수명 클레임이 유효한지를 별도로 검사해야 한다. 내용 인코딩은 신뢰 근거가 아니다.","explanationMarkdown":"서명은 토큰 내용의 무결성을 확인하지만 그 토큰을 현재 API가 받아들여야 하는지는 정하지 않는다. 허용한 `alg`와 키, `iss`·`aud`·`exp` 등의 정책을 별도로 검사해야 한다."},
-  {"kind":"question","contentKey":"security.core.tokens-oauth.jwt-lifecycle.q2","promptMarkdown":"오래된 발급자의 서명 키를 키 교체 기간 동안 유지하고 있다. 그 키로 서명한 JWT가 아직 만료되지 않았지만 `iss`는 현재 허용하지 않는 발급자이고 `aud`도 다른 API를 가리킨다. 서명이 유효하다는 이유로 이 토큰을 받아들여도 되는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.tokens-oauth.jwt-lifecycle"],"modelAnswer":"받아들이면 안 된다. 키를 보유하고 서명을 검증할 수 있는 것과 현재 발급자를 신뢰하는 것은 다르다. `iss`가 허용된 발급자인지, `aud`가 이 API를 포함하는지, `exp`와 `nbf`가 현재 시각에 맞는지 정책에 따라 확인해야 한다. 이전 키를 보유하는 기간과 이전 발급자의 토큰을 받아들이는 기간도 별도로 정해야 한다.","explanationMarkdown":"서명 키 교체 중에도 서명 검증만으로 토큰 사용 권한이 생기지는 않는다. 발급자·대상·시간 조건을 검증해야 하며, 기존 키 보관과 기존 토큰 허용은 서로 다른 정책이다."},
-  {"kind":"question","contentKey":"security.core.tokens-oauth.oauth-oidc.q2","promptMarkdown":"인가 코드를 가로챈 공격자는 코드는 갖고 있지만 클라이언트가 만든 `code_verifier`는 모른다. PKCE를 사용한 인가 코드 흐름에서 토큰 엔드포인트가 무엇을 비교하며 왜 공격자의 교환 요청이 실패하는가?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.tokens-oauth.oauth-oidc"],"modelAnswer":"클라이언트는 인가 요청 전에 무작위 `code_verifier`를 만들고 그 값에서 `code_challenge`를 계산해 인가 코드와 연결한다. 토큰 요청에는 원래 검증자를 보내며, 인가 서버는 이를 다시 계산해 저장된 챌린지와 비교한다. 코드를 탈취한 공격자는 검증자를 모르므로 같은 챌린지를 증명할 수 없어 토큰을 얻지 못한다.","explanationMarkdown":"PKCE는 인가 코드를 발급받은 흐름과 토큰 교환 요청을 같은 검증자로 묶는다. 인가 코드만으로는 저장된 챌린지에 맞는 검증자를 제시할 수 없다."}
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.jwt-structure.q1",
+    "promptMarkdown": "JWT 페이로드를 base64url 디코딩할 수 있으므로 그 안의 `role=ADMIN`을 서명 검증 없이 신뢰해도 되는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.jwt-structure"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "아니다. 인코딩은 신뢰를 제공하지 않으며 허용된 알고리즘과 키로 서명과 발급자·대상·만료 등을 검증해야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "base64url은 표현 인코딩일 뿐 내용의 출처나 무결성을 인증하지 않는다. 신뢰하려면 허용된 알고리즘과 키로 서명을 검증하고 발급자, 대상, 만료 등 토큰이 현재 용도에 맞는지도 확인해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "그렇다. JWS 내용이 base64url로 인코딩되어 있으면 내용 변조 여부도 인코딩 단계에서 검증된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "인코딩은 데이터를 다른 문자 집합으로 표현할 뿐 변조를 탐지하는 암호학적 증거를 만들지 않는다. JWS 서명 검증은 지정된 서명 키와 알고리즘에 따라 별도로 수행해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "그렇다. `role`은 인가 클레임이므로 토큰 서명 검증과 무관하게 애플리케이션이 그대로 신뢰할 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`role`이라는 클레임은 내용에 적혀 있다는 이유만으로 신뢰할 수 없고, 서명 검증과 발급자·대상·만료 조건 확인이 먼저 필요하다. 검증이 끝난 클레임을 실제 권한으로 매핑하는 애플리케이션 정책도 별도 적용된다."
+      },
+      {
+        "key": "D",
+        "content": "그렇다. 서명만 유효하면 발급자·대상·만료 같은 클레임 검증은 생략해도 된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "서명이 유효해도 토큰이 이 서비스와 현재 시점에 사용 가능한지는 별도 검증해야 한다. 발급자, 대상, 만료와 토큰 유형 같은 조건을 생략하면 다른 대상용 또는 만료된 토큰을 잘못 받아들일 수 있다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "base64url 디코딩은 토큰 내용을 읽는 단계일 뿐 발급자나 무결성을 증명하지 않는다. 허용된 알고리즘·키로 서명을 확인하고 발급자·대상·시간 클레임도 검증해야 `role`을 판단 근거로 사용할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.jwt-lifecycle.q1",
+    "promptMarkdown": "사용자 권한 상태가 다음 순서로 바뀌었다.\n\n1. `USER` 역할로 15분짜리 JWT 액세스 토큰을 발급한다.\n2. 사용자 역할을 `SUSPENDED`로 변경한다.\n3. 기존 토큰으로 API 호출이 계속 성공한다.\n\n왜 가능하며 어떤 선택지가 있는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.jwt-lifecycle"
+    ],
+    "modelAnswer": "리소스 서버가 매 요청 중앙 상태를 조회하지 않으면 토큰 발급 시점의 클레임을 만료 시각까지 신뢰할 수 있다. 짧은 유효 기간으로 지연 구간을 제한하거나 즉시 폐기가 필요하면 폐기 목록·토큰 버전·유효성 조회 같은 서버 상태 유지 방식을 검토한다.",
+    "explanationMarkdown": "리소스 서버가 중앙 계정 상태를 다시 조회하지 않으면 이미 발급된 토큰의 `USER` 클레임은 만료 전까지 유효할 수 있다. 즉시 회수가 필요하면 서버 상태를 확인하는 폐기 정책을 추가해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.oauth-oidc.q1",
+    "promptMarkdown": "인가 코드 + OIDC 로그인에서 액세스 토큰과 ID 토큰의 주 목적을 각각 짧게 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.oauth-oidc"
+    ],
+    "acceptedAnswers": [
+      "액세스 토큰은 리소스 서버의 API 접근에 사용하고 ID 토큰은 클라이언트가 사용자 인증 결과를 확인하는 데 사용한다",
+      "액세스 토큰: API 접근, ID 토큰: 사용자 인증 결과",
+      "액세스 토큰은 API 접근용이고 ID 토큰은 사용자 신원 확인용이다"
+    ],
+    "explanationMarkdown": "액세스 토큰은 리소스 서버 API 접근에 사용하고 ID 토큰은 클라이언트가 사용자 인증 결과를 확인하는 데 사용한다. 두 토큰의 소비자와 대상이 다르므로 서로 바꿔 사용하면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.jwt-structure.q2",
+    "promptMarkdown": "JWT에 다음 값이 들어 있어도 리소스 서버가 서명만 확인하면 충분하지 않은 이유는?\n\n- JOSE 헤더: `alg`\n- 클레임 집합: `iss`, `aud`, `exp`",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.jwt-structure"
+    ],
+    "modelAnswer": "서명이 유효해도 허용한 알고리즘과 키인지, 발급자와 대상이 현재 리소스 서버에 맞는지, exp·nbf 같은 수명 클레임이 유효한지를 별도로 검사해야 한다. 내용 인코딩은 신뢰 근거가 아니다.",
+    "explanationMarkdown": "서명은 토큰 내용의 무결성을 확인하지만 그 토큰을 현재 API가 받아들여야 하는지는 정하지 않는다. 허용한 `alg`와 키, `iss`·`aud`·`exp` 등의 정책을 별도로 검사해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.jwt-lifecycle.q2",
+    "promptMarkdown": "오래된 발급자의 서명 키를 키 교체 기간 동안 유지하고 있다. 그 키로 서명한 JWT가 아직 만료되지 않았지만 `iss`는 현재 허용하지 않는 발급자이고 `aud`도 다른 API를 가리킨다. 서명이 유효하다는 이유로 이 토큰을 받아들여도 되는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.jwt-lifecycle"
+    ],
+    "modelAnswer": "받아들이면 안 된다. 키를 보유하고 서명을 검증할 수 있는 것과 현재 발급자를 신뢰하는 것은 다르다. `iss`가 허용된 발급자인지, `aud`가 이 API를 포함하는지, `exp`와 `nbf`가 현재 시각에 맞는지 정책에 따라 확인해야 한다. 이전 키를 보유하는 기간과 이전 발급자의 토큰을 받아들이는 기간도 별도로 정해야 한다.",
+    "explanationMarkdown": "서명 키 교체 중에도 서명 검증만으로 토큰 사용 권한이 생기지는 않는다. 발급자·대상·시간 조건을 검증해야 하며, 기존 키 보관과 기존 토큰 허용은 서로 다른 정책이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.oauth-oidc.q2",
+    "promptMarkdown": "인가 코드를 가로챈 공격자는 코드는 갖고 있지만 클라이언트가 만든 `code_verifier`는 모른다. PKCE를 사용한 인가 코드 흐름에서 토큰 엔드포인트가 무엇을 비교하며 왜 공격자의 교환 요청이 실패하는가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.oauth-oidc"
+    ],
+    "modelAnswer": "클라이언트는 인가 요청 전에 무작위 `code_verifier`를 만들고 그 값에서 `code_challenge`를 계산해 인가 코드와 연결한다. 토큰 요청에는 원래 검증자를 보내며, 인가 서버는 이를 다시 계산해 저장된 챌린지와 비교한다. 코드를 탈취한 공격자는 검증자를 모르므로 같은 챌린지를 증명할 수 없어 토큰을 얻지 못한다.",
+    "explanationMarkdown": "PKCE는 인가 코드를 발급받은 흐름과 토큰 교환 요청을 같은 검증자로 묶는다. 인가 코드만으로는 저장된 챌린지에 맞는 검증자를 제시할 수 없다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.jwt-lifecycle.q4",
+    "promptMarkdown": "Access Token(JWT)과 Refresh Token을 함께 운용할 때, 토큰 탈취 피해를 최소화하는 표준 수명주기 설계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.jwt-lifecycle"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Refresh Token을 평문 그대로 DB에 저장하고 로그아웃해도 만료 전까지 계속 재발급을 허용한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "로그아웃 시 서버 저장소의 Refresh Token을 즉시 폐기해야 재발급을 차단할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "JWT 검증 시 `exp`, `iss`, `aud` 클레임은 선택 사항이므로 서명만 확인하면 충분하다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`exp`(만료), `iss`(발급자), `aud`(대상 서비스)를 검증하지 않으면 만료 토큰이나 다른 서비스용 토큰이 그대로 통과하는 치명적 결함이 생긴다."
+      },
+      {
+        "key": "C",
+        "content": "Access Token은 짧은 만료 시간(예: 5~15분)으로 유지하고, Refresh Token은 서버 저장소에 해시·상태를 관리하며 갱신 시마다 새 Refresh Token으로 교체(Rotation)하고 이미 사용된 Refresh Token이 재제출되면 탈취로 판단해 해당 토큰 패밀리 전체를 폐기한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "짧은 Access Token은 탈취 창을 줄이고, Refresh Token Rotation + Reuse Detection은 탈취된 리프레시 토큰 재사용을 즉시 탐지해 정상·공격자 세션을 모두 차단한다."
+      },
+      {
+        "key": "D",
+        "content": "사용자 편의를 위해 Access Token 만료 시간(`exp`)을 365일로 설정하고 Refresh Token은 쓰지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "무상태 Access Token의 유효기간이 1년이면 토큰이 한 번 탈취되거나 계정이 정지돼도 1년간 막을 방법이 없다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "JWT 수명주기는 '짧은 Access Token + `exp/iss/aud` 엄격 검증 + Refresh Token Rotation 및 재사용 탐지(Reuse Detection) + 로그아웃/정지 시 폐기 전략'으로 완성한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.jwt-lifecycle.q5",
+    "promptMarkdown": "JWT 기반 시스템에서 관리자가 악성 사용자의 계정을 즉시 정지(Ban)하거나 권한을 강등했는데, 해당 사용자가 기존 Access Token으로 10분 동안 계속 API를 호출할 수 있는 현상의 원인과 실무 대응책은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.jwt-lifecycle"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "DB에서 사용자 권한 컬럼을 바꾸면 클라이언트가 가진 JWT 내부 페이로드도 자동으로 수정된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "이미 발급되어 클라이언트에 저장된 JWT 문자열은 서버 DB 변경으로 바뀌지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "JWT 서명 알고리즘을 HS256에서 RS256으로 바꾸면 즉시 폐기가 자동으로 지원된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "RS256은 비대칭키 서명 방식일 뿐, 발급 완료된 토큰의 만료 전 강제 폐기 기능과는 무관하다."
+      },
+      {
+        "key": "C",
+        "content": "HTTP 응답에 `Cache-Control: no-store`만 붙이면 클라이언트의 JWT가 즉시 무효화된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "캐시 제어 헤더는 HTTP 응답 캐싱을 막을 뿐 이미 발급된 JWT의 서명 유효성을 취소하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "자체 완결형(Stateless) JWT는 서버 조회 없이 서명과 만료만 검증하므로 만료 전까지 폐기가 즉시 반영되지 않는다. Access Token 수명을 매우 짧게 유지하거나, 민감 작업/계정 정지 시 Redis 기반 `jti` 블랙리스트·`tokenVersion` 검증을 결합한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "완전 무상태 JWT와 '즉시 폐기'는 본질적인 트레이드오프다. 즉시 차단이 필수인 계정 정지·비밀번호 변경은 짧은 TTL + 경량 상태 검증(`tokenVersion`/차단 목록) 또는 세션 방식으로 해결한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "JWT는 만료 전 즉시 폐기가 기본적으로 불가능하므로, 즉시 차단이 필요한 요구사항이 있으면 짧은 만료 시간 + `jti`/버전 체크 또는 세션 저장소를 선택해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.jwt-structure.q4",
+    "promptMarkdown": "일반적인 JWS 형식 JWT(`header.payload.signature`)에 대한 설명 중 **틀린** 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.jwt-structure"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "서명(Signature)은 토큰이 신뢰할 수 있는 발급자에 의해 생성되었고 전송 중 변조되지 않았음(무결성)을 검증한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "JWS 서명의 정확한 역할은 발급자 진위와 무결성 보장이므로 이 보기는 옳은 설명이며 문제의 오답(틀린 설명)이 아니다."
+      },
+      {
+        "key": "B",
+        "content": "서버가 토큰 헤더의 `alg` 값을 그대로 신뢰해 `alg: none`이나 RS256 공개키를 HS256 비밀키로 혼용(Algorithm Confusion)하면 서명 검증이 우회될 수 있으므로 허용 알고리즘을 서버 설정에 고정해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "토큰 헤더의 `alg`를 맹신하면 대표적 JWT 서명 우회 취약점이 생기므로 서버가 허용 알고리즘을 명시적으로 고정해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "JWT는 매 요청 헤더에 실려 전송되므로 불필요한 대형 클레임을 많이 넣으면 네트워크 오버헤드가 커진다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "JWT에는 `sub`, `exp`, `iss`, 최소 권한 등 꼭 필요한 클레임만 작게 담아야 한다."
+      },
+      {
+        "key": "D",
+        "content": "JWT의 Payload는 서명 키로 암호화되어 있으므로 비밀번호나 주민등록번호 같은 비밀정보를 Payload에 안전하게 담아도 외부에서 읽을 수 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "일반 JWT(JWS)의 Header와 Payload는 암호화가 아니라 단순 Base64URL 인코딩일 뿐이므로 누구나 디코딩해 평문 JSON을 볼 수 있다. 서명은 기밀성이 아니라 변조 방지(무결성)만 보장한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "JWS JWT는 '서명(무결성)'이지 '암호화(기밀성)'가 아니다. Payload에 민감 비밀정보를 넣지 말고, 서버에서 허용 `alg`를 고정해 검증해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.jwt-structure.q5",
+    "promptMarkdown": "마이크로서비스 환경에서 인증 서버(Issuer)가 JWT를 발급하고 여러 리소스 서버가 검증할 때, 대칭키(HS256) 대신 비대칭키(RS256/ES256 + JWKS)를 선호하는 가장 큰 보안 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.jwt-structure"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "RS256은 서명 크기가 0바이트여서 토큰 길이가 가장 짧다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "오히려 RSA 서명이 HMAC 서명보다 길이가 길며, 선택 이유는 키 관리·권한 분리 보안성이다."
+      },
+      {
+        "key": "B",
+        "content": "발급 권한(개인키)은 인증 서버만 독점하고 리소스 서버들은 공개키(JWKS)로 검증만 수행하므로, 리소스 서버 하나가 침해되어도 공격자가 임의의 관리자 JWT를 위조·발급할 수 없다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "HS256은 발급과 검증이 같은 비밀키를 공유하므로 검증 서버 중 하나만 뚫려도 모든 사용자의 토큰을 위조할 수 있다. 비대칭키는 발급과 검증 권한을 완벽히 분리한다."
+      },
+      {
+        "key": "C",
+        "content": "RS256은 Payload를 자동 암호화하지만 HS256은 암호화하지 않는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "RS256과 HS256 모두 JWS 서명 알고리즘이며 Payload는 동일하게 Base64URL 평문 인코딩이다."
+      },
+      {
+        "key": "D",
+        "content": "HS256은 `exp` 만료 시간 클레임을 지원하지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`exp` 검증은 서명 알고리즘 종류와 무관하게 모든 JWT에서 지원된다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "다수 서비스가 토큰을 검증하는 구조에서는 비대칭키(RS256/ES256)와 `kid` 기반 JWKS 공개키 배포로 '발급(개인키)'과 '검증(공개키)' 책임을 분리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.oauth-oidc.q4",
+    "promptMarkdown": "OAuth 2.0과 OpenID Connect(OIDC)의 목적 차이와 각 프로토콜의 핵심 토큰 역할을 가장 정확하게 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.oauth-oidc"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "OAuth 2.0은 리소스 접근 **권한 위임(Authorization)** 프레임워크로 API 호출용 `Access Token`을 발급하고, OIDC는 OAuth 2.0 위에 **사용자 인증(Authentication)** 계층을 얹어 사용자 신원 클레임(`iss`, `sub`, `aud`, `nonce`)을 담은 `ID Token`을 제공한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "OAuth 2.0의 Access Token은 리소스 서버(API)용 권한 증서이고, OIDC의 ID Token은 클라이언트 앱이 '누가 로그인했는가'를 확인하는 인증 증서다."
+      },
+      {
+        "key": "B",
+        "content": "OAuth 2.0은 비밀번호 해싱 알고리즘이고, OIDC는 방화벽 프로토콜이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "OAuth 2.0은 권한 위임, OIDC는 그 위의 신원 인증 표준이다."
+      },
+      {
+        "key": "C",
+        "content": "OIDC의 `ID Token`을 외부 리소스 API의 `Authorization: Bearer` 토큰으로 보내는 것이 표준이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "API 호출에는 대상 리소스 서버용 `Access Token`을 써야 하며, `ID Token`은 클라이언트 앱의 로그인 신원 확인용이다."
+      },
+      {
+        "key": "D",
+        "content": "OAuth 2.0만으로 사용자 로그인을 구현할 때는 `state`와 `PKCE`를 생략해도 CSRF나 인가 코드 가로채기 위험이 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "OAuth 2.0 Authorization Code 흐름에서는 CSRF 방어용 `state`와 코드 가로채기 방어용 `PKCE(code_verifier/code_challenge)`가 필수다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "OAuth 2.0 = 권한 위임(`Access Token`), OIDC = 사용자 인증(`ID Token`)으로 역할을 구분하고, Authorization Code + PKCE + `state`/`nonce` 검증을 함께 적용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.tokens-oauth.oauth-oidc.q5",
+    "promptMarkdown": "OAuth 2.0 Authorization Code 흐름에서 `PKCE(Proof Key for Code Exchange)`와 `state` 파라미터가 각각 방어하는 공격은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.tokens-oauth.oauth-oidc"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`PKCE`는 오직 모바일 앱에서만 쓸 수 있고 백엔드 웹 서버에서는 사용할 수 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "OAuth 2.1 초안에서는 공개 클라이언트뿐 아니라 기밀(백엔드) 클라이언트에도 PKCE 적용을 표준으로 권장한다."
+      },
+      {
+        "key": "B",
+        "content": "`state` 파라미터는 고정 문자열 `\"1234\"`를 모든 사용자에게 동일하게 쓰면 된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`state`는 사용자 세션에 묶인 예측 불가능한 암호학적 랜덤 값이어야 Login CSRF를 막을 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "`PKCE`는 리다이렉트 과정에서 가로챈 인가 코드(`code`)를 공격자가 토큰으로 교환하는 Code Interception 공격을 막고, `state`는 공격자의 인가 코드를 피해자 세션에 주입하는 Login CSRF 공격을 막는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`PKCE`는 최초 요청자만 아는 `code_verifier`를 토큰 교환 시 검증해 코드 탈취를 무력화하고, `state`는 인가 요청과 콜백이 같은 사용자 세션에서 시작됐음을 검증한다."
+      },
+      {
+        "key": "D",
+        "content": "`PKCE`는 SQL 인젝션을 막고, `state`는 비밀번호 해싱 속도를 높인다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "둘 다 OAuth 2.0 리다이렉트 기반 인가 코드 흐름의 프로토콜 보안 장치다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "현대 OAuth 2.0/OIDC 로그인은 Authorization Code + PKCE(코드 가로채기 방어) + 랜덤 `state`(Login CSRF 방어) + `nonce`(ID Token 리플레이 방어)를 기본으로 구현한다."
+  }
 ]

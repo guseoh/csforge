@@ -1,11 +1,405 @@
 [
-  {"kind":"question","contentKey":"distributed.core.coordination.leases-fencing.q1","promptMarkdown":"임대(Lease)만으로 이전 소유자의 부수 효과를 완전히 막을 수 없는 이유는 무엇인가?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["distributed.core.coordination.leases-fencing"],"modelAnswer":"임대가 만료되어도 이전 소유자가 만료 사실을 즉시 알지 못한 채 긴 일시 정지나 네트워크 지연 뒤 다시 실행되어 늦은 쓰기를 보낼 수 있다. 또한 Lease API가 비교 가능한 펜싱 토큰을 자동으로 제공한다는 보장도 없다. 따라서 조정 시스템의 소유권 판단과 별개로 실제 자원이 검증할 단조 증가 세대·버전, 외부 제공자의 멱등성 키, 작업 상태 조회와 정합성 보정 같은 오래된 쓰기 방어가 필요하다.","explanationMarkdown":"Lease는 일정 시간 동안 누가 소유자인지 판단하는 조정 계약일 뿐 이전 소유자의 실행을 물리적으로 멈추지는 못한다. GC 일시 정지나 네트워크 지연 뒤 오래된 실행 주체가 다시 쓸 수 있으므로 실제 쓰기 대상이 더 최신 세대만 허용하는 펜싱 같은 방어가 필요하다."},
-  {"kind":"question","contentKey":"distributed.core.coordination.leases-fencing.q2","promptMarkdown":"다음 순서로 Lease 소유자가 바뀌었다.\n\n1. 워커 A의 Lease가 만료된다.\n2. 워커 B가 새 Lease와 더 큰 펜싱 토큰을 얻는다.\n3. 네트워크 지연 뒤 A가 저장소 쓰기를 재개한다.\n\n이때 저장소가 강제해야 할 안전 조건은 무엇인가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["distributed.core.coordination.leases-fencing"],"modelAnswer":"저장소가 더 큰 세대의 쓰기를 수락한 뒤 그보다 낮은 토큰을 가진 A의 쓰기를 조건 검사에서 거부해야 한다. 이 시나리오는 조정 시스템이 비교 가능한 펜싱 토큰이나 버전을 실제로 제공한다는 전제가 필요하며, 토큰을 Lease 서비스에만 저장하고 실제 쓰기 대상이 검사하지 않으면 이전 소유자의 지연된 작업을 막지 못한다.","explanationMarkdown":"펜싱 토큰은 단순히 새 소유자에게 큰 숫자를 주는 것으로 끝나지 않는다. 저장소가 이미 본 최대 세대를 기억하고 그보다 작은 토큰의 쓰기를 거부해야 이전 소유자의 지연된 쓰기가 실제 부수 효과에 반영되지 않는다."},
-  {"kind":"question","contentKey":"distributed.core.coordination.leases-fencing.q3","promptMarkdown":"조정 시스템과 실제 자원 쓰기 주체의 계약을 다음 조건을 포함해 설계하라.\n\n- Lease TTL과 갱신 주기\n- 작업 수행 시간\n- 이전 소유자가 뒤늦게 실행될 위험\n- Lease API가 펜싱 토큰을 제공하지 않는 경우","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["distributed.core.coordination.leases-fencing"],"modelAnswer":"TTL과 갱신 주기는 정상적인 지연·일시 정지와 복구 목표를 보고 정하고, 소유자는 작업 기한과 취소 처리를 가진다. Lease API가 비교 가능한 세대를 제공하거나 별도 권한 시스템에서 단조 증가하는 epoch·version을 만들 수 있다면 실제 자원 쓰기에서 오래된 세대를 거부하게 한다. 외부 API처럼 펜싱 조건을 받을 수 없는 대상에는 Lease만으로 정확히 한 번 실행을 주장하지 말고 멱등성 키, 단일 쓰기 주체 경계, 작업 상태 조회와 정합성 보정을 결합한다.","explanationMarkdown":"Lease TTL은 소유권을 언제 잃었다고 판단할지 정하는 생존성 기준이고, 펜싱은 이전 소유자의 변경을 거부하는 안전 장치다. Lease 서비스가 토큰을 제공하지 않으면 별도 세대 권한이나 멱등성·정합성 보정 경계를 설계해야 한다."},
-  {"kind":"question","contentKey":"distributed.core.coordination.saga-compensation.q1","promptMarkdown":"Saga의 핵심 구성으로 가장 적절한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["distributed.core.coordination.saga-compensation"],"choices":[{"key":"A","content":"이벤트 순서만으로 여러 서비스의 격리와 롤백을 얻는 것","displayOrder":0,"rationaleMarkdown":"이벤트 순서는 작업의 관찰 순서를 도울 수 있어도 여러 DB의 격리나 롤백을 제공하지 않는다. 이미 커밋된 단계는 별도 보상 동작이 필요하다."},{"key":"B","content":"모든 서비스 DB를 하나의 로컬 ACID 트랜잭션으로 자동 묶는 것","displayOrder":1,"rationaleMarkdown":"서로 다른 서비스의 로컬 트랜잭션은 하나의 DB 트랜잭션으로 자동 결합되지 않는다. Saga는 각 단계의 독립 커밋과 후속 실패를 다루는 조정 방식이다."},{"key":"C","content":"실패한 단계의 부수 효과를 프레임워크가 항상 물리적으로 삭제하는 것","displayOrder":2,"rationaleMarkdown":"보상은 환불이나 예약 취소처럼 새로운 업무 동작일 수 있으며 과거 이력을 물리적으로 지우는 작업이 아니다. 보상 자체의 실패와 재시도 가능성도 설계해야 한다."},{"key":"D","content":"여러 로컬 트랜잭션을 순서대로 실행하고 부분 실패 시 앞 단계의 효과를 보상 트랜잭션으로 조정하는 것","displayOrder":3,"rationaleMarkdown":"각 단계는 자체 트랜잭션으로 확정되고, 후속 단계가 실패하면 앞 단계의 효과를 상쇄하는 보상 트랜잭션을 실행한다. 보상은 물리적 원상복구와 같지 않을 수 있어 순서와 실패 처리가 중요하다."}],"correctChoiceKey":"D","explanationMarkdown":"Saga는 여러 서비스의 로컬 트랜잭션을 하나의 전역 ACID 트랜잭션처럼 만드는 기능이 아니다. 각 단계를 순서대로 실행하고 실패하면 이미 성공한 부수 효과를 상쇄하기 위한 별도의 보상 트랜잭션을 수행한다."},
-  {"kind":"question","contentKey":"distributed.core.coordination.saga-compensation.q2","promptMarkdown":"다음 순서로 Saga가 진행되었다.\n\n1. 결제 승인이 완료된다.\n2. 배송 예약이 실패한다.\n3. 결제 승인 DB 행을 삭제하려 한다.\n\nDB 행을 단순히 삭제하면 안 되는 이유와 어떤 상태·보상 흐름이 필요한가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["distributed.core.coordination.saga-compensation"],"modelAnswer":"외부 결제 시스템에서 이미 승인된 부수 효과는 로컬 DB 행을 삭제한다고 취소되지 않는다. 환불이나 승인 취소(void) 같은 보상 명령을 멱등하게 실행하고, 결과가 확인될 때까지 주문을 보상 진행 중·보상 실패 같은 상태로 보존해야 한다. 시간 초과나 재실행으로 결과가 불확실하면 작업 상태 조회와 수동 또는 자동 정합성 보정으로 최종 상태를 확인한다.","explanationMarkdown":"외부 결제 승인은 로컬 DB 행을 삭제한다고 취소되지 않는다. 이미 발생한 업무 부수 효과를 상쇄하려면 환불 같은 새 명령을 실행해야 하고, 그 보상도 실패할 수 있으므로 진행 중·재시도·정합성 보정 상태를 남겨야 한다."},
-  {"kind":"question","contentKey":"distributed.core.coordination.saga-compensation.q3","promptMarkdown":"마이크로서비스 Saga에서 코레오그래피(choreography)와 오케스트레이션(orchestration)을 비교하라.\n\n다음 경계를 포함해 선택 기준을 설명해야 한다.\n\n- 전체 업무 흐름의 소유권과 관측성\n- 로컬 트랜잭션 사이의 격리 공백\n- 보상 작업\n- 이벤트 발행 신뢰성","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["distributed.core.coordination.saga-compensation"],"modelAnswer":"코레오그래피는 중앙 조정자를 줄일 수 있지만 참여 서비스 사이의 이벤트 의존성과 실패 경로가 분산되어 전체 흐름을 추적하기 어려워질 수 있다. 오케스트레이션은 업무 흐름 상태·시간 초과·보상 순서를 명시적 소유자가 관리해 진행 상황이 잘 보이지만 중앙 조정자에 대한 의존이 생긴다. 어느 방식이든 로컬 트랜잭션 사이의 격리 공백, 중복·순서가 바뀐 이벤트, 되돌릴 수 없는 부수 효과는 별도 상태·예약·멱등성·정합성 보정으로 다뤄야 한다. DB 변경과 이벤트 발행 의도의 이중 쓰기는 아웃박스 같은 Messaging 기법으로 줄일 수 있지만 아웃박스가 Saga 격리를 자동 해결하지는 않는다.","explanationMarkdown":"코레오그래피와 오케스트레이션의 차이는 전체 업무 흐름의 소유권과 관측성에 있지만 둘 다 로컬 트랜잭션 사이의 격리 공백은 피할 수 없다. 중복 이벤트, 보상 실패, 발행 실패를 별도 상태와 멱등성·복구 계약으로 다뤄야 한다."},
-  {"kind":"question","contentKey":"distributed.core.coordination.cap-tradeoffs.q1","promptMarkdown":"Gilbert-Lynch가 정식화한 CAP 정리의 네트워크 분할 상황을 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["distributed.core.coordination.cap-tradeoffs"],"choices":[{"key":"A","content":"일부 노드 사이의 메시지가 전달되지 않는 네트워크 분할에서 선형화 가능한 일관성과 모든 정상 노드의 유효한 읽기·쓰기 요청 완료을 동시에 항상 보장할 수 없다.","displayOrder":0,"rationaleMarkdown":"일부 노드 사이의 메시지가 전달되지 않는 상황에서 모든 정상 노드의 요청에 계속 응답해야 한다면 서로 조율하지 못한 응답이 생길 수 있다. 이 조건에서는 선형화 가능성과 정해진 가용성을 동시에 항상 만족시킬 수 없다. 단순 오류 응답은 읽기·쓰기 작업의 유효한 완료가 아니다."},{"key":"B","content":"일시적인 지연 시간 증가만 생겨도 네트워크 분할 여부와 관계없이 일관성과 가용성 중 하나를 영구적으로 포기해야 한다.","displayOrder":1,"rationaleMarkdown":"느린 응답만으로 네트워크 분할이 발생한 것은 아니다. CAP의 불가능성은 메시지가 전달되지 않는 분할 조건과 정해진 일관성·가용성 정의에 관한 것이다."},{"key":"C","content":"CAP의 가용성은 모든 응답이 가장 최신 쓰기를 포함해야 한다는 의미다.","displayOrder":2,"rationaleMarkdown":"CAP에서 가용성은 정상 노드에 도달한 유효한 읽기·쓰기 요청이 작업 결과로 완료되는 성질이다. 응답이 최신 쓰기를 담는지는 일관성에 속하는 조건이다."},{"key":"D","content":"선형화 가능한 일관성을 선택하면 프로토콜이 네트워크 분할 자체를 방지한다.","displayOrder":3,"rationaleMarkdown":"선형화 가능한 동작을 택해도 네트워크 단절을 막지는 못한다. 단절 중 일부 요청에 응답하지 않는 선택을 통해 일관성을 지킬 수 있을 뿐이다."}],"correctChoiceKey":"A","explanationMarkdown":"정식 CAP에서 일관성은 원자적·선형화 가능한 의미이고, 가용성은 장애가 아닌 노드가 받은 요청이 결국 유효한 작업 결과로 완료되는 성질이다. 모든 요청을 오류로 거절하는 것만으로 A를 만족하지 않는다. 이는 정상 상태의 일반적인 지연 시간 절충이나 네트워크 분할 자체를 예방한다는 뜻이 아니다."},
-  {"kind":"question","contentKey":"distributed.core.coordination.cap-tradeoffs.q2","promptMarkdown":"네트워크 분할 중 두 종류의 데이터에 갱신 요청이 들어온다.\n\n| 데이터 | 핵심 성질 |\n| --- | --- |\n| 좋아요 수 | 충돌 후 병합 가능 |\n| 계좌 잔액 | 중복 지출(double spend)을 허용할 수 없음 |\n\n두 데이터에 같은 정책을 적용하면 안 되는 이유와 각각의 복구 방식을 비교하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["distributed.core.coordination.cap-tradeoffs"],"modelAnswer":"좋아요 수처럼 병합 가능한 상태는 선형화 가능성을 완화하고 분할된 각 구간의 로컬 쓰기를 허용한 뒤 최종 병합을 선택할 수 있다. 계좌 잔액처럼 중복 지출을 허용할 수 없는 상태는 필요한 권한이나 합의를 얻지 못한 구간의 쓰기를 거절·대기·보류해 일관성을 지킬 수 있다. 분할이 끝난 뒤 전자는 변경을 병합·재생하고, 후자는 보류 중인 작업과 로그를 대조해 불변 조건을 다시 검증한다.","explanationMarkdown":"네트워크 분할 중 어떤 요청을 계속 성공시킬지는 데이터 불변 조건에 따라 달라진다. 좋아요처럼 병합 가능한 값은 로컬 쓰기 후 수렴을 허용할 수 있지만 잔액처럼 중복 지출을 막아야 하는 값은 필요한 권한을 얻지 못하면 거절·대기·보류하는 편이 더 안전할 수 있다."},
-  {"kind":"question","contentKey":"distributed.core.coordination.cap-tradeoffs.q3","promptMarkdown":"정식 CAP 정리와 실제 제품의 일관성 계약을 구분해 설명하고, 네트워크 분할 중 작업 처리와 복구 정책을 어떻게 명시해야 하는지 서술하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["distributed.core.coordination.cap-tradeoffs"],"modelAnswer":"정식 CAP의 일관성은 선형화 가능한 원자적 읽기·쓰기 의미이고 가용성은 실패하지 않은 노드가 받은 모든 요청이 결국 유효한 읽기·쓰기 결과로 완료되는 성질이다. 오류만 반환하는 것은 가용성을 보장하는 것이 아니다. 네트워크 분할 중 C를 유지하려면 일부 구간의 작업을 대기시키거나 거절할 수 있고, A를 유지하려면 이전 값이나 충돌 가능성을 허용하며 더 약한 일관성을 선택할 수 있다. 실제 제품은 쓰기 후 읽기, 제한된 오래됨, 병합 정책 같은 구체적인 계약을 정하고 어떤 요청이 거절·보류·이전 값 응답을 받을 수 있는지 명시해야 한다. 복구에는 충돌 보정, 재실행, 정족수 회복, 사용자에게 보이는 상태 전환을 포함한다.","explanationMarkdown":"정식 CAP의 C는 선형화 가능한 원자적 의미이고 A는 정상 노드가 받은 유효한 읽기·쓰기 요청이 결국 완료되는 성질이다. 오류나 무기한 대기는 이를 충족하지 않는다. 실제 제품은 그보다 구체적인 쓰기 후 읽기·제한된 오래됨·병합 정책을 별도 계약으로 정해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.leases-fencing.q1",
+    "promptMarkdown": "임대(Lease)만으로 이전 소유자의 부수 효과를 완전히 막을 수 없는 이유는 무엇인가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.leases-fencing"
+    ],
+    "modelAnswer": "임대가 만료되어도 이전 소유자가 만료 사실을 즉시 알지 못한 채 긴 일시 정지나 네트워크 지연 뒤 다시 실행되어 늦은 쓰기를 보낼 수 있다. 또한 Lease API가 비교 가능한 펜싱 토큰을 자동으로 제공한다는 보장도 없다. 따라서 조정 시스템의 소유권 판단과 별개로 실제 자원이 검증할 단조 증가 세대·버전, 외부 제공자의 멱등성 키, 작업 상태 조회와 정합성 보정 같은 오래된 쓰기 방어가 필요하다.",
+    "explanationMarkdown": "Lease는 일정 시간 동안 누가 소유자인지 판단하는 조정 계약일 뿐 이전 소유자의 실행을 물리적으로 멈추지는 못한다. GC 일시 정지나 네트워크 지연 뒤 오래된 실행 주체가 다시 쓸 수 있으므로 실제 쓰기 대상이 더 최신 세대만 허용하는 펜싱 같은 방어가 필요하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.leases-fencing.q2",
+    "promptMarkdown": "다음 순서로 Lease 소유자가 바뀌었다.\n\n1. 워커 A의 Lease가 만료된다.\n2. 워커 B가 새 Lease와 더 큰 펜싱 토큰을 얻는다.\n3. 네트워크 지연 뒤 A가 저장소 쓰기를 재개한다.\n\n이때 저장소가 강제해야 할 안전 조건은 무엇인가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.leases-fencing"
+    ],
+    "modelAnswer": "저장소가 더 큰 세대의 쓰기를 수락한 뒤 그보다 낮은 토큰을 가진 A의 쓰기를 조건 검사에서 거부해야 한다. 이 시나리오는 조정 시스템이 비교 가능한 펜싱 토큰이나 버전을 실제로 제공한다는 전제가 필요하며, 토큰을 Lease 서비스에만 저장하고 실제 쓰기 대상이 검사하지 않으면 이전 소유자의 지연된 작업을 막지 못한다.",
+    "explanationMarkdown": "펜싱 토큰은 단순히 새 소유자에게 큰 숫자를 주는 것으로 끝나지 않는다. 저장소가 이미 본 최대 세대를 기억하고 그보다 작은 토큰의 쓰기를 거부해야 이전 소유자의 지연된 쓰기가 실제 부수 효과에 반영되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.leases-fencing.q3",
+    "promptMarkdown": "조정 시스템과 실제 자원 쓰기 주체의 계약을 다음 조건을 포함해 설계하라.\n\n- Lease TTL과 갱신 주기\n- 작업 수행 시간\n- 이전 소유자가 뒤늦게 실행될 위험\n- Lease API가 펜싱 토큰을 제공하지 않는 경우",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.leases-fencing"
+    ],
+    "modelAnswer": "TTL과 갱신 주기는 정상적인 지연·일시 정지와 복구 목표를 보고 정하고, 소유자는 작업 기한과 취소 처리를 가진다. Lease API가 비교 가능한 세대를 제공하거나 별도 권한 시스템에서 단조 증가하는 epoch·version을 만들 수 있다면 실제 자원 쓰기에서 오래된 세대를 거부하게 한다. 외부 API처럼 펜싱 조건을 받을 수 없는 대상에는 Lease만으로 정확히 한 번 실행을 주장하지 말고 멱등성 키, 단일 쓰기 주체 경계, 작업 상태 조회와 정합성 보정을 결합한다.",
+    "explanationMarkdown": "Lease TTL은 소유권을 언제 잃었다고 판단할지 정하는 생존성 기준이고, 펜싱은 이전 소유자의 변경을 거부하는 안전 장치다. Lease 서비스가 토큰을 제공하지 않으면 별도 세대 권한이나 멱등성·정합성 보정 경계를 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.saga-compensation.q1",
+    "promptMarkdown": "Saga의 핵심 구성으로 가장 적절한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.saga-compensation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "이벤트 순서만으로 여러 서비스의 격리와 롤백을 얻는 것",
+        "displayOrder": 0,
+        "rationaleMarkdown": "이벤트 순서는 작업의 관찰 순서를 도울 수 있어도 여러 DB의 격리나 롤백을 제공하지 않는다. 이미 커밋된 단계는 별도 보상 동작이 필요하다."
+      },
+      {
+        "key": "B",
+        "content": "모든 서비스 DB를 하나의 로컬 ACID 트랜잭션으로 자동 묶는 것",
+        "displayOrder": 1,
+        "rationaleMarkdown": "서로 다른 서비스의 로컬 트랜잭션은 하나의 DB 트랜잭션으로 자동 결합되지 않는다. Saga는 각 단계의 독립 커밋과 후속 실패를 다루는 조정 방식이다."
+      },
+      {
+        "key": "C",
+        "content": "실패한 단계의 부수 효과를 프레임워크가 항상 물리적으로 삭제하는 것",
+        "displayOrder": 2,
+        "rationaleMarkdown": "보상은 환불이나 예약 취소처럼 새로운 업무 동작일 수 있으며 과거 이력을 물리적으로 지우는 작업이 아니다. 보상 자체의 실패와 재시도 가능성도 설계해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "여러 로컬 트랜잭션을 순서대로 실행하고 부분 실패 시 앞 단계의 효과를 보상 트랜잭션으로 조정하는 것",
+        "displayOrder": 3,
+        "rationaleMarkdown": "각 단계는 자체 트랜잭션으로 확정되고, 후속 단계가 실패하면 앞 단계의 효과를 상쇄하는 보상 트랜잭션을 실행한다. 보상은 물리적 원상복구와 같지 않을 수 있어 순서와 실패 처리가 중요하다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Saga는 여러 서비스의 로컬 트랜잭션을 하나의 전역 ACID 트랜잭션처럼 만드는 기능이 아니다. 각 단계를 순서대로 실행하고 실패하면 이미 성공한 부수 효과를 상쇄하기 위한 별도의 보상 트랜잭션을 수행한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.saga-compensation.q2",
+    "promptMarkdown": "다음 순서로 Saga가 진행되었다.\n\n1. 결제 승인이 완료된다.\n2. 배송 예약이 실패한다.\n3. 결제 승인 DB 행을 삭제하려 한다.\n\nDB 행을 단순히 삭제하면 안 되는 이유와 어떤 상태·보상 흐름이 필요한가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.saga-compensation"
+    ],
+    "modelAnswer": "외부 결제 시스템에서 이미 승인된 부수 효과는 로컬 DB 행을 삭제한다고 취소되지 않는다. 환불이나 승인 취소(void) 같은 보상 명령을 멱등하게 실행하고, 결과가 확인될 때까지 주문을 보상 진행 중·보상 실패 같은 상태로 보존해야 한다. 시간 초과나 재실행으로 결과가 불확실하면 작업 상태 조회와 수동 또는 자동 정합성 보정으로 최종 상태를 확인한다.",
+    "explanationMarkdown": "외부 결제 승인은 로컬 DB 행을 삭제한다고 취소되지 않는다. 이미 발생한 업무 부수 효과를 상쇄하려면 환불 같은 새 명령을 실행해야 하고, 그 보상도 실패할 수 있으므로 진행 중·재시도·정합성 보정 상태를 남겨야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.saga-compensation.q3",
+    "promptMarkdown": "마이크로서비스 Saga에서 코레오그래피(choreography)와 오케스트레이션(orchestration)을 비교하라.\n\n다음 경계를 포함해 선택 기준을 설명해야 한다.\n\n- 전체 업무 흐름의 소유권과 관측성\n- 로컬 트랜잭션 사이의 격리 공백\n- 보상 작업\n- 이벤트 발행 신뢰성",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.saga-compensation"
+    ],
+    "modelAnswer": "코레오그래피는 중앙 조정자를 줄일 수 있지만 참여 서비스 사이의 이벤트 의존성과 실패 경로가 분산되어 전체 흐름을 추적하기 어려워질 수 있다. 오케스트레이션은 업무 흐름 상태·시간 초과·보상 순서를 명시적 소유자가 관리해 진행 상황이 잘 보이지만 중앙 조정자에 대한 의존이 생긴다. 어느 방식이든 로컬 트랜잭션 사이의 격리 공백, 중복·순서가 바뀐 이벤트, 되돌릴 수 없는 부수 효과는 별도 상태·예약·멱등성·정합성 보정으로 다뤄야 한다. DB 변경과 이벤트 발행 의도의 이중 쓰기는 아웃박스 같은 Messaging 기법으로 줄일 수 있지만 아웃박스가 Saga 격리를 자동 해결하지는 않는다.",
+    "explanationMarkdown": "코레오그래피와 오케스트레이션의 차이는 전체 업무 흐름의 소유권과 관측성에 있지만 둘 다 로컬 트랜잭션 사이의 격리 공백은 피할 수 없다. 중복 이벤트, 보상 실패, 발행 실패를 별도 상태와 멱등성·복구 계약으로 다뤄야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.cap-tradeoffs.q1",
+    "promptMarkdown": "Gilbert-Lynch가 정식화한 CAP 정리의 네트워크 분할 상황을 가장 정확히 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.cap-tradeoffs"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "일부 노드 사이의 메시지가 전달되지 않는 네트워크 분할에서 선형화 가능한 일관성과 모든 정상 노드의 유효한 읽기·쓰기 요청 완료을 동시에 항상 보장할 수 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "일부 노드 사이의 메시지가 전달되지 않는 상황에서 모든 정상 노드의 요청에 계속 응답해야 한다면 서로 조율하지 못한 응답이 생길 수 있다. 이 조건에서는 선형화 가능성과 정해진 가용성을 동시에 항상 만족시킬 수 없다. 단순 오류 응답은 읽기·쓰기 작업의 유효한 완료가 아니다."
+      },
+      {
+        "key": "B",
+        "content": "일시적인 지연 시간 증가만 생겨도 네트워크 분할 여부와 관계없이 일관성과 가용성 중 하나를 영구적으로 포기해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "느린 응답만으로 네트워크 분할이 발생한 것은 아니다. CAP의 불가능성은 메시지가 전달되지 않는 분할 조건과 정해진 일관성·가용성 정의에 관한 것이다."
+      },
+      {
+        "key": "C",
+        "content": "CAP의 가용성은 모든 응답이 가장 최신 쓰기를 포함해야 한다는 의미다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "CAP에서 가용성은 정상 노드에 도달한 유효한 읽기·쓰기 요청이 작업 결과로 완료되는 성질이다. 응답이 최신 쓰기를 담는지는 일관성에 속하는 조건이다."
+      },
+      {
+        "key": "D",
+        "content": "선형화 가능한 일관성을 선택하면 프로토콜이 네트워크 분할 자체를 방지한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "선형화 가능한 동작을 택해도 네트워크 단절을 막지는 못한다. 단절 중 일부 요청에 응답하지 않는 선택을 통해 일관성을 지킬 수 있을 뿐이다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "정식 CAP에서 일관성은 원자적·선형화 가능한 의미이고, 가용성은 장애가 아닌 노드가 받은 요청이 결국 유효한 작업 결과로 완료되는 성질이다. 모든 요청을 오류로 거절하는 것만으로 A를 만족하지 않는다. 이는 정상 상태의 일반적인 지연 시간 절충이나 네트워크 분할 자체를 예방한다는 뜻이 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.cap-tradeoffs.q2",
+    "promptMarkdown": "네트워크 분할 중 두 종류의 데이터에 갱신 요청이 들어온다.\n\n| 데이터 | 핵심 성질 |\n| --- | --- |\n| 좋아요 수 | 충돌 후 병합 가능 |\n| 계좌 잔액 | 중복 지출(double spend)을 허용할 수 없음 |\n\n두 데이터에 같은 정책을 적용하면 안 되는 이유와 각각의 복구 방식을 비교하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.cap-tradeoffs"
+    ],
+    "modelAnswer": "좋아요 수처럼 병합 가능한 상태는 선형화 가능성을 완화하고 분할된 각 구간의 로컬 쓰기를 허용한 뒤 최종 병합을 선택할 수 있다. 계좌 잔액처럼 중복 지출을 허용할 수 없는 상태는 필요한 권한이나 합의를 얻지 못한 구간의 쓰기를 거절·대기·보류해 일관성을 지킬 수 있다. 분할이 끝난 뒤 전자는 변경을 병합·재생하고, 후자는 보류 중인 작업과 로그를 대조해 불변 조건을 다시 검증한다.",
+    "explanationMarkdown": "네트워크 분할 중 어떤 요청을 계속 성공시킬지는 데이터 불변 조건에 따라 달라진다. 좋아요처럼 병합 가능한 값은 로컬 쓰기 후 수렴을 허용할 수 있지만 잔액처럼 중복 지출을 막아야 하는 값은 필요한 권한을 얻지 못하면 거절·대기·보류하는 편이 더 안전할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.cap-tradeoffs.q3",
+    "promptMarkdown": "정식 CAP 정리와 실제 제품의 일관성 계약을 구분해 설명하고, 네트워크 분할 중 작업 처리와 복구 정책을 어떻게 명시해야 하는지 서술하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.cap-tradeoffs"
+    ],
+    "modelAnswer": "정식 CAP의 일관성은 선형화 가능한 원자적 읽기·쓰기 의미이고 가용성은 실패하지 않은 노드가 받은 모든 요청이 결국 유효한 읽기·쓰기 결과로 완료되는 성질이다. 오류만 반환하는 것은 가용성을 보장하는 것이 아니다. 네트워크 분할 중 C를 유지하려면 일부 구간의 작업을 대기시키거나 거절할 수 있고, A를 유지하려면 이전 값이나 충돌 가능성을 허용하며 더 약한 일관성을 선택할 수 있다. 실제 제품은 쓰기 후 읽기, 제한된 오래됨, 병합 정책 같은 구체적인 계약을 정하고 어떤 요청이 거절·보류·이전 값 응답을 받을 수 있는지 명시해야 한다. 복구에는 충돌 보정, 재실행, 정족수 회복, 사용자에게 보이는 상태 전환을 포함한다.",
+    "explanationMarkdown": "정식 CAP의 C는 선형화 가능한 원자적 의미이고 A는 정상 노드가 받은 유효한 읽기·쓰기 요청이 결국 완료되는 성질이다. 오류나 무기한 대기는 이를 충족하지 않는다. 실제 제품은 그보다 구체적인 쓰기 후 읽기·제한된 오래됨·병합 정책을 별도 계약으로 정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.leases-fencing.q4",
+    "promptMarkdown": "분산 락(Lease)과 펜싱 토큰(Fencing Token)을 적용한 스토리지 갱신 SQL이 다음과 같다. 워커 A(토큰 `33`)가 긴 STW GC로 멈춘 사이 워커 B(토큰 `34`)가 새 락을 얻어 이미 갱신한 뒤, 깨어난 워커 A가 늦게 보낸 요청은 어떻게 되는가?\n```sql\nUPDATE settlement_batch\nSET status = 'DONE', fencing_token = :token\nWHERE id = :batchId AND fencing_token < :token;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.leases-fencing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "워커 A의 요청이 워커 B의 커밋을 자동 롤백시킨다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "이미 커밋된 워커 B의 작업은 유지되고, 뒤늦게 도착한 워커 A의 갱신만 거부된다."
+      },
+      {
+        "key": "B",
+        "content": "Redis `SET NX PX`만 쓰면 펜싱 토큰 없이도 GC 일시정지 뒤 도착하는 DB 쓰기를 100% 막을 수 있다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Redis 락이 만료된 뒤에도 GC에서 깨어난 워커 A는 자신이 아직 락을 쥔 줄 알고 DB에 쓰기를 보낼 수 있으므로 저장소 측 펜싱 토큰 검증이 필수다."
+      },
+      {
+        "key": "C",
+        "content": "DB의 현재 `fencing_token`이 이미 `34`이므로 워커 A의 조건 `34 < 33`이 거짓이 되어 `0 rows updated`로 구 소유자의 지연 쓰기가 저장소 경계에서 안전하게 거부된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "클라이언트 측 Lease 만료 검사만으로는 GC 일시정지나 네트워크 지연 뒤에 도착하는 패킷을 막을 수 없다. 저장소가 단조 증가 펜싱 토큰을 검증해야 비로소 구 소유자의 덮어쓰기가 원천 차단된다."
+      },
+      {
+        "key": "D",
+        "content": "워커 A가 먼저 락을 획득했으므로 `33`이 `34`를 덮어쓴다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`fencing_token < :token` 조건 때문에 더 작은 구 토큰(`33`)은 절대 최신 토큰(`34`)을 덮어쓸 수 없다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "분산 락(Lease)은 '누가 일할지 조율'할 뿐이고, GC 일시정지나 네트워크 지연 후 날아오는 구 소유자의 쓰기를 실제로 막아 주는 것은 **저장소 경계의 단조 증가 펜싱 토큰 검증**이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.leases-fencing.q5",
+    "promptMarkdown": "분산 락의 Lease TTL을 `5초`로 잡았는데 실제 작업은 평균 `2초`, p99 `12초`가 걸린다. 별도 Lease 갱신(heartbeat/renewal)이나 펜싱 토큰 없이 운영할 때 발생하는 가장 흔한 장애는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.leases-fencing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "작업이 5초를 넘는 p99 구간에서 워커 A가 아직 작업 중인데 Lease가 자동 만료되어 워커 B도 같은 락을 획득하고, 두 워커가 동일 자원을 동시에 수정해 데이터가 오염된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "TTL이 실제 작업 최악 시간보다 짧으면 상호 배제가 깨진다. 작업 시간 추정, 안전한 TTL/갱신 설계, 그리고 최종 방어선으로 저장소 측 펜싱 토큰이나 멱등 조건부 UPDATE를 결합해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "Lease TTL이 만료되는 즉시 락 서버가 워커 A의 JVM 스레드를 원격으로 강제 중단한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "락 서버는 키만 만료시킬 뿐 워커 A 프로세스 안에서 이미 실행 중인 자바 스레드나 DB 요청을 원격 중단시키지 못한다."
+      },
+      {
+        "key": "C",
+        "content": "평균이 2초이므로 5초 TTL은 절대 만료되지 않는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "p99(12초)가 TTL(5초)의 2배를 넘으므로 100건 중 1건 이상에서 중복 진입 사고가 발생한다."
+      },
+      {
+        "key": "D",
+        "content": "TTL을 24시간으로 무한정 길게 잡으면 모든 문제가 부작용 없이 해결된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "TTL이 지나치게 길면 워커 A가 크래시했을 때 24시간 동안 아무도 락을 얻지 못해 가용성 장애가 발생한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Lease TTL은 '장애 시 복구 대기 시간(짧을수록 좋음)'과 '정상 작업 중 조기 만료 방지(길수록 좋음)' 사이의 절충이며, 결국 저장소 측 펜싱 토큰/멱등성이 안전성을 보장한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.saga-compensation.q4",
+    "promptMarkdown": "주문 Saga(`재고 예약 → 결제 승인 → 배송 접수`)에서 3단계 `배송 접수`가 실패해 2단계 `결제 승인`과 1단계 `재고 예약`을 보상(Compensation)하려 한다. 보상 트랜잭션이 반드시 만족해야 하는 핵심 성질은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.saga-compensation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Saga를 쓰면 중간 단계(재고 예약 완료, 결제 진행 중)의 상태가 다른 사용자에게 절대 보이지 않는 완전한 격리(Isolation)가 자동 보장된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Saga는 ACID의 I(Isolation)가 없으므로 중간 커밋 상태가 노출된다(Dirty Read 유사 현상). 따라서 `PENDING`/`RESERVED` 같은 시맨틱 락 상태로 중간 상태를 표현해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "보상 시 원본 결제 행을 물리 `DELETE`로 지워 흔적을 없애는 것이 회계 표준이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "실제로 발생했던 승인 기록을 물리 삭제하면 PG 정산 대사와 감사 추적이 불가능해진다."
+      },
+      {
+        "key": "C",
+        "content": "보상 작업은 네트워크 실패 시 재시도될 수 있으므로 **멱등(idempotent)**해야 하며, 이전 레코드를 `DELETE`로 지우는 대신 `CANCELLED`/`REFUNDED` 같은 명시적 역방향 업무 이벤트·상태 전이로 기록한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "보상 요청이 중복 전달되어도 두 번 환불되거나 재고가 두 번 복구되지 않아야 하며, 이미 커밋된 원장 기록을 지우지 않고 취소/환불 이력을 남겨 감사 추적과 정합성을 지킨다."
+      },
+      {
+        "key": "D",
+        "content": "보상 작업은 DB `ROLLBACK`과 같으므로 단 한 번도 실패할 수 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "보상 역시 별도의 원격 서비스 호출과 로컬 트랜잭션이므로 일시 실패·재시도·DLQ 대사 절차가 필요하다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Saga는 분산 2PC 대신 각 서비스의 로컬 트랜잭션과 멱등한 보상 트랜잭션을 조합한다. Isolation 부재를 보완하기 위해 `PENDING`/`RESERVED` 같은 시맨틱 락 상태를 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.saga-compensation.q5",
+    "promptMarkdown": "Saga에서 단계가 6개 이상으로 복잡하고 실패 분기·타임아웃·상태 가시성이 중요한 주문 결제 워크플로우에서 **코레오그래피(Choreography)**보다 **오케스트레이션(Orchestration)**을 선호하는 주된 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.saga-compensation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "전체 워크플로우 상태 전이와 보상 순서를 중앙 오케스트레이터 한곳에서 명시적으로 추적·제어할 수 있어, 이벤트 체인이 여러 서비스에 흩어져 흐름 파악이 불가능해지는 현상을 줄인다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "코레오그래피는 2~3단계 단순 흐름엔 가볍지만 단계가 많아지면 순환 이벤트와 전체 진행 상태 파악이 어려워진다. 오케스트레이션은 상태 머신을 한곳에 모아 가시성과 보상 제어를 높인다(단, 오케스트레이터가 신(God) 서비스가 되지 않도록 경계 유지)."
+      },
+      {
+        "key": "B",
+        "content": "오케스트레이션은 각 서비스의 로컬 DB를 하나의 단일 DB로 합쳐 준다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "각 서비스는 여전히 독립된 DB와 로컬 트랜잭션을 유지하며, 분산 2PC 대신 단계별 로컬 커밋과 보상 트랜잭션으로 최종 일관성을 맞춘다."
+      },
+      {
+        "key": "C",
+        "content": "오케스트레이션을 쓰면 보상 트랜잭션을 구현하지 않아도 된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "실패 시 각 참여 서비스의 멱등한 보상 작업은 여전히 반드시 구현해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "코레오그래피는 Kafka 같은 메시지 브로커를 사용할 수 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "코레오그래피는 오히려 이벤트 브로커를 중심으로 각 서비스가 자율 반응하는 패턴이다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "단순한 2~3단계 결합 해제는 코레오그래피, 복잡한 다단계 보상·타임아웃·진행률 추적이 필요한 핵심 업무 흐름은 오케스트레이션이 운영 가시성 면에서 유리하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.cap-tradeoffs.q4",
+    "promptMarkdown": "CAP 정리와 이를 확장한 **PACELC** 모델에 대한 설명으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.cap-tradeoffs"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "CAP의 `C`는 데이터베이스 `FOREIGN KEY` 제약 조건을 의미한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "CAP의 `C`는 ACID의 불변식 일관성이 아니라 모든 노드가 가장 최근 완료된 쓰기를 읽는 선형화 가능성(Linearizability)을 뜻한다."
+      },
+      {
+        "key": "B",
+        "content": "네트워크 분할(P) 시에는 가용성(A)과 일관성(C) 사이의 절충을 선택해야 하며, 분할이 없는 정상 상태(E)에서도 지연 시간(L)과 일관성(C) 사이의 절충이 항상 존재한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "CAP은 분할 상황만 다루지만 실제 운영의 99.9%는 정상 네트워크 상태다. PACELC은 정상 상태에서도 동기 복제(C, 높은 지연) vs 비동기 복제(L, 낮은 지연)의 선택이 있음을 명확히 보여 준다."
+      },
+      {
+        "key": "C",
+        "content": "클라우드 네트워크는 절대 분할되지 않으므로 `CA` 시스템을 선택하면 지연도 없고 일관성도 완벽하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "분산 시스템에서 네트워크 분할(P)은 선택지가 아니라 반드시 일어나는 현실이므로 `P`를 전제로 `CP` vs `AP` 전략을 결정해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "하나의 전체 서비스는 모든 테이블·API에 대해 무조건 전부 CP이거나 전부 AP여야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "같은 제품 안에서도 결제·재고는 CP(쓰기 거부로 정확성 보호), 좋아요 수·조회수는 AP(가용성 우선 후 병합)처럼 데이터·기능별로 정책을 달리 선택한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "CAP은 분할 시 C vs A, PACELC은 평상시 L(지연) vs C(일관성) 절충까지 포괄한다. 제품 전체를 하나의 라벨로 묶지 말고 기능·데이터의 중요도에 따라 일관성 계약을 다르게 선택해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "distributed.core.coordination.cap-tradeoffs.q5",
+    "promptMarkdown": "네트워크 분할이 발생했을 때, 은행 계좌 출금 API와 SNS 게시글 '좋아요' 카운터에 각각 적용할 가장 적절한 분할 정책 조합은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "distributed.core.coordination.cap-tradeoffs"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "계좌 출금: 과반수/프라이머리 도달 불가 시 오류를 반환해 이중 출금을 차단(일관성 우선) / 좋아요 카운터: 로컬에서 수락 후 분할 복구 시 카운터를 병합(가용성 우선)",
+        "displayOrder": 0,
+        "rationaleMarkdown": "이중 출금은 회복 불가능한 금전 손실을 초래하므로 분할 시 실패(fail-closed)가 맞고, 좋아요 수는 가산적(CRDT counter)으로 병합 가능하므로 가용성을 우선할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "계좌 출금: 분할된 모든 노드에서 오프라인 출금을 무제한 허용 / 좋아요 카운터: 즉시 전체 서비스 차단",
+        "displayOrder": 1,
+        "rationaleMarkdown": "업무 리스크와 반대로 정책을 적용해 금전 사고와 불필요한 UX 중단을 모두 초래한다."
+      },
+      {
+        "key": "C",
+        "content": "둘 다 네트워크 분할 중에는 무조건 200 OK를 반환하고 데이터를 버린다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "데이터를 버리면서 200 OK를 반환하는 것은 가용성이 아니라 데이터 유실 장애다."
+      },
+      {
+        "key": "D",
+        "content": "둘 다 항상 `READ UNCOMMITTED`로 전환하면 분할이 해결된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "로컬 SQL 격리 수준 변경으로는 노드 간 네트워크 단절을 해결할 수 없다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "분할 중 동작은 데이터 성격(불변식 파괴 시 금전·보안 피해 여부, 병합 가능성)에 따라 API별로 명시적으로 설계해야 한다."
+  }
 ]

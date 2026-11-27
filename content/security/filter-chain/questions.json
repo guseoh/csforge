@@ -1,8 +1,345 @@
 [
-  {"kind":"question","contentKey":"security.core.filter-chain.servlet-filter.q1","promptMarkdown":"401로 끝나고 컨트롤러가 호출되지 않았다면 먼저 확인할 Spring Security 경계를 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["security.core.filter-chain.servlet-filter"],"acceptedAnswers":["Spring Security 필터 체인","SecurityFilterChain","인증 필터가 포함된 보안 필터 체인","DispatcherServlet 앞의 보안 필터 체인"],"explanationMarkdown":"Spring Security 필터는 `DispatcherServlet`보다 앞에서 요청을 처리할 수 있다. 여기서 인증 실패로 401 응답이 끝나면 컨트롤러는 실행되지 않는다."},
-  {"kind":"question","contentKey":"security.core.filter-chain.security-filter-chain.q1","promptMarkdown":"`permitAll()`로 지정한 엔드포인트는 Spring Security 필터를 전혀 거치지 않는다고 설명해도 되는가?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.filter-chain.security-filter-chain"],"choices":[{"key":"A","content":"그렇다. permitAll은 CORS와 CSRF도 자동 비활성화한다.","displayOrder":0,"rationaleMarkdown":"`permitAll`은 일치한 인가 규칙에서 해당 요청을 허용한다는 뜻이지 CORS나 CSRF 정책을 전역으로 끄는 명령이 아니다. 각 기능의 활성화와 적용은 필터 체인 구성 및 엔드포인트 특성에 따라 결정된다."},{"key":"B","content":"그렇다. permitAll은 보안 필터 체인 대신 곧바로 컨트롤러로 전달한다.","displayOrder":1,"rationaleMarkdown":"`permitAll`은 보안 필터 체인을 우회하는 설정이 아니다. 요청은 선택된 체인의 다른 필터를 계속 거친 다음 서블릿 처리 흐름으로 전달된다."},{"key":"C","content":"아니다. 인가 규칙은 요청을 허용할 수 있지만 일치한 SecurityFilterChain의 다른 필터는 여전히 실행될 수 있다.","displayOrder":2,"rationaleMarkdown":"`permitAll`은 인가 판단에서 접근을 허용해도 일치한 SecurityFilterChain에 있는 인증, CORS, CSRF 등 다른 필터가 실행될 수 있다. 따라서 인가 허용과 필터 체인 우회는 같은 의미가 아니다."},{"key":"D","content":"아니다. `permitAll()`은 인증 필터만 제외하고 나머지 보안 필터를 유지한다.","displayOrder":3,"rationaleMarkdown":"`permitAll()`은 필터 구성을 바꾸지 않고 인가 판단만 허용한다. 인증 필터를 자동으로 제거하거나 건너뛰게 하는 설정도 아니다."}],"correctChoiceKey":"C","explanationMarkdown":"`permitAll()`은 선택된 체인의 인가 판단에서 요청을 허용한다. 인증·CSRF·CORS 등 체인에 포함된 다른 필터까지 건너뛰게 하지는 않는다."},
-  {"kind":"question","contentKey":"security.core.filter-chain.exception-translation.q1","promptMarkdown":"REST API의 Spring Security 401/403 응답 형식을 `@ControllerAdvice`만 수정했는데 바뀌지 않았다. 왜 그럴 수 있으며 어디를 커스텀해야 하는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.filter-chain.exception-translation"],"modelAnswer":"보안 예외가 DispatcherServlet 전에 필터 체인에서 처리되면 MVC ControllerAdvice 경계 밖이다. 미인증 요청은 AuthenticationEntryPoint, 권한 거부는 AccessDeniedHandler 쪽에서 API 오류 계약을 맞춰야 할 수 있다.","explanationMarkdown":"인증·인가 예외가 MVC에 도달하기 전에 보안 필터에서 응답으로 바뀌면 `@ControllerAdvice`가 처리하지 못한다. 미인증과 접근 거부 응답을 각각 필터의 진입점과 접근 거부 처리기에서 맞춰야 한다."},
-  {"kind":"question","contentKey":"security.core.filter-chain.servlet-filter.q2","promptMarkdown":"서블릿 필터가 요청 본문을 먼저 읽고 컨트롤러에서 다시 읽으려 할 때 생기는 문제를 보안 필터 설계 관점에서 무엇과 연결해 볼 수 있는가?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.filter-chain.servlet-filter"],"modelAnswer":"필터와 뒤에서 실행되는 컨트롤러가 공유하는 요청 본문 스트림의 소비와 래퍼 경계를 확인해야 한다. 필터가 인증·감사를 위해 요청 본문을 읽는다면 본문을 다시 읽을 수 있게 하는 래퍼, 크기 제한, 민감정보 제거를 명시적으로 설계하지 않으면 컨트롤러의 본문 파싱과 보안 로그가 서로 다른 결과를 볼 수 있다.","explanationMarkdown":"서블릿 요청 본문 스트림은 한 번 읽으면 컨트롤러가 그대로 다시 읽지 못할 수 있다. 필터에서 본문을 읽어야 한다면 재사용 가능한 래퍼와 크기·민감정보 처리 방식을 설계해야 한다."},
-  {"kind":"question","contentKey":"security.core.filter-chain.security-filter-chain.q2","promptMarkdown":"다음 필터 체인 설정에서 `/api/admin/report` 요청이 일반 API 체인의 `permitAll` 규칙을 탄다.\n\n1. `/api/**` 체인을 먼저 등록한다.\n2. 그 뒤 `/api/admin/**` 체인을 등록한다.\n\n어느 체인이 선택됐으며 관리자 요청에 필요한 인증·인가를 적용하려면 어떻게 수정해야 하는가?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["security.core.filter-chain.security-filter-chain"],"modelAnswer":"두 매처 모두 `/api/admin/report`에 일치하지만, `FilterChainProxy`는 순서상 처음 일치하는 `/api/**` 체인 하나를 선택한다. 관리자용 `/api/admin/**` 체인을 먼저 배치하고 일반 `/api/**` 체인을 뒤에 둔 뒤, 관리자 경로가 실제로 어느 체인과 인가 규칙을 타는지 확인해야 한다.","explanationMarkdown":"여러 `SecurityFilterChain`의 필터를 합쳐 실행하지 않는다. 겹치는 경로에서는 먼저 일치하는 체인만 선택되므로 구체적인 관리자 매처의 순서가 보안 결과를 바꾼다."},
-  {"kind":"question","contentKey":"security.core.filter-chain.exception-translation.q2","promptMarkdown":"인증되지 않은 요청과 인증됐지만 권한이 없는 요청을 REST API에서 같은 응답으로만 처리할 때 잃는 보안·클라이언트 의미는?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["security.core.filter-chain.exception-translation"],"modelAnswer":"인증 필요 상태와 인가 거부 상태를 구분하지 못해 클라이언트가 재인증할지 권한 오류로 처리할지 판단하기 어렵다. 보통 미인증 요청은 AuthenticationEntryPoint, 인가가 거부된 요청은 AccessDeniedHandler 경계에서 일관된 401/403 오류 계약으로 번역하되 민감한 내부 이유는 노출하지 않는다.","explanationMarkdown":"401은 인증이 필요하다는 뜻이고 403은 인증된 주체에게 작업 권한이 없다는 뜻으로 사용된다. 둘을 같은 응답으로만 처리하면 클라이언트가 재인증과 권한 오류를 구분하기 어렵다."}
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.servlet-filter.q1",
+    "promptMarkdown": "401로 끝나고 컨트롤러가 호출되지 않았다면 먼저 확인할 Spring Security 경계를 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.servlet-filter"
+    ],
+    "acceptedAnswers": [
+      "Spring Security 필터 체인",
+      "SecurityFilterChain",
+      "인증 필터가 포함된 보안 필터 체인",
+      "DispatcherServlet 앞의 보안 필터 체인"
+    ],
+    "explanationMarkdown": "Spring Security 필터는 `DispatcherServlet`보다 앞에서 요청을 처리할 수 있다. 여기서 인증 실패로 401 응답이 끝나면 컨트롤러는 실행되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.security-filter-chain.q1",
+    "promptMarkdown": "`permitAll()`로 지정한 엔드포인트는 Spring Security 필터를 전혀 거치지 않는다고 설명해도 되는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.security-filter-chain"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "그렇다. permitAll은 CORS와 CSRF도 자동 비활성화한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`permitAll`은 일치한 인가 규칙에서 해당 요청을 허용한다는 뜻이지 CORS나 CSRF 정책을 전역으로 끄는 명령이 아니다. 각 기능의 활성화와 적용은 필터 체인 구성 및 엔드포인트 특성에 따라 결정된다."
+      },
+      {
+        "key": "B",
+        "content": "그렇다. permitAll은 보안 필터 체인 대신 곧바로 컨트롤러로 전달한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`permitAll`은 보안 필터 체인을 우회하는 설정이 아니다. 요청은 선택된 체인의 다른 필터를 계속 거친 다음 서블릿 처리 흐름으로 전달된다."
+      },
+      {
+        "key": "C",
+        "content": "아니다. 인가 규칙은 요청을 허용할 수 있지만 일치한 SecurityFilterChain의 다른 필터는 여전히 실행될 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`permitAll`은 인가 판단에서 접근을 허용해도 일치한 SecurityFilterChain에 있는 인증, CORS, CSRF 등 다른 필터가 실행될 수 있다. 따라서 인가 허용과 필터 체인 우회는 같은 의미가 아니다."
+      },
+      {
+        "key": "D",
+        "content": "아니다. `permitAll()`은 인증 필터만 제외하고 나머지 보안 필터를 유지한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`permitAll()`은 필터 구성을 바꾸지 않고 인가 판단만 허용한다. 인증 필터를 자동으로 제거하거나 건너뛰게 하는 설정도 아니다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`permitAll()`은 선택된 체인의 인가 판단에서 요청을 허용한다. 인증·CSRF·CORS 등 체인에 포함된 다른 필터까지 건너뛰게 하지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.exception-translation.q1",
+    "promptMarkdown": "REST API의 Spring Security 401/403 응답 형식을 `@ControllerAdvice`만 수정했는데 바뀌지 않았다. 왜 그럴 수 있으며 어디를 커스텀해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.exception-translation"
+    ],
+    "modelAnswer": "보안 예외가 DispatcherServlet 전에 필터 체인에서 처리되면 MVC ControllerAdvice 경계 밖이다. 미인증 요청은 AuthenticationEntryPoint, 권한 거부는 AccessDeniedHandler 쪽에서 API 오류 계약을 맞춰야 할 수 있다.",
+    "explanationMarkdown": "인증·인가 예외가 MVC에 도달하기 전에 보안 필터에서 응답으로 바뀌면 `@ControllerAdvice`가 처리하지 못한다. 미인증과 접근 거부 응답을 각각 필터의 진입점과 접근 거부 처리기에서 맞춰야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.servlet-filter.q2",
+    "promptMarkdown": "서블릿 필터가 요청 본문을 먼저 읽고 컨트롤러에서 다시 읽으려 할 때 생기는 문제를 보안 필터 설계 관점에서 무엇과 연결해 볼 수 있는가?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.servlet-filter"
+    ],
+    "modelAnswer": "필터와 뒤에서 실행되는 컨트롤러가 공유하는 요청 본문 스트림의 소비와 래퍼 경계를 확인해야 한다. 필터가 인증·감사를 위해 요청 본문을 읽는다면 본문을 다시 읽을 수 있게 하는 래퍼, 크기 제한, 민감정보 제거를 명시적으로 설계하지 않으면 컨트롤러의 본문 파싱과 보안 로그가 서로 다른 결과를 볼 수 있다.",
+    "explanationMarkdown": "서블릿 요청 본문 스트림은 한 번 읽으면 컨트롤러가 그대로 다시 읽지 못할 수 있다. 필터에서 본문을 읽어야 한다면 재사용 가능한 래퍼와 크기·민감정보 처리 방식을 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.security-filter-chain.q2",
+    "promptMarkdown": "다음 필터 체인 설정에서 `/api/admin/report` 요청이 일반 API 체인의 `permitAll` 규칙을 탄다.\n\n1. `/api/**` 체인을 먼저 등록한다.\n2. 그 뒤 `/api/admin/**` 체인을 등록한다.\n\n어느 체인이 선택됐으며 관리자 요청에 필요한 인증·인가를 적용하려면 어떻게 수정해야 하는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.security-filter-chain"
+    ],
+    "modelAnswer": "두 매처 모두 `/api/admin/report`에 일치하지만, `FilterChainProxy`는 순서상 처음 일치하는 `/api/**` 체인 하나를 선택한다. 관리자용 `/api/admin/**` 체인을 먼저 배치하고 일반 `/api/**` 체인을 뒤에 둔 뒤, 관리자 경로가 실제로 어느 체인과 인가 규칙을 타는지 확인해야 한다.",
+    "explanationMarkdown": "여러 `SecurityFilterChain`의 필터를 합쳐 실행하지 않는다. 겹치는 경로에서는 먼저 일치하는 체인만 선택되므로 구체적인 관리자 매처의 순서가 보안 결과를 바꾼다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.exception-translation.q2",
+    "promptMarkdown": "인증되지 않은 요청과 인증됐지만 권한이 없는 요청을 REST API에서 같은 응답으로만 처리할 때 잃는 보안·클라이언트 의미는?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.exception-translation"
+    ],
+    "modelAnswer": "인증 필요 상태와 인가 거부 상태를 구분하지 못해 클라이언트가 재인증할지 권한 오류로 처리할지 판단하기 어렵다. 보통 미인증 요청은 AuthenticationEntryPoint, 인가가 거부된 요청은 AccessDeniedHandler 경계에서 일관된 401/403 오류 계약으로 번역하되 민감한 내부 이유는 노출하지 않는다.",
+    "explanationMarkdown": "401은 인증이 필요하다는 뜻이고 403은 인증된 주체에게 작업 권한이 없다는 뜻으로 사용된다. 둘을 같은 응답으로만 처리하면 클라이언트가 재인증과 권한 오류를 구분하기 어렵다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.exception-translation.q4",
+    "promptMarkdown": "Spring Security 필터 체인에서 `ExceptionTranslationFilter`가 `AuthenticationException`과 `AccessDeniedException`을 받아 각각 어떤 HTTP 응답(또는 위임 컴포넌트)으로 변환하는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.exception-translation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`ExceptionTranslationFilter`는 예외를 삼키고 항상 `200 OK`를 반환한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "예외를 삼키지 않고 명확한 401/403 응답 계약으로 번역한다."
+      },
+      {
+        "key": "B",
+        "content": "미인증(`AuthenticationException` 또는 익명 사용자의 `AccessDeniedException`)은 `AuthenticationEntryPoint`(`401 Unauthorized` 또는 로그인 이동)로, 인증 완료 사용자의 권한 부족(`AccessDeniedException`)은 `AccessDeniedHandler`(`403 Forbidden`)로 위임한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "익명 사용자가 보호 리소스에 접근해 `AccessDeniedException`이 나면 아직 인증되지 않은 상태이므로 `403`이 아니라 `AuthenticationEntryPoint(401)`로 보내 재인증을 유도하는 것이 핵심 동작이다."
+      },
+      {
+        "key": "C",
+        "content": "두 예외 모두 `@RestControllerAdvice`의 `@ExceptionHandler`가 필터 체인보다 먼저 가로채 처리한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "필터 체인은 `DispatcherServlet` 앞에서 실행되므로 필터 단계의 인증·인가 예외는 기본적으로 `ExceptionTranslationFilter`가 처리한다."
+      },
+      {
+        "key": "D",
+        "content": "인증 실패는 `AccessDeniedHandler(403)`, 인가 실패는 `AuthenticationEntryPoint(401)`로 변환한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "두 핸들러와 상태 코드(401 vs 403)의 역할이 정반대로 연결되었다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`ExceptionTranslationFilter`는 '미인증/익명 → `AuthenticationEntryPoint`(401)'와 '인증됨 + 권한 부족 → `AccessDeniedHandler`(403)'의 경계를 정확히 분리한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.exception-translation.q5",
+    "promptMarkdown": "JSON REST API에서 Spring Security의 인증 실패(401)·인가 실패(403) 응답을 우리 서비스의 표준 Error JSON 포맷으로 통일하려면 어디를 커스터마이징해야 하는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.exception-translation"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`FilterChain`을 비활성화하고 모든 인증을 컨트롤러 `if` 문으로 옮긴다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "보안 필터 체인을 우회하면 중앙화된 보안 통제와 일관성이 무너진다."
+      },
+      {
+        "key": "B",
+        "content": "`http.exceptionHandling(...)`에 커스텀 `AuthenticationEntryPoint`(401 JSON)와 `AccessDeniedHandler`(403 JSON)를 등록한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "필터 체인에서 발생하는 인증·인가 예외는 컨트롤러까지 도달하지 않으므로 `AuthenticationEntryPoint`와 `AccessDeniedHandler`에서 표준 JSON 오류 응답을 작성해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "컨트롤러에 `try/catch`를 추가하면 서블릿 필터 단계의 401 응답도 모두 잡을 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "요청이 보안 필터 체인에서 이미 차단되므로 컨트롤러 메서드 자체가 호출되지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "Spring Data JPA `Repository` 인터페이스에 `@ExceptionHandler`를 붙인다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Repository 계층은 HTTP 오류 응답 변환 책임이 없고 어노테이션도 동작하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "REST API의 일관된 401/403 JSON 응답 계약은 `AuthenticationEntryPoint`와 `AccessDeniedHandler` 설정으로 완성한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.security-filter-chain.q4",
+    "promptMarkdown": "하나의 Spring Boot 애플리케이션에 `/api/**`(JWT Stateless)와 `/admin/**`(세션 폼 로그인) 두 개의 `SecurityFilterChain` 빈을 등록할 때 반드시 주의해야 할 설정은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.security-filter-chain"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`@Order` 없이 두 체인을 등록하면 Spring이 자동으로 JWT 체인과 세션 체인을 병합한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "체인들은 병합되지 않으며 순서가 모호하면 의도치 않은 체인이 요청을 가로채 인증 실패나 보안 구멍을 만든다."
+      },
+      {
+        "key": "B",
+        "content": "커스텀 JWT 필터를 `@Component`로만 등록하고 `addFilterBefore()`에도 추가하면 1번만 실행된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`@Component` 서블릿 필터는 내장 톰캣의 일반 필터 체인에도 자동 등록되어 요청당 2번 실행되거나 보안 체인 밖에서도 돌 수 있으므로 `OncePerRequestFilter` + 빈 등록 방식에 주의해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "각 체인에 `http.securityMatcher(\"/api/**\")`처럼 적용 대상 경로를 명시하고 `@Order`로 우선순위를 지정해, 첫 번째 체인이 모든 요청을 가로채 두 번째 체인이 무력화되지 않도록 한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`FilterChainProxy`는 `@Order` 순으로 `securityMatcher`가 일치하는 **단 하나의** `SecurityFilterChain`만 선택해 실행한다. 앞선 체인에 `securityMatcher`가 없으면 모든 요청에 매칭되어 뒤 체인이 절대 실행되지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "요청 하나가 등록된 모든 `SecurityFilterChain`을 순차적으로 전부 통과한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "하나의 요청은 매칭된 단 하나의 `SecurityFilterChain`만 실행된다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "다중 `SecurityFilterChain`은 `securityMatcher`로 경계를 명확히 분리하고 `@Order`로 우선순위를 고정해야 의도한 체인이 정확히 선택된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.security-filter-chain.q5",
+    "promptMarkdown": "Spring Security `SecurityFilterChain`에 커스텀 JWT 인증 필터를 추가할 때, 필터 체인 내 배치 위치로 가장 적절한 곳은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.security-filter-chain"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "필터 순서는 Spring Security 내부에서 무작위로 실행되므로 배치 위치가 중요하지 않다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "보안 필터 체인은 엄격한 순서(CORS → CSRF → 인증 → 예외 번역 → 인가)에 의존한다."
+      },
+      {
+        "key": "B",
+        "content": "`AuthorizationFilter`보다 앞(예: `UsernamePasswordAuthenticationFilter` 앞)에 배치해, 인가 판단이 실행되기 전에 검증된 `Authentication`이 `SecurityContext`에 채워지도록 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "인증 필터가 `AuthorizationFilter` 뒤에 있으면 인가 시점에 `SecurityContext`가 비어 있어 모든 인증 요청이 `401`로 거부된다."
+      },
+      {
+        "key": "C",
+        "content": "`AuthorizationFilter`보다 뒤에 배치해 인가가 먼저 통과한 뒤 토큰을 검증한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "인가가 먼저 실행되면 인증 주체가 없어 요청이 차단되거나, 반대로 공개 경로 외에는 정상 동작할 수 없다."
+      },
+      {
+        "key": "D",
+        "content": "`ExceptionTranslationFilter`보다 앞쪽에 배치해 인증 예외가 `AuthenticationEntryPoint`로 번역되지 못하게 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`ExceptionTranslationFilter`보다 앞에서 던져진 예외는 Spring Security의 401/403 번역기를 거치지 못한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "보안 필터 체인에서는 `ExceptionTranslationFilter`와 `AuthorizationFilter`의 상대적 순서를 이해하고, 인증 필터가 인가 필터보다 앞서 실행되도록 배치해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.servlet-filter.q4",
+    "promptMarkdown": "Spring MVC 요청 처리 흐름에서 Spring Security의 `DelegatingFilterProxy` / `FilterChainProxy`가 실행되는 정확한 위치와 그 이점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.servlet-filter"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "서블릿 컨테이너 필터 체인 단계(`DispatcherServlet`과 컨트롤러 진입 전)에서 실행되어, 미인증·비인가 요청이 비즈니스 컨트롤러나 뷰 렌더링에 도달하기 전에 앞단에서 일괄 차단한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "보안 필터가 `DispatcherServlet` 앞에서 동작하므로 MVC 컨트롤러뿐 아니라 정적 리소스·Actuator 등 서블릿 기반 모든 진입점을 일관되게 보호한다."
+      },
+      {
+        "key": "B",
+        "content": "컨트롤러 메서드가 완료되고 DB 트랜잭션이 커밋된 뒤에 실행된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "인증·인가를 컨트롤러 실행 후에 검사하면 이미 무단 데이터 변경이 커밋된 뒤다."
+      },
+      {
+        "key": "C",
+        "content": "Hibernate SQL 생성 직전에 JDBC 드라이버 내부에서 실행된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Spring Security 웹 필터는 서블릿 HTTP 계층에서 동작한다."
+      },
+      {
+        "key": "D",
+        "content": "오직 `@RestController`에만 적용되고 `@Controller`나 Actuator 엔드포인트에는 적용되지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "서블릿 필터 레벨에서 동작하므로 모든 서블릿 요청 경로에 일관되게 적용된다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "서블릿 필터(`DelegatingFilterProxy` → `FilterChainProxy`)는 `DispatcherServlet` 앞단에서 모든 웹 요청의 보안 관문 역할을 수행한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "security.core.filter-chain.servlet-filter.q5",
+    "promptMarkdown": "Spring Security의 `DelegatingFilterProxy`가 서블릿 컨테이너와 Spring 애플리케이션 컨텍스트 사이에서 맡는 역할은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "security.core.filter-chain.servlet-filter"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 요청의 HTTP 본문을 Base64로 자동 암호화한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "암호화 필터가 아니라 Spring Security 빈 위임 프록시다."
+      },
+      {
+        "key": "B",
+        "content": "서블릿 컨테이너에 표준 `Filter`로 등록되어 요청을 받은 뒤, Spring 빈으로 관리되는 `springSecurityFilterChain`(`FilterChainProxy`)에 실제 보안 처리를 위임한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "서블릿 컨테이너 자체는 Spring DI 빈을 직접 관리하지 못하므로 `DelegatingFilterProxy`가 다리(Bridge) 역할을 하여 Spring 빈 기반 보안 필터 체인을 연결한다."
+      },
+      {
+        "key": "C",
+        "content": "데이터베이스 커넥션 풀(HikariCP)의 SQL 쿼리를 캐싱한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`DelegatingFilterProxy`는 서블릿 필터 위임 브리지이며 DB 커넥션 풀과 무관하다."
+      },
+      {
+        "key": "D",
+        "content": "브라우저의 JavaScript 코드를 서버에서 대신 실행한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "서버 측 HTTP 요청 필터 체인 연결 역할만 수행하며 브라우저 자바스크립트 실행과는 전혀 무관하다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`DelegatingFilterProxy`는 서블릿 필터 생명주기와 Spring IoC 컨테이너(`FilterChainProxy`)를 연결하는 브리지다."
+  }
 ]

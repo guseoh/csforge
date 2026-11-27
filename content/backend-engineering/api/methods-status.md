@@ -52,13 +52,7 @@ Location: /api/orders/42
 
 ### 실패 상태는 클라이언트가 다음 행동을 결정하게 한다
 
-```text
-요청 형식 자체를 해석할 수 없음  → 400 Bad Request
-대상 리소스를 찾을 수 없음       → 404 Not Found
-현재 상태와 요청이 충돌          → 409 Conflict
-인증 정보가 없음/유효하지 않음   → 401 Unauthorized
-인증됐지만 권한이 없음           → 403 Forbidden
-```
+![HTTP 메서드 안전성·멱등성과 실패 상태 코드 계약](/learning/backend-engineering/http-method-idempotency-status.svg)
 
 모든 업무 실패를 `400` 하나로 반환하면 클라이언트는 "입력을 고쳐야 하는가", "이미 상태가 바뀐 것인가", "대상이 없는가"를 구분하기 어렵습니다.
 

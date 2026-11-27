@@ -1,8 +1,368 @@
 [
-  {"kind":"question","contentKey":"spring.core.container.bean-definition.q1","promptMarkdown":"BeanDefinition과 실제 Bean 객체의 관계를 가장 정확히 설명한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.container.bean-definition"],"choices":[{"key":"A","content":"BeanDefinition은 클래스·factory·scope·의존성·생명주기 같은 생성·관리 정보이고, 실제 Bean 객체는 그 정보를 사용해 만들어진 결과다.","displayOrder":0,"rationaleMarkdown":"BeanDefinition은 컨테이너가 객체를 만들고 연결하고 관리하는 데 사용하는 등록 정보다. 실제 업무 메서드는 이 등록 정보로 만들어진 Bean 객체에서 실행된다."},{"key":"B","content":"BeanDefinition 자체가 애플리케이션에서 호출하는 서비스 객체다.","displayOrder":1,"rationaleMarkdown":"BeanDefinition은 관리 대상 객체를 만들기 위한 등록 정보이며 서비스 협력 객체로 주입해 호출할 대상이 아니다. 컨테이너가 BeanDefinition을 바탕으로 실제 Bean을 생성한다."},{"key":"C","content":"BeanDefinition 하나는 JVM 전체에 반드시 객체 하나만 만든다.","displayOrder":2,"rationaleMarkdown":"객체 공유 범위는 Bean scope가 정한다. 같은 Java 클래스를 여러 Bean 정의나 여러 ApplicationContext에 등록하면 각각 다른 객체가 존재할 수 있다."},{"key":"D","content":"`@Component`가 붙은 클래스 파일은 BeanDefinition 등록 단계 없이 바로 singleton 객체가 된다.","displayOrder":3,"rationaleMarkdown":"컴포넌트 스캔은 stereotype을 발견해 BeanDefinition을 등록하는 단계다. 실제 객체 생성은 scope와 eager/lazy 설정 등 컨테이너 정책에 따라 별도로 이루어진다."}],"correctChoiceKey":"A","explanationMarkdown":"BeanDefinition은 클래스, factory, scope, 의존성 같은 **객체 생성·관리 정보**이고 실제 호출 대상은 그 정보로 만들어진 Bean 객체다. 따라서 Bean 정의 등록 시점과 실제 객체 생성 시점, scope에 따른 객체 수를 구분해야 한다."},
-  {"kind":"question","contentKey":"spring.core.container.bean-definition.q2","promptMarkdown":"어떤 `@Lazy` singleton Bean의 생성자가 예외를 던진다. Bean 정의 등록은 성공했고 애플리케이션도 시작됐지만 첫 조회에서 실패했다. 이 현상이 가능한 이유를 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.container.bean-definition"],"modelAnswer":"Bean 정의 등록과 실제 객체 생성은 다른 단계다. lazy singleton은 등록 정보가 있어도 시작 시 객체를 만들지 않을 수 있으므로 생성자 예외가 첫 조회·생성 시점까지 지연될 수 있다.","explanationMarkdown":"컨테이너가 BeanDefinition을 등록한 것과 그 정의를 사용해 실제 생성자를 실행한 것은 서로 다른 단계다. `@Lazy` singleton은 시작 시점에 객체를 만들지 않을 수 있으므로 등록과 애플리케이션 시작은 성공하고 첫 조회 때 생성자 예외가 드러날 수 있다."},
-  {"kind":"question","contentKey":"spring.core.container.application-context.q1","promptMarkdown":"ApplicationContext를 단순한 Bean 저장소보다 더 넓은 컨테이너로 보는 이유를 두 가지 이상 적어라.","questionType":"DESCRIPTIVE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.container.application-context"],"explanationMarkdown":"ApplicationContext는 Bean을 보관하고 조회하는 것에 그치지 않고 의존성 해결·후처리·생명주기 관리를 통해 객체 그래프를 만든다. 또한 환경 설정·리소스·이벤트 같은 애플리케이션 기능도 연결하므로 단순한 Map과 책임 범위가 다르다.","modelAnswer":"Bean 생성과 의존성 해결, 후처리와 생명주기를 관리하며 객체 그래프를 조립한다. 또한 환경 설정·리소스·이벤트 같은 애플리케이션 기능을 제공한다."},
-  {"kind":"question","contentKey":"spring.core.container.application-context.q2","promptMarkdown":"시작 중 `NoUniqueBeanDefinitionException`이 발생했다. 다음 단계 중 어느 문제에 가장 가까운가?\n\n1. 설정 파일 파싱\n2. Bean 정의 등록\n3. 의존성 해결\n4. Bean 메서드 실행\n\n해당 단계를 고르고 이유를 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.container.application-context"],"modelAnswer":"의존성 해결 문제에 가깝다. 필요한 타입의 Bean 후보가 여러 개 존재하지만 어떤 객체를 연결해야 하는지 컨테이너가 결정하지 못한 상태다.","explanationMarkdown":"Bean 후보 자체는 등록되어 있지만 같은 타입의 후보 중 어느 Bean을 주입할지 결정하지 못했으므로 **의존성 해결 단계의 모호성**이다. `@Primary`나 `@Qualifier`처럼 선택 단서를 추가해야 하며, 설정 파일 파싱이나 Bean 메서드 실행 실패와는 다르다."},
-  {"kind":"question","contentKey":"spring.core.container.singleton-identity.q1","promptMarkdown":"Spring singleton scope에 대한 설명으로 옳은 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.container.singleton-identity"],"choices":[{"key":"A","content":"같은 클래스는 JVM 전체에서 반드시 객체 하나만 존재한다.","displayOrder":0,"rationaleMarkdown":"Spring singleton은 Java 클래스의 JVM 전체 객체 수를 제한하지 않는다. 컨테이너와 Bean 정의가 다르면 같은 클래스의 별도 객체가 존재할 수 있다."},{"key":"B","content":"한 컨테이너의 한 Bean 정의에 대해 공유 객체를 관리하는 scope이며, 다른 context나 Bean 정의에는 다른 객체가 있을 수 있다.","displayOrder":1,"rationaleMarkdown":"singleton scope의 공유 단위는 한 컨테이너의 한 Bean 정의다. ApplicationContext나 Bean 정의가 다르면 같은 클래스라도 서로 다른 객체를 가질 수 있다."},{"key":"C","content":"singleton Bean의 변경 가능한 필드는 Spring이 자동으로 thread-safe하게 만든다.","displayOrder":2,"rationaleMarkdown":"scope는 객체를 어느 범위에서 공유할지 정할 뿐 동시 접근을 자동으로 안전하게 만들지 않는다. 변경 가능한 상태의 동시성 안전성은 Bean 코드가 별도로 보장해야 한다."},{"key":"D","content":"singleton은 요청마다 새 객체를 만드는 scope다.","displayOrder":3,"rationaleMarkdown":"singleton은 컨테이너 안에서 공유하는 scope다. 요청마다 다른 객체가 필요하다면 request scope 등 다른 수명 정책을 사용한다."}],"correctChoiceKey":"B","explanationMarkdown":"Spring singleton은 JVM 전체에서 클래스당 객체 하나라는 뜻이 아니라 **한 컨테이너의 한 Bean 정의가 공유 객체 하나를 관리한다**는 의미다. 다른 컨테이너나 다른 Bean 정의에는 별도 객체가 있을 수 있고, 필드의 동시성 안전성도 자동으로 보장되지 않는다."},
-  {"kind":"question","contentKey":"spring.core.container.singleton-identity.q2","promptMarkdown":"singleton `PriceService`에 `private Long currentMemberId;`를 두고 요청마다 값을 저장한다. 동시에 두 요청이 들어왔을 때 어떤 문제가 생길 수 있고 왜 그런가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.container.singleton-identity"],"modelAnswer":"두 요청을 처리하는 스레드가 같은 singleton 객체와 같은 필드를 공유하므로 한 요청의 쓰기가 다른 요청의 값을 덮어쓰거나 다른 회원 ID를 읽을 수 있다. Spring singleton은 필드 접근을 요청별로 격리하거나 자동으로 동기화하지 않는다.","explanationMarkdown":"두 요청이 같은 singleton 필드를 번갈아 읽고 쓰면 A가 저장한 회원 ID를 B가 덮어쓰거나 A가 B의 값을 사용할 수 있다. Spring은 singleton 객체를 공유할 뿐 필드를 요청별로 격리하거나 자동 동기화하지 않으므로 요청별 상태는 지역 변수나 명시적인 별도 범위로 분리해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.bean-definition.q1",
+    "promptMarkdown": "BeanDefinition과 실제 Bean 객체의 관계를 가장 정확히 설명한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.bean-definition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "BeanDefinition은 클래스·factory·scope·의존성·생명주기 같은 생성·관리 정보이고, 실제 Bean 객체는 그 정보를 사용해 만들어진 결과다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "BeanDefinition은 컨테이너가 객체를 만들고 연결하고 관리하는 데 사용하는 등록 정보다. 실제 업무 메서드는 이 등록 정보로 만들어진 Bean 객체에서 실행된다."
+      },
+      {
+        "key": "B",
+        "content": "BeanDefinition 자체가 애플리케이션에서 호출하는 서비스 객체다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "BeanDefinition은 관리 대상 객체를 만들기 위한 등록 정보이며 서비스 협력 객체로 주입해 호출할 대상이 아니다. 컨테이너가 BeanDefinition을 바탕으로 실제 Bean을 생성한다."
+      },
+      {
+        "key": "C",
+        "content": "BeanDefinition 하나는 JVM 전체에 반드시 객체 하나만 만든다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "객체 공유 범위는 Bean scope가 정한다. 같은 Java 클래스를 여러 Bean 정의나 여러 ApplicationContext에 등록하면 각각 다른 객체가 존재할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "`@Component`가 붙은 클래스 파일은 BeanDefinition 등록 단계 없이 바로 singleton 객체가 된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "컴포넌트 스캔은 stereotype을 발견해 BeanDefinition을 등록하는 단계다. 실제 객체 생성은 scope와 eager/lazy 설정 등 컨테이너 정책에 따라 별도로 이루어진다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "BeanDefinition은 클래스, factory, scope, 의존성 같은 **객체 생성·관리 정보**이고 실제 호출 대상은 그 정보로 만들어진 Bean 객체다. 따라서 Bean 정의 등록 시점과 실제 객체 생성 시점, scope에 따른 객체 수를 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.bean-definition.q2",
+    "promptMarkdown": "어떤 `@Lazy` singleton Bean의 생성자가 예외를 던진다. Bean 정의 등록은 성공했고 애플리케이션도 시작됐지만 첫 조회에서 실패했다. 이 현상이 가능한 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.bean-definition"
+    ],
+    "modelAnswer": "Bean 정의 등록과 실제 객체 생성은 다른 단계다. lazy singleton은 등록 정보가 있어도 시작 시 객체를 만들지 않을 수 있으므로 생성자 예외가 첫 조회·생성 시점까지 지연될 수 있다.",
+    "explanationMarkdown": "컨테이너가 BeanDefinition을 등록한 것과 그 정의를 사용해 실제 생성자를 실행한 것은 서로 다른 단계다. `@Lazy` singleton은 시작 시점에 객체를 만들지 않을 수 있으므로 등록과 애플리케이션 시작은 성공하고 첫 조회 때 생성자 예외가 드러날 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.application-context.q1",
+    "promptMarkdown": "ApplicationContext를 단순한 Bean 저장소보다 더 넓은 컨테이너로 보는 이유를 두 가지 이상 적어라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.application-context"
+    ],
+    "explanationMarkdown": "ApplicationContext는 Bean을 보관하고 조회하는 것에 그치지 않고 의존성 해결·후처리·생명주기 관리를 통해 객체 그래프를 만든다. 또한 환경 설정·리소스·이벤트 같은 애플리케이션 기능도 연결하므로 단순한 Map과 책임 범위가 다르다.",
+    "modelAnswer": "Bean 생성과 의존성 해결, 후처리와 생명주기를 관리하며 객체 그래프를 조립한다. 또한 환경 설정·리소스·이벤트 같은 애플리케이션 기능을 제공한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.application-context.q2",
+    "promptMarkdown": "시작 중 `NoUniqueBeanDefinitionException`이 발생했다. 다음 단계 중 어느 문제에 가장 가까운가?\n\n1. 설정 파일 파싱\n2. Bean 정의 등록\n3. 의존성 해결\n4. Bean 메서드 실행\n\n해당 단계를 고르고 이유를 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.application-context"
+    ],
+    "modelAnswer": "의존성 해결 문제에 가깝다. 필요한 타입의 Bean 후보가 여러 개 존재하지만 어떤 객체를 연결해야 하는지 컨테이너가 결정하지 못한 상태다.",
+    "explanationMarkdown": "Bean 후보 자체는 등록되어 있지만 같은 타입의 후보 중 어느 Bean을 주입할지 결정하지 못했으므로 **의존성 해결 단계의 모호성**이다. `@Primary`나 `@Qualifier`처럼 선택 단서를 추가해야 하며, 설정 파일 파싱이나 Bean 메서드 실행 실패와는 다르다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.singleton-identity.q1",
+    "promptMarkdown": "Spring singleton scope에 대한 설명으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.singleton-identity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "같은 클래스는 JVM 전체에서 반드시 객체 하나만 존재한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Spring singleton은 Java 클래스의 JVM 전체 객체 수를 제한하지 않는다. 컨테이너와 Bean 정의가 다르면 같은 클래스의 별도 객체가 존재할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "한 컨테이너의 한 Bean 정의에 대해 공유 객체를 관리하는 scope이며, 다른 context나 Bean 정의에는 다른 객체가 있을 수 있다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "singleton scope의 공유 단위는 한 컨테이너의 한 Bean 정의다. ApplicationContext나 Bean 정의가 다르면 같은 클래스라도 서로 다른 객체를 가질 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "singleton Bean의 변경 가능한 필드는 Spring이 자동으로 thread-safe하게 만든다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "scope는 객체를 어느 범위에서 공유할지 정할 뿐 동시 접근을 자동으로 안전하게 만들지 않는다. 변경 가능한 상태의 동시성 안전성은 Bean 코드가 별도로 보장해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "singleton은 요청마다 새 객체를 만드는 scope다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "singleton은 컨테이너 안에서 공유하는 scope다. 요청마다 다른 객체가 필요하다면 request scope 등 다른 수명 정책을 사용한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Spring singleton은 JVM 전체에서 클래스당 객체 하나라는 뜻이 아니라 **한 컨테이너의 한 Bean 정의가 공유 객체 하나를 관리한다**는 의미다. 다른 컨테이너나 다른 Bean 정의에는 별도 객체가 있을 수 있고, 필드의 동시성 안전성도 자동으로 보장되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.singleton-identity.q2",
+    "promptMarkdown": "singleton `PriceService`에 `private Long currentMemberId;`를 두고 요청마다 값을 저장한다. 동시에 두 요청이 들어왔을 때 어떤 문제가 생길 수 있고 왜 그런가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.singleton-identity"
+    ],
+    "modelAnswer": "두 요청을 처리하는 스레드가 같은 singleton 객체와 같은 필드를 공유하므로 한 요청의 쓰기가 다른 요청의 값을 덮어쓰거나 다른 회원 ID를 읽을 수 있다. Spring singleton은 필드 접근을 요청별로 격리하거나 자동으로 동기화하지 않는다.",
+    "explanationMarkdown": "두 요청이 같은 singleton 필드를 번갈아 읽고 쓰면 A가 저장한 회원 ID를 B가 덮어쓰거나 A가 B의 값을 사용할 수 있다. Spring은 singleton 객체를 공유할 뿐 필드를 요청별로 격리하거나 자동 동기화하지 않으므로 요청별 상태는 지역 변수나 명시적인 별도 범위로 분리해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.bean-definition.q3",
+    "promptMarkdown": "Spring 컨테이너 기동 과정에서 `BeanDefinition`을 수정하거나 플레이스홀더(`${...}`)를 해석하는 확장 지점과, 실제 생성된 Bean 인스턴스를 AOP 프록시 등으로 감싸는 확장 지점의 올바른 짝은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.bean-definition",
+      "spring.core.container.application-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "두 인터페이스 모두 첫 HTTP 요청이 들어올 때 실행된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "둘 다 `ApplicationContext` 초기화(`refresh()`) 단계에서 컨테이너 부트스트랩 과정으로 실행된다."
+      },
+      {
+        "key": "B",
+        "content": "Spring Boot에서는 `@Bean`을 쓰면 `BeanDefinition`이 생성되지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`@Component` 스캔, `@Bean` 메서드, 프로그래밍 등록 모두 최종적으로 컨테이너 내부에 `BeanDefinition`으로 등록된다."
+      },
+      {
+        "key": "C",
+        "content": "`BeanPostProcessor`가 `BeanDefinition`을 수정하고, `BeanFactoryPostProcessor`가 AOP 프록시를 감싼다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "역할이 반대다. `BeanFactoryPostProcessor`가 Bean 생성 전 메타데이터(`BeanDefinition`)를 다루고, `BeanPostProcessor`가 생성된 Bean 인스턴스를 후처리한다."
+      },
+      {
+        "key": "D",
+        "content": "`BeanFactoryPostProcessor`가 Bean 인스턴스 생성 전에 `BeanDefinition` 메타데이터를 가공하고, `BeanPostProcessor`가 생성·초기화 전후의 Bean 인스턴스를 가공한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`BeanFactoryPostProcessor`는 설계도(`BeanDefinition`) 단계에서 동작하고, `BeanPostProcessor`는 실제 객체 생성 뒤 초기화 전(`@PostConstruct`)·초기화 후(AOP 프록시) 단계에서 동작한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`BeanFactoryPostProcessor`는 객체가 아직 만들어지기 전 `BeanDefinition`을 다루며, `BeanPostProcessor`는 실제 Bean 인스턴스가 생성된 뒤 초기화 전후 훅(예: `@PostConstruct`, `@Transactional` 자동 프록시)을 적용한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.bean-definition.q4",
+    "promptMarkdown": "다음 코드에서 `@Lazy`가 붙은 `HeavyReportGenerator` Bean이 있을 때 기동 시점과 런타임 동작으로 가장 정확한 것은?\n```java\n@Component\n@Lazy\npublic class HeavyReportGenerator {\n    public HeavyReportGenerator() {\n        throw new IllegalStateException(\"missing native font\");\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.bean-definition"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`@Lazy`를 붙이면 매 호출마다 새 인스턴스를 만드는 `prototype` scope로 자동 변경된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`@Lazy`는 초기화 시점(eager vs lazy)을 바꿀 뿐 scope는 그대로 `singleton`이다."
+      },
+      {
+        "key": "B",
+        "content": "`@Lazy`가 붙어 있으므로 `BeanDefinition` 자체가 컨테이너에 등록되지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`@Lazy`는 등록을 건너뛰는 것이 아니라 `BeanDefinition`은 정상 등록하고 실제 인스턴스 생성만 첫 요청·주입 시점으로 미룬다."
+      },
+      {
+        "key": "C",
+        "content": "`BeanDefinition`은 등록되지만, 다른 즉시 생성 Bean이 이를 주입받지 않는 한 인스턴스 생성과 생성자 예외는 첫 조회 시점까지 지연된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "기본 singleton은 기동 시 즉시 생성(pre-instantiate)되지만 `@Lazy`는 첫 사용 시점까지 인스턴스화를 미루므로 생성자 실패가 운영 요청 시점에 뒤늦게 드러날 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "`@Lazy`는 생성자에서 발생한 예외를 자동으로 무시하고 빈 프록시를 반환한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "예외가 무시되지 않으며 실제 초기화가 일어나는 시점에 `BeanCreationException`으로 실패한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`BeanDefinition` 등록과 실제 객체 인스턴스화는 서로 다른 단계다. `@Lazy`는 시작 시간을 단축할 수 있지만 기동 시점 fail-fast 검증을 런타임으로 미루는 트레이드오프가 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.application-context.q3",
+    "promptMarkdown": "`ApplicationContext` 부트스트랩 과정에서 단일 Bean의 초기화 및 후처리 순서로 가장 올바른 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.application-context",
+      "spring.core.scope-lifecycle.lifecycle-callback"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`InitializingBean.afterPropertiesSet()` → `BPP.postProcessBeforeInitialization` → 생성자 호출",
+        "displayOrder": 0,
+        "rationaleMarkdown": "생성자 호출이 먼저이고, `postProcessBeforeInitialization`은 `afterPropertiesSet()`보다 앞에 실행된다."
+      },
+      {
+        "key": "B",
+        "content": "인스턴스 생성 + DI → `BPP.postProcessBeforeInitialization`(`@PostConstruct`) → `InitializingBean.afterPropertiesSet()` / `initMethod` → `BPP.postProcessAfterInitialization`(AOP 프록시)",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Spring 컨테이너는 생성·의존성 주입 후 초기화 전 후처리기(`CommonAnnotationBeanPostProcessor`의 `@PostConstruct`), 명시적 초기화 콜백, 초기화 후 후처리기(일반적인 AOP 자동 프록시) 순서로 진행한다."
+      },
+      {
+        "key": "C",
+        "content": "`@PostConstruct` → 생성자 호출 → 의존성 주입 → AOP 프록시 생성",
+        "displayOrder": 2,
+        "rationaleMarkdown": "생성자 호출과 의존성 주입이 완료되기 전에는 `@PostConstruct`가 실행될 수 없다."
+      },
+      {
+        "key": "D",
+        "content": "AOP 프록시 생성 → 생성자 호출 → `@PostConstruct` → `BeanDefinition` 등록",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`BeanDefinition` 등록이 가장 먼저이며, 일반적인 AOP 프록시 래핑은 Bean 초기화 이후 `postProcessAfterInitialization` 단계에서 일어난다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "초기화 전(`postProcessBeforeInitialization` — `@PostConstruct`)과 초기화 후(`postProcessAfterInitialization` — `@Transactional` AOP 프록시)는 서로 다른 시점이다. 따라서 `@PostConstruct` 안에서 자기 자신의 `@Transactional` 메서드를 호출해도 프록시가 아직 감싸지지 않아 트랜잭션이 적용되지 않는 이유가 여기서 나온다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.application-context.q4",
+    "promptMarkdown": "다음 중 `ApplicationContext`에 Bean으로 등록하기에 **가장 부적절한** 객체는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.application-context"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "시간 기반 로직의 결정적 테스트를 위한 `Clock`",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`Clock`은 테스트에서 고정 시계로 교체할 수 있는 유용한 공유 Bean 후보이다."
+      },
+      {
+        "key": "B",
+        "content": "외부 결제 게이트웨이 HTTP 클라이언트 어댑터(`PaymentGatewayClient`)",
+        "displayOrder": 1,
+        "rationaleMarkdown": "연결 풀·설정·수명을 애플리케이션 전체에서 공유하는 인프라 어댑터는 Bean으로 관리하는 것이 자연스럽다."
+      },
+      {
+        "key": "C",
+        "content": "주문 생성 유스케이스를 조율하는 애플리케이션 서비스(`OrderCommandService`)",
+        "displayOrder": 2,
+        "rationaleMarkdown": "무상태 협력 서비스는 DI와 트랜잭션 경계를 관리받기 위해 Bean으로 등록한다."
+      },
+      {
+        "key": "D",
+        "content": "요청마다 서로 다른 금액과 통화를 담는 도메인 값 객체(`Money`, `OrderLine`)",
+        "displayOrder": 3,
+        "rationaleMarkdown": "요청이나 엔티티마다 값이 달라지고 수명이 짧은 값 객체·엔티티·DTO는 일반 `new`/팩토리 메서드로 생성해야 하며 Spring Bean으로 등록할 대상이 아니다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Spring Bean은 컨테이너가 생성·연결·수명을 관리할 가치가 있는 무상태 협력 객체, 설정, 인프라 어댑터에 적합하다. 요청별 데이터를 담는 `Money`, `Order`, Command/Response DTO까지 Bean으로 만들면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.singleton-identity.q3",
+    "promptMarkdown": "다음 Spring `@Service` 코드가 다중 요청 환경에서 치명적인 동시성 버그를 일으키는 이유는?\n```java\n@Service\npublic class DiscountCalculator {\n    private int lastDiscountRate;\n\n    public int apply(Order order, int rate) {\n        this.lastDiscountRate = rate;\n        return order.totalAmount() * (100 - this.lastDiscountRate) / 100;\n    }\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.singleton-identity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Spring `@Service`는 기본 `singleton` scope이므로 여러 HTTP 요청 스레드가 같은 인스턴스의 가변 필드 `lastDiscountRate`를 동시에 덮어써 다른 사용자의 할인율이 섞인다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "컨테이너당 하나의 인스턴스를 모든 요청 스레드가 공유한다. 요청별 상태를 인스턴스 필드에 저장하면 race condition으로 A 요청의 할인율이 B 요청 계산에 적용되는 심각한 결함이 발생한다."
+      },
+      {
+        "key": "B",
+        "content": "`@Service`는 요청마다 새 객체를 만들므로 `lastDiscountRate`가 항상 0으로 초기화되어 실패한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`@Service`의 기본 scope는 `request`가 아니라 `singleton`이다."
+      },
+      {
+        "key": "C",
+        "content": "Spring이 모든 `@Service` 메서드에 `synchronized`를 자동 적용해 데드락이 발생한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Spring은 singleton Bean에 자동 동기화(`synchronized`)를 걸지 않으므로 스레드 안전성(무상태 설계)은 개발자 책임이다."
+      },
+      {
+        "key": "D",
+        "content": "기본형 `int` 필드는 Spring 컨테이너에서 주입할 수 없어 컴파일 에러가 난다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "일반 인스턴스 필드는 컴파일 및 기동이 모두 정상 통과하며 운영 트래픽에서 조용히 데이터 오염으로 드러난다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Spring의 기본 `singleton` Bean은 여러 스레드가 동시에 접근하는 공유 객체다. 요청별 데이터는 인스턴스 필드가 아니라 메서드 지역 변수·매개변수·반환값으로만 다루는 무상태(stateless) 설계를 지켜야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.container.singleton-identity.q4",
+    "promptMarkdown": "Java의 고전적 `static` Singleton 패턴과 Spring 컨테이너의 `singleton` Bean scope의 핵심 차이로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.container.singleton-identity"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Spring `singleton`은 멀티스레드 환경에서 내부 가변 상태를 자동으로 스레드 격리해 준다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Spring은 singleton 인스턴스의 가변 필드를 자동으로 `ThreadLocal` 격리하지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "Spring `singleton`은 JVM 클래스로더 전체에 단 1개만 존재하며 단위 테스트에서 `new`로 생성할 수 없다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "그것은 `private` 생성자와 `static INSTANCE`를 쓰는 고전적 GoF Singleton의 제약이다. Spring `singleton`은 컨테이너(`ApplicationContext`)당 1개이며 테스트에서는 일반 `new`로 얼마든지 독립 인스턴스를 만들 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "Spring `singleton`은 `ApplicationContext` 단위로 Bean 이름당 하나의 공유 인스턴스를 관리하며, 클래스 자체는 일반 생성자를 유지해 DI와 단위 테스트 교체가 자유롭다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "컨테이너가 공유 수명만 책임지므로 클래스 코드에 `static getInstance()` 결합이 생기지 않고, 테스트에서 가짜 협력 객체를 넣어 독립 인스턴스를 쉽게 생성할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "Spring `singleton`은 같은 클래스로 Bean 이름을 다르게 2개 등록하는 것을 절대 허용하지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "같은 타입이라도 서로 다른 Bean 이름(`primaryDataSource`, `analyticsDataSource`)으로 여러 singleton Bean을 등록할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "Spring `singleton`은 'JVM 전역 static 단일 객체'가 아니라 '컨테이너당 Bean 정의(이름)별 단일 공유 인스턴스'다. 덕분에 전역 상태 결합 없이 DI와 테스트 용이성을 확보할 수 있다."
+  }
 ]

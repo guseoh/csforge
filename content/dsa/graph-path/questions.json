@@ -6,12 +6,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.unweighted-shortest-path"],
+    "conceptKeys": [
+      "dsa.core.graph-path.unweighted-shortest-path"
+    ],
     "choices": [
-      {"key": "A", "content": "BFS", "displayOrder": 0, "rationaleMarkdown": "모든 간선의 비용이 같으면 경로 비용은 사용한 간선 수에 비례한다. BFS는 시작 정점에서 가까운 단계부터 탐색하므로 처음 도달한 단계가 최소 간선 수다."},
-      {"key": "B", "content": "DFS로 목적지를 처음 발견한 경로", "displayOrder": 1, "rationaleMarkdown": "DFS의 첫 발견 경로는 탐색 순서에 따라 길 수 있다. DFS는 연결성이나 경로 존재 여부를 확인할 수 있지만 비가중치 최단 경로를 보장하지 않는다."},
-      {"key": "C", "content": "Union-Find로 연결 여부만 확인", "displayOrder": 2, "rationaleMarkdown": "Union-Find는 두 정점이 같은 연결 요소인지 효율적으로 확인하지만 경로 길이나 실제 최단 경로를 계산하지 않는다. 필요한 결과가 연결성인지 최단 거리인지 구분해야 한다."},
-      {"key": "D", "content": "Prim으로 신장 트리를 만든 뒤 경로를 읽는다", "displayOrder": 3, "rationaleMarkdown": "Prim은 모든 정점을 잇는 최소 신장 트리를 만들며 시작 정점에서 목적지까지의 경로 길이를 최소화하는 알고리즘은 아니다. MST 안의 경로가 원래 그래프의 최단 경로와 같다는 보장도 없다."}
+      {
+        "key": "A",
+        "content": "BFS",
+        "displayOrder": 0,
+        "rationaleMarkdown": "모든 간선의 비용이 같으면 경로 비용은 사용한 간선 수에 비례한다. BFS는 시작 정점에서 가까운 단계부터 탐색하므로 처음 도달한 단계가 최소 간선 수다."
+      },
+      {
+        "key": "B",
+        "content": "DFS로 목적지를 처음 발견한 경로",
+        "displayOrder": 1,
+        "rationaleMarkdown": "DFS의 첫 발견 경로는 탐색 순서에 따라 길 수 있다. DFS는 연결성이나 경로 존재 여부를 확인할 수 있지만 비가중치 최단 경로를 보장하지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "Union-Find로 연결 여부만 확인",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Union-Find는 두 정점이 같은 연결 요소인지 효율적으로 확인하지만 경로 길이나 실제 최단 경로를 계산하지 않는다. 필요한 결과가 연결성인지 최단 거리인지 구분해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "Prim으로 신장 트리를 만든 뒤 경로를 읽는다",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Prim은 모든 정점을 잇는 최소 신장 트리를 만들며 시작 정점에서 목적지까지의 경로 길이를 최소화하는 알고리즘은 아니다. MST 안의 경로가 원래 그래프의 최단 경로와 같다는 보장도 없다."
+      }
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "모든 간선 비용이 같으면 BFS의 탐색 단계가 시작 정점에서 사용한 간선 수와 일치한다. 목적지를 처음 발견한 단계가 최소이므로 간선 수 기준 최단 경로를 구할 수 있다."
@@ -23,7 +45,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.unweighted-shortest-path"],
+    "conceptKeys": [
+      "dsa.core.graph-path.unweighted-shortest-path"
+    ],
     "explanationMarkdown": "A→B→D→F 경로는 간선 세 개를 사용하므로 최소 간선 수는 3이다. 모든 간선 비용이 같을 때 BFS가 이 거리를 먼저 확정하며 실제 경로까지 필요하면 이전 정점 정보도 함께 기록한다.",
     "modelAnswer": "최단 거리는 간선 3개이며 가능한 최단 경로 하나는 A→B→D→F다."
   },
@@ -34,7 +58,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.unweighted-shortest-path"],
+    "conceptKeys": [
+      "dsa.core.graph-path.unweighted-shortest-path"
+    ],
     "modelAnswer": "BFS에서 처음 발견한 정점을 따라 곧바로 경로를 역추적하려면 `parent`를 기록하는 것이 대표적이다. 다만 원래 그래프와 시작점부터 각 정점까지의 거리 `dist`가 모두 남아 있다면 목적지에서 거리가 1 작은 이전 정점을 찾아 역으로 따라가 최단 경로 하나를 복원할 수도 있다. 이 대안은 역방향 인접 간선 탐색 비용이 추가되고, 최초 BFS 발견 트리의 경로와 같다고 보장할 수 없다.",
     "explanationMarkdown": "`dist`는 경로 길이만 나타내며 최초에 어떤 간선으로 발견했는지는 기억하지 않는다. `parent`를 함께 저장하면 직접 역추적할 수 있다. 원래 그래프와 전체 거리 정보가 있다면 거리 1 감소 간선을 재탐색해 최단 경로 하나를 찾는 다른 올바른 방법도 있다."
   },
@@ -45,12 +71,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.dijkstra"],
+    "conceptKeys": [
+      "dsa.core.graph-path.dijkstra"
+    ],
     "choices": [
-      {"key": "A", "content": "음수 사이클만 없으면 음수 간선은 얼마든지 가능하다", "displayOrder": 0, "rationaleMarkdown": "음수 간선은 음수 사이클이 없어도 다익스트라 알고리즘의 확정 논리를 깨뜨릴 수 있다. 이미 확정한 정점까지 가는 더 싼 경로가 뒤늦게 발견될 수 있기 때문이다."},
-      {"key": "B", "content": "모든 가중치가 반드시 1이다", "displayOrder": 1, "rationaleMarkdown": "다익스트라 알고리즘은 가중치가 모두 1일 필요 없이 음수가 아닌 가중치를 처리한다. 모든 간선 비용이 같은 특수한 경우에는 BFS를 사용할 수 있다."},
-      {"key": "C", "content": "최단 경로 계산에 관여하는 모든 간선의 가중치가 0 이상이다", "displayOrder": 2, "rationaleMarkdown": "음수가 아닌 간선에서는 아직 확정되지 않은 경로를 더 연장해도 비용이 줄어들지 않는다. 그래서 가장 작은 잠정 거리를 가진 정점을 꺼낸 뒤 그 거리를 안전하게 확정할 수 있다."},
-      {"key": "D", "content": "우선순위 큐가 decrease-key를 지원하면 음수 간선도 안전하다", "displayOrder": 3, "rationaleMarkdown": "우선순위 큐는 다음 후보를 효율적으로 고르는 구현 도구일 뿐 정확성 조건을 바꾸지 않는다. 음수 간선이 있으면 decrease-key 지원 여부와 무관하게 이미 확정한 거리가 나중에 더 작아질 수 있다."}
+      {
+        "key": "A",
+        "content": "음수 사이클만 없으면 음수 간선은 얼마든지 가능하다",
+        "displayOrder": 0,
+        "rationaleMarkdown": "음수 간선은 음수 사이클이 없어도 다익스트라 알고리즘의 확정 논리를 깨뜨릴 수 있다. 이미 확정한 정점까지 가는 더 싼 경로가 뒤늦게 발견될 수 있기 때문이다."
+      },
+      {
+        "key": "B",
+        "content": "모든 가중치가 반드시 1이다",
+        "displayOrder": 1,
+        "rationaleMarkdown": "다익스트라 알고리즘은 가중치가 모두 1일 필요 없이 음수가 아닌 가중치를 처리한다. 모든 간선 비용이 같은 특수한 경우에는 BFS를 사용할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "최단 경로 계산에 관여하는 모든 간선의 가중치가 0 이상이다",
+        "displayOrder": 2,
+        "rationaleMarkdown": "음수가 아닌 간선에서는 아직 확정되지 않은 경로를 더 연장해도 비용이 줄어들지 않는다. 그래서 가장 작은 잠정 거리를 가진 정점을 꺼낸 뒤 그 거리를 안전하게 확정할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "우선순위 큐가 decrease-key를 지원하면 음수 간선도 안전하다",
+        "displayOrder": 3,
+        "rationaleMarkdown": "우선순위 큐는 다음 후보를 효율적으로 고르는 구현 도구일 뿐 정확성 조건을 바꾸지 않는다. 음수 간선이 있으면 decrease-key 지원 여부와 무관하게 이미 확정한 거리가 나중에 더 작아질 수 있다."
+      }
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "음수가 아닌 간선에서는 경로를 더 이어서 이미 확정한 최소 비용보다 더 작은 값을 만드는 일이 없다. 이 전제가 다익스트라 알고리즘이 가장 작은 잠정 거리를 확정할 수 있는 근거다."
@@ -62,8 +110,13 @@
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.dijkstra"],
-    "acceptedAnswers": ["4에서 3으로 줄어든다", "dist[B]=3"],
+    "conceptKeys": [
+      "dsa.core.graph-path.dijkstra"
+    ],
+    "acceptedAnswers": [
+      "4에서 3으로 줄어든다",
+      "dist[B]=3"
+    ],
     "explanationMarkdown": "C를 거치는 후보 거리는 `dist[C] + weight(C,B) = 1+2=3`이다. 기존 B의 값 4보다 작으므로 완화 과정에서 `dist[B]`를 3으로 갱신한다."
   },
   {
@@ -73,7 +126,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.dijkstra"],
+    "conceptKeys": [
+      "dsa.core.graph-path.dijkstra"
+    ],
     "modelAnswer": "큐 항목의 거리 4가 현재 `dist[B]=3`과 다르므로 이미 더 좋은 경로로 대체된 오래된 항목이다. 이 항목은 건너뛰어 불필요한 간선 완화를 하지 않는다.",
     "explanationMarkdown": "decrease-key 대신 더 짧은 `(거리, 정점)` 쌍을 큐에 다시 넣는 구현에서는 같은 정점의 오래된 항목이 남을 수 있다. 꺼낸 거리와 현재 `dist[B]`가 다르면 건너뛰면 된다."
   },
@@ -84,7 +139,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.dijkstra"],
+    "conceptKeys": [
+      "dsa.core.graph-path.dijkstra"
+    ],
     "modelAnswer": "A→B의 직접 비용은 2지만 A→C→B의 비용은 5-10=-5다. 음수 간선 때문에 나중에 발견한 경로가 이미 확정한 거리를 더 줄일 수 있으므로 다익스트라 알고리즘의 확정 불변식이 깨진다.",
     "explanationMarkdown": "다익스트라 알고리즘은 간선 가중치가 음수가 아닐 때 이미 확정한 최단 거리가 다시 작아지지 않는다는 성질을 이용한다. C를 거친 음수 간선은 이 전제를 깨뜨린다."
   },
@@ -95,12 +152,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.bellman-ford"],
+    "conceptKeys": [
+      "dsa.core.graph-path.bellman-ford"
+    ],
     "choices": [
-      {"key": "A", "content": "음수 간선은 무방향 트리에서만 허용되는 그래프", "displayOrder": 0, "rationaleMarkdown": "벨먼–포드는 음수 간선을 무방향 트리로 한정하지 않으며 방향 그래프의 음수 간선도 처리할 수 있다. 다만 무방향 음수 간선을 양방향으로 반복해서 지날 수 있다면 음수 사이클 때문에 유한한 최단 거리가 사라질 수 있다."},
-      {"key": "B", "content": "도달 가능한 음수 사이클이 있어도 항상 유한한 최단 거리가 정의되는 그래프", "displayOrder": 1, "rationaleMarkdown": "시작 정점에서 도달 가능한 음수 사이클을 반복하면 경로 비용을 계속 낮출 수 있어 유한한 최단 거리가 정의되지 않는다. 벨먼–포드는 이를 감지할 수 있지만 유한한 값으로 만들지는 못한다."},
-      {"key": "C", "content": "음수 간선이 하나라도 있으면 처리할 수 없는 그래프", "displayOrder": 2, "rationaleMarkdown": "벨먼–포드 알고리즘은 모든 간선의 완화를 여러 번 반복해 음수 간선의 효과도 전파할 수 있다. 음수 간선이 있다는 사실만으로 실행할 수 없는 것은 아니다."},
-      {"key": "D", "content": "음수 간선이 있지만 유한한 최단 거리가 존재할 수 있는 그래프", "displayOrder": 3, "rationaleMarkdown": "벨먼–포드 알고리즘은 음수 간선이 포함되어도 시작 정점에서 유한한 최단 거리가 정의되는 경우를 처리한다. 시작 정점에서 도달 가능한 음수 사이클은 별도로 확인해야 한다."}
+      {
+        "key": "A",
+        "content": "음수 간선은 무방향 트리에서만 허용되는 그래프",
+        "displayOrder": 0,
+        "rationaleMarkdown": "벨먼–포드는 음수 간선을 무방향 트리로 한정하지 않으며 방향 그래프의 음수 간선도 처리할 수 있다. 다만 무방향 음수 간선을 양방향으로 반복해서 지날 수 있다면 음수 사이클 때문에 유한한 최단 거리가 사라질 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "도달 가능한 음수 사이클이 있어도 항상 유한한 최단 거리가 정의되는 그래프",
+        "displayOrder": 1,
+        "rationaleMarkdown": "시작 정점에서 도달 가능한 음수 사이클을 반복하면 경로 비용을 계속 낮출 수 있어 유한한 최단 거리가 정의되지 않는다. 벨먼–포드는 이를 감지할 수 있지만 유한한 값으로 만들지는 못한다."
+      },
+      {
+        "key": "C",
+        "content": "음수 간선이 하나라도 있으면 처리할 수 없는 그래프",
+        "displayOrder": 2,
+        "rationaleMarkdown": "벨먼–포드 알고리즘은 모든 간선의 완화를 여러 번 반복해 음수 간선의 효과도 전파할 수 있다. 음수 간선이 있다는 사실만으로 실행할 수 없는 것은 아니다."
+      },
+      {
+        "key": "D",
+        "content": "음수 간선이 있지만 유한한 최단 거리가 존재할 수 있는 그래프",
+        "displayOrder": 3,
+        "rationaleMarkdown": "벨먼–포드 알고리즘은 음수 간선이 포함되어도 시작 정점에서 유한한 최단 거리가 정의되는 경우를 처리한다. 시작 정점에서 도달 가능한 음수 사이클은 별도로 확인해야 한다."
+      }
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "벨먼–포드 알고리즘은 간선 완화를 반복해 음수 간선의 영향도 뒤쪽 정점까지 전파할 수 있다. 다만 시작 정점에서 도달 가능한 음수 사이클이 있으면 유한한 최단 거리가 정의되지 않을 수 있다."
@@ -112,8 +191,13 @@
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.bellman-ford"],
-    "acceptedAnswers": ["V-1", "V - 1"],
+    "conceptKeys": [
+      "dsa.core.graph-path.bellman-ford"
+    ],
+    "acceptedAnswers": [
+      "V-1",
+      "V - 1"
+    ],
     "explanationMarkdown": "정점을 반복하지 않는 경로는 V개 정점을 최대 한 번씩 지나므로 인접 정점을 잇는 간선은 최대 V-1개다. 이 때문에 모든 간선을 V-1번 완화하면 단순 최단 경로의 거리 정보가 끝까지 전파될 수 있다."
   },
   {
@@ -123,8 +207,14 @@
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.bellman-ford"],
-    "acceptedAnswers": ["시작 정점에서 도달 가능한 음수 사이클의 영향이 있다", "도달 가능한 음수 사이클", "reachable negative cycle"],
+    "conceptKeys": [
+      "dsa.core.graph-path.bellman-ford"
+    ],
+    "acceptedAnswers": [
+      "시작 정점에서 도달 가능한 음수 사이클의 영향이 있다",
+      "도달 가능한 음수 사이클",
+      "reachable negative cycle"
+    ],
     "explanationMarkdown": "V-1번이면 사이클을 반복하지 않는 모든 단순 경로의 거리가 전파되어야 한다. 그 뒤에도 값이 줄어든다면 시작 정점에서 도달 가능한 음수 사이클을 반복해 비용을 더 낮출 수 있다는 뜻이다."
   },
   {
@@ -134,7 +224,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.bellman-ford"],
+    "conceptKeys": [
+      "dsa.core.graph-path.bellman-ford"
+    ],
     "modelAnswer": "시작 정점에서 도달할 수 없는 사이클은 해당 시작 정점의 최단 경로에 영향을 주지 않는다. 유한한 `dist` 값을 가진 도달 가능한 정점에서 시작되는 간선만 완화와 음수 사이클 판정에 영향을 준다.",
     "explanationMarkdown": "단일 시작점 최단 경로 문제에서는 시작 정점에서 실제로 도달할 수 있는 그래프 부분만 결과에 영향을 준다."
   },
@@ -145,12 +237,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.floyd-warshall"],
+    "conceptKeys": [
+      "dsa.core.graph-path.floyd-warshall"
+    ],
     "choices": [
-      {"key": "A", "content": "모든 정점 쌍의 최단 거리", "displayOrder": 0, "rationaleMarkdown": "플로이드–워셜 알고리즘은 중간 정점으로 사용할 수 있는 정점 집합을 하나씩 넓히면서 모든 정점 쌍의 거리를 갱신한다."},
-      {"key": "B", "content": "시작 정점 하나에서 각 정점까지의 최단 거리만", "displayOrder": 1, "rationaleMarkdown": "시작 정점 하나에서 모든 정점으로의 거리만 구하는 것은 단일 시작점 최단 경로 문제다. 플로이드–워셜은 모든 정점 쌍을 대상으로 한다."},
-      {"key": "C", "content": "모든 정점 쌍의 도달 가능 여부만 계산하고 거리는 계산하지 않는다", "displayOrder": 2, "rationaleMarkdown": "플로이드–워셜의 기본 거리 행렬은 단순한 도달 여부가 아니라 경로 가중치의 최솟값을 저장한다."},
-      {"key": "D", "content": "전체 그래프를 연결하는 MST의 총 가중치만", "displayOrder": 3, "rationaleMarkdown": "최소 신장 트리는 전체 정점을 연결하는 간선 집합의 총 가중치를 최소화한다. 플로이드–워셜은 각 정점 쌍 사이의 최단 거리를 계산하므로 목적이 다르다."}
+      {
+        "key": "A",
+        "content": "모든 정점 쌍의 최단 거리",
+        "displayOrder": 0,
+        "rationaleMarkdown": "플로이드–워셜 알고리즘은 중간 정점으로 사용할 수 있는 정점 집합을 하나씩 넓히면서 모든 정점 쌍의 거리를 갱신한다."
+      },
+      {
+        "key": "B",
+        "content": "시작 정점 하나에서 각 정점까지의 최단 거리만",
+        "displayOrder": 1,
+        "rationaleMarkdown": "시작 정점 하나에서 모든 정점으로의 거리만 구하는 것은 단일 시작점 최단 경로 문제다. 플로이드–워셜은 모든 정점 쌍을 대상으로 한다."
+      },
+      {
+        "key": "C",
+        "content": "모든 정점 쌍의 도달 가능 여부만 계산하고 거리는 계산하지 않는다",
+        "displayOrder": 2,
+        "rationaleMarkdown": "플로이드–워셜의 기본 거리 행렬은 단순한 도달 여부가 아니라 경로 가중치의 최솟값을 저장한다."
+      },
+      {
+        "key": "D",
+        "content": "전체 그래프를 연결하는 MST의 총 가중치만",
+        "displayOrder": 3,
+        "rationaleMarkdown": "최소 신장 트리는 전체 정점을 연결하는 간선 집합의 총 가중치를 최소화한다. 플로이드–워셜은 각 정점 쌍 사이의 최단 거리를 계산하므로 목적이 다르다."
+      }
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "플로이드–워셜 알고리즘은 중간 정점으로 허용할 정점을 하나씩 늘리면서 모든 정점 쌍의 최단 거리를 갱신한다."
@@ -162,8 +276,13 @@
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.floyd-warshall"],
-    "acceptedAnswers": ["6", "dist[A][C]=6"],
+    "conceptKeys": [
+      "dsa.core.graph-path.floyd-warshall"
+    ],
+    "acceptedAnswers": [
+      "6",
+      "dist[A][C]=6"
+    ],
     "explanationMarkdown": "B를 중간 정점으로 허용한 후보 비용은 `dist[A][B] + dist[B][C] = 4+2=6`이다. 기존 직접 경로 비용 10보다 작으므로 `dist[A][C]`가 6으로 갱신된다."
   },
   {
@@ -173,7 +292,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.floyd-warshall"],
+    "conceptKeys": [
+      "dsa.core.graph-path.floyd-warshall"
+    ],
     "modelAnswer": "v에서 출발해 다시 v로 돌아오는 음수 사이클이 존재한다는 신호다. 그 사이클에 도달한 뒤 목적지로 갈 수 있는 정점 쌍은 경로 비용을 계속 낮출 수 있으므로 유한한 최단 거리가 정의되지 않을 수 있다.",
     "explanationMarkdown": "`dist[v][v] < 0`은 v에서 시작해 음수 비용으로 다시 v에 돌아올 수 있음을 뜻한다. 영향을 받는 정점 쌍에서는 거리 행렬의 값을 정상적인 유한 최단 거리로 그대로 해석하면 안 된다."
   },
@@ -184,12 +305,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.union-find"],
+    "conceptKeys": [
+      "dsa.core.graph-path.union-find"
+    ],
     "choices": [
-      {"key": "A", "content": "x가 속한 집합의 원소 수", "displayOrder": 0, "rationaleMarkdown": "`find`는 부모 포인터를 따라 연결 요소의 대표를 찾는다. 집합 크기는 구현에서 별도로 관리할 수 있지만 루트 자체가 반드시 원소 수를 나타내지는 않는다."},
-      {"key": "B", "content": "x가 속한 서로소 집합의 대표 루트", "displayOrder": 1, "rationaleMarkdown": "Union-Find는 서로소 집합을 부모 포인터로 만든 포리스트로 표현한다. x에서 부모를 따라가면 x가 속한 집합을 나타내는 대표 루트에 도달한다."},
-      {"key": "C", "content": "x의 부모를 한 단계만 따라간 정점", "displayOrder": 2, "rationaleMarkdown": "직접 부모도 다시 부모를 가질 수 있다. `find`는 대표 루트에 도달할 때까지 부모 관계를 따라가며 흔히 경로 압축도 수행한다."},
-      {"key": "D", "content": "x와 연결된 원본 그래프의 간선 목록", "displayOrder": 3, "rationaleMarkdown": "Union-Find는 연결 요소 소속을 추적할 뿐 원래 그래프의 간선 목록이나 정점 사이 실제 경로를 저장하지 않는다."}
+      {
+        "key": "A",
+        "content": "x가 속한 집합의 원소 수",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`find`는 부모 포인터를 따라 연결 요소의 대표를 찾는다. 집합 크기는 구현에서 별도로 관리할 수 있지만 루트 자체가 반드시 원소 수를 나타내지는 않는다."
+      },
+      {
+        "key": "B",
+        "content": "x가 속한 서로소 집합의 대표 루트",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Union-Find는 서로소 집합을 부모 포인터로 만든 포리스트로 표현한다. x에서 부모를 따라가면 x가 속한 집합을 나타내는 대표 루트에 도달한다."
+      },
+      {
+        "key": "C",
+        "content": "x의 부모를 한 단계만 따라간 정점",
+        "displayOrder": 2,
+        "rationaleMarkdown": "직접 부모도 다시 부모를 가질 수 있다. `find`는 대표 루트에 도달할 때까지 부모 관계를 따라가며 흔히 경로 압축도 수행한다."
+      },
+      {
+        "key": "D",
+        "content": "x와 연결된 원본 그래프의 간선 목록",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Union-Find는 연결 요소 소속을 추적할 뿐 원래 그래프의 간선 목록이나 정점 사이 실제 경로를 저장하지 않는다."
+      }
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "`find(x)`는 부모 포인터를 따라 x가 속한 서로소 집합의 대표 루트를 반환한다. 원본 그래프의 실제 경로나 이전 정점을 반환하는 연산은 아니다."
@@ -201,8 +344,14 @@
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.union-find"],
-    "acceptedAnswers": ["같다", "find(A)==find(C)", "같은 대표를 가진다"],
+    "conceptKeys": [
+      "dsa.core.graph-path.union-find"
+    ],
+    "acceptedAnswers": [
+      "같다",
+      "find(A)==find(C)",
+      "같은 대표를 가진다"
+    ],
     "explanationMarkdown": "첫 번째 `union`으로 A와 B가 같은 집합이 되고 두 번째 `union`이 그 집합과 C를 합친다. 실제 대표 루트가 어떤 정점이든 A와 C의 `find` 결과는 같아야 한다."
   },
   {
@@ -212,7 +361,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.union-find"],
+    "conceptKeys": [
+      "dsa.core.graph-path.union-find"
+    ],
     "modelAnswer": "u와 v는 이미 선택한 간선들로 같은 연결 요소에 속해 있어 둘 사이에 경로가 존재한다. 이 상태에서 새 간선을 추가하면 사이클이 생기므로 신장 트리의 사이클 없는 조건을 깨뜨린다.",
     "explanationMarkdown": "같은 연결 요소 안의 두 정점을 잇는 간선을 추가하면 기존 경로와 새 간선이 함께 사이클을 만든다."
   },
@@ -223,7 +374,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.union-find"],
+    "conceptKeys": [
+      "dsa.core.graph-path.union-find"
+    ],
     "modelAnswer": "Union-Find의 부모 포인터는 원본 그래프의 간선 경로가 아니라 집합의 대표를 찾기 위한 내부 구조이며 경로 압축으로 계속 바뀔 수 있다. 실제 경로가 필요하면 원본 그래프 간선과 별도의 탐색·이전 정점 정보가 필요하다.",
     "explanationMarkdown": "Union-Find의 부모 관계는 연결 여부를 빠르게 판정하기 위한 내부 표현이지 원본 그래프의 실제 경로가 아니다."
   },
@@ -234,12 +387,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.path-compression-union-rank"],
+    "conceptKeys": [
+      "dsa.core.graph-path.path-compression-union-rank"
+    ],
     "choices": [
-      {"key": "A", "content": "rank를 항상 0으로 만든다", "displayOrder": 0, "rationaleMarkdown": "경로 압축은 `find` 중 지나온 부모 포인터를 다시 연결한다. 랭크 값을 고정 값으로 바꾸지 않으며 랭크나 크기는 합치기 방향을 정하는 별도 휴리스틱으로 사용할 수 있다."},
-      {"key": "B", "content": "원본 그래프 간선을 삭제한다", "displayOrder": 1, "rationaleMarkdown": "Union-Find의 부모 포리스트는 보조 표현이지 원래 그래프가 아니다. 부모 연결을 짧게 바꿔도 그래프 간선은 삭제되거나 수정되지 않는다."},
-      {"key": "C", "content": "연결 요소를 다시 여러 개로 분리한다", "displayOrder": 2, "rationaleMarkdown": "경로 압축은 집합 표현을 바꿀 뿐 원소의 소속을 바꾸지 않는다. 표준 Union-Find는 경로 압축으로 집합을 분리하지 않는다."},
-      {"key": "D", "content": "find가 지나온 노드를 루트에 더 가깝게 연결해 이후 탐색 깊이를 줄인다", "displayOrder": 3, "rationaleMarkdown": "`find`를 수행할 때 지나간 노드가 대표 루트에 더 가깝게 가리키도록 바꾸면 이후 조회에서 따라가야 할 부모 포인터 수가 줄어든다. 연결 요소 소속은 그대로 유지된다."}
+      {
+        "key": "A",
+        "content": "rank를 항상 0으로 만든다",
+        "displayOrder": 0,
+        "rationaleMarkdown": "경로 압축은 `find` 중 지나온 부모 포인터를 다시 연결한다. 랭크 값을 고정 값으로 바꾸지 않으며 랭크나 크기는 합치기 방향을 정하는 별도 휴리스틱으로 사용할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "원본 그래프 간선을 삭제한다",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Union-Find의 부모 포리스트는 보조 표현이지 원래 그래프가 아니다. 부모 연결을 짧게 바꿔도 그래프 간선은 삭제되거나 수정되지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "연결 요소를 다시 여러 개로 분리한다",
+        "displayOrder": 2,
+        "rationaleMarkdown": "경로 압축은 집합 표현을 바꿀 뿐 원소의 소속을 바꾸지 않는다. 표준 Union-Find는 경로 압축으로 집합을 분리하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "find가 지나온 노드를 루트에 더 가깝게 연결해 이후 탐색 깊이를 줄인다",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`find`를 수행할 때 지나간 노드가 대표 루트에 더 가깝게 가리키도록 바꾸면 이후 조회에서 따라가야 할 부모 포인터 수가 줄어든다. 연결 요소 소속은 그대로 유지된다."
+      }
     ],
     "correctChoiceKey": "D",
     "explanationMarkdown": "경로 압축은 `find`가 지나간 노드를 대표 루트에 더 가깝게 연결해 이후 `find`에서 따라가야 할 부모 포인터 수를 줄인다. 집합 구성 자체는 바뀌지 않는다."
@@ -251,8 +426,14 @@
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.path-compression-union-rank"],
-    "acceptedAnswers": ["1 증가한다", "새 root의 rank가 하나 증가한다", "새 루트의 랭크가 1 증가한다"],
+    "conceptKeys": [
+      "dsa.core.graph-path.path-compression-union-rank"
+    ],
+    "acceptedAnswers": [
+      "1 증가한다",
+      "새 root의 rank가 하나 증가한다",
+      "새 루트의 랭크가 1 증가한다"
+    ],
     "explanationMarkdown": "같은 랭크의 트리 둘을 합치면 어느 루트를 아래에 두어도 새 트리의 높이가 한 단계 늘 수 있다. 그래서 선택한 새 루트의 랭크를 1 증가시킨다."
   },
   {
@@ -262,7 +443,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.path-compression-union-rank"],
+    "conceptKeys": [
+      "dsa.core.graph-path.path-compression-union-rank"
+    ],
     "modelAnswer": "경로 압축은 부모 포인터를 루트 쪽으로 직접 연결해 실제 트리 높이를 낮출 수 있지만 기존 랭크를 그때마다 실제 높이에 맞춰 다시 계산하지 않는다. 랭크는 합치기 방향을 정하기 위한 상한 성격의 보조 정보다.",
     "explanationMarkdown": "랭크는 경로 압축 후의 정확한 현재 높이라기보다 트리가 불필요하게 깊어지는 것을 막기 위한 합치기 휴리스틱의 보조 정보로 이해해야 한다."
   },
@@ -273,12 +456,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.minimum-spanning-tree"],
+    "conceptKeys": [
+      "dsa.core.graph-path.minimum-spanning-tree"
+    ],
     "choices": [
-      {"key": "A", "content": "MST는 방향 그래프에서만 정의된다", "displayOrder": 0, "rationaleMarkdown": "최소 신장 트리는 보통 연결된 무방향 가중치 그래프에 대해 정의한다. 방향 그래프에서는 다른 형태의 구조를 다뤄야 한다."},
-      {"key": "B", "content": "둘은 항상 같은 간선 집합을 만든다", "displayOrder": 1, "rationaleMarkdown": "MST는 선택한 트리 간선 전체의 가중치 합을 최소화하고 최단 경로는 시작 정점에서 각 목적지까지의 경로 비용을 최소화한다. 같은 그래프에서도 선택 간선이 서로 다를 수 있다."},
-      {"key": "C", "content": "MST는 전체 연결 간선의 총 가중치를 최소화하고 최단 경로는 시작 정점에서 목적지까지의 경로 비용을 최소화한다", "displayOrder": 2, "rationaleMarkdown": "MST는 모든 정점을 연결하면서 선택한 간선 전체의 가중치 합을 최소화한다. 단일 시작점 최단 경로는 한 시작 정점에서 각 목적지까지의 개별 경로 비용을 최소화한다."},
-      {"key": "D", "content": "최단 경로는 사이클 개수만 최소화한다", "displayOrder": 3, "rationaleMarkdown": "최단 경로 문제는 보통 간선 가중치 합으로 정의한 경로 비용을 최소화한다. 사이클의 개수 자체를 최소화하는 문제가 아니다."}
+      {
+        "key": "A",
+        "content": "MST는 방향 그래프에서만 정의된다",
+        "displayOrder": 0,
+        "rationaleMarkdown": "최소 신장 트리는 보통 연결된 무방향 가중치 그래프에 대해 정의한다. 방향 그래프에서는 다른 형태의 구조를 다뤄야 한다."
+      },
+      {
+        "key": "B",
+        "content": "둘은 항상 같은 간선 집합을 만든다",
+        "displayOrder": 1,
+        "rationaleMarkdown": "MST는 선택한 트리 간선 전체의 가중치 합을 최소화하고 최단 경로는 시작 정점에서 각 목적지까지의 경로 비용을 최소화한다. 같은 그래프에서도 선택 간선이 서로 다를 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "MST는 전체 연결 간선의 총 가중치를 최소화하고 최단 경로는 시작 정점에서 목적지까지의 경로 비용을 최소화한다",
+        "displayOrder": 2,
+        "rationaleMarkdown": "MST는 모든 정점을 연결하면서 선택한 간선 전체의 가중치 합을 최소화한다. 단일 시작점 최단 경로는 한 시작 정점에서 각 목적지까지의 개별 경로 비용을 최소화한다."
+      },
+      {
+        "key": "D",
+        "content": "최단 경로는 사이클 개수만 최소화한다",
+        "displayOrder": 3,
+        "rationaleMarkdown": "최단 경로 문제는 보통 간선 가중치 합으로 정의한 경로 비용을 최소화한다. 사이클의 개수 자체를 최소화하는 문제가 아니다."
+      }
     ],
     "correctChoiceKey": "C",
     "explanationMarkdown": "MST는 모든 정점을 연결하는 트리의 전체 간선 가중치 합을 최소화한다. 단일 시작점 최단 경로는 특정 시작 정점에서 각 목적지까지의 개별 경로 비용을 최소화하므로 목표가 다르다."
@@ -290,8 +495,14 @@
     "questionType": "SHORT_ANSWER",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.minimum-spanning-tree"],
-    "acceptedAnswers": ["7", "7개", "V-1"],
+    "conceptKeys": [
+      "dsa.core.graph-path.minimum-spanning-tree"
+    ],
+    "acceptedAnswers": [
+      "7",
+      "7개",
+      "V-1"
+    ],
     "explanationMarkdown": "트리는 연결되어 있으면서 사이클이 없기 때문에 V개 정점을 연결하는 간선이 정확히 V-1개다. 따라서 정점 8개의 신장 트리는 간선 7개를 가진다."
   },
   {
@@ -301,7 +512,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.minimum-spanning-tree"],
+    "conceptKeys": [
+      "dsa.core.graph-path.minimum-spanning-tree"
+    ],
     "modelAnswer": "MST는 사이클이 없는 최소 총비용 트리라 여분 경로를 목표로 하지 않는다. 장애 우회와 복원력이 필요하다면 최소 총비용 외에 추가 간선, 용량, 가용성 같은 제약을 별도로 설계해야 한다.",
     "explanationMarkdown": "최소 신장 트리는 연결 비용 최소화가 목표이지 장애가 발생했을 때 대체 경로를 제공하는 것이 목표는 아니다."
   },
@@ -312,7 +525,9 @@
     "questionType": "SCENARIO",
     "difficulty": "HARD",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.minimum-spanning-tree"],
+    "conceptKeys": [
+      "dsa.core.graph-path.minimum-spanning-tree"
+    ],
     "modelAnswer": "MST는 유일하지 않을 수 있어 서로 다른 간선 집합이 같은 최소 총 가중치를 가질 수 있다. 재현성이 별도 요구라면 간선 식별자처럼 안정적인 키를 동률 처리 기준으로 사용하되 MST의 정확성과 결과의 결정성을 구분해야 한다.",
     "explanationMarkdown": "최소 신장 트리의 정답이 하나뿐이라는 보장은 없다. 같은 최솟값을 만드는 여러 트리 중 어떤 것을 선택할지 별도 동률 처리 규칙으로 고정할 수 있다."
   },
@@ -323,12 +538,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.kruskal"],
+    "conceptKeys": [
+      "dsa.core.graph-path.kruskal"
+    ],
     "choices": [
-      {"key": "A", "content": "가중치가 가장 작으면 사이클이 생겨도 선택한다", "displayOrder": 0, "rationaleMarkdown": "Kruskal은 서로 다른 연결 요소를 잇는 간선을 가중치 오름차순으로 선택한다. 가장 가벼운 간선이어도 두 끝점이 이미 연결되어 있다면 사이클을 만들므로 건너뛴다."},
-      {"key": "B", "content": "사이클을 만들므로 건너뛴다", "displayOrder": 1, "rationaleMarkdown": "두 끝점이 같은 연결 요소라면 이미 선택한 간선들로 둘 사이에 경로가 존재한다. 후보 간선을 더하면 사이클이 생긴다."},
-      {"key": "C", "content": "사이클을 피하려고 두 끝점의 연결 요소를 분리한다", "displayOrder": 2, "rationaleMarkdown": "Union-Find는 연결 요소를 합치기 위한 구조이며 후보 간선을 넣기 위해 기존 연결 요소를 분리하지 않는다."},
-      {"key": "D", "content": "현재 간선을 건너뛴 뒤 남은 간선을 가중치 순서와 무관하게 임의로 선택하고 사이클 검사도 생략한다", "displayOrder": 3, "rationaleMarkdown": "이미 연결된 간선을 건너뛰는 것은 맞지만 이후에도 가중치 오름차순과 두 끝점의 연결 여부 확인을 유지해야 한다. 남은 간선을 임의로 고르면 최소 신장 트리를 보장할 수 없다."}
+      {
+        "key": "A",
+        "content": "가중치가 가장 작으면 사이클이 생겨도 선택한다",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Kruskal은 서로 다른 연결 요소를 잇는 간선을 가중치 오름차순으로 선택한다. 가장 가벼운 간선이어도 두 끝점이 이미 연결되어 있다면 사이클을 만들므로 건너뛴다."
+      },
+      {
+        "key": "B",
+        "content": "사이클을 만들므로 건너뛴다",
+        "displayOrder": 1,
+        "rationaleMarkdown": "두 끝점이 같은 연결 요소라면 이미 선택한 간선들로 둘 사이에 경로가 존재한다. 후보 간선을 더하면 사이클이 생긴다."
+      },
+      {
+        "key": "C",
+        "content": "사이클을 피하려고 두 끝점의 연결 요소를 분리한다",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Union-Find는 연결 요소를 합치기 위한 구조이며 후보 간선을 넣기 위해 기존 연결 요소를 분리하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "현재 간선을 건너뛴 뒤 남은 간선을 가중치 순서와 무관하게 임의로 선택하고 사이클 검사도 생략한다",
+        "displayOrder": 3,
+        "rationaleMarkdown": "이미 연결된 간선을 건너뛰는 것은 맞지만 이후에도 가중치 오름차순과 두 끝점의 연결 여부 확인을 유지해야 한다. 남은 간선을 임의로 고르면 최소 신장 트리를 보장할 수 없다."
+      }
     ],
     "correctChoiceKey": "B",
     "explanationMarkdown": "두 끝점이 이미 같은 연결 요소면 선택된 간선들만으로 둘 사이 경로가 존재한다. 그 간선을 추가하면 사이클이 생기므로 건너뛴다."
@@ -340,7 +577,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.kruskal"],
+    "conceptKeys": [
+      "dsa.core.graph-path.kruskal"
+    ],
     "explanationMarkdown": "가중치 순서로 A-B(1), B-C(2)를 선택하고 A-C(3)은 이미 같은 연결 요소를 잇기 때문에 건너뛴다. C-D(4)를 선택하면 신장 트리가 완성되어 총 가중치는 7이다.",
     "modelAnswer": "가중치 순서대로 A-B(1), B-C(2)를 선택하고 A-C(3)은 사이클을 만들므로 건너뛴다. C-D(4)를 선택하면 총 가중치 7의 신장 트리가 완성된다."
   },
@@ -351,7 +590,9 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.kruskal"],
+    "conceptKeys": [
+      "dsa.core.graph-path.kruskal"
+    ],
     "modelAnswer": "그래프가 연결되어 있지 않아 하나의 신장 트리를 만들 수 없다는 뜻이다. 입력 계약이 연결 그래프를 요구하면 오류이고, 비연결 그래프도 허용한다면 연결 요소별 최소 신장 포리스트 결과로 해석한다.",
     "explanationMarkdown": "신장 트리는 모든 정점을 하나의 연결 구조로 이어야 한다. V-1개보다 적은 간선으로 끝났다면 전체 그래프가 연결되지 않았는지 확인해야 한다."
   },
@@ -362,12 +603,34 @@
     "questionType": "MULTIPLE_CHOICE",
     "difficulty": "EASY",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.prim"],
+    "conceptKeys": [
+      "dsa.core.graph-path.prim"
+    ],
     "choices": [
-      {"key": "A", "content": "현재 트리 내부 정점과 아직 밖에 있는 정점을 잇는 간선", "displayOrder": 0, "rationaleMarkdown": "프런티어 간선은 현재 트리에 포함된 정점과 아직 포함되지 않은 정점 사이의 컷(cut)을 가로지른다. 이 간선을 추가하면 새 정점 하나를 트리에 연결할 수 있다."},
-      {"key": "B", "content": "두 끝점이 모두 이미 트리 내부인 간선만", "displayOrder": 1, "rationaleMarkdown": "두 끝점이 모두 트리 안에 있으면 새 정점이 추가되지 않고 사이클만 생긴다. 트리를 넓히는 후보가 아니다."},
-      {"key": "C", "content": "현재 트리와 닿지 않아도 가중치가 가장 작은 모든 간선", "displayOrder": 2, "rationaleMarkdown": "현재 트리와 닿지 않는 간선은 다음 단계에서 트리를 확장할 수 없다. Prim은 현재 트리와 바깥 정점을 잇는 간선들 중에서 선택한다."},
-      {"key": "D", "content": "시작 정점에서의 최단 경로에 포함된 간선만", "displayOrder": 3, "rationaleMarkdown": "Prim은 시작 정점에서의 경로가 아니라 신장 트리 전체의 가중치 합을 최소화한다. MST가 시작 정점의 최단 경로 간선만 포함해야 하는 것은 아니다."}
+      {
+        "key": "A",
+        "content": "현재 트리 내부 정점과 아직 밖에 있는 정점을 잇는 간선",
+        "displayOrder": 0,
+        "rationaleMarkdown": "프런티어 간선은 현재 트리에 포함된 정점과 아직 포함되지 않은 정점 사이의 컷(cut)을 가로지른다. 이 간선을 추가하면 새 정점 하나를 트리에 연결할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "두 끝점이 모두 이미 트리 내부인 간선만",
+        "displayOrder": 1,
+        "rationaleMarkdown": "두 끝점이 모두 트리 안에 있으면 새 정점이 추가되지 않고 사이클만 생긴다. 트리를 넓히는 후보가 아니다."
+      },
+      {
+        "key": "C",
+        "content": "현재 트리와 닿지 않아도 가중치가 가장 작은 모든 간선",
+        "displayOrder": 2,
+        "rationaleMarkdown": "현재 트리와 닿지 않는 간선은 다음 단계에서 트리를 확장할 수 없다. Prim은 현재 트리와 바깥 정점을 잇는 간선들 중에서 선택한다."
+      },
+      {
+        "key": "D",
+        "content": "시작 정점에서의 최단 경로에 포함된 간선만",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Prim은 시작 정점에서의 경로가 아니라 신장 트리 전체의 가중치 합을 최소화한다. MST가 시작 정점의 최단 경로 간선만 포함해야 하는 것은 아니다."
+      }
     ],
     "correctChoiceKey": "A",
     "explanationMarkdown": "Prim의 프런티어는 현재 트리 내부 정점과 아직 포함되지 않은 정점을 잇는 간선들이다. 트리 내부끼리 잇는 간선은 새 정점을 추가하지 못하고 사이클만 만들 수 있다."
@@ -379,7 +642,9 @@
     "questionType": "DESCRIPTIVE",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.prim"],
+    "conceptKeys": [
+      "dsa.core.graph-path.prim"
+    ],
     "explanationMarkdown": "A에서 시작하면 A-B(1), 이어 B-C(2), C-D(3)을 선택해 모든 정점을 연결하므로 총 가중치는 6이다.",
     "modelAnswer": "A에서 시작하면 A-B(1), B-C(2), C-D(3) 순으로 선택할 수 있고 총 가중치는 6이다."
   },
@@ -390,8 +655,205 @@
     "questionType": "SCENARIO",
     "difficulty": "MEDIUM",
     "status": "PUBLISHED",
-    "conceptKeys": ["dsa.core.graph-path.prim"],
+    "conceptKeys": [
+      "dsa.core.graph-path.prim"
+    ],
     "modelAnswer": "새 정점을 트리에 추가하지 못하고 기존 트리 내부에 사이클만 만들 수 있는 오래된 프런티어 간선이다. 건너뛰고 현재 트리와 바깥 정점을 잇는 간선만 선택해야 한다.",
     "explanationMarkdown": "Prim은 현재 트리와 바깥 정점 사이를 잇는 간선으로 트리를 한 정점씩 확장한다. 두 끝점이 이미 트리 안에 있다면 새 정점을 추가하지 못하고 사이클만 만들 수 있으므로 건너뛴다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph-path.floyd-warshall.q5",
+    "promptMarkdown": "플로이드–워셜(Floyd–Warshall) 알고리즘에서 3중 루프의 경유 정점 `k`를 **반드시 가장 바깥쪽 루프**에 두어야 하는 이유는?\n\n```java\nfor (int k = 0; k < V; k++)\n    for (int i = 0; i < V; i++)\n        for (int j = 0; j < V; j++)\n            dist[i][j] = Math.min(dist[i][j], dist[i][k] + dist[k][j]);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.graph-path.floyd-warshall"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`i, j, k` 어느 순서로 돌려도 수학적으로 항상 동일한 최단 거리 행렬이 나온다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`i-j-k` 순서는 DP 단계 의존성을 깨뜨려 2개 이상 경유하는 경로에서 오답을 낸다."
+      },
+      {
+        "key": "B",
+        "content": "`k`를 바깥에 두면 시간 복잡도가 `O(V^3)`에서 `O(V^2)`로 줄어들기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "루프 순서와 무관하게 시간 복잡도는 `O(V^3)`이며, `k`가 바깥인 이유는 DP 정확성 때문이다."
+      },
+      {
+        "key": "C",
+        "content": "플로이드–워셜은 음수 간선이 하나라도 있으면 절대 사용할 수 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "음수 사이클만 없다면 음수 가중치 간선도 정상 처리하며, 종료 후 `dist[i][i] < 0`으로 음수 사이클 존재까지 탐지할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "플로이드–워셜은 `dist(k)[i][j]`('0..k 정점만 중간 경유로 허용한 i→j 최단 거리')를 단계적으로 확장하는 DP이므로, `k`가 바깥에 있어야 `k-1`단계까지 모든 쌍이 확정된 뒤 `k` 경유를 반영할 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`k`를 안쪽 루프에 넣으면 `dist[i][k]`와 `dist[k][j]`가 아직 중간 정점 `0..k-1`을 모두 반영하지 못한 상태에서 갱신되어 일부 최단 경로를 놓친다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Floyd–Warshall은 경유 정점 집합 `{0..k}`를 점진 확장하는 DP이므로 `k`가 최외곽 루프여야 하며, 모든 쌍 최단 경로와 `dist[i][i] < 0` 음수 사이클 검출에 쓰인다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph-path.kruskal.q5",
+    "promptMarkdown": "크루스칼(Kruskal) 알고리즘으로 최소 신장 트리(MST)를 구할 때, 간선을 가중치 오름차순으로 정렬한 뒤 Union-Find(Disjoint Set)를 사용하는 핵심 역할과 전체 시간 복잡도는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.graph-path.kruskal"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "크루스칼 알고리즘은 음수 가중치 간선이 있으면 최소 신장 트리를 구하지 못한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "MST(크루스칼·프림)는 모든 간선을 가중치 순으로 비교하므로 음수 가중치 간선이 있어도 정확히 동작한다."
+      },
+      {
+        "key": "B",
+        "content": "간선 `(u, v)` 추가 시 `find(u) == find(v)`인지 거의 `O(1)`(`O(α(V))`)에 판별해 사이클을 형성하는 간선을 건너뛰고, 전체 시간 복잡도는 간선 정렬이 지배하는 `O(E log E)`이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Union-Find 덕분에 사이클 판별 비용이 사실상 상수 시간이 되어, 희소 그래프(`E`가 작은 그래프)에서 크루스칼이 매우 빠르고 구현도 간결하다."
+      },
+      {
+        "key": "C",
+        "content": "Union-Find는 간선들을 가중치 순으로 정렬해 주는 정렬 알고리즘이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "간선 정렬은 일반 정렬(`O(E log E)`)이 수행하고, Union-Find는 연결 요소 병합 및 사이클 판별을 담당한다."
+      },
+      {
+        "key": "D",
+        "content": "크루스칼 알고리즘은 방향 그래프의 최단 경로를 구하는 알고리즘이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "크루스칼은 무방향 연결 가중치 그래프의 최소 신장 트리(MST)를 구한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Kruskal은 간선 정렬(`O(E log E)`) + Union-Find 사이클 판별(`O(E α(V))`)로 동작하며, 간선 수가 적은 희소 그래프의 MST에 매우 유리하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph-path.path-compression-union-rank.q5",
+    "promptMarkdown": "Union-Find(Disjoint Set)에서 경로 압축(Path Compression)과 랭크/크기 기반 합치기(Union by Rank/Size)를 **함께** 적용했을 때 `M`번의 `find/union` 연산의 분할 상환 시간 복잡도는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.graph-path.path-compression-union-rank"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`O(M N)` — 트리가 항상 일렬로 길어지므로 개선되지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "최적화가 없을 때 최악이 `O(MN)`이며, 두 최적화를 적용하면 `O(M α(N))`로 줄어든다."
+      },
+      {
+        "key": "B",
+        "content": "`O(M log^2 N)` — 매번 전체 트리를 재정렬해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "전체 재정렬 없이 `find` 경로의 부모 포인터를 루트로 직접 연결하고 낮은 트리를 높은 트리에 붙여 `O(M α(N))`을 달성한다."
+      },
+      {
+        "key": "C",
+        "content": "경로 압축을 쓰면 `union`으로 합친 집합을 `O(1)`에 다시 분리(split)할 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "경로 압축은 기존 트리 구조를 평탄화하므로 일반 Union-Find는 원소 삭제/분리를 지원하지 않는다(롤백이 필요하면 경로 압축 없이 Union by Rank만 쓴다)."
+      },
+      {
+        "key": "D",
+        "content": "`O(M α(N))` — 역 아커만 함수 `α(N)`은 우주 원자 수 규모 입력에서도 5 이하이므로 사실상 연산당 상수 시간(`O(1)`)이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "최적화 없는 Union-Find는 편향 트리가 되어 `find` 1회가 `O(N)`까지 느려지지만, 경로 압축과 랭크/크기 합치기를 함께 쓰면 연산당 `O(α(N))`로 극도로 빨라진다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Path Compression + Union by Rank/Size는 Union-Find를 연산당 거의 `O(1)`(`O(α(N))`)로 만든다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph-path.prim.q5",
+    "promptMarkdown": "프림(Prim) 알고리즘과 다익스트라(Dijkstra) 알고리즘은 둘 다 우선순위 큐를 쓰는 탐욕적 정점 확장 구조를 가진다. 두 알고리즘의 우선순위 큐 키(key) 값의 결정적 차이는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.graph-path.prim"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "프림은 현재 MST 집합과 새 정점 `v`를 잇는 **단일 간선 가중치 `w(u, v)`**가 최소인 정점을 고르고, 다익스트라는 **시작 정점 `s`부터 `v`까지의 누적 거리 `dist[u] + w(u, v)`**가 최소인 정점을 고른다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "코드 골격은 거의 같지만 프림은 트리 총 가중치 최소화(단일 연결 간선 비용), 다익스트라는 시작점 기준 누적 최단 경로 최소화라는 목적 차이가 키 정의에 그대로 드러난다."
+      },
+      {
+        "key": "B",
+        "content": "프림은 방향 그래프 전용이고 다익스트라는 무방향 그래프 전용이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "프림은 무방향 그래프의 MST를 구하고, 다익스트라는 방향·무방향 그래프 모두에서 비음수 최단 경로를 구한다."
+      },
+      {
+        "key": "C",
+        "content": "다익스트라는 음수 간선에서도 항상 정확하고 프림은 음수 간선에서 실패한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "정반대다. 프림은 음수 가중치 간선이 있어도 MST를 정확히 구하지만, 다익스트라는 음수 간선에서 이미 확정한 최단 거리가 나중에 더 짧아질 수 있어 실패한다."
+      },
+      {
+        "key": "D",
+        "content": "프림은 항상 다익스트라와 정확히 같은 트리(SPT = MST)를 생성한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "최단 경로 트리(SPT)와 최소 신장 트리(MST)는 일반적으로 서로 다른 트리다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Prim(단일 간선 `w(u, v)`)은 MST를, Dijkstra(누적 거리 `dist[u] + w(u, v)`)는 단일 출발점 최단 경로 트리를 구한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "dsa.core.graph-path.unweighted-shortest-path.q5",
+    "promptMarkdown": "모든 간선 가중치가 `1`인 미로 격자에서 출발점→도착점 최단 거리를 구할 때, BFS에서 정점을 큐에 **넣는 시점(enqueue)**에 `visited = true`를 표시해야 하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "dsa.core.graph-path.unweighted-shortest-path"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "비가중치 그래프에서는 BFS보다 DFS가 항상 더 빨리 최단 거리를 찾는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "DFS는 처음 도달한 경로가 최단 경로임을 보장하지 못하므로 모든 경로를 탐색해야 해 최악 지수 시간이 걸린다."
+      },
+      {
+        "key": "B",
+        "content": "BFS는 간선 가중치가 `1`과 `5`처럼 서로 다를 때도 큐만으로 항상 최단 거리를 보장한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "가중치가 다른 그래프에서는 간선 수가 적은 경로가 더 무거울 수 있으므로 0-1 BFS나 다익스트라를 써야 한다."
+      },
+      {
+        "key": "C",
+        "content": "큐에서 꺼내는 시점(dequeue)에 방문 표시하면 같은 레벨의 여러 인접 정점이 아직 꺼내지지 않은 동일 정점을 큐에 중복 삽입해 시간·메모리가 기하급수적으로 폭발할 수 있기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "격자 그래프에서 `(r+1, c+1)`은 `(r+1, c)`와 `(r, c+1)` 양쪽에서 도달 가능하다. enqueue 시점에 `visited`/`dist`를 즉시 기록해야 각 정점이 큐에 최대 1번만 들어간다."
+      },
+      {
+        "key": "D",
+        "content": "dequeue 시점에 방문 표시하면 BFS가 DFS로 바뀌기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "큐의 FIFO 순서 자체는 유지되지만 동일 정점이 중복으로 수백만 번 큐에 들어가 메모리/시간 초과가 발생한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "비가중치 최단 경로 BFS에서는 `enqueue` 시점에 즉시 `visited`/`dist`를 기록해 정점당 최대 1회 삽입(`O(V + E)`)을 보장해야 한다."
   }
 ]

@@ -1,8 +1,331 @@
 [
-  {"kind":"question","contentKey":"database.core.query-patterns.offset-pagination.q1","promptMarkdown":"큰 `OFFSET`에서 비용이 커지는 직접 원인을 한 구절로 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["database.core.query-patterns.offset-pagination"],"acceptedAnswers":["앞의 많은 row를 찾아 건너뛴 뒤 원하는 20개를 반환해야 할 수 있기 때문이다","앞의 많은 행을 찾아 건너뛴 뒤 원하는 20개를 반환해야 할 수 있기 때문이다","OFFSET이 커질수록 버릴 row를 처리하는 비용이 커질 수 있기 때문이다","OFFSET이 커질수록 버릴 행을 처리하는 비용이 커질 수 있기 때문이다","건너뛸 row 처리 비용","건너뛸 행 처리 비용","앞의 row를 처리한 뒤 버려야 하기 때문이다","앞의 행을 처리한 뒤 버려야 하기 때문이다","skip할 row 처리 비용"],"explanationMarkdown":"OFFSET은 결과의 앞에서 500,000개를 건너뛰기 위해 그 위치까지 행을 찾아 처리해야 할 수 있다. 실제 건너뛰기 비용과 실행 계획은 인덱스·정렬·데이터 분포에 따라 달라지므로 `EXPLAIN`으로 확인하고, 연속 탐색이 맞는 화면이면 Keyset 방식도 비교한다."},
-  {"kind":"question","contentKey":"database.core.query-patterns.offset-pagination.q2","promptMarkdown":"페이지 1 조회 후 앞쪽에 새 행이 여러 개 삽입되면 OFFSET 기반 페이지 2에서 중복·누락이 생길 수 있는 이유는?","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.query-patterns.offset-pagination"],"modelAnswer":"OFFSET은 현재 정렬 결과의 위치를 기준으로 하므로 앞쪽 INSERT/DELETE가 있으면 같은 숫자 OFFSET이 가리키는 행 위치가 바뀐다. 이전에 본 행이 밀려 다시 나오거나 일부를 건너뛸 수 있다.","explanationMarkdown":"OFFSET은 이전 페이지의 마지막 행 식별자가 아니라 그때의 결과 위치를 기억한다. 앞쪽 INSERT나 DELETE로 정렬 결과가 이동하면 같은 OFFSET이 다른 행을 가리켜 중복·누락이 생기므로, 안정적인 ORDER BY만으로 데이터 집합의 변화까지 고정할 수 없다는 경계를 알아야 한다."},
-  {"kind":"question","contentKey":"database.core.query-patterns.keyset-pagination.q1","promptMarkdown":"`ORDER BY created_at DESC, id DESC`에서 Keyset 커서에 `created_at`과 함께 넣어야 할 동률 해소 기준은?","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.query-patterns.keyset-pagination"],"acceptedAnswers":["id","id를 tie-breaker로 함께 저장한다","id를 동률 해소 기준으로 함께 저장한다","created_at과 함께 id를 cursor에 포함한다","created_at과 함께 id를 커서에 포함한다"],"explanationMarkdown":"created_at이 같은 행이 여러 개면 시각만으로는 1페이지에서 어느 행까지 소비했는지 표현할 수 없다. 따라서 커서에 id 동률 해소 기준까지 넣고 쿼리 조건과 `ORDER BY`가 같은 전체 정렬 계약을 사용해야 중복·누락을 줄일 수 있다."},
-  {"kind":"question","contentKey":"database.core.query-patterns.keyset-pagination.q2","promptMarkdown":"다음 페이지네이션 계약을 생각하자.\n\n- 정렬: `ORDER BY created_at DESC, id DESC`\n- 현재 커서: `created_at`만 저장\n- 다음 페이지 조건: `created_at < :cursorCreatedAt`\n\n질문: 이 조건만으로 충분하지 않을 수 있는 상황을 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.query-patterns.keyset-pagination"],"modelAnswer":"커서와 같은 created_at을 가진 행이 여러 개면 그중 id가 더 작은 행을 놓칠 수 있다. 보통 `(created_at < cursorCreatedAt) OR (created_at = cursorCreatedAt AND id < cursorId)`처럼 전체 정렬 키를 조건에 반영하고 동일한 ORDER BY를 유지한다.","explanationMarkdown":"커서와 같은 `created_at`을 가진 행이 아직 남아 있으면 `created_at < :cursorCreatedAt`만 사용했을 때 그 행들을 모두 건너뛴다. DESC 정렬의 전체 경계를 보존하려면 `created_at`이 더 작거나, 같은 시각이면 `id`가 더 작은 조건을 함께 두고 동일한 동률 해소 기준을 커서에 저장해야 한다."},
-  {"kind":"question","contentKey":"database.core.query-patterns.batch-n-plus-one.q1","promptMarkdown":"100개 주문 조회 후 회원을 주문마다 1번씩 조회한다. 각 회원 쿼리가 1ms라도 전체가 느려질 수 있는 이유를 DB 왕복 관점에서 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["database.core.query-patterns.batch-n-plus-one"],"modelAnswer":"101번의 네트워크·애플리케이션-DB 왕복, 연결 사용, SQL 문 실행 부가 비용이 누적된다. JOIN이나 ID 배치 조회로 쿼리 수를 줄일 수 있는지 데이터 모양을 보고 판단한다.","explanationMarkdown":"주문 목록 1번에 회원 조회 100번이 더해져 101회의 왕복과 SQL 문·연결 부가 비용이 요청 지연에 누적된다. 회원 정보를 JOIN이나 ID 배치 조회로 가져올 수 있는지는 결과 행 수와 중복을 확인하면서 판단하되, 단일 쿼리의 1ms만 보고 전체 비용을 추정하면 안 된다."},
-  {"kind":"question","contentKey":"database.core.query-patterns.batch-n-plus-one.q2","promptMarkdown":"주문 20개를 페이지로 조회하면서 각 주문의 항목 컬렉션을 fetch join해 한 SQL로 만들면 항상 더 좋은가?","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["database.core.query-patterns.batch-n-plus-one"],"modelAnswer":"아니다. 일대다 JOIN은 주문 행을 항목 수만큼 늘려 DB LIMIT/OFFSET과 부모 주문 20개라는 페이지 의미가 충돌할 수 있고 전송량도 커질 수 있다. 부모를 먼저 페이지네이션한 뒤 자식을 배치 조회하거나 DTO 쿼리 등 대안을 검토한다.","explanationMarkdown":"일대다 fetch join은 항목 수만큼 부모 행을 늘리므로 SQL 단계의 `LIMIT/OFFSET`이 부모 주문 20개가 아니라 JOIN 결과 20행을 자를 수 있고 전송량도 커진다. 부모 페이지를 먼저 확정한 뒤 자식을 배치 조회하거나 별도 DTO 쿼리를 비교해 쿼리 수뿐 아니라 결과 행 수와 페이지네이션의 정확성을 함께 판단해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.offset-pagination.q1",
+    "promptMarkdown": "큰 `OFFSET`에서 비용이 커지는 직접 원인을 한 구절로 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.offset-pagination"
+    ],
+    "acceptedAnswers": [
+      "앞의 많은 row를 찾아 건너뛴 뒤 원하는 20개를 반환해야 할 수 있기 때문이다",
+      "앞의 많은 행을 찾아 건너뛴 뒤 원하는 20개를 반환해야 할 수 있기 때문이다",
+      "OFFSET이 커질수록 버릴 row를 처리하는 비용이 커질 수 있기 때문이다",
+      "OFFSET이 커질수록 버릴 행을 처리하는 비용이 커질 수 있기 때문이다",
+      "건너뛸 row 처리 비용",
+      "건너뛸 행 처리 비용",
+      "앞의 row를 처리한 뒤 버려야 하기 때문이다",
+      "앞의 행을 처리한 뒤 버려야 하기 때문이다",
+      "skip할 row 처리 비용"
+    ],
+    "explanationMarkdown": "OFFSET은 결과의 앞에서 500,000개를 건너뛰기 위해 그 위치까지 행을 찾아 처리해야 할 수 있다. 실제 건너뛰기 비용과 실행 계획은 인덱스·정렬·데이터 분포에 따라 달라지므로 `EXPLAIN`으로 확인하고, 연속 탐색이 맞는 화면이면 Keyset 방식도 비교한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.offset-pagination.q2",
+    "promptMarkdown": "페이지 1 조회 후 앞쪽에 새 행이 여러 개 삽입되면 OFFSET 기반 페이지 2에서 중복·누락이 생길 수 있는 이유는?",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.offset-pagination"
+    ],
+    "modelAnswer": "OFFSET은 현재 정렬 결과의 위치를 기준으로 하므로 앞쪽 INSERT/DELETE가 있으면 같은 숫자 OFFSET이 가리키는 행 위치가 바뀐다. 이전에 본 행이 밀려 다시 나오거나 일부를 건너뛸 수 있다.",
+    "explanationMarkdown": "OFFSET은 이전 페이지의 마지막 행 식별자가 아니라 그때의 결과 위치를 기억한다. 앞쪽 INSERT나 DELETE로 정렬 결과가 이동하면 같은 OFFSET이 다른 행을 가리켜 중복·누락이 생기므로, 안정적인 ORDER BY만으로 데이터 집합의 변화까지 고정할 수 없다는 경계를 알아야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.keyset-pagination.q1",
+    "promptMarkdown": "`ORDER BY created_at DESC, id DESC`에서 Keyset 커서에 `created_at`과 함께 넣어야 할 동률 해소 기준은?",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.keyset-pagination"
+    ],
+    "acceptedAnswers": [
+      "id",
+      "id를 tie-breaker로 함께 저장한다",
+      "id를 동률 해소 기준으로 함께 저장한다",
+      "created_at과 함께 id를 cursor에 포함한다",
+      "created_at과 함께 id를 커서에 포함한다"
+    ],
+    "explanationMarkdown": "created_at이 같은 행이 여러 개면 시각만으로는 1페이지에서 어느 행까지 소비했는지 표현할 수 없다. 따라서 커서에 id 동률 해소 기준까지 넣고 쿼리 조건과 `ORDER BY`가 같은 전체 정렬 계약을 사용해야 중복·누락을 줄일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.keyset-pagination.q2",
+    "promptMarkdown": "다음 페이지네이션 계약을 생각하자.\n\n- 정렬: `ORDER BY created_at DESC, id DESC`\n- 현재 커서: `created_at`만 저장\n- 다음 페이지 조건: `created_at < :cursorCreatedAt`\n\n질문: 이 조건만으로 충분하지 않을 수 있는 상황을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.keyset-pagination"
+    ],
+    "modelAnswer": "커서와 같은 created_at을 가진 행이 여러 개면 그중 id가 더 작은 행을 놓칠 수 있다. 보통 `(created_at < cursorCreatedAt) OR (created_at = cursorCreatedAt AND id < cursorId)`처럼 전체 정렬 키를 조건에 반영하고 동일한 ORDER BY를 유지한다.",
+    "explanationMarkdown": "커서와 같은 `created_at`을 가진 행이 아직 남아 있으면 `created_at < :cursorCreatedAt`만 사용했을 때 그 행들을 모두 건너뛴다. DESC 정렬의 전체 경계를 보존하려면 `created_at`이 더 작거나, 같은 시각이면 `id`가 더 작은 조건을 함께 두고 동일한 동률 해소 기준을 커서에 저장해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.batch-n-plus-one.q1",
+    "promptMarkdown": "100개 주문 조회 후 회원을 주문마다 1번씩 조회한다. 각 회원 쿼리가 1ms라도 전체가 느려질 수 있는 이유를 DB 왕복 관점에서 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.batch-n-plus-one"
+    ],
+    "modelAnswer": "101번의 네트워크·애플리케이션-DB 왕복, 연결 사용, SQL 문 실행 부가 비용이 누적된다. JOIN이나 ID 배치 조회로 쿼리 수를 줄일 수 있는지 데이터 모양을 보고 판단한다.",
+    "explanationMarkdown": "주문 목록 1번에 회원 조회 100번이 더해져 101회의 왕복과 SQL 문·연결 부가 비용이 요청 지연에 누적된다. 회원 정보를 JOIN이나 ID 배치 조회로 가져올 수 있는지는 결과 행 수와 중복을 확인하면서 판단하되, 단일 쿼리의 1ms만 보고 전체 비용을 추정하면 안 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.batch-n-plus-one.q2",
+    "promptMarkdown": "주문 20개를 페이지로 조회하면서 각 주문의 항목 컬렉션을 fetch join해 한 SQL로 만들면 항상 더 좋은가?",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.batch-n-plus-one"
+    ],
+    "modelAnswer": "아니다. 일대다 JOIN은 주문 행을 항목 수만큼 늘려 DB LIMIT/OFFSET과 부모 주문 20개라는 페이지 의미가 충돌할 수 있고 전송량도 커질 수 있다. 부모를 먼저 페이지네이션한 뒤 자식을 배치 조회하거나 DTO 쿼리 등 대안을 검토한다.",
+    "explanationMarkdown": "일대다 fetch join은 항목 수만큼 부모 행을 늘리므로 SQL 단계의 `LIMIT/OFFSET`이 부모 주문 20개가 아니라 JOIN 결과 20행을 자를 수 있고 전송량도 커진다. 부모 페이지를 먼저 확정한 뒤 자식을 배치 조회하거나 별도 DTO 쿼리를 비교해 쿼리 수뿐 아니라 결과 행 수와 페이지네이션의 정확성을 함께 판단해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.offset-pagination.q3",
+    "promptMarkdown": "다음 `EXPLAIN (ANALYZE, BUFFERS)` 출력이 깊은 페이지(`OFFSET 100000`)에서 느려지는 근본적인 이유는?\n```sql\nSELECT id, title, created_at\nFROM articles\nORDER BY created_at DESC, id DESC\nLIMIT 20 OFFSET 100000;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.offset-pagination"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`OFFSET`이 10,000을 넘으면 PostgreSQL이 항상 인덱스를 금지한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "인덱스를 타더라도 앞선 10만 엔트리와 힙 가시성 확인을 거쳐야 하므로 비용이 커진다."
+      },
+      {
+        "key": "B",
+        "content": "`LIMIT 20`이 `ORDER BY`보다 먼저 적용되어 20건만 정렬하기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`LIMIT/OFFSET`은 정렬 이후에 적용되므로 앞선 10만 건의 정렬 순서를 모두 결정해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "클라이언트로 100,020건을 모두 네트워크 전송한 뒤 프론트엔드가 앞 10만 건을 자르기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "네트워크로는 20건만 전송되지만 DB 서버 내부에서 100,020건을 읽고 100,000건을 버리는 비용이 발생한다."
+      },
+      {
+        "key": "D",
+        "content": "인덱스가 있어도 DB가 앞선 100,000개 행을 실제로 스캔·카운트해 버린 뒤에야 20건을 반환하므로 페이지가 깊어질수록 비용이 선형 증가(`O(OFFSET + LIMIT)`)한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "B-tree 인덱스에는 각 노드의 하위 행 개수 카운트가 없으므로 `OFFSET 100000`으로 바로 점프할 수 없고 앞선 10만 행을 모두 지나가며 버려야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`OFFSET` 페이지네이션은 깊은 페이지로 갈수록 버리는 행 수가 선형 증가하고, 조회 사이에 새 행이 삽입·삭제되면 페이지 경계가 밀려 중복이나 누락이 발생한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.offset-pagination.q4",
+    "promptMarkdown": "무한 스크롤 피드 API가 `OFFSET` 기반으로 동작 중이다. 사용자가 1페이지(최신 20건)를 보는 동안 맨 앞에 새 게시글 3건이 `INSERT`된 뒤 2페이지(`OFFSET 20 LIMIT 20`)를 요청하면 어떤 현상이 발생하는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.offset-pagination",
+      "database.core.query-patterns.keyset-pagination"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "2페이지가 항상 빈 배열 `[]`을 반환한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "빈 배열이 아니라 앞쪽 삽입으로 밀려난 기존 1페이지 하단 중복 행 3건을 포함한 20건이 반환된다."
+      },
+      {
+        "key": "B",
+        "content": "DB가 `409 Conflict` 오류를 발생시킨다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "SQL은 오류 없이 정상 응답하며 UI에서 중복 아이템으로 드러난다."
+      },
+      {
+        "key": "C",
+        "content": "1페이지 하단에서 이미 본 게시글 3건이 밀려 내려와 2페이지 상단에 중복 노출된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "앞쪽에 3건이 추가되면 기존 18~20번째 행이 21~23번째 위치로 밀려나 `OFFSET 20` 결과에 다시 포함된다. 반대로 앞쪽 행이 삭제되면 3건이 건너뛰어져 누락된다."
+      },
+      {
+        "key": "D",
+        "content": "PostgreSQL이 사용자별 페이지 스냅샷을 자동 보관하므로 중복이 전혀 생기지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "각 HTTP 요청은 별도의 새 트랜잭션과 스냅샷으로 실행되므로 이전 페이지 상태를 기억하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "삽입·삭제가 잦은 피드·이력 목록에서는 `OFFSET` 대신 마지막 행의 정렬 키를 기준 삼는 Keyset(Cursor) 페이지네이션을 사용해야 중복·누락과 깊은 페이지 성능 저하를 모두 막을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.keyset-pagination.q3",
+    "promptMarkdown": "정렬 기준이 `ORDER BY created_at DESC, id DESC`이고 `(created_at DESC, id DESC)` 복합 인덱스가 있다. 이전 페이지 마지막 행의 커서 `(:cursorAt, :cursorId)` 다음 페이지를 조회하는 가장 정확하고 인덱스 친화적인 PostgreSQL `WHERE` 절은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.keyset-pagination"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`WHERE created_at < :cursorAt`",
+        "displayOrder": 0,
+        "rationaleMarkdown": "같은 `created_at` 타임스탬프를 가진 동률 행들이 다음 페이지에서 영구 누락된다."
+      },
+      {
+        "key": "B",
+        "content": "`WHERE created_at <= :cursorAt AND id < :cursorId`",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`created_at`이 더 오래되었지만 `id`가 `:cursorId`보다 큰 행이 잘못 걸러져 누락된다(특히 UUID나 시퀀스 역전 시)."
+      },
+      {
+        "key": "C",
+        "content": "`WHERE id <> :cursorId OFFSET 20`",
+        "displayOrder": 2,
+        "rationaleMarkdown": "커서 seek이 아니라 다시 `OFFSET`으로 되돌아가므로 Keyset의 장점을 잃는다."
+      },
+      {
+        "key": "D",
+        "content": "`WHERE (created_at, id) < (:cursorAt, :cursorId)` (또는 `created_at < :cursorAt OR (created_at = :cursorAt AND id < :cursorId)`)",
+        "displayOrder": 3,
+        "rationaleMarkdown": "PostgreSQL의 행 값 비교 `(created_at, id) < (:cursorAt, :cursorId)`는 `(created_at DESC, id DESC)` 복합 B-tree 인덱스에서 정확히 커서 직후 위치로 seek하여 `O(log N + LIMIT)`으로 동작하며 동률 `created_at` 누락도 방지한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Keyset 페이지네이션은 반드시 유일한 tie-breaker(`id`)를 포함해 `(created_at, id) < (:cursorAt, :cursorId)`(행 값 비교)로 조건을 작성해야 동률 누락 없이 인덱스로 즉시 seek할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.keyset-pagination.q4",
+    "promptMarkdown": "Keyset(Cursor) 페이지네이션이 Offset 페이지네이션보다 불리하거나 trade-off로 고려해야 하는 기능 요구사항은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.keyset-pagination"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Keyset은 `ORDER BY`와 함께 사용할 수 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Keyset은 오히려 명확하고 결정적인 `ORDER BY`와 짝을 이루어 동작한다."
+      },
+      {
+        "key": "B",
+        "content": "사용자가 임의의 17페이지로 바로 점프하는 번호형 페이지 바(`1 2 ... 17`) 구현이 어렵다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Keyset은 이전/다음 커서 기반 연속 탐색에 최적화되어 있으므로 임의 페이지 번호 점프나 정확한 전체 페이지 수 표시가 필수인 관리자 테이블에서는 Offset(또는 상한 제한 Offset)과 비교해 선택해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "테이블 행 수가 100만 건을 넘으면 Keyset이 Offset보다 느려진다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "행 수가 많고 페이지가 깊어질수록 Keyset이 Offset보다 압도적으로 빠르다."
+      },
+      {
+        "key": "D",
+        "content": "PostgreSQL은 복합 인덱스에서 Keyset 비교를 지원하지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "PostgreSQL은 행 값 비교 `(a, b) < (x, y)`에 대한 B-tree 인덱스 seek을 매우 잘 지원한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "피드·로그·시도 이력처럼 순차 탐색이 중심이면 Keyset이 최적이고, 임의 페이지 점프가 꼭 필요한 소규모 관리 화면에서는 페이지 크기·최대 페이지 제한이 있는 Offset이 실용적일 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.batch-n-plus-one.q3",
+    "promptMarkdown": "부모 `orders` 20건을 페이지 조회한 뒤 각 주문의 `order_items` 컬렉션(주문당 평균 5건)을 N+1 없이 가져오면서 DB 페이징 정확도와 메모리 안전성을 모두 지키는 가장 표준적인 2단계 패턴은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.batch-n-plus-one"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "테이블 전체를 `SELECT *`로 메모리에 올린 뒤 자바에서 `subList(0, 20)`으로 자른다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "데이터가 커지면 OOM과 심각한 네트워크·DB I/O 병목을 일으킨다."
+      },
+      {
+        "key": "B",
+        "content": "1단계에서 `orders` 20건(또는 ID 20개)을 DB 페이징으로 조회하고, 2단계에서 `WHERE order_id = ANY($1)`(`IN` 절) 배치 쿼리 1번으로 해당 20개 주문의 `order_items`를 한꺼번에 읽어 메모리에서 그룹핑한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "총 2번의 쿼리(O(1) 왕복)로 N+1을 제거하면서도 부모 20건 기준의 정확한 DB `LIMIT`과 불필요한 카테시안 row 중복 방지를 모두 달성한다."
+      },
+      {
+        "key": "C",
+        "content": "20건의 `order_id`를 `for` 루프로 돌며 `SELECT * FROM order_items WHERE order_id = ?`를 20번 실행한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "전형적인 N+1 패턴으로 페이지 크기가 커질수록 DB 네트워크 왕복이 선형 증가한다."
+      },
+      {
+        "key": "D",
+        "content": "`orders`와 `order_items`, `order_coupons`, `order_shipments` 3개 컬렉션을 한 쿼리에 모두 `LEFT JOIN`하고 `LIMIT 20`을 건다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "다중 1:N 컬렉션 조인은 행 수가 곱셈(카테시안 곱)으로 폭발하고 `LIMIT 20`이 부모 20건을 보장하지 못한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "1:N 컬렉션이 포함된 페이지 조회는 '부모 페이지 1쿼리 + 자식 `IN`/`ANY` 배치 1쿼리'(또는 JPA `default_batch_fetch_size`)로 2번 만에 깔끔하게 가져오는 패턴이 카테시안 곱과 N+1을 동시에 피한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "database.core.query-patterns.batch-n-plus-one.q4",
+    "promptMarkdown": "배치 임포트 작업에서 10,000건의 행을 삽입할 때 건별 `INSERT` 10,000번 대신 청크 단위(예: 500건씩) 다중 행 `INSERT`/JDBC batch로 묶어 실행할 때 얻는 핵심 이점과 주의점은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "database.core.query-patterns.batch-n-plus-one"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "네트워크 왕복·파싱·WAL 커밋 오버헤드를 크게 줄이지만, 청크를 지나치게 크게 잡으면 파라미터 한도·메모리·장시간 잠금이 커지므로 500~1,000건 수준으로 상한을 둔다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "배치 묶음은 왕복 횟수를 수십 분의 일로 줄여 처리량을 극대화하며, 적절한 청크 크기를 두어 트랜잭션 잠금 시간과 메모리 사용량도 통제할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "100만 건을 하나의 거대한 단일 `INSERT` 문과 단일 트랜잭션으로 넣는 것이 항상 가장 안전하다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "단일 거대 문장은 파라미터 개수 상한(PostgreSQL 65,535), 메모리 급증, WAL 폭증, 실패 시 전체 재작업 위험이 크다."
+      },
+      {
+        "key": "C",
+        "content": "배치 `INSERT`를 쓰면 DB의 `UNIQUE`와 `FOREIGN KEY` 제약 검사가 자동 생략된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "배치 `INSERT`에서도 `PRIMARY KEY`, `UNIQUE`, `FOREIGN KEY`, `CHECK` 등 모든 스키마 제약 조건은 동일하게 검증된다."
+      },
+      {
+        "key": "D",
+        "content": "로컬 개발 DB에서는 네트워크 지연이 없으므로 운영에서도 N+1과 단건 반복 삽입의 차이가 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "운영 환경의 네트워크 RTT와 동시 부하 아래에서는 수천 번의 DB 왕복이 수 초 이상의 치명적 지연으로 확대된다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "반복 단건 쿼리를 적절한 크기(예: 500~1,000건)의 배치로 묶으면 네트워크 RTT와 커밋 비용을 대폭 줄이면서도 잠금 보유 시간과 메모리 상한을 안전하게 유지할 수 있다."
+  }
 ]

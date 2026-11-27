@@ -94,6 +94,8 @@ ResponseEntity<ApiError> handleAll(Exception e) { ... }
 
 ### 트랜잭션 rollback과 HTTP 예외 변환은 별개다
 
+![트랜잭션 rollback 경계와 전역 HTTP 예외 변환 경계 분리](/learning/spring/exception-handler-boundary.svg)
+
 `@ExceptionHandler`가 응답을 만든다고 DB 트랜잭션이 자동 rollback되는 것은 아닙니다. transaction interceptor가 어떤 예외를 보았는지, 예외 타입과 rollback 규칙이 무엇인지가 중요합니다. API 오류 변환은 **HTTP 표현**, 트랜잭션은 **DB 변경 경계**입니다.
 
 전역 예외 처리는 오류를 한곳에 숨기는 패턴이 아니라 **내부 실패 의미를 외부 프로토콜 계약으로 일관되게 번역하는 어댑터**로 보는 편이 정확합니다.

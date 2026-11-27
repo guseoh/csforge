@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 430" width="840" height="430" role="img" aria-labelledby="title desc">
+  <title id="title">애플리케이션 유스케이스 조정과 도메인 불변식 및 Outbox 경계</title>
+  <desc id="desc">Application 계층이 트랜잭션·저장소·Outbox 협력 순서를 조정하고 Domain 계층이 상태 전이 불변식을 보호하는 책임 분리 도식</desc>
+  <style>
+    :root { --bg:#f8fafc; --card:#ffffff; --muted:#f1f5f9; --bd:#cbd5e1; --tx:#0f172a; --sub:#475569; --blue-bg:#eff6ff; --blue-bd:#3b82f6; --blue-tx:#1d4ed8; --green-bg:#ecfdf5; --green-bd:#10b981; --green-tx:#047857; --amber-bg:#fffbeb; --amber-bd:#f59e0b; --amber-tx:#b45309; --arr:#64748b; }
+    @media (prefers-color-scheme: dark) { :root { --bg:#0f172a; --card:#1e293b; --muted:#0b1220; --bd:#334155; --tx:#f1f5f9; --sub:#94a3b8; --blue-bg:#172554; --blue-bd:#60a5fa; --blue-tx:#93c5fd; --green-bg:#064e3b; --green-bd:#34d399; --green-tx:#6ee7b7; --amber-bg:#451a03; --amber-bd:#fbbf24; --amber-tx:#fcd34d; --arr:#94a3b8; } }
+    text { font-family: "Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; }
+    .h1 { font-size:17px; font-weight:700; fill:var(--tx); }
+    .h2 { font-size:14px; font-weight:700; }
+    .b { font-size:12px; fill:var(--tx); }
+    .s { font-size:11.5px; fill:var(--sub); }
+    .k { font-size:11.5px; font-weight:700; }
+  </style>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--arr)"/>
+    </marker>
+  </defs>
+  <rect x="0" y="0" width="840" height="430" rx="14" fill="var(--bg)"/>
+  <text x="28" y="34" class="h1">Application(유스케이스 조정) vs Domain(상태 불변식) 책임 경계</text>
+  <text x="28" y="54" class="s">협력 순서·트랜잭션·Outbox는 Application이, 객체 상태 유효성·전이는 Domain이 소유한다.</text>
+
+  <!-- Left: Application -->
+  <rect x="28" y="74" width="382" height="196" rx="10" fill="var(--card)" stroke="var(--blue-bd)" stroke-width="1.6"/>
+  <rect x="28" y="74" width="382" height="34" rx="10" fill="var(--blue-bg)"/>
+  <text x="46" y="96" class="h2" fill="var(--blue-tx)">Application Layer (OrderService)</text>
+  <text x="46" y="128" class="b">• @Transactional 경계 시작 및 커밋</text>
+  <text x="46" y="150" class="b">• Repository에서 Order 애그리거트 조회</text>
+  <text x="46" y="172" class="b">• 도메인 동작 호출: order.cancel(clock.instant())</text>
+  <text x="46" y="194" class="b">• 동일 로컬 트랜잭션에 환불 Outbox 기록</text>
+  <text x="46" y="216" class="b">• 외부 API 실패 후 복구·대사 방향 결정</text>
+  <text x="46" y="246" class="s">※ 여러 저장소·외부 시스템 호출 순서의 조정자</text>
+
+  <!-- Right: Domain -->
+  <rect x="430" y="74" width="382" height="196" rx="10" fill="var(--card)" stroke="var(--green-bd)" stroke-width="1.6"/>
+  <rect x="430" y="74" width="382" height="34" rx="10" fill="var(--green-bg)"/>
+  <text x="448" y="96" class="h2" fill="var(--green-tx)">Domain Layer (Order Entity)</text>
+  <text x="448" y="128" class="b">• 상태 전이 규칙: CREATED / PAID만 취소 허용</text>
+  <text x="448" y="150" class="b">• 불변식 보호: status·cancelledAt 동시 갱신</text>
+  <text x="448" y="172" class="b">• 음수 금액 금지 등 값·상태 유효성 보장</text>
+  <text x="448" y="194" class="b">• HTTP·DB·외부 클라이언트에 의존하지 않음</text>
+  <text x="448" y="216" class="b">• API·배치·관리자 어느 진입점에서도 동일 규칙</text>
+  <text x="448" y="246" class="s">※ 객체 자신이 항상 유효한 상태임을 보장</text>
+
+  <!-- Arrow between App and Domain -->
+  <line x1="410" y1="172" x2="426" y2="172" stroke="var(--arr)" stroke-width="2" marker-end="url(#arr)"/>
+
+  <!-- Bottom: Transactional Outbox Flow -->
+  <rect x="28" y="290" width="784" height="118" rx="10" fill="var(--card)" stroke="var(--amber-bd)" stroke-width="1.5"/>
+  <text x="46" y="316" class="h2" fill="var(--amber-tx)">외부 환불 연동 시 안전한 조정 흐름 (Transactional Outbox 패턴)</text>
+
+  <rect x="46" y="332" width="222" height="60" rx="7" fill="var(--blue-bg)" stroke="var(--blue-bd)" stroke-width="1.2"/>
+  <text x="58" y="352" class="k" fill="var(--blue-tx)">1. 단일 로컬 DB 트랜잭션</text>
+  <text x="58" y="372" class="s">Order CANCELLED + Outbox 기록</text>
+  <text x="58" y="386" class="s">함께 Commit (원자성 보장)</text>
+
+  <rect x="304" y="332" width="222" height="60" rx="7" fill="var(--amber-bg)" stroke="var(--amber-bd)" stroke-width="1.2"/>
+  <text x="316" y="352" class="k" fill="var(--amber-tx)">2. 비동기 Relay / Worker</text>
+  <text x="316" y="372" class="s">커밋된 Outbox를 읽어 외부 PG에</text>
+  <text x="316" y="386" class="s">at-least-once로 환불 요청 전달</text>
+
+  <rect x="562" y="332" width="232" height="60" rx="7" fill="var(--green-bg)" stroke="var(--green-bd)" stroke-width="1.2"/>
+  <text x="574" y="352" class="k" fill="var(--green-tx)">3. 중복·응답 유실 방어</text>
+  <text x="574" y="372" class="s">고유 작업 ID(Idempotency-Key)와</text>
+  <text x="574" y="386" class="s">대사 정책으로 최종 정합성 수렴</text>
+
+  <line x1="268" y1="362" x2="300" y2="362" stroke="var(--arr)" stroke-width="2" marker-end="url(#arr)"/>
+  <line x1="526" y1="362" x2="558" y2="362" stroke="var(--arr)" stroke-width="2" marker-end="url(#arr)"/>
+</svg>

@@ -1,11 +1,314 @@
 [
-  {"kind":"question","contentKey":"backend.core.external.timeouts.q1","promptMarkdown":"외부 HTTP 호출에서 TCP 연결 시도가 오래 걸린다. 우선 어떤 timeout을 확인해야 하는가?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["backend.core.external.timeouts"],"choices":[{"key":"A","content":"connection establishment를 제한하는 connect timeout","displayOrder":0, "rationaleMarkdown": "TCP 연결 시도가 오래 걸리는 경우 connection establishment 대기 한계를 점검한다. connect timeout은 해당 연결 시도에 적용된다."},{"key":"B","content":"연결된 뒤 response data 대기를 제한하는 read/response timeout","displayOrder":1, "rationaleMarkdown": "read/response timeout은 연결이 성립한 뒤 서버 응답이나 data를 기다리는 구간을 제한한다. 아직 transport 연결이 만들어지지 않았다면 이 대기 한계가 우선 원인은 아니다."},{"key":"C","content":"pool에서 reusable connection을 얻는 시간을 제한하는 acquisition timeout","displayOrder":2, "rationaleMarkdown": "acquisition timeout은 HTTP connection pool에서 사용 가능한 연결을 빌리는 대기시간이다. pool에 이미 연결이 있다면 remote host와 연결하는 단계의 지연은 별도다."},{"key":"D","content":"DNS·연결·전송·응답을 포함한 상위 요청 전체의 deadline","displayOrder":3, "rationaleMarkdown": "deadline은 DNS부터 response body까지 application operation의 남은 예산을 제한하는 상위 개념이다. 다만 이 한계만 확인하면 어느 transport 단계가 멈췄는지는 바로 구별되지 않는다."}],"correctChoiceKey":"A","explanationMarkdown":"Timeout은 외부 호출의 특정 대기 구간을 bounded하게 만드는 자원 보호 경계이며, 호출이 실제로 처리되지 않았다는 결과 판정과는 별개다. TCP 연결 시도가 지연되는 상황에서는 connect timeout을 먼저 확인한다. 다만 DNS resolution, TLS handshake, response body read가 어떤 timeout에 포함되는지는 client마다 다르므로 실제 사용하는 HTTP client의 계약을 확인해야 한다."},
-  {"kind":"question","contentKey":"backend.core.external.timeouts.q2","promptMarkdown":"현재 설정은 다음과 같다.\n\n- 상위 API deadline: 800ms\n- 외부 client connect timeout: 1초\n- 외부 client 응답 타임아웃: 2초\n\n질문: 이 설정의 위험을 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["backend.core.external.timeouts"],"modelAnswer":"하위 호출이 상위 요청이 이미 종료된 뒤에도 worker와 connection을 점유할 수 있고 전체 API deadline을 지키지 못한다. 상위 deadline에서 이미 사용한 시간을 빼 남은 budget 안에서 connect/read/retry를 판단해야 한다.","explanationMarkdown":"1초 connect timeout 하나만으로도 상위 800ms deadline을 넘길 수 있고, 연결 뒤 2초 응답 wait는 이미 client가 떠난 뒤 worker와 socket을 점유할 수 있다. elapsed time을 뺀 remaining budget 안에 connect·read·retry를 배치해야 한다."},
-  {"kind":"question","contentKey":"backend.core.external.timeouts.q3","promptMarkdown":"상황: 결제 요청이 timeout되어 retry하려 한다.\n\n질문: timeout이 remote에서 작업되지 않았다는 증거가 아닌 이유와 먼저 확인할 설계 요소를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["backend.core.external.timeouts"],"modelAnswer":"caller가 응답을 받지 못했을 뿐 remote가 요청을 처리한 뒤 응답이 늦었을 수 있다. 재전송 전 operation의 idempotency key나 결과 조회 계약, 남은 deadline, retry 횟수와 backoff를 확인해 중복 결제를 막아야 한다.","explanationMarkdown":"caller가 응답을 못 받은 것뿐이고 provider가 commit 후 응답을 잃었을 수도 있으므로 timeout은 remote 미실행의 증거가 아니다. 재시도 전 idempotency key/result lookup, 남은 deadline, attempt/backoff 예산을 확인해 중복 결제와 과도한 대기를 함께 막아야 한다."},
-  {"kind":"question","contentKey":"backend.core.external.remote-errors.q1","promptMarkdown":"외부 API가 HTTP 200을 반환했지만 body의 필수 `orderId`가 없다. 내부에서 성공 처리하기 전에 필요한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["backend.core.external.remote-errors"],"choices":[{"key":"A","content":"모든 200 응답을 retry한다.","displayOrder":0, "rationaleMarkdown": "200 응답을 무조건 다시 보내면 이미 완료된 operation을 중복 수행할 수 있다. 먼저 response contract를 해석해 재시도 가능한 통신 실패인지, 유효하지 않은 payload인지 분류해야 한다."},{"key":"B","content":"200이면 body를 읽지 않고 성공 처리한다.","displayOrder":1, "rationaleMarkdown": "HTTP status는 request 처리의 protocol-level 결과를 표현하지만 body의 필수 business data 존재까지 보장하지 않는다. payload를 검증하지 않으면 불완전한 결과를 성공으로 저장할 수 있다."},{"key":"C","content":"remote body를 그대로 DB domain entity로 저장한다.","displayOrder":2, "rationaleMarkdown": "vendor response를 domain entity에 바로 보관하면 외부 schema와 오류 의미가 내부 lifecycle로 전파된다. adapter에서 검증·번역한 값만 application 경계에 전달한다."},{"key":"D","content":"payload schema와 필수 field를 검증한다.","displayOrder":3, "rationaleMarkdown": "HTTP 응답을 내부 성공으로 인정하기 전에 schema와 필수 필드를 확인해야 한다. 누락된 orderId를 경계에서 거부하면 downstream에서 불완전한 주문을 다루지 않게 된다."}],"correctChoiceKey":"D","explanationMarkdown":"외부 어댑터는 HTTP 상태와 응답 본문, 공급자 업무 상태를 검증한 뒤 애플리케이션이 대응할 수 있는 실패 의미와 안전한 진단 정보를 내부 계약으로 번역해야 한다. HTTP 200은 HTTP 요청이 성공 범주의 응답을 받았다는 뜻이지 `orderId`가 존재하고 공급자의 업무 처리가 성공했다는 보장까지 주지 않는다. 응답 구조와 필수 필드를 검증해 유효한 내부 결과를 만들 수 있을 때만 성공 경계로 넘긴다."},
-  {"kind":"question","contentKey":"backend.core.external.remote-errors.q2","promptMarkdown":"외부 API가 `200`과 `success=false`를 반환하는 경우 HTTP status만 검사하면 안 되는 이유와 adapter의 책임을 설명하라.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["backend.core.external.remote-errors"],"modelAnswer":"HTTP 200이더라도 공급자 응답 본문의 업무 결과는 실패일 수 있다. adapter가 body schema, required field, business status를 검증하고 내부의 typed 실패나 application 결과로 번역해야 한다.","explanationMarkdown":"HTTP 성공 범주의 응답과 공급자 업무 결과는 서로 다른 층위다. `200`과 `success=false`가 함께 올 수 있다면 adapter가 응답 구조·필수 필드·업무 상태를 확인하고 application이 재시도, 사용자 오류, 대체 처리를 구분할 수 있는 내부 결과로 번역해야 한다. 이를 TCP 같은 transport 성공과 업무 성공의 차이로 설명하면 HTTP 계층을 잘못 섞게 된다."},
-  {"kind":"question","contentKey":"backend.core.external.remote-errors.q3","promptMarkdown":"외부 API의 malformed body, 429, 500, timeout을 모두 같은 `ExternalApiException`으로 던질 때 생기는 운영·정책 문제와 개선 방향을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["backend.core.external.remote-errors"],"modelAnswer":"검증 실패와 rate limit, 가용성 실패, outcome unknown은 retry·대체 처리·사용자 응답 정책이 다르므로 하나로 뭉개면 잘못된 retry와 원인 추적이 발생한다. adapter에서 내부 typed 실패로 구분하고 correlation id와 제한된 remote metadata를 보존해야 한다.","explanationMarkdown":"malformed body는 계약 위반, 429는 rate limit, 500은 가용성 실패, timeout은 처리 여부를 모르는 결과일 수 있어 retry·대체 처리·status mapping이 서로 다르다. 하나의 예외로 뭉개지 말고 내부 실패 type과 correlation metadata를 보존하되 vendor payload/secret은 외부로 노출하지 않아야 한다."},
-  {"kind":"question","contentKey":"backend.core.external.circuit-fallback.q1","promptMarkdown":"Circuit breaker가 OPEN 상태일 때 일반적으로 하는 동작은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["backend.core.external.circuit-fallback"],"choices":[{"key":"A","content":"설정한 timeout까지 remote 호출을 계속 허용한 뒤 결과만 성공으로 기록한다.","displayOrder":0, "rationaleMarkdown": "OPEN은 실패 조건이 유지되는 동안 새 remote 호출을 빠르게 차단해 기다림과 부하를 추가하지 않는다. 매 호출을 timeout까지 보내면 breaker가 막으려는 자원 소모가 계속된다."},{"key":"B","content":"remote 호출을 즉시 거절해 반복 실패 부하를 줄인다.","displayOrder":1, "rationaleMarkdown": "OPEN 상태에서 call을 거절하면 장애가 난 dependency에 요청을 계속 밀어 넣지 않는다. 거절 응답은 fallback 성공과 다르며 호출자는 그 실패를 별도로 처리한다."},{"key":"C","content":"새 호출을 모두 HALF_OPEN probe로 보내 remote 복구 여부를 확인한다.","displayOrder":2, "rationaleMarkdown": "HALF_OPEN은 구현 설정에 따른 제한된 probe로 회복 가능성을 살피는 상태다. 모든 들어오는 요청을 probe로 허용하면 장애 중인 dependency에 정상 부하가 다시 집중된다."},{"key":"D","content":"이전 성공 응답을 대체 결과로 반환하는 동작까지 breaker가 자동으로 결정한다.","displayOrder":3, "rationaleMarkdown": "breaker는 호출을 허용하거나 거절하는 실패 제어를 맡는다. cache/fallback의 반환값과 업무 의미는 별도 정책이 있어야 하고 breaker가 성공 응답으로 알아서 바꾸지 않는다."}],"correctChoiceKey":"B","explanationMarkdown":"Circuit breaker는 관측된 실패 window에 따라 호출 허용 상태를 바꾸고, 대체 처리·timeout·bulkhead가 보호하는 resource와 의미는 각각 다르다. OPEN은 최근 실패/slow-call 조건으로 remote 호출을 잠시 차단해 같은 장애에 부하를 더하지 않는 상태다. 차단 뒤 어떤 stale/partial 결과를 반환할지는 대체 처리의 별도 의미 계약이며 circuit이 성공으로 바꾸는 것은 아니다."},
-  {"kind":"question","contentKey":"backend.core.external.circuit-fallback.q2","promptMarkdown":"추천 API가 circuit OPEN으로 차단되었을 때 오래된 추천 목록을 `stale`로 표시해 반환하는 대체 처리와 결제 승인 실패를 성공으로 반환하는 대체 처리가 다른 이유는?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["backend.core.external.circuit-fallback"],"modelAnswer":"읽기 전용 추천은 stale임을 표시하고 사용자가 허용할 수 있는 degraded result가 될 수 있지만, 결제 성공은 canonical side effect를 의미하므로 추정해서 반환하면 데이터와 금전 상태를 오염시킨다. 대체 처리 가능 여부는 domain 의미와 recovery 계약으로 판단한다.","explanationMarkdown":"stale 추천은 사용자에게 오래된 결과임을 표시하면 읽기 기능의 허용된 degraded result가 될 수 있다. 결제 승인 성공은 canonical 금전 상태를 뜻하므로 provider 확인 없이 성공으로 바꾸면 false success가 되어 대체 처리 대상이 아니다."},
-  {"kind":"question","contentKey":"backend.core.external.circuit-fallback.q3","promptMarkdown":"Circuit breaker의 CLOSED, OPEN, HALF_OPEN 상태 전이를 실패 window와 probe 관점에서 설명하고, bulkhead의 resource isolation이 별도인 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["backend.core.external.circuit-fallback"],"modelAnswer":"CLOSED에서는 configured window의 outcome을 기록하고 minimum sample과 실패/slow-call threshold를 만족하면 OPEN으로 전이해 호출을 차단한다. 대기 뒤 HALF_OPEN에서는 제한된 수의 probe를 허용하고 그 결과의 configured rate를 평가해 healthy하면 CLOSED, unhealthy하면 OPEN으로 돌아간다. breaker는 호출 허가와 실패 measurement를 담당할 뿐 dependency별 동시 실행/resource capacity를 자동 격리하지 않으므로 semaphore나 bounded thread-pool 같은 bulkhead 정책을 별도로 둘 수 있다.","explanationMarkdown":"CLOSED는 outcome window를 축적해 threshold를 넘으면 OPEN으로 가고, 대기 뒤 HALF_OPEN에서 제한된 probe를 평가해 healthy할 때만 CLOSED로 돌아간다. breaker는 허용과 실패 측정만 담당하므로 dependency별 동시 capacity를 격리하는 bulkhead와 timeout은 별도로 설계해야 한다."}
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.timeouts.q1",
+    "promptMarkdown": "외부 HTTP 호출에서 TCP 연결 시도가 오래 걸린다. 우선 어떤 timeout을 확인해야 하는가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.timeouts"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "connection establishment를 제한하는 connect timeout",
+        "displayOrder": 0,
+        "rationaleMarkdown": "TCP 연결 시도가 오래 걸리는 경우 connection establishment 대기 한계를 점검한다. connect timeout은 해당 연결 시도에 적용된다."
+      },
+      {
+        "key": "B",
+        "content": "연결된 뒤 response data 대기를 제한하는 read/response timeout",
+        "displayOrder": 1,
+        "rationaleMarkdown": "read/response timeout은 연결이 성립한 뒤 서버 응답이나 data를 기다리는 구간을 제한한다. 아직 transport 연결이 만들어지지 않았다면 이 대기 한계가 우선 원인은 아니다."
+      },
+      {
+        "key": "C",
+        "content": "pool에서 reusable connection을 얻는 시간을 제한하는 acquisition timeout",
+        "displayOrder": 2,
+        "rationaleMarkdown": "acquisition timeout은 HTTP connection pool에서 사용 가능한 연결을 빌리는 대기시간이다. pool에 이미 연결이 있다면 remote host와 연결하는 단계의 지연은 별도다."
+      },
+      {
+        "key": "D",
+        "content": "DNS·연결·전송·응답을 포함한 상위 요청 전체의 deadline",
+        "displayOrder": 3,
+        "rationaleMarkdown": "deadline은 DNS부터 response body까지 application operation의 남은 예산을 제한하는 상위 개념이다. 다만 이 한계만 확인하면 어느 transport 단계가 멈췄는지는 바로 구별되지 않는다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Timeout은 외부 호출의 특정 대기 구간을 bounded하게 만드는 자원 보호 경계이며, 호출이 실제로 처리되지 않았다는 결과 판정과는 별개다. TCP 연결 시도가 지연되는 상황에서는 connect timeout을 먼저 확인한다. 다만 DNS resolution, TLS handshake, response body read가 어떤 timeout에 포함되는지는 client마다 다르므로 실제 사용하는 HTTP client의 계약을 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.timeouts.q2",
+    "promptMarkdown": "현재 설정은 다음과 같다.\n\n- 상위 API deadline: 800ms\n- 외부 client connect timeout: 1초\n- 외부 client 응답 타임아웃: 2초\n\n질문: 이 설정의 위험을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.timeouts"
+    ],
+    "modelAnswer": "하위 호출이 상위 요청이 이미 종료된 뒤에도 worker와 connection을 점유할 수 있고 전체 API deadline을 지키지 못한다. 상위 deadline에서 이미 사용한 시간을 빼 남은 budget 안에서 connect/read/retry를 판단해야 한다.",
+    "explanationMarkdown": "1초 connect timeout 하나만으로도 상위 800ms deadline을 넘길 수 있고, 연결 뒤 2초 응답 wait는 이미 client가 떠난 뒤 worker와 socket을 점유할 수 있다. elapsed time을 뺀 remaining budget 안에 connect·read·retry를 배치해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.timeouts.q3",
+    "promptMarkdown": "상황: 결제 요청이 timeout되어 retry하려 한다.\n\n질문: timeout이 remote에서 작업되지 않았다는 증거가 아닌 이유와 먼저 확인할 설계 요소를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.timeouts"
+    ],
+    "modelAnswer": "caller가 응답을 받지 못했을 뿐 remote가 요청을 처리한 뒤 응답이 늦었을 수 있다. 재전송 전 operation의 idempotency key나 결과 조회 계약, 남은 deadline, retry 횟수와 backoff를 확인해 중복 결제를 막아야 한다.",
+    "explanationMarkdown": "caller가 응답을 못 받은 것뿐이고 provider가 commit 후 응답을 잃었을 수도 있으므로 timeout은 remote 미실행의 증거가 아니다. 재시도 전 idempotency key/result lookup, 남은 deadline, attempt/backoff 예산을 확인해 중복 결제와 과도한 대기를 함께 막아야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.remote-errors.q1",
+    "promptMarkdown": "외부 API가 HTTP 200을 반환했지만 body의 필수 `orderId`가 없다. 내부에서 성공 처리하기 전에 필요한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.remote-errors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 200 응답을 retry한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "200 응답을 무조건 다시 보내면 이미 완료된 operation을 중복 수행할 수 있다. 먼저 response contract를 해석해 재시도 가능한 통신 실패인지, 유효하지 않은 payload인지 분류해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "200이면 body를 읽지 않고 성공 처리한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "HTTP status는 request 처리의 protocol-level 결과를 표현하지만 body의 필수 business data 존재까지 보장하지 않는다. payload를 검증하지 않으면 불완전한 결과를 성공으로 저장할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "remote body를 그대로 DB domain entity로 저장한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "vendor response를 domain entity에 바로 보관하면 외부 schema와 오류 의미가 내부 lifecycle로 전파된다. adapter에서 검증·번역한 값만 application 경계에 전달한다."
+      },
+      {
+        "key": "D",
+        "content": "payload schema와 필수 field를 검증한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "HTTP 응답을 내부 성공으로 인정하기 전에 schema와 필수 필드를 확인해야 한다. 누락된 orderId를 경계에서 거부하면 downstream에서 불완전한 주문을 다루지 않게 된다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "외부 어댑터는 HTTP 상태와 응답 본문, 공급자 업무 상태를 검증한 뒤 애플리케이션이 대응할 수 있는 실패 의미와 안전한 진단 정보를 내부 계약으로 번역해야 한다. HTTP 200은 HTTP 요청이 성공 범주의 응답을 받았다는 뜻이지 `orderId`가 존재하고 공급자의 업무 처리가 성공했다는 보장까지 주지 않는다. 응답 구조와 필수 필드를 검증해 유효한 내부 결과를 만들 수 있을 때만 성공 경계로 넘긴다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.remote-errors.q2",
+    "promptMarkdown": "외부 API가 `200`과 `success=false`를 반환하는 경우 HTTP status만 검사하면 안 되는 이유와 adapter의 책임을 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.remote-errors"
+    ],
+    "modelAnswer": "HTTP 200이더라도 공급자 응답 본문의 업무 결과는 실패일 수 있다. adapter가 body schema, required field, business status를 검증하고 내부의 typed 실패나 application 결과로 번역해야 한다.",
+    "explanationMarkdown": "HTTP 성공 범주의 응답과 공급자 업무 결과는 서로 다른 층위다. `200`과 `success=false`가 함께 올 수 있다면 adapter가 응답 구조·필수 필드·업무 상태를 확인하고 application이 재시도, 사용자 오류, 대체 처리를 구분할 수 있는 내부 결과로 번역해야 한다. 이를 TCP 같은 transport 성공과 업무 성공의 차이로 설명하면 HTTP 계층을 잘못 섞게 된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.remote-errors.q3",
+    "promptMarkdown": "외부 API의 malformed body, 429, 500, timeout을 모두 같은 `ExternalApiException`으로 던질 때 생기는 운영·정책 문제와 개선 방향을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.remote-errors"
+    ],
+    "modelAnswer": "검증 실패와 rate limit, 가용성 실패, outcome unknown은 retry·대체 처리·사용자 응답 정책이 다르므로 하나로 뭉개면 잘못된 retry와 원인 추적이 발생한다. adapter에서 내부 typed 실패로 구분하고 correlation id와 제한된 remote metadata를 보존해야 한다.",
+    "explanationMarkdown": "malformed body는 계약 위반, 429는 rate limit, 500은 가용성 실패, timeout은 처리 여부를 모르는 결과일 수 있어 retry·대체 처리·status mapping이 서로 다르다. 하나의 예외로 뭉개지 말고 내부 실패 type과 correlation metadata를 보존하되 vendor payload/secret은 외부로 노출하지 않아야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.circuit-fallback.q1",
+    "promptMarkdown": "Circuit breaker가 OPEN 상태일 때 일반적으로 하는 동작은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.circuit-fallback"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "설정한 timeout까지 remote 호출을 계속 허용한 뒤 결과만 성공으로 기록한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "OPEN은 실패 조건이 유지되는 동안 새 remote 호출을 빠르게 차단해 기다림과 부하를 추가하지 않는다. 매 호출을 timeout까지 보내면 breaker가 막으려는 자원 소모가 계속된다."
+      },
+      {
+        "key": "B",
+        "content": "remote 호출을 즉시 거절해 반복 실패 부하를 줄인다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "OPEN 상태에서 call을 거절하면 장애가 난 dependency에 요청을 계속 밀어 넣지 않는다. 거절 응답은 fallback 성공과 다르며 호출자는 그 실패를 별도로 처리한다."
+      },
+      {
+        "key": "C",
+        "content": "새 호출을 모두 HALF_OPEN probe로 보내 remote 복구 여부를 확인한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "HALF_OPEN은 구현 설정에 따른 제한된 probe로 회복 가능성을 살피는 상태다. 모든 들어오는 요청을 probe로 허용하면 장애 중인 dependency에 정상 부하가 다시 집중된다."
+      },
+      {
+        "key": "D",
+        "content": "이전 성공 응답을 대체 결과로 반환하는 동작까지 breaker가 자동으로 결정한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "breaker는 호출을 허용하거나 거절하는 실패 제어를 맡는다. cache/fallback의 반환값과 업무 의미는 별도 정책이 있어야 하고 breaker가 성공 응답으로 알아서 바꾸지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Circuit breaker는 관측된 실패 window에 따라 호출 허용 상태를 바꾸고, 대체 처리·timeout·bulkhead가 보호하는 resource와 의미는 각각 다르다. OPEN은 최근 실패/slow-call 조건으로 remote 호출을 잠시 차단해 같은 장애에 부하를 더하지 않는 상태다. 차단 뒤 어떤 stale/partial 결과를 반환할지는 대체 처리의 별도 의미 계약이며 circuit이 성공으로 바꾸는 것은 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.circuit-fallback.q2",
+    "promptMarkdown": "추천 API가 circuit OPEN으로 차단되었을 때 오래된 추천 목록을 `stale`로 표시해 반환하는 대체 처리와 결제 승인 실패를 성공으로 반환하는 대체 처리가 다른 이유는?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.circuit-fallback"
+    ],
+    "modelAnswer": "읽기 전용 추천은 stale임을 표시하고 사용자가 허용할 수 있는 degraded result가 될 수 있지만, 결제 성공은 canonical side effect를 의미하므로 추정해서 반환하면 데이터와 금전 상태를 오염시킨다. 대체 처리 가능 여부는 domain 의미와 recovery 계약으로 판단한다.",
+    "explanationMarkdown": "stale 추천은 사용자에게 오래된 결과임을 표시하면 읽기 기능의 허용된 degraded result가 될 수 있다. 결제 승인 성공은 canonical 금전 상태를 뜻하므로 provider 확인 없이 성공으로 바꾸면 false success가 되어 대체 처리 대상이 아니다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.circuit-fallback.q3",
+    "promptMarkdown": "Circuit breaker의 CLOSED, OPEN, HALF_OPEN 상태 전이를 실패 window와 probe 관점에서 설명하고, bulkhead의 resource isolation이 별도인 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.circuit-fallback"
+    ],
+    "modelAnswer": "CLOSED에서는 configured window의 outcome을 기록하고 minimum sample과 실패/slow-call threshold를 만족하면 OPEN으로 전이해 호출을 차단한다. 대기 뒤 HALF_OPEN에서는 제한된 수의 probe를 허용하고 그 결과의 configured rate를 평가해 healthy하면 CLOSED, unhealthy하면 OPEN으로 돌아간다. breaker는 호출 허가와 실패 measurement를 담당할 뿐 dependency별 동시 실행/resource capacity를 자동 격리하지 않으므로 semaphore나 bounded thread-pool 같은 bulkhead 정책을 별도로 둘 수 있다.",
+    "explanationMarkdown": "CLOSED는 outcome window를 축적해 threshold를 넘으면 OPEN으로 가고, 대기 뒤 HALF_OPEN에서 제한된 probe를 평가해 healthy할 때만 CLOSED로 돌아간다. breaker는 허용과 실패 측정만 담당하므로 dependency별 동시 capacity를 격리하는 bulkhead와 timeout은 별도로 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.circuit-fallback.q4",
+    "promptMarkdown": "상품 상세 API가 내부에서 추천 서비스(외부 HTTP)를 호출한다. 추천 서비스 장애로 타임아웃이 연속 발생해 Circuit Breaker가 `OPEN` 상태가 되었을 때, 가장 적절한 동작과 Fallback 설계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.circuit-fallback"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Fallback 내부에서 또 다른 느린 외부 추천 API를 타임아웃 없이 동기 호출한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Fallback 경로가 느리거나 외부 장애에 의존하면 오히려 장애를 증폭시키므로 Fallback은 단순·로컬·고속이어야 한다."
+      },
+      {
+        "key": "B",
+        "content": "일정 시간 동안 추천 서비스 호출을 즉시 차단(Fail-Fast)해 스레드 풀 고갈을 막고, 상품 기본 정보는 정상 응답하면서 추천 영역만 빈 목록 또는 캐시된 인기 상품으로 축소(Graceful Degradation)한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "서킷 브레이커의 핵심 목적은 느린 하위 장애가 상위 핵심 기능(상품 상세 조회·구매)까지 전염되는 것을 차단하고, 비핵심 영역만 안전하게 축소 제공하는 것이다."
+      },
+      {
+        "key": "C",
+        "content": "서킷이 `OPEN`되어도 매 요청마다 추천 서버에 3회씩 추가 재시도를 보내 복구 여부를 확인한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "OPEN 상태에서 모든 요청을 계속 보내면 서킷 브레이커의 부하 차단 의미가 사라진다. 복구 탐지는 일정 대기 후 `HALF-OPEN`에서 소수의 프로브 요청으로만 수행한다."
+      },
+      {
+        "key": "D",
+        "content": "추천 서비스가 실패했으므로 상품 상세 API 전체를 `500 Internal Server Error`로 실패시킨다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "비핵심 보조 기능(추천) 장애로 핵심 수익 경로(상품 상세·장바구니)까지 중단시키면 가용성이 불필요하게 하락한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Circuit Breaker는 `CLOSED → OPEN(즉시 차단 + 안전한 Fallback) → HALF-OPEN(제한된 복구 탐지)` 상태 전이로 장애 전파를 막고 핵심 기능을 보호한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.remote-errors.q4",
+    "promptMarkdown": "외부 배송사 API를 호출하는 어댑터 계층에서 원격 오류 응답을 처리할 때 가장 올바른 오류 번역(Error Translation) 전략은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.remote-errors"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "외부 배송사 서버가 반환한 HTTP 상태 코드(예: 외부 API 키 만료 `401`)와 원문 JSON을 그대로 우리 사용자에게 프록시 전달한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "외부 연동 API 키 만료로 받은 `401`을 사용자에게 그대로 넘기면 프론트엔드가 사용자를 강제 로그아웃시키는 오작동이 발생한다."
+      },
+      {
+        "key": "B",
+        "content": "외부 응답 본문이 HTML 에러 페이지여도 무조건 JSON으로 파싱하다가 `JsonParseException` 500을 그대로 노출한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "프록시/게이트웨이 장애 시 외부 API는 JSON 대신 HTML 502 페이지를 내려줄 수 있으므로 상태 코드·Content-Type을 방어적으로 검사해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "외부 API의 모든 오류를 `200 OK` 성공으로 바꾸어 상위 호출자가 실패를 모르도록 숨긴다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "실패를 성공으로 위장하면 배송 누락이나 결제 불일치가 조용히 누적된다."
+      },
+      {
+        "key": "D",
+        "content": "외부 HTTP 상태·벤더 에러 코드를 그대로 상위 클라이언트에 노출하지 않고, 우리 도메인의 의미(예: 일시 장애 `503` vs 잘못된 송장 번호 `400` vs 미지원 주소 `422`)로 번역하며 원격 상세 원인은 구조화 로그에 남긴다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "외부 벤더의 401/403 인증 만료나 404를 그대로 우리 API 응답으로 전달하면 클라이언트가 사용자 인증 오류로 오인한다. 어댑터 경계에서 우리 API 계약으로 번역해야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "외부 시스템의 상태 코드·에러 형식은 우리 API의 계약이 아니다. 인프라 어댑터에서 방어적으로 파싱하고 우리 도메인 예외·재시도 가능 여부로 번역해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "backend.core.external.timeouts.q4",
+    "promptMarkdown": "외부 결제 승인 API를 호출하는 아래 설정에서, 클라이언트 전체 SLA가 `2초`일 때 발생할 수 있는 가장 위험한 문제는?\n\n```yaml\npayment-client:\n  connect-timeout: 2s\n  read-timeout: 5s\n  max-retries: 3\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "backend.core.external.timeouts"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "최악의 경우 1회 요청이 `read-timeout(5s) × 4회 시도 = 20초` 이상 스레드·커넥션을 점유해 상위 2초 SLA를 크게 초과하고, 이미 승인된 결제가 read-timeout 후 재시도되어 중복 결제까지 유발할 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "개별 호출 timeout과 재시도 횟수의 곱이 상위 전체 deadline(2초)을 훨씬 넘으면 사용자가 이미 떠난 뒤에도 서버 자원을 계속 낭비하며, 멱등 키 없는 결제 재시도는 이중 과금 위험을 만든다."
+      },
+      {
+        "key": "B",
+        "content": "`connect-timeout`이 `2s`이므로 전체 요청과 재시도까지 합쳐 항상 2초 안에 종료된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`connect-timeout`은 TCP 연결 수립 구간만 제한하며, 응답 대기(`read-timeout`)나 재시도 누적 시간을 제한하지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "`read-timeout`이 발생했다는 것은 결제사 서버가 요청을 아예 받지 못했다는 확실한 증거다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "요청 전송 이후 발생한 `read-timeout`은 상대가 이미 승인을 커밋했지만 응답만 지연/유실된 상태일 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "`read-timeout`을 60초로 늘리면 타임아웃 오류가 줄어들어 서버 처리량(TPS)이 항상 올라간다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "타임아웃을 과도하게 늘리면 느린 요청이 워커 스레드와 커넥션을 오래 잡아 전체 서버가 연쇄 마비된다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "외부 호출은 connect/read timeout 구분뿐 아니라 상위 요청의 남은 deadline 예산과 재시도 증폭, 그리고 read-timeout 이후의 불확실성(멱등 키·상태 조회)을 함께 설계해야 한다."
+  }
 ]

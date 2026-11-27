@@ -604,5 +604,83 @@
     ],
     "modelAnswer": "우선순위 상속은 높은 우선순위 대기자가 낮은 우선순위 자원 소유자 때문에 막히는 우선순위 역전을 완화하는 규칙이다. 스케줄링 정책 때문에 낮은 우선순위의 실행 가능한 작업이 계속 선택되지 않는 일반적인 기아는 에이징, 공정성, 할당량 같은 다른 정책 문제다.",
     "explanationMarkdown": "우선순위 역전은 **필요한 자원을 가진 낮은 우선순위 소유자가 실행되지 못해 높은 우선순위 대기자가 막히는 문제**이고, 기아는 특정 실행 가능한 작업이 반복적으로 선택에서 밀리는 더 일반적인 진행성 문제다. 원인이 다르므로 해결 정책도 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.deadlock.coffman-conditions.q5",
+    "promptMarkdown": "교착 상태(Deadlock)의 4가지 코프먼 조건(상호 배제·점유 대기·비선점·순환 대기) 중, 계좌 이체 코드에서 두 스레드가 항상 `min(fromId, toId)` 계좌 락을 먼저 획득하고 `max(fromId, toId)` 락을 나중에 획득하도록 강제하는 방식이 깨뜨리는 조건은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.deadlock.coffman-conditions"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "상호 배제(Mutual Exclusion) — 두 스레드가 같은 계좌를 동시에 수정할 수 있게 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "계좌 잔액 수정은 여전히 상호 배제 락으로 보호되며, 락 획득 순서만 통일해 순환 대기를 차단한다."
+      },
+      {
+        "key": "B",
+        "content": "비선점(No Preemption) — OS 커널이 실행 중인 스레드의 락을 강제로 빼앗는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "락을 강제 회수하는 것이 아니라 모든 스레드가 같은 오름차순으로 락을 요청하게 만드는 것이다."
+      },
+      {
+        "key": "C",
+        "content": "점유 대기(Hold and Wait) — 계좌 락을 아예 잡지 않고 이체한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "첫 번째 락을 점유한 채 두 번째 락을 대기하므로 점유 대기는 여전히 존재하며, 깨뜨린 조건은 순환 대기다."
+      },
+      {
+        "key": "D",
+        "content": "순환 대기(Circular Wait) — 모든 자원에 전역 순서(Lock Ordering)를 부여하면 A→B와 B→A의 순환 고리가 원천적으로 형성되지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "4가지 코프먼 조건 중 하나만 깨뜨려도 교착 상태는 불가능하다. 전역 락 순서(Lock Ordering)는 실무에서 가장 널리 쓰이는 순환 대기 파괴 기법이다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "코프먼 4조건(상호 배제·점유 대기·비선점·순환 대기) 중 실무에서 가장 실용적으로 깨뜨리는 조건은 Lock Ordering을 통한 '순환 대기'다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.deadlock.livelock.q5",
+    "promptMarkdown": "교착 상태(Deadlock)와 라이브락(Livelock)의 실행 상태 차이와 라이브락을 해소하는 표준 기법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.deadlock.livelock"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Deadlock은 스레드들이 블로킹 상태로 멈춰 CPU를 거의 쓰지 않지만, Livelock은 스레드들이 서로 양보·재시도를 반복하며 상태가 계속 바뀌고 CPU를 소모하면서도 실제 진전(progress)이 없다. 랜덤 백오프(Jitter)나 우선순위 비대칭화로 해소한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "좁은 복도에서 두 사람이 동시에 같은 방향으로 비켜서길 반복하는 것처럼, 대칭적 양보/재시도가 동기화되면 CPU는 100% 쓰는데 일은 안 끝나는 라이브락이 생긴다."
+      },
+      {
+        "key": "B",
+        "content": "Livelock에서는 스레드들이 CPU를 0% 사용하고 영구 슬립 상태에 빠진다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "블로킹 대기 상태로 CPU를 쓰지 않는 것은 Deadlock이며, Livelock은 계속 실행·양보하면서 CPU를 소모한다."
+      },
+      {
+        "key": "C",
+        "content": "`tryLock()` 실패 시 두 스레드가 정확히 동일한 고정 시간(10ms) 후 재시도하면 Livelock이 완벽히 사라진다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "고정 동일 대기 시간은 두 스레드의 재시도 시점을 계속 동기화시켜 라이브락을 지속시킨다. 무작위 지터(Jitter)가 필요하다."
+      },
+      {
+        "key": "D",
+        "content": "Livelock은 단일 스레드 프로그램에서만 발생한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "둘 이상의 실행 주체가 상호 반응하며 양보/재시도를 반복할 때 발생하는 동시성 문제다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Livelock은 '실행 중이지만 진전 없음' 상태이며, 대칭성을 깨는 무작위 백오프(Jitter)나 우선순위 규칙으로 해소한다."
   }
 ]

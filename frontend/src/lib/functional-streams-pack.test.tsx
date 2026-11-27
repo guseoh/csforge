@@ -6,7 +6,7 @@ import { javaApiScenes } from './java-api-models'
 import { parseVisualization } from './learning-visualization'
 
 const root = new URL('../../../content/java/', import.meta.url)
-const packs = [['functional', 5, 33], ['streams', 7, 41]] as const
+const packs = [['functional', 5, 34], ['streams', 7, 42]] as const
 
 describe('functional and streams content', () => {
   it.each(packs)('%s preserves valid question and concept structure', (topic, conceptCount, questionCount) => {

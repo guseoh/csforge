@@ -91,7 +91,7 @@ public class WrongNoteQueryService {
 
     @Transactional(readOnly = true)
     public WrongNoteAttemptPageView attempts(long questionId, String cursor, int size) {
-        if (!wrongNoteRepository.findByQuestionId(questionId).isPresent()) throw new WrongNoteNotFoundException();
+        if (!wrongNoteRepository.existsByQuestionId(questionId)) throw new WrongNoteNotFoundException();
         AttemptHistoryCursor decoded = AttemptHistoryCursor.decode(cursor);
         List<Attempt> attempts = decoded.at() == null
                 ? attemptRepository.findQuestionHistoryFirst(questionId, PageRequest.of(0, size + 1))

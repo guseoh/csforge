@@ -236,5 +236,317 @@
     ],
     "modelAnswer": "먼저 클라이언트→LB→App→DB·스토리지·인증 서비스 경로에서 각 의존성의 위치와 공통 장애점을 확인한다. 한 AZ 손실 시 기본 DB와 해당 AZ에만 묶인 볼륨이 사용 불가능해질 수 있으므로 실제 서비스의 복제·승격 설정 및 커밋 보장과 RPO, 전환·재연결·readiness 복귀에 걸리는 RTO를 검증한다. LB의 비정상 인스턴스 제외와 재수용 조건을 확인하고 남은 App의 성공 처리량 및 DB 연결·네트워크 상한이 예상 부하를 감당하는지 계산한다. 부족하면 여유 용량, 대체 인스턴스 배치, 부하 차단과 중요 요청 우선순위 등을 설계한다. 격리 환경 복구 리허설과 관측으로 목표를 검증하며, 분산 배치만으로 무손실·무중단을 보장한다고 단정하지 않는다.",
     "explanationMarkdown": "가용 영역은 인스턴스 숫자만의 문제가 아니라 공통 의존성의 배치, 장애 시 복제/복구 계약과 잔존 처리 용량을 묶어 평가한다. 분산 여부, 무손실 여부, 시간 목표를 각각 증거로 검증해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.reliability.storage-models.q4",
+    "promptMarkdown": "사용자가 업로드하는 프로필 이미지·대용량 첨부 파일(1MB~100MB)과 메타데이터(작성자, 파일명, 권한)를 저장하는 가장 표준적인 클라우드 스토리지 조합은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.reliability.storage-models"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "파일 바이너리 본문은 객체 저장소(S3/GCS 등) + CDN으로 저장·배포하고, PostgreSQL에는 객체 키·크기·MIME·소유자 같은 메타데이터만 저장한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "객체 저장소는 높은 내구성과 저렴한 비용·HTTP 직접 서빙(Pre-signed URL/CDN)에 최적화되어 있고, RDBMS는 트랜잭션·권한·검색용 메타데이터 관리에 강하다. DB BLOB에 대용량 파일을 쌓으면 백업·복제·메모리 비용이 폭증한다."
+      },
+      {
+        "key": "B",
+        "content": "모든 100MB 바이너리 파일을 PostgreSQL `BYTEA` 컬럼에 넣어 매일 전체 DB 백업에 포함한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "DB 크기, WAL 복제량, 백업/복구 시간(RTO), 버퍼 캐시 오염이 기하급수적으로 악화된다."
+      },
+      {
+        "key": "C",
+        "content": "API 컨테이너 1대의 로컬 EBS 블록 볼륨에만 저장하고 다른 인스턴스는 접근하지 못하게 둔다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "단일 블록 볼륨은 보통 1개 노드에만 마운트(RWO)되므로 다중 인스턴스 수평 확장과 고가용성에 맞지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "모든 이미지 파일을 Base64로 인코딩해 Redis 메모리에 영구 저장한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Redis는 고비용 인메모리 캐시이지 대용량 영구 바이너리 파일 저장소가 아니다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "블록 스토리지는 DB 데이터파일처럼 낮은 지연의 임의 R/W에, 객체 스토리지는 이미지·백업·정적 파일의 대용량 고내구성 저장에, RDBMS는 정형 메타데이터와 트랜잭션에 사용하는 것이 역할 분리의 정석이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.reliability.storage-models.q5",
+    "promptMarkdown": "파일 업로드 흐름에서 ① 객체 저장소(S3)에 파일 업로드 성공 → ② DB 메타데이터 저장 트랜잭션 실패가 발생했다. 객체 저장소에 남겨진 고아 객체(Orphan Object)를 운영에서 깔끔하게 다루는 전략은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.reliability.storage-models"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "스토리지 비용이 무한하므로 고아 객체가 수천만 개 쌓여도 영구 방치한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "미참조 파일이 누적되면 스토리지 비용뿐 아니라 개인정보 보존 기간 위반 위험도 커진다."
+      },
+      {
+        "key": "B",
+        "content": "임시 prefix(`uploads/pending/`) + 수명주기(Lifecycle) 만료 규칙으로 미확정 고아 객체를 자동 정리하거나, DB에 먼저 `PENDING` 메타데이터를 기록한 뒤 업로드 완료 시 `ACTIVE`로 확정하고 주기적 정리 배치로 회수한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "S3와 PostgreSQL은 분산 트랜잭션으로 묶이지 않으므로 실패 시 고아 객체가 필연적으로 생길 수 있다. `PENDING` 상태 + Lifecycle 규칙/정리 배치로 스토리지 누수를 자동 통제하는 것이 실무 표준이다."
+      },
+      {
+        "key": "C",
+        "content": "DB 트랜잭션이 롤백되면 S3 객체도 자동으로 함께 삭제되므로 별도 처리가 필요 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "PostgreSQL 롤백은 이미 완료된 S3 HTTP PUT 객체를 자동 삭제하지 못한다."
+      },
+      {
+        "key": "D",
+        "content": "고아 객체를 막기 위해 DB 트랜잭션 안에서 100MB 파일을 동기 업로드하고 커밋한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "100MB 업로드 시간 동안 DB 커넥션과 트랜잭션이 묶여 풀 고갈 장애를 일으키며, 커밋 실패 시 고아 객체 문제도 여전히 남는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "외부 객체 저장소와 DB 메타데이터의 이중 쓰기에서는 Pre-signed URL + `PENDING/ACTIVE` 상태 + 객체 수명주기 만료(또는 정리 배치)로 고아 파일을 안전하게 회수한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.reliability.backup-restore.q4",
+    "promptMarkdown": "장애 복구 목표에서 **RPO = 5분**, **RTO = 30분**이 의미하는 바로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.reliability.backup-restore"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "백업 파일 크기가 5MB 이하이고 다운로드에 30초 걸린다는 뜻이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "파일 크기가 아니라 데이터 손실 허용 시점(RPO)과 복구 완료 목표 시간(RTO)이다."
+      },
+      {
+        "key": "B",
+        "content": "재해 발생 시 최대 5분 분량의 최근 데이터 손실까지 허용(RPO)하고, 장애 인지 후 30분 이내에 서비스를 정상 복구해야 한다(RTO).",
+        "displayOrder": 1,
+        "rationaleMarkdown": "RPO(Recovery Point Objective)는 허용 가능한 최대 데이터 손실 시점(시간)이고, RTO(Recovery Time Objective)는 허용 가능한 최대 복구 소요 시간이다."
+      },
+      {
+        "key": "C",
+        "content": "복구에는 최대 5분이 걸리고, 데이터는 최대 30분 분량까지 유실되어도 된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "RPO(데이터 손실 허용)와 RTO(복구 소요 시간)의 정의가 정확히 반대로 서술되었다."
+      },
+      {
+        "key": "D",
+        "content": "매일 5분마다 서버를 재시작하고 30분마다 캐시를 비워야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "RPO/RTO는 재해 복구 목표 지표이며 주기적 재시작 주기가 아니다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "RPO는 '얼마나 최근 시점까지 데이터를 살려야 하는가'(백업/WAL 아카이빙 주기 결정), RTO는 '얼마나 빨리 서비스를 되살려야 하는가'(복구 자동화·스탠바이 구성 결정)를 정량화한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.reliability.backup-restore.q5",
+    "promptMarkdown": "매일 새벽 `pg_basebackup` 백업 작업이 1년째 `SUCCESS` 로그를 남기고 있다. 그럼에도 “복구가 보장된다”고 단정할 수 없는 가장 중요한 이유와 검증 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.reliability.backup-restore"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "복구 리허설은 반드시 현재 트래픽이 흐르는 운영 DB에 덮어쓰면서 테스트해야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "복구 훈련은 반드시 운영과 격리된 별도 스테이징/임시 인스턴스에서 수행해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "아카이브 파일 손상, 암호화 키 불일치, WAL 누락, 복구 스크립트 노후화는 실제 복원을 시도하기 전까지 드러나지 않으므로 격리된 환경에서 정기적 복구 리허설(Restore Drill)과 소요 시간(RTO) 측정을 수행해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "‘복원해 보지 않은 백업은 백업이 아니다.’ 정기적 자동 복구 테스트로 데이터 무결성과 실제 RTO 충족 여부를 검증해야 장애 당일 복구 실패 참사를 막을 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "`pg_basebackup`은 로그에 `SUCCESS`를 출력하기만 하면 100% 모든 시점 복원이 수학적으로 보장된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "백업 생성 성공과 실제 새 인스턴스에 복원·WAL 재생·앱 기동 성공은 별개의 검증 대상이다."
+      },
+      {
+        "key": "D",
+        "content": "고가용성 Read Replica가 1대 있으므로 백업과 복구 리허설은 아예 필요 없다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "실수로 `DELETE`나 `DROP TABLE`을 실행하면 Read Replica에도 수 밀리초 만에 그대로 복제되어 함께 삭제된다. 복제본은 백업을 대체하지 못한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "복제본은 하드웨어 장애 대비(HA)이고, 독립 백업+PITR+정기 복구 리허설은 인적 실수·랜섬웨어·전체 저장소 유실 대비(DR)다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.reliability.iac-rollout.q4",
+    "promptMarkdown": "Terraform으로 운영 인프라를 관리 중인데, 긴급 장애 대응 시 누군가 AWS 콘솔에서 직접 보안 그룹 포트와 RDS 파라미터를 수동 변경한 뒤 코드에 반영하지 않았다. 이 상태의 명칭과 위험은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.reliability.iac-rollout"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "블루/그린 배포 — 두 개의 인프라가 안전하게 공존하는 정상 상태다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "계획된 블루/그린이 아니라 코드와 실제 환경의 괴리(Drift)다."
+      },
+      {
+        "key": "B",
+        "content": "Terraform이 수동 변경을 감지하면 항상 해당 변경을 영구적으로 유지하도록 코드를 자동 수정한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Terraform은 선언된 코드(desired state)를 기준으로 실제 인프라를 덮어쓰려 하므로 수동 긴급 패치가 사라질 위험이 크다."
+      },
+      {
+        "key": "C",
+        "content": "구성 드리프트(Configuration Drift) — IaC 목표 상태(desired state)와 실제 인프라가 어긋나, 다음 `terraform apply` 시 수동 긴급 조치가 의도치 않게 원복되어 장애가 재발하거나 예기치 않은 리소스 재생성이 일어날 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "긴급 수동 변경이 불가피했다면 직후 `terraform plan`으로 차이를 확인하고 즉시 코드(PR)에 역반영해 drift를 해소해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "불변 인프라(Immutable Infrastructure) — 콘솔 수동 변경이 자동으로 Git 커밋으로 저장된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "클라우드 콘솔 수동 편집은 Git 코드에 자동 반영되지 않으며, 불변 인프라 원칙에 정면으로 반한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "IaC의 핵심은 코드가 인프라의 단일 진실 공급원(desired state)인 것이다. 정기적 `plan` 드리프트 감지와 콘솔 수동 변경의 즉시 코드화가 필수다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.reliability.iac-rollout.q5",
+    "promptMarkdown": "IaC(`terraform apply`)로 새 RDS 파라미터와 앱 배포를 적용한 뒤 문제가 생겨 이전 Git 커밋으로 `terraform apply`를 되돌렸다. 이때 “자동으로 되돌려지지 않을 수 있는 상태”를 가장 정확히 짚은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.reliability.iac-rollout"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "이미 적용된 애플리케이션 DB 스키마 마이그레이션(Flyway DDL), 새 버전이 기록한 데이터, 외부 결제/웹훅 부수 효과는 IaC 코드 롤백만으로 자동 원복되지 않는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "IaC는 컴퓨팅·네트워크 리소스 선언은 되돌릴 수 있지만, 데이터 계층의 영속 변경과 외부 시스템 부수 효과는 별도의 하위 호환 설계와 보상/복구 절차가 필요하다."
+      },
+      {
+        "key": "B",
+        "content": "Git 커밋을 되돌리고 `terraform apply`를 실행하면 DB에 새로 삽입된 주문 데이터까지 완벽히 이전 시점으로 복원된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "IaC는 인프라 리소스 구성을 관리할 뿐 DB 테이블 내부의 행 데이터를 시점 복원하지 못한다."
+      },
+      {
+        "key": "C",
+        "content": "IaC 롤백 시 VPC 서브넷과 컨테이너 이미지 버전은 절대 되돌릴 수 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "컨테이너 이미지 태그나 비파괴적 네트워크 설정은 IaC로 비교적 쉽게 이전 선언으로 되돌릴 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "상태 파일(`terraform.tfstate`)을 삭제하면 안전하게 이전 상태로 자동 롤백된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "상태 파일을 삭제하면 Terraform이 기존 리소스 소유권을 잃어 중복 생성·충돌 참사가 발생한다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "인프라 롤백(IaC)과 데이터/스키마 롤백은 별개다. 따라서 변경 전 `plan` 검토, 파괴적 변경 방지(`prevent_destroy`), 그리고 스키마의 하위 호환성 유지가 필수다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.reliability.failure-domains.q4",
+    "promptMarkdown": "API 인스턴스 4대를 AZ-A(2대)와 AZ-B(2대)에 분산 배치했다. 평소 최대 트래픽은 `300 req/s`이고 인스턴스 1대의 안정 최대 처리량은 `100 req/s`다. AZ-A 전체에 장애가 발생했을 때의 결과와 올바른 N+1/AZ 여유 용량 설계는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.reliability.failure-domains"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "3-AZ 구성으로 바꾸면 인스턴스를 총 2대만 띄워도 AZ 장애를 견딘다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "총 2대는 `200 req/s`로 정상 상태의 피크 `300 req/s`조차 감당하지 못한다."
+      },
+      {
+        "key": "B",
+        "content": "AZ-A가 죽으면 로드밸런서가 자동으로 AZ-B 인스턴스의 CPU 처리량을 2배로 늘려 준다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "로드밸런서는 트래픽을 넘길 뿐 개별 인스턴스의 물리 처리 용량을 늘리지 못한다."
+      },
+      {
+        "key": "C",
+        "content": "AZ-A 장애 시 남은 AZ-B 2대의 최대 용량은 `200 req/s`뿐이므로 `300 req/s`를 감당하지 못하고 AZ-B마저 과부하로 연쇄 붕괴한다. 2-AZ 구성에서는 각 AZ가 단독으로 피크 `300 req/s`를 견딜 수 있도록 최소 AZ당 3대(총 6대) 이상의 여유 용량이 필요하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "다중 AZ에 인스턴스를 단순히 나누기만 하면 안 된다. 한 AZ가 통째로 빠졌을 때 남은 AZ들이 전체 피크 트래픽을 감당할 여유 용량(headroom)을 갖춰야 진정한 AZ 장애 내성이 성립한다."
+      },
+      {
+        "key": "D",
+        "content": "총 4대(`400 req/s`)가 `300 req/s`보다 크므로 AZ-A가 통째로 죽어도 아무 문제 없이 버틴다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "AZ-A가 죽으면 2대(`200 req/s`)가 사라지므로 남은 `200 req/s`로는 `300 req/s`를 처리할 수 없다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "장애 영역(AZ) 분산의 실전 공식은 `생존 AZ들의 합산 용량 >= 피크 트래픽`이다. 2-AZ면 50% 여유(2x), 3-AZ면 33% 여유(1.5x)를 유지해야 한 AZ 유실 시 남은 AZ의 연쇄 과부하를 막을 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "infrastructure.core.reliability.failure-domains.q5",
+    "promptMarkdown": "멀티 AZ 아키텍처에서 API 서버와 로드밸런서는 2개 AZ에 분산했지만, PostgreSQL Primary는 단일 AZ에만 있고 자동 Failover Standby가 없다. 이 시스템의 실질적인 단일 장애점(SPOF)과 개선 방향은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "infrastructure.core.reliability.failure-domains"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "단일 AZ PostgreSQL이 전체 시스템의 SPOF다. Multi-AZ 동기/준동기 Standby와 자동 Failover 구성을 갖춰야 DB가 속한 AZ 장애 시에도 쓰기 가용성을 유지할 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "전체 시스템의 가용성은 가장 취약한 필수 의존성(단일 AZ DB, 단일 NAT Gateway, 단일 인증 서버)의 장애 영역에 의해 결정된다."
+      },
+      {
+        "key": "B",
+        "content": "API 서버가 2개 AZ에 있으므로 DB가 속한 AZ가 죽어도 쓰기 API는 계속 정상 동작한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "쓰기 요청이 필수 의존하는 단일 AZ DB가 내려가면 다른 AZ의 API 서버들도 모두 DB 연결 실패로 중단된다."
+      },
+      {
+        "key": "C",
+        "content": "같은 AZ 안의 같은 물리 랙에 DB를 2대 두면 AZ 전체 정전에도 안전하다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "같은 AZ는 전력·냉각·네트워크 장애 영역을 공유하므로 AZ 장애를 견디려면 반드시 서로 다른 AZ에 배치해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "API 서버 수를 100대로 늘리면 단일 DB 장애가 해결된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "무상태 앱 인스턴스를 아무리 늘려도 단일 장애점인 DB 장애는 해소되지 않는다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "장애 영역 분석은 진입점부터 API, DB, 캐시, NAT, 인증 서버까지 **모든 필수 의존성 경로**에서 단일 장애점(SPOF)을 제거해야 비로소 Multi-AZ 고가용성이 완성된다."
   }
 ]

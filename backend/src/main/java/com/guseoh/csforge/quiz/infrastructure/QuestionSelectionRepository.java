@@ -17,6 +17,8 @@ import jakarta.persistence.criteria.Subquery;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import com.guseoh.csforge.learning.domain.BookmarkCategoryAssignment;
+import com.guseoh.csforge.learning.domain.ConceptProgress;
 import com.guseoh.csforge.learning.domain.ContentStatus;
 import com.guseoh.csforge.question.domain.Question;
 import com.guseoh.csforge.question.domain.QuestionStatus;
@@ -52,9 +54,16 @@ public class QuestionSelectionRepository {
                 .orderBy(builder.asc(question.get("id")));
 
         List<Long> ids = entityManager.createQuery(query).getResultList();
-        List<Long> selectedIds = criteria.state() == QuizQuestionState.ALL && criteria.conceptIds().isEmpty()
-                ? randomSubset(ids, limit, ThreadLocalRandom.current())
-                : List.copyOf(ids.subList(0, Math.min(limit, ids.size())));
+        List<Long> selectedIds;
+        if (criteria.shuffle()) {
+            selectedIds = shuffledSubset(ids, limit, ThreadLocalRandom.current());
+        } else if (criteria.state() == QuizQuestionState.ALL
+                && criteria.conceptIds().isEmpty()
+                && criteria.topicIds().isEmpty()) {
+            selectedIds = randomSubset(ids, limit, ThreadLocalRandom.current());
+        } else {
+            selectedIds = List.copyOf(ids.subList(0, Math.min(limit, ids.size())));
+        }
         return new QuestionSelectionResult(ids.size(), selectedIds);
     }
 
@@ -63,6 +72,12 @@ public class QuestionSelectionRepository {
         if (shuffled.size() > limit) {
             Collections.shuffle(shuffled, random);
         }
+        return List.copyOf(shuffled.subList(0, Math.min(limit, shuffled.size())));
+    }
+
+    static List<Long> shuffledSubset(List<Long> ids, int limit, Random random) {
+        List<Long> shuffled = new ArrayList<>(ids);
+        Collections.shuffle(shuffled, random);
         return List.copyOf(shuffled.subList(0, Math.min(limit, shuffled.size())));
     }
 
@@ -141,6 +156,20 @@ public class QuestionSelectionRepository {
         }
         if (!criteria.conceptIds().isEmpty()) {
             predicates.add(concept.get("id").in(criteria.conceptIds()));
+        }
+        if (!criteria.topicIds().isEmpty()) {
+            predicates.add(topic.get("id").in(criteria.topicIds()));
+        }
+        if (criteria.bookmarkCategoryId() != null) {
+            Subquery<Long> bookmarked = query.subquery(Long.class);
+            Root<BookmarkCategoryAssignment> assignment = bookmarked.from(BookmarkCategoryAssignment.class);
+            Root<ConceptProgress> progress = bookmarked.from(ConceptProgress.class);
+            bookmarked.select(builder.literal(1L)).where(
+                    builder.equal(assignment.get("conceptId"), concept.get("id")),
+                    builder.equal(assignment.get("category").get("id"), criteria.bookmarkCategoryId()),
+                    builder.equal(progress.get("conceptId"), concept.get("id")),
+                    builder.isTrue(progress.get("bookmarked")));
+            predicates.add(builder.exists(bookmarked));
         }
         if (!criteria.levels().isEmpty()) {
             predicates.add(concept.get("level").in(criteria.levels()));

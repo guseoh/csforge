@@ -46,10 +46,12 @@ public class ContentSyncService {
         var existingKeys = previous.files().values().stream().flatMap(e -> e.identities().stream()).collect(java.util.stream.Collectors.toSet());
         int updated = 0, created = 0, unchanged = 0;
         var plan = batches.plan(files);
+        var preflightItems = new ArrayList<NormalizedImportItem>();
         // Preflight every file, including unchanged source files: DB-only drift must not be silently ignored.
         for (var batch : plan.batches()) {
             var analysis = analyzer.analyze(batch.command());
             policy.validate(analysis, scope);
+            preflightItems.addAll(analysis.items());
             for (var item : analysis.previews()) {
                 if (item.classification() == ImportClassification.CREATED
                         && existingKeys.contains(item.kind() + ":" + item.contentKey()))
@@ -60,6 +62,7 @@ public class ContentSyncService {
                 if (item.classification() != ImportClassification.UNCHANGED) filesToApply.add(item.fileName());
             }
         }
+        policy.validateSharedReferenceConsistency(preflightItems);
         if (!filesToApply.isEmpty()) {
             var delta = batches.plan(files.stream().filter(f -> filesToApply.contains(f.path())).toList());
             for (var batch : delta.batches()) {

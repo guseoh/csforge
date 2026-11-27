@@ -533,5 +533,239 @@
     ],
     "modelAnswer": "자식은 stdout 쓰기가 파이프 용량 때문에 막혀 종료 지점에 도달하지 못하고, 부모는 출력을 비우지 않은 채 자식 종료만 기다릴 수 있다. 하위 프로세스 실행기는 출력 소비와 프로세스 대기 순서를 함께 설계해야 한다.",
     "explanationMarkdown": "상태를 순서대로 보면 `파이프 가득 참 → 자식의 쓰기 블로킹 → 자식이 종료 지점에 도달하지 못함 → 부모는 자식 종료를 블로킹 대기 → 부모가 파이프를 읽지 않음`이 된다. 서로의 진행 조건이 충족되지 않아 교착성 대기가 지속될 수 있다. 출력 비우기와 `wait` 순서를 함께 설계하거나 동시 소비·논블로킹 I/O 같은 구조를 사용할 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.process.parent-child.q5",
+    "promptMarkdown": "리눅스에서 부모 프로세스가 `fork()`로 자식 프로세스를 생성할 때, 부모의 수 GB 메모리를 즉시 전부 복사하지 않고 빠르게 생성하는 커널 최적화 기법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.process.parent-child"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "부모와 자식은 영구적으로 같은 쓰기 가능 힙을 공유해 서로의 변수를 직접 수정한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "프로세스는 독립된 주소 공간을 가지므로 쓰기 시점에 COW로 분리되어 서로의 메모리에 영향을 주지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "`fork()`는 자식 프로세스의 페이지 테이블을 아예 생성하지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "자식 고유의 페이지 테이블은 생성되며, 각 엔트리가 초기에는 부모와 같은 물리 프레임을 읽기 전용(COW)으로 가리킬 뿐이다."
+      },
+      {
+        "key": "C",
+        "content": "COW를 쓰면 자식 프로세스가 종료된 뒤에도 부모가 `wait()`을 호출할 필요가 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "COW는 메모리 복사 최적화이며, 종료 상태 회수(`wait`) 누락 시 좀비 프로세스 문제는 별개로 발생한다."
+      },
+      {
+        "key": "D",
+        "content": "Copy-on-Write(COW) — `fork()` 직후에는 부모와 자식이 동일한 물리 메모리 페이지를 읽기 전용으로 공유하다가, 어느 한쪽이 특정 페이지에 쓰기를 시도해 페이지 폴트가 날 때만 그 페이지를 복사한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "COW 덕분에 `fork()` 직후 `exec()`로 새 프로그램을 덮어쓰거나, Redis `BGSAVE`처럼 스냅샷을 뜰 때 불필요한 전체 메모리 복사를 피할 수 있다(단, 쓰기가 활발하면 COW 페이지 복사로 메모리가 급증할 수 있다)."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`fork()`는 Copy-on-Write로 메모리 복사를 쓰기 시점까지 지연시키지만, 부모의 쓰기가 활발한 상태(예: Redis `BGSAVE` 중 대량 쓰기)에서는 COW 복사량 증가로 메모리 사용량이 튈 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.process.pcb.q5",
+    "promptMarkdown": "운영체제 커널이 프로세스 문맥 전환(Context Switch)을 수행할 때 PCB(Process Control Block, 리눅스 `task_struct`)에 저장·복원해야 하는 핵심 정보로 묶인 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.process.pcb"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "PCB는 일반 유저 모드 코드에서 포인터로 직접 수정할 수 있는 전역 배열이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "PCB는 커널 메모리에 격리되어 보호되며 유저 모드에서 직접 접근할 수 없다."
+      },
+      {
+        "key": "B",
+        "content": "PCB에는 PID 숫자 하나만 저장된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "PID 외에도 상태, 레지스터 문맥, 메모리 맵, 열린 파일, 시그널, 스케줄링 통계 등 프로세스 관리 전반이 기록된다."
+      },
+      {
+        "key": "C",
+        "content": "프로세스 상태·PID·CPU 레지스터(PC/SP 포함)·메모리 관리 정보(페이지 테이블 기준 주소)·열린 파일 디스크립터 테이블·스케줄링 우선순위",
+        "displayOrder": 2,
+        "rationaleMarkdown": "커널은 PCB에 저장된 실행 문맥과 주소 공간·FD·스케줄링 메타데이터를 교체함으로써 중단된 프로세스를 정확히 다음 명령어부터 재개할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "프로세스의 전체 힙 메모리 수 GB 데이터를 매 문맥 전환마다 PCB 구조체 안으로 복사한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "힙 데이터 자체를 복사하는 것이 아니라 페이지 테이블 포인터(예: x86 CR3 레지스터)만 교체해 주소 공간을 전환한다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "PCB는 커널이 프로세스를 식별·스케줄링·문맥 전환·자원 회수하기 위해 유지하는 핵심 커널 자료구조다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.process.process-state.q5",
+    "promptMarkdown": "프로세스 상태 전이(`New → Ready ↔ Running → Waiting/Blocked → Terminated`) 중 **직접 전이될 수 없는** 경로는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.process.process-state"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`Running → Ready` 전이 (타임 슬라이스 만료로 선점됨)",
+        "displayOrder": 0,
+        "rationaleMarkdown": "타이머 인터럽트나 더 높은 우선순위 프로세스의 선점으로 `Running → Ready` 전이는 정상적으로 일어난다."
+      },
+      {
+        "key": "B",
+        "content": "`Running → Waiting(Blocked)` 전이 (블로킹 I/O나 락 대기 진입)",
+        "displayOrder": 1,
+        "rationaleMarkdown": "실행 중이던 프로세스가 디스크 읽기나 뮤텍스 대기에 들어가면 `Waiting` 상태로 전환된다."
+      },
+      {
+        "key": "C",
+        "content": "`Ready → Running` 전이 (스케줄러 디스패치)",
+        "displayOrder": 2,
+        "rationaleMarkdown": "스케줄러가 준비 큐에서 프로세스를 선택해 CPU를 할당하면 `Ready → Running`이 된다."
+      },
+      {
+        "key": "D",
+        "content": "`Waiting(Blocked) → Running` 직접 전이 — 디스크/네트워크 I/O가 완료된 프로세스는 곧바로 CPU를 차지하는 것이 아니라 먼저 `Ready` 큐로 들어가 스케줄러의 선택을 기다려야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "I/O 완료 인터럽트는 대기 프로세스를 `Ready` 상태로 깨울 뿐이며, 실제 CPU 배정(`Ready → Running`)은 OS 스케줄러가 결정한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "I/O나 이벤트 대기가 끝난 프로세스는 항상 `Waiting → Ready`로 먼저 이동한 뒤 스케줄러에 의해 `Running`으로 디스패치된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.process.process-terminate.q5",
+    "promptMarkdown": "프로세스가 정상 종료(`exit()`)하거나 치명적 오류로 비정상 종료될 때, OS 커널이 자동으로 정리해 주는 자원과 애플리케이션이 종료 전 직접 챙겨야 할 일의 구분으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.process.process-terminate"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "커널은 가상 메모리 페이지·열린 FD·소켓을 자동 회수하지만, 유저 공간 버퍼 플러시·진행 중인 HTTP 응답 마무리·외부 DB/분산 락 해제와 트랜잭션 정리는 애플리케이션의 Graceful Shutdown 로직이 직접 처리해야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "OS는 프로세스의 로컬 메모리와 FD를 정리하지만, 외부 DB의 미완료 작업이나 클라이언트에게 보내던 응답 본문·유저 버퍼 로그는 커널이 대신 마무리해 주지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "프로세스가 `SIGKILL`로 종료되면 커널이 진행 중인 HTTP 응답 JSON을 자동으로 완성해 전송한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "커널은 TCP 연결을 강제 종료(RST/FIN)할 뿐 애플리케이션 프로토콜 응답을 완성하지 못한다."
+      },
+      {
+        "key": "C",
+        "content": "프로세스가 종료되어도 사용하던 RAM은 재부팅 전까지 절대 커널에 반환되지 않는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "프로세스 종료 시 커널이 해당 프로세스의 모든 물리 메모리 페이지와 열린 FD를 회수한다."
+      },
+      {
+        "key": "D",
+        "content": "종료 코드(Exit Code) `0`은 치명적 오류를, `137`은 정상 종료를 뜻한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "관례상 `0`이 정상 종료이고, `137(128 + 9)`은 `SIGKILL`(대표적으로 OOMKilled)에 의한 비정상 종료다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "OS의 로컬 자원 회수와 애플리케이션의 외부 상태·진행 중 요청 정리(Graceful Shutdown)는 서로 다른 책임이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.process.program-vs-process.q5",
+    "promptMarkdown": "같은 실행 파일(`/usr/bin/java`)로 두 개의 Spring Boot 인스턴스를 동시에 실행했을 때, '프로그램(Program)'과 '프로세스(Process)'의 관계로 가장 정확한 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.process.program-vs-process"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "같은 실행 파일에서 시작했으므로 두 프로세스는 동일한 PID와 동일한 힙 객체를 공유한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "각 프로세스는 고유 PID와 독립된 가상 주소 공간(힙·스택)을 가진다."
+      },
+      {
+        "key": "B",
+        "content": "프로세스는 디스크에 저장된 소스 코드 파일이고 프로그램이 메모리에서 실행 중인 인스턴스다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "프로그램(정적 바이너리)과 프로세스(동적 실행 인스턴스)의 정의가 반대로 뒤바뀌었다."
+      },
+      {
+        "key": "C",
+        "content": "한 번 실행 중인 프로그램 파일은 두 번째 프로세스로 동시에 실행할 수 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "포트나 락 파일 충돌만 피하면 같은 프로그램으로 수십 개의 독립 프로세스를 동시에 실행할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "프로그램은 디스크에 저장된 정적 실행 파일(코드·정적 데이터)이고, 두 인스턴스는 각각 고유한 PID·가상 주소 공간(힙·스택)·열린 FD·실행 상태를 갖는 독립된 2개의 프로세스다(단, 읽기 전용 코드 페이지는 물리 메모리에서 공유 가능).",
+        "displayOrder": 3,
+        "rationaleMarkdown": "하나의 정적 프로그램에서 여러 동적 프로세스가 생성될 수 있으며, 각 프로세스는 자신만의 동적 실행 상태(스택·힙·레지스터·FD)를 독립 유지한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "프로그램은 디스크 위의 수동적 바이너리이고, 프로세스는 OS가 PID·가상 메모리·FD·실행 문맥을 부여해 구동하는 능동적 실행 단위다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "operating-systems.core.process.wait-reap.q5",
+    "promptMarkdown": "리눅스 서버에서 `ps aux`를 확인했더니 `STAT`이 `Z`(Zombie, `<defunct>`)인 프로세스가 수천 개 쌓여 있다. 좀비 프로세스의 정확한 상태와 해결 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "operating-systems.core.process.wait-reap"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "고아 프로세스(Orphan)와 좀비 프로세스(Zombie)는 완전히 같은 상태다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "고아는 부모가 먼저 죽어 살아 있는 자식(init/subreaper에 입양됨)이고, 좀비는 자식이 먼저 죽었는데 부모가 회수하지 않은 상태다."
+      },
+      {
+        "key": "B",
+        "content": "자식 프로세스는 이미 실행이 끝나 메모리·FD를 모두 반납했지만 부모 프로세스가 `wait()`/`waitpid()`로 종료 코드를 회수(reap)하지 않아 PID와 프로세스 테이블 엔트리만 남은 상태다. 부모의 `wait()` 호출(또는 부모 종료 시 init/PID 1 입양·회수)로 제거된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "좀비는 이미 죽은 상태라 `kill -9`를 보내도 사라지지 않는다. 부모가 `wait()`으로 종료 상태를 회수하게 하거나 부모를 재시작해 PID 1이 회수하도록 해야 PID 테이블 고갈을 막을 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "좀비 프로세스에 `kill -9 <zombie_pid>`를 보내면 즉시 프로세스 테이블에서 사라진다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "좀비는 이미 종료된 프로세스이므로 `SIGKILL`에 반응하지 않는다. 부모 프로세스가 `wait()`으로 회수해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "좀비 프로세스는 CPU를 100% 사용하고 수 GB의 RAM을 계속 점유한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "좀비는 실행 중이 아니며 메모리도 이미 반납했고, 오직 PID와 커널 프로세스 테이블 슬롯만 차지한다(단, 대량 누적 시 새 프로세스 생성 불가 장애를 유발한다)."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "좀비 프로세스는 이미 종료됐지만 부모의 `wait()` 회수를 기다리는 PID 엔트리이며, `kill -9`가 아니라 부모의 회수 또는 부모 종료→init 회수로 정리된다."
   }
 ]

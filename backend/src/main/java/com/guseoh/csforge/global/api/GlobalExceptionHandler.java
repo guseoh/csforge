@@ -1,8 +1,10 @@
 package com.guseoh.csforge.global.api;
 
+import java.time.Clock;
 import java.time.Instant;
 import java.util.List;
 
+import com.guseoh.csforge.importcontent.application.CanonicalContentSourceException;
 import com.guseoh.csforge.importcontent.application.ImportBoundsException;
 import com.guseoh.csforge.importcontent.application.ImportPreviewStaleException;
 import com.guseoh.csforge.ai.application.AiProviderNotConfiguredException;
@@ -24,22 +26,30 @@ import com.guseoh.csforge.review.application.NoDueReviewsException;
 import com.guseoh.csforge.review.application.ReviewQuestionNotFoundException;
 import com.guseoh.csforge.wrongnote.application.WrongNoteNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /** 애플리케이션 예외를 일관된 HTTP 오류 응답으로 변환하는 전역 예외 처리기이다. */
 @Slf4j
 @RestControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
+
+    private final Clock clock;
 
     @ExceptionHandler(LearningNotFoundException.class)
     public ResponseEntity<ApiError> handleLearningNotFound(LearningNotFoundException exception, HttpServletRequest request) {
@@ -134,11 +144,40 @@ public class GlobalExceptionHandler {
             IllegalArgumentException.class,
             MethodArgumentTypeMismatchException.class,
             MissingServletRequestParameterException.class,
+            MissingServletRequestPartException.class,
             HttpMessageNotReadableException.class
     })
     public ResponseEntity<ApiError> handleBadRequest(Exception exception, HttpServletRequest request) {
         String message = exception instanceof HttpMessageNotReadableException ? "Request contains an invalid value" : exception.getMessage();
         return error(HttpStatus.BAD_REQUEST, "INVALID_REQUEST", message, request, List.of());
+    }
+
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiError> handleNoResourceFound(NoResourceFoundException exception, HttpServletRequest request) {
+        return error(HttpStatus.NOT_FOUND, "RESOURCE_NOT_FOUND", "Requested resource was not found", request, List.of());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ApiError> handleMethodNotSupported(
+            HttpRequestMethodNotSupportedException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.METHOD_NOT_ALLOWED, "METHOD_NOT_ALLOWED", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+    public ResponseEntity<ApiError> handleMediaTypeNotSupported(
+            HttpMediaTypeNotSupportedException exception,
+            HttpServletRequest request) {
+        return error(HttpStatus.UNSUPPORTED_MEDIA_TYPE, "UNSUPPORTED_MEDIA_TYPE", exception.getMessage(), request, List.of());
+    }
+
+    @ExceptionHandler(CanonicalContentSourceException.class)
+    public ResponseEntity<ApiError> handleCanonicalContentSource(
+            CanonicalContentSourceException exception,
+            HttpServletRequest request) {
+        log.error("Canonical content source unavailable", exception);
+        return error(HttpStatus.SERVICE_UNAVAILABLE, "CANONICAL_CONTENT_UNAVAILABLE",
+                "Canonical content pack is unavailable", request, List.of());
     }
 
     @ExceptionHandler(QuizExpiredException.class)
@@ -194,7 +233,7 @@ public class GlobalExceptionHandler {
             String message,
             HttpServletRequest request,
             List<FieldViolationResponse> fields) {
-        ApiError body = new ApiError(Instant.now(), status.value(), code, message, request.getRequestURI(), fields);
+        ApiError body = new ApiError(Instant.now(clock), status.value(), code, message, request.getRequestURI(), fields);
         return ResponseEntity.status(status).body(body);
     }
 }

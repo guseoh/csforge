@@ -46,23 +46,7 @@ member_id index에서 후보 위치를 찾고 heap row 방문
 
 계획을 선택하는 시점에는 쿼리를 아직 실행하지 않았으므로 **통계와 비용 모델로 추정**합니다. 대표적으로 테이블 행 수, 컬럼 값 분포, 고유 값 수, NULL 비율 같은 정보가 예상 행 수 계산에 사용됩니다.
 
-```text
-statistics
-   │
-   ├─ table size
-   ├─ distinct values
-   ├─ common values
-   └─ histogram
-        │
-        ▼
-조건 selectivity 추정
-        │
-        ▼
-각 plan의 rows / I/O / CPU cost 추정
-        │
-        ▼
-예상 cost가 낮은 plan 선택
-```
+![PostgreSQL 비용 기반 옵티마이저 실행 계획 선택 과정](/learning/database/optimizer-cost-selection.svg)
 
 ### cost 숫자를 밀리초로 읽으면 안 된다
 

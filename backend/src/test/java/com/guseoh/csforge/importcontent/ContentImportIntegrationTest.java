@@ -475,7 +475,7 @@ class ContentImportIntegrationTest {
         assertEquals(0, initial.get("totals").get("errors").asInt(), initial::toString);
         assertEquals(200, post("/api/imports/apply", older, initial.get("previewDigest").asText()).statusCode());
         assertEquals(10, jdbc.queryForObject("select count(*) from concept", Integer.class));
-        assertEquals(56, jdbc.queryForObject("select count(*) from question", Integer.class));
+        assertEquals(57, jdbc.queryForObject("select count(*) from question", Integer.class));
         List<Map<String, Object>> identities = jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id");
         List<Map<String, Object>> links = jdbc.queryForList("select * from question_concept order by question_id, concept_id");
         long correctedQuestionId = jdbc.queryForObject("select id from question where content_key = ?", Long.class, correctedQuestionKey);
@@ -504,7 +504,7 @@ class ContentImportIntegrationTest {
         assertEquals(choices, jdbc.queryForList("select id, choice_key, display_order from question_choice where question_id = ? order by id", correctedQuestionId));
         assertTrue(jdbc.queryForObject("select prompt_markdown from question where id = ?", String.class, correctedQuestionId).contains("System.out.println(a == b);"));
         JsonNode repeated = json(post("/api/imports/preview", pack, null)).get("body");
-        assertEquals(67, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
+        assertEquals(68, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
         assertEquals(0, repeated.get("totals").get("updated").asInt());
         assertEquals(0, repeated.get("totals").get("created").asInt());
         assertEquals(0, repeated.get("totals").get("errors").asInt());
@@ -546,7 +546,7 @@ class ContentImportIntegrationTest {
         assertEquals(0, initial.get("totals").get("errors").asInt(), initial::toString);
         assertEquals(200, post("/api/imports/apply", older, initial.get("previewDigest").asText()).statusCode());
         assertEquals(12, jdbc.queryForObject("select count(*) from concept", Integer.class));
-        assertEquals(68, jdbc.queryForObject("select count(*) from question", Integer.class));
+        assertEquals(69, jdbc.queryForObject("select count(*) from question", Integer.class));
         var concepts = jdbc.queryForList("select id, content_key, topic_id, level, display_order from concept order by id");
         var questions = jdbc.queryForList("select id, content_key, question_type, difficulty, status from question order by id");
         var links = jdbc.queryForList("select * from question_concept order by question_id, concept_id");
@@ -579,7 +579,7 @@ class ContentImportIntegrationTest {
         assertEquals(answers, jdbc.queryForList("select * from question_answer order by id"));
         assertEquals(history, personalHistorySnapshot());
         JsonNode repeated = json(post("/api/imports/preview", pack, null)).get("body");
-        assertEquals(81, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
+        assertEquals(82, repeated.get("totals").get("unchanged").asInt(), repeated::toString);
         for (String count : List.of("created", "updated", "errors")) assertEquals(0, repeated.get("totals").get(count).asInt());
         assertEquals(200, post("/api/imports/apply", pack, repeated.get("previewDigest").asText()).statusCode());
         assertEquals(history, personalHistorySnapshot());
@@ -654,7 +654,7 @@ class ContentImportIntegrationTest {
         }
         assertEquals(18, expectedTopics);
         assertEquals(145, expectedConcepts);
-        assertEquals(843, expectedQuestions);
+        assertEquals(862, expectedQuestions);
         assertEquals(expectedTopics, jdbc.queryForObject("select count(*) from topic", Integer.class));
         assertEquals(expectedConcepts, jdbc.queryForObject("select count(*) from concept", Integer.class));
         for (var history : personalHistorySnapshot().entrySet()) {

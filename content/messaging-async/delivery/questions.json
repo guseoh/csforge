@@ -1,14 +1,577 @@
 [
-  {"kind":"question","contentKey":"messaging.core.delivery.at-least-once-idempotency.q1","promptMarkdown":"다음 순서로 처리하던 컨슈머가 있다.\n\n1. DB 업무 효과를 반영한다.\n2. 확정 위치(committed position)를 갱신하기 전에 프로세스가 종료된다.\n\n가장 현실적으로 예상할 전달 결과는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.at-least-once-idempotency"],"choices":[{"key":"A","content":"컨슈머가 반드시 정확히 한 번만 실행된다.","displayOrder":0,"rationaleMarkdown":"DB 변경은 이미 확정됐지만 처리 완료 위치는 저장되지 않았다. 재시작한 컨슈머가 같은 레코드를 다시 읽을 수 있으므로 실행 횟수를 한 번으로 보장할 수 없다."},{"key":"B","content":"현재 소비 위치가 이동했으므로 확정 위치도 함께 저장되어 재전달되지 않는다.","displayOrder":1,"rationaleMarkdown":"현재 읽기 위치와 재시작 기준인 확정 위치는 별개다. 현재 위치가 앞으로 갔더라도 오프셋 확정 전에 중단되면 이전 위치에서 다시 시작할 수 있다."},{"key":"C","content":"메시지가 다시 전달되면 이미 커밋된 DB 트랜잭션의 효과를 Kafka가 자동으로 되돌린다.","displayOrder":2,"rationaleMarkdown":"이미 커밋된 DB 트랜잭션은 메시지 재전달만으로 취소되지 않는다. 중복 업무 효과를 막으려면 처리 기록과 변경을 같은 원자적 경계에 두는 등의 컨슈머 설계가 필요하다."},{"key":"D","content":"같은 메시지가 다시 전달될 수 있다.","displayOrder":3,"rationaleMarkdown":"DB 변경은 남았지만 오프셋 확정은 남지 않았다. 재시작 시 이전 확정 위치부터 다시 읽으므로 같은 메시지를 재처리할 수 있다."}],"correctChoiceKey":"D","explanationMarkdown":"컨슈머가 DB 업무 효과를 커밋한 뒤 오프셋 확정 전에 종료되면 브로커는 해당 레코드가 완료됐다는 사실을 알 수 없다. 재시작 후 같은 메시지가 다시 전달될 수 있으므로 최소 1회 전달 컨슈머는 중복 실행을 정상 조건으로 다뤄야 한다."},
-  {"kind":"question","contentKey":"messaging.core.delivery.at-least-once-idempotency.q2","promptMarkdown":"`processed_message(messageId)`를 저장하고 주문 상태를 갱신하는 컨슈머에서 두 작업의 트랜잭션 경계를 어떻게 두는 것이 안전한가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.at-least-once-idempotency"],"modelAnswer":"같은 로컬 DB 트랜잭션으로 묶어 처리 기록과 업무 상태 변경이 함께 커밋되거나 롤백되게 해야 한다. 기록만 커밋되고 상태 변경이 실패하면 재처리가 막히고, 상태 변경만 커밋되고 기록이 없으면 중복 메시지에서 같은 효과가 다시 적용될 수 있다. 처리 기록에는 적절한 유일 제약을 두고 INSERT 성공 여부로 처리 소유권을 결정한다. 단순 SELECT 후 변경은 동시 중복 전달의 경쟁을 막지 못한다.","explanationMarkdown":"처리 기록과 업무 상태 변경이 서로 다른 트랜잭션이면 한쪽만 성공하는 실패 구간이 생긴다. 둘을 같은 로컬 DB 트랜잭션으로 묶어야 중복 감지와 실제 업무 효과가 함께 커밋되거나 함께 롤백된다."},
-  {"kind":"question","contentKey":"messaging.core.delivery.at-least-once-idempotency.q3","promptMarkdown":"다음 두 경계를 구분해 설명하라.\n\n- Kafka consume-process-produce 흐름을 exactly-once로 구성할 때 필요한 트랜잭션 경계\n- 그 보장이 결제 제공자 호출까지 확장되지 않는 이유","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.at-least-once-idempotency"],"modelAnswer":"Kafka 내부 흐름에서는 transactional producer가 출력 토픽 레코드와 소비한 오프셋을 같은 Kafka 트랜잭션에 포함하고, 다운스트림 컨슈머는 중단된 트랜잭션의 출력을 보지 않도록 `isolation.level=read_committed`를 사용하며 트랜잭션과 오프셋을 올바르게 관리해야 한다. 하지만 PostgreSQL·결제 제공자·메일 시스템 같은 외부 자원은 그 Kafka 트랜잭션의 참여자가 아니므로 타임아웃·재시도·결과 불명 상태가 남는다. 외부 효과에는 제공자 멱등 키, 작업 상태, 보상·대사를 별도로 둬야 한다.","explanationMarkdown":"Kafka exactly-once 처리는 명시적인 Kafka 트랜잭션 경계를 가지며 전체 분산 업무 흐름의 물리적인 exactly-once를 뜻하지 않는다."},
-  {"kind":"question","contentKey":"messaging.core.delivery.retry-dlq.q1","promptMarkdown":"다음 중 일반적으로 제한된 재시도 후보에 가까운 실패는?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.retry-dlq"],"choices":[{"key":"A","content":"필수 필드가 없는 독성 메시지","displayOrder":0,"rationaleMarkdown":"필수 필드가 없는 동일 페이로드를 그대로 다시 처리해도 누락된 값이 생기지 않는다. 입력 수정이나 격리·조사 경로가 필요한 영구적 실패에 가깝다."},{"key":"B","content":"항상 재현되는 잘못된 스키마","displayOrder":1,"rationaleMarkdown":"스키마 자체가 현재 컨슈머 계약에 맞지 않으면 같은 입력의 즉시 반복은 결과를 바꾸지 않는다. 호환 가능한 배포나 데이터 보정이 필요한지 확인해야 한다."},{"key":"C","content":"일시적인 네트워크 타임아웃","displayOrder":2,"rationaleMarkdown":"일시적인 네트워크 장애는 다음 시도에서 회복될 수 있다. 다만 무한 재시도 대신 횟수와 간격을 제한하고 실패 시 격리 경로를 마련해야 한다."},{"key":"D","content":"권한이 없는 요청의 검증 오류","displayOrder":3,"rationaleMarkdown":"권한 검증이 거부한 동일 요청을 시간만 두고 반복해도 권한이 생기지 않는다. 자격이나 정책 변경이 확인되지 않았다면 재시도 대상이 아니다."}],"correctChoiceKey":"C","explanationMarkdown":"네트워크 타임아웃처럼 시간이 지나면 회복될 수 있는 일시적 실패는 제한된 재시도 후보가 될 수 있다. 반대로 스키마 오류나 필수 필드 누락처럼 같은 입력에서 계속 재현되는 실패는 무한 재시도보다 실패 메시지 격리 흐름으로 보내는 편이 안전하다."},
-  {"kind":"question","contentKey":"messaging.core.delivery.retry-dlq.q2","promptMarkdown":"다음 상황의 개선 정책을 설명하라.\n\n- 스키마 오류 메시지를 같은 파티션에서 무제한 재시도한다.\n- 뒤의 정상 메시지까지 지연된다.\n\nKafka 자체 전달 보장과 애플리케이션의 재시도/DLQ 흐름을 구분해야 한다.","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.retry-dlq"],"modelAnswer":"영구 오류를 무제한 재시도하지 않고 실패 레코드 저장소나 별도 재시도/DLQ 토픽 같은 애플리케이션·프레임워크 흐름으로 격리할 수 있다. 원본 키·페이로드 버전·실패 원인·시도 횟수를 보존하고 운영자가 수정 후 재생할 절차를 둔다. 별도 토픽을 사용하면 원래 파티션 순서와 확정 위치 처리 방식이 달라질 수 있으므로 이를 명시한다. 원본 위치를 먼저 확정하면 실패 레코드 발행 실패 시 복구 대상을 잃을 수 있다. 실패 레코드의 내구성 있는 저장 이후 확정하거나 동일 Kafka 트랜잭션으로 출력과 위치를 함께 확정하며, 별도 저장이면 중복 격리 가능성도 고려한다.","explanationMarkdown":"재시도 토픽이나 DLQ는 Kafka의 모든 컨슈머에 자동 적용되는 프로토콜 보장이 아니라 구현 전략이며 순서·보존 기간·재생 계약을 함께 설계해야 한다."},
-  {"kind":"question","contentKey":"messaging.core.delivery.retry-dlq.q3","promptMarkdown":"다음 순서로 장애가 확대되고 있다.\n\n1. 5개 컨슈머가 같은 시각에 하위 시스템 타임아웃을 겪는다.\n2. 모든 컨슈머가 동시에 재시도한다.\n3. 하위 시스템 부하가 더 커진다.\n\n재시도 폭주를 줄이면서 순서와 처리 용량을 통제할 설계를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.retry-dlq"],"modelAnswer":"지수 백오프와 지터, 최대 시도 횟수·대기 시간·전체 제한 시간으로 재시도 예산을 제한하고 하위 시스템 포화를 관측한다. 정상 파티션을 계속 막지 않게 pause/seek, 별도 재시도 토픽, 프레임워크 스케줄러 같은 구현을 선택할 수 있지만 별도 토픽은 원래 순서를 바꿀 수 있으므로 업무 단위 순번과 중복 처리도 다시 검토한다. 영구적 실패는 실패 메시지 격리 흐름으로 보낸다.","explanationMarkdown":"여러 컨슈머가 같은 하위 시스템 장애에 즉시 재시도하면 복구 중인 시스템에 부하를 더해 재시도 폭주를 만들 수 있다. 백오프·지터·시도 예산을 두고, 순서를 유지할지 별도 재시도 흐름으로 분리할지까지 함께 결정해야 한다."},
-  {"kind":"question","contentKey":"messaging.core.delivery.ordering.q1","promptMarkdown":"같은 `orderId`를 키로 여러 프로듀서 인스턴스가 `Placed`와 `Paid`를 동시에 발행한다. 같은 파티션으로 보내는 것만으로 업무 순서가 보장되지 않는 이유는?","questionType":"MULTIPLE_CHOICE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.ordering"],"choices":[{"key":"A","content":"Kafka가 같은 파티션에 도착한 레코드를 이벤트 타임스탬프 순으로 자동 재정렬하기 때문이다.","displayOrder":0,"rationaleMarkdown":"Kafka는 업무 이벤트의 타임스탬프를 해석해 레코드를 재정렬하지 않는다. 파티션에 추가된 로그 순서만 보존하므로, 서로 다른 프로듀서의 업무상 선후 관계를 별도 버전·순번으로 확인해야 한다."},{"key":"B","content":"키는 파티션을 선택하는 기준일 뿐, 서로 다른 프로듀서의 발행을 업무 버전 순으로 직렬화하지 않기 때문이다.","displayOrder":1,"rationaleMarkdown":"같은 키는 같은 파티션으로 라우팅하는 데 쓰이지만 동시 프로듀서가 어느 업무 이벤트를 먼저 보내야 하는지 판단하지 않는다. 업무 순서는 프로듀서·릴레이 또는 버전을 확인하는 컨슈머에서 별도로 보장해야 한다."},{"key":"C","content":"같은 키가 중복 이벤트를 자동으로 합치기 때문이다.","displayOrder":2,"rationaleMarkdown":"Kafka 키는 파티션 라우팅과 로그 압축 등에 쓰일 수 있지만 일반적인 프로듀서 발행에서 중복 이벤트를 업무 의미에 따라 자동 제거하지 않는다."},{"key":"D","content":"컨슈머 그룹이 같은 키의 레코드마다 서로 다른 파티션을 재할당하기 때문이다.","displayOrder":3,"rationaleMarkdown":"컨슈머 그룹은 토픽 파티션을 그룹 구성원에게 할당한다. 레코드 키가 컨슈머 구성원에 직접 배정되는 것이 아니며 이 할당이 프로듀서 간 업무 순서를 정하지도 않는다."}],"correctChoiceKey":"B","explanationMarkdown":"같은 키는 프로듀서 파티셔너가 같은 파티션을 선택하도록 돕고 Kafka는 그 파티션에 추가된 순서를 보존한다. 하지만 여러 프로듀서가 동시에 보낸 레코드의 추가 순서가 업무상 인과 순서와 같다고 보장하지는 않으므로 순번·버전과 순서 보장 책임을 별도로 정해야 한다."},
-  {"kind":"question","contentKey":"messaging.core.delivery.ordering.q2","promptMarkdown":"다음 순서로 두 이벤트를 처리한다.\n\n1. 한 파티션에서 `Placed`, `Paid`를 차례로 읽는다.\n2. 두 작업을 별도 작업자에게 동시에 맡긴다.\n3. `Paid`가 먼저 DB에 반영된다.\n\n이 결과가 가능한 이유와 방어책은?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.ordering"],"modelAnswer":"읽은 순서가 작업 완료 순서를 보장하지 않아 느린 Placed보다 Paid가 먼저 끝날 수 있다. 키별 직렬 처리·파티션 단위 순차 실행·업무 순번 또는 버전 확인으로 역순 적용을 거부하는 방식을 선택한다.","explanationMarkdown":"브로커가 `Placed` 다음 `Paid`를 순서대로 전달해도 컨슈머가 두 작업을 병렬 작업자에게 넘기면 완료 순서는 뒤집힐 수 있다. 키별 직렬 처리나 순번·버전 확인으로 애플리케이션 완료 순서까지 보호해야 한다."},
-  {"kind":"question","contentKey":"messaging.core.delivery.ordering.q3","promptMarkdown":"모든 이벤트를 하나의 파티션으로 보내면 순서 문제가 사라진다고 할 때 처리량·장애 격리 관점의 절충을 설명하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.ordering"],"modelAnswer":"하나의 파티션 로그 순서는 단순해지지만 파티션 하나가 병렬성과 장애 격리의 병목이 된다. 또한 애플리케이션 내부 병렬 처리까지 직렬화하지 않으면 완료 순서는 여전히 역전될 수 있다. 필요한 업무 키 범위만 같은 파티션으로 라우팅하고 핫 키·컨슈머 병렬성·서로 다른 키 간 조정 비용을 함께 계산한다.","explanationMarkdown":"모든 이벤트를 하나의 파티션에 넣으면 로그 순서는 단순해지지만 병렬성과 장애 격리도 하나의 파티션에 묶인다. 필요한 업무 단위 범위만 순서를 보장하고 나머지는 병렬 처리해 처리량 비용을 줄이는 편이 일반적이다."},
-  {"kind":"question","contentKey":"messaging.core.delivery.producer-ack-durability.q1","promptMarkdown":"Kafka 토픽에 복제본이 3개 있고 Producer가 `acks=1`로 레코드를 발행했다. 리더가 성공을 응답한 직후 팔로워에 복제가 완료되기 전에 리더가 실패했다면 가장 적절한 설명은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.producer-ack-durability"],"choices":[{"key":"A","content":"성공 응답을 받았으므로 새 리더에서도 해당 레코드가 반드시 남아 있다.","displayOrder":0,"rationaleMarkdown":"acks=1은 리더가 응답할 때 모든 팔로워의 복제를 기다리지 않는다. 리더만 가진 기록이 사라지면 새 리더에는 없을 수 있다."},{"key":"B","content":"Consumer 오프셋이 아직 확정되지 않았다면 리더 장애가 있어도 레코드 유실은 불가능하다.","displayOrder":1,"rationaleMarkdown":"Consumer 오프셋은 읽기 복구 위치를 다룬다. 발행 레코드 자체가 복제되지 않은 상태로 리더가 실패했는지와는 별도 문제다."},{"key":"C","content":"`acks=1`은 리더 기록 후 곧바로 응답할 수 있으므로, 복제되지 않은 레코드는 리더 장애 때 유실될 수 있다.","displayOrder":2,"rationaleMarkdown":"Producer가 성공 콜백을 받더라도 팔로워에 기록된 상태가 아닐 수 있다. 어떤 수준의 내구성을 요구하는지에 맞게 확인 조건을 선택해야 한다."},{"key":"D","content":"`min.insync.replicas` 값을 2로 설정하기만 하면 `acks=1`에서도 항상 두 복제본의 확인을 기다린다.","displayOrder":3,"rationaleMarkdown":"최소 ISR 조건은 기본적으로 acks=all의 성공 인정과 연결된다. acks=1이 자동으로 all 수준으로 바뀌지 않는다."}],"correctChoiceKey":"C","explanationMarkdown":"acks=1은 리더가 기록한 뒤 팔로워 복제를 기다리지 않고 성공 응답을 줄 수 있다. 그 뒤 리더가 사라지면 해당 기록이 복제본에 없어서 유실될 수 있으므로 발행 성공의 수준을 구분해야 한다."},
-  {"kind":"question","contentKey":"messaging.core.delivery.producer-ack-durability.q2","promptMarkdown":"Kafka 파티션의 replication.factor는 3, min.insync.replicas는 2, Producer의 acks는 all이다. 현재 리더 A만 ISR에 남고 나머지 두 복제본은 ISR에서 빠졌다.\n\n이 설정에서 발행 결과를 어떻게 예상하며, 현재 ISR 크기가 3일 때는 왜 '항상 두 복제본만 확인하면 성공'이 아닌지 설명하라. (일반적인 Kafka 4.2의 ELR 미사용 조건을 가정한다.)","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.producer-ack-durability"],"modelAnswer":"현재 ISR가 {A} 하나뿐이면 min.insync.replicas=2보다 작아 acks=all 발행은 성공하지 못하고 NotEnoughReplicas 계열 오류가 날 수 있다. ISR가 {A,B,C} 세 개이면 acks=all은 min의 최소 두 개만 아니라 현재 ISR에 포함된 세 복제본 모두의 확인을 요구한다. 세부 의미는 클러스터의 ELR 등 버전별 설정에 따라 확인해야 하며, acks=all도 consumer DB 처리나 외부 부수 효과의 완료를 뜻하지 않는다.","explanationMarkdown":"min.insync.replicas는 acks=all 쓰기 성공의 하한 조건이며 실제 현재 ISR 크기와 동일하지 않다. ISR가 늘어나면 확인에 참여하는 복제본도 달라진다. 복제본 수 설정 자체가 발행 성공이나 외부 업무 처리를 보장하지 않는다."},
-  {"kind":"question","contentKey":"messaging.core.delivery.producer-ack-durability.q3","promptMarkdown":"주문 DB 변경과 아웃박스 기록을 한 트랜잭션에 커밋한 뒤 릴레이가 Kafka에 이벤트를 보낸다. 브로커에는 실제로 기록되었지만 릴레이는 확인 응답을 잃어 타임아웃을 받았다. 다른 서비스의 Consumer도 이벤트 처리 뒤 오프셋 확정 전에 종료될 수 있다.\n\nProducer의 acks·idempotence, outbox 기록, Consumer의 업무 DB 커밋·offset commit이 각각 어떤 중복/유실 구간을 보호하는지 설명하고, 같은 주문 업무 효과가 중복되지 않게 처리하는 계약을 설계하라.","questionType":"DESCRIPTIVE","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["messaging.core.delivery.producer-ack-durability"],"modelAnswer":"아웃박스는 주문 DB 커밋과 발행 의도를 같은 로컬 트랜잭션으로 보존한다. Producer acks=all은 ISR 및 min.insync.replicas 조건에 따른 Kafka 로그 기록 확인이지 Consumer 업무 완료가 아니다. 같은 Producer 세션 내부 전송 재시도는 idempotence로 로그 중복을 줄이지만, 릴레이가 결과 불명 상태에서 신규 발행을 반복하는 것까지 자동으로 처리하지 않는다. Outbox 행의 발행 상태·eventId를 유지하고 결과 조회/재시도로 전달을 보정하며, Consumer는 eventId 처리 기록과 업무 DB 변경을 한 로컬 트랜잭션으로 묶는다. Consumer DB 커밋 뒤 offset commit 전에 종료하면 재전달될 수 있으므로 멱등 처리로 중복 효과를 막는다. 외부 결제 등 로컬 DB 밖 효과에는 제공자 멱등 키·결과 대사·보상 정책이 별도로 필요하다.","explanationMarkdown":"Kafka 내부 기록 확인, DB와 outbox의 원자적 발행 의도, Consumer 오프셋 확정, 외부 업무 효과는 서로 다른 경계다. 각각이 보호하는 틈을 연결해도 전체 분산 업무를 자동으로 exactly-once로 만들지는 않는다."}
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.at-least-once-idempotency.q1",
+    "promptMarkdown": "다음 순서로 처리하던 컨슈머가 있다.\n\n1. DB 업무 효과를 반영한다.\n2. 확정 위치(committed position)를 갱신하기 전에 프로세스가 종료된다.\n\n가장 현실적으로 예상할 전달 결과는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.at-least-once-idempotency"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "컨슈머가 반드시 정확히 한 번만 실행된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "DB 변경은 이미 확정됐지만 처리 완료 위치는 저장되지 않았다. 재시작한 컨슈머가 같은 레코드를 다시 읽을 수 있으므로 실행 횟수를 한 번으로 보장할 수 없다."
+      },
+      {
+        "key": "B",
+        "content": "현재 소비 위치가 이동했으므로 확정 위치도 함께 저장되어 재전달되지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "현재 읽기 위치와 재시작 기준인 확정 위치는 별개다. 현재 위치가 앞으로 갔더라도 오프셋 확정 전에 중단되면 이전 위치에서 다시 시작할 수 있다."
+      },
+      {
+        "key": "C",
+        "content": "메시지가 다시 전달되면 이미 커밋된 DB 트랜잭션의 효과를 Kafka가 자동으로 되돌린다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "이미 커밋된 DB 트랜잭션은 메시지 재전달만으로 취소되지 않는다. 중복 업무 효과를 막으려면 처리 기록과 변경을 같은 원자적 경계에 두는 등의 컨슈머 설계가 필요하다."
+      },
+      {
+        "key": "D",
+        "content": "같은 메시지가 다시 전달될 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "DB 변경은 남았지만 오프셋 확정은 남지 않았다. 재시작 시 이전 확정 위치부터 다시 읽으므로 같은 메시지를 재처리할 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "컨슈머가 DB 업무 효과를 커밋한 뒤 오프셋 확정 전에 종료되면 브로커는 해당 레코드가 완료됐다는 사실을 알 수 없다. 재시작 후 같은 메시지가 다시 전달될 수 있으므로 최소 1회 전달 컨슈머는 중복 실행을 정상 조건으로 다뤄야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.at-least-once-idempotency.q2",
+    "promptMarkdown": "`processed_message(messageId)`를 저장하고 주문 상태를 갱신하는 컨슈머에서 두 작업의 트랜잭션 경계를 어떻게 두는 것이 안전한가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.at-least-once-idempotency"
+    ],
+    "modelAnswer": "같은 로컬 DB 트랜잭션으로 묶어 처리 기록과 업무 상태 변경이 함께 커밋되거나 롤백되게 해야 한다. 기록만 커밋되고 상태 변경이 실패하면 재처리가 막히고, 상태 변경만 커밋되고 기록이 없으면 중복 메시지에서 같은 효과가 다시 적용될 수 있다. 처리 기록에는 적절한 유일 제약을 두고 INSERT 성공 여부로 처리 소유권을 결정한다. 단순 SELECT 후 변경은 동시 중복 전달의 경쟁을 막지 못한다.",
+    "explanationMarkdown": "처리 기록과 업무 상태 변경이 서로 다른 트랜잭션이면 한쪽만 성공하는 실패 구간이 생긴다. 둘을 같은 로컬 DB 트랜잭션으로 묶어야 중복 감지와 실제 업무 효과가 함께 커밋되거나 함께 롤백된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.at-least-once-idempotency.q3",
+    "promptMarkdown": "다음 두 경계를 구분해 설명하라.\n\n- Kafka consume-process-produce 흐름을 exactly-once로 구성할 때 필요한 트랜잭션 경계\n- 그 보장이 결제 제공자 호출까지 확장되지 않는 이유",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.at-least-once-idempotency"
+    ],
+    "modelAnswer": "Kafka 내부 흐름에서는 transactional producer가 출력 토픽 레코드와 소비한 오프셋을 같은 Kafka 트랜잭션에 포함하고, 다운스트림 컨슈머는 중단된 트랜잭션의 출력을 보지 않도록 `isolation.level=read_committed`를 사용하며 트랜잭션과 오프셋을 올바르게 관리해야 한다. 하지만 PostgreSQL·결제 제공자·메일 시스템 같은 외부 자원은 그 Kafka 트랜잭션의 참여자가 아니므로 타임아웃·재시도·결과 불명 상태가 남는다. 외부 효과에는 제공자 멱등 키, 작업 상태, 보상·대사를 별도로 둬야 한다.",
+    "explanationMarkdown": "Kafka exactly-once 처리는 명시적인 Kafka 트랜잭션 경계를 가지며 전체 분산 업무 흐름의 물리적인 exactly-once를 뜻하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.retry-dlq.q1",
+    "promptMarkdown": "다음 중 일반적으로 제한된 재시도 후보에 가까운 실패는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.retry-dlq"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "필수 필드가 없는 독성 메시지",
+        "displayOrder": 0,
+        "rationaleMarkdown": "필수 필드가 없는 동일 페이로드를 그대로 다시 처리해도 누락된 값이 생기지 않는다. 입력 수정이나 격리·조사 경로가 필요한 영구적 실패에 가깝다."
+      },
+      {
+        "key": "B",
+        "content": "항상 재현되는 잘못된 스키마",
+        "displayOrder": 1,
+        "rationaleMarkdown": "스키마 자체가 현재 컨슈머 계약에 맞지 않으면 같은 입력의 즉시 반복은 결과를 바꾸지 않는다. 호환 가능한 배포나 데이터 보정이 필요한지 확인해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "일시적인 네트워크 타임아웃",
+        "displayOrder": 2,
+        "rationaleMarkdown": "일시적인 네트워크 장애는 다음 시도에서 회복될 수 있다. 다만 무한 재시도 대신 횟수와 간격을 제한하고 실패 시 격리 경로를 마련해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "권한이 없는 요청의 검증 오류",
+        "displayOrder": 3,
+        "rationaleMarkdown": "권한 검증이 거부한 동일 요청을 시간만 두고 반복해도 권한이 생기지 않는다. 자격이나 정책 변경이 확인되지 않았다면 재시도 대상이 아니다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "네트워크 타임아웃처럼 시간이 지나면 회복될 수 있는 일시적 실패는 제한된 재시도 후보가 될 수 있다. 반대로 스키마 오류나 필수 필드 누락처럼 같은 입력에서 계속 재현되는 실패는 무한 재시도보다 실패 메시지 격리 흐름으로 보내는 편이 안전하다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.retry-dlq.q2",
+    "promptMarkdown": "다음 상황의 개선 정책을 설명하라.\n\n- 스키마 오류 메시지를 같은 파티션에서 무제한 재시도한다.\n- 뒤의 정상 메시지까지 지연된다.\n\nKafka 자체 전달 보장과 애플리케이션의 재시도/DLQ 흐름을 구분해야 한다.",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.retry-dlq"
+    ],
+    "modelAnswer": "영구 오류를 무제한 재시도하지 않고 실패 레코드 저장소나 별도 재시도/DLQ 토픽 같은 애플리케이션·프레임워크 흐름으로 격리할 수 있다. 원본 키·페이로드 버전·실패 원인·시도 횟수를 보존하고 운영자가 수정 후 재생할 절차를 둔다. 별도 토픽을 사용하면 원래 파티션 순서와 확정 위치 처리 방식이 달라질 수 있으므로 이를 명시한다. 원본 위치를 먼저 확정하면 실패 레코드 발행 실패 시 복구 대상을 잃을 수 있다. 실패 레코드의 내구성 있는 저장 이후 확정하거나 동일 Kafka 트랜잭션으로 출력과 위치를 함께 확정하며, 별도 저장이면 중복 격리 가능성도 고려한다.",
+    "explanationMarkdown": "재시도 토픽이나 DLQ는 Kafka의 모든 컨슈머에 자동 적용되는 프로토콜 보장이 아니라 구현 전략이며 순서·보존 기간·재생 계약을 함께 설계해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.retry-dlq.q3",
+    "promptMarkdown": "다음 순서로 장애가 확대되고 있다.\n\n1. 5개 컨슈머가 같은 시각에 하위 시스템 타임아웃을 겪는다.\n2. 모든 컨슈머가 동시에 재시도한다.\n3. 하위 시스템 부하가 더 커진다.\n\n재시도 폭주를 줄이면서 순서와 처리 용량을 통제할 설계를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.retry-dlq"
+    ],
+    "modelAnswer": "지수 백오프와 지터, 최대 시도 횟수·대기 시간·전체 제한 시간으로 재시도 예산을 제한하고 하위 시스템 포화를 관측한다. 정상 파티션을 계속 막지 않게 pause/seek, 별도 재시도 토픽, 프레임워크 스케줄러 같은 구현을 선택할 수 있지만 별도 토픽은 원래 순서를 바꿀 수 있으므로 업무 단위 순번과 중복 처리도 다시 검토한다. 영구적 실패는 실패 메시지 격리 흐름으로 보낸다.",
+    "explanationMarkdown": "여러 컨슈머가 같은 하위 시스템 장애에 즉시 재시도하면 복구 중인 시스템에 부하를 더해 재시도 폭주를 만들 수 있다. 백오프·지터·시도 예산을 두고, 순서를 유지할지 별도 재시도 흐름으로 분리할지까지 함께 결정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.ordering.q1",
+    "promptMarkdown": "같은 `orderId`를 키로 여러 프로듀서 인스턴스가 `Placed`와 `Paid`를 동시에 발행한다. 같은 파티션으로 보내는 것만으로 업무 순서가 보장되지 않는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.ordering"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Kafka가 같은 파티션에 도착한 레코드를 이벤트 타임스탬프 순으로 자동 재정렬하기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Kafka는 업무 이벤트의 타임스탬프를 해석해 레코드를 재정렬하지 않는다. 파티션에 추가된 로그 순서만 보존하므로, 서로 다른 프로듀서의 업무상 선후 관계를 별도 버전·순번으로 확인해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "키는 파티션을 선택하는 기준일 뿐, 서로 다른 프로듀서의 발행을 업무 버전 순으로 직렬화하지 않기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "같은 키는 같은 파티션으로 라우팅하는 데 쓰이지만 동시 프로듀서가 어느 업무 이벤트를 먼저 보내야 하는지 판단하지 않는다. 업무 순서는 프로듀서·릴레이 또는 버전을 확인하는 컨슈머에서 별도로 보장해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "같은 키가 중복 이벤트를 자동으로 합치기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Kafka 키는 파티션 라우팅과 로그 압축 등에 쓰일 수 있지만 일반적인 프로듀서 발행에서 중복 이벤트를 업무 의미에 따라 자동 제거하지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "컨슈머 그룹이 같은 키의 레코드마다 서로 다른 파티션을 재할당하기 때문이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "컨슈머 그룹은 토픽 파티션을 그룹 구성원에게 할당한다. 레코드 키가 컨슈머 구성원에 직접 배정되는 것이 아니며 이 할당이 프로듀서 간 업무 순서를 정하지도 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "같은 키는 프로듀서 파티셔너가 같은 파티션을 선택하도록 돕고 Kafka는 그 파티션에 추가된 순서를 보존한다. 하지만 여러 프로듀서가 동시에 보낸 레코드의 추가 순서가 업무상 인과 순서와 같다고 보장하지는 않으므로 순번·버전과 순서 보장 책임을 별도로 정해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.ordering.q2",
+    "promptMarkdown": "다음 순서로 두 이벤트를 처리한다.\n\n1. 한 파티션에서 `Placed`, `Paid`를 차례로 읽는다.\n2. 두 작업을 별도 작업자에게 동시에 맡긴다.\n3. `Paid`가 먼저 DB에 반영된다.\n\n이 결과가 가능한 이유와 방어책은?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.ordering"
+    ],
+    "modelAnswer": "읽은 순서가 작업 완료 순서를 보장하지 않아 느린 Placed보다 Paid가 먼저 끝날 수 있다. 키별 직렬 처리·파티션 단위 순차 실행·업무 순번 또는 버전 확인으로 역순 적용을 거부하는 방식을 선택한다.",
+    "explanationMarkdown": "브로커가 `Placed` 다음 `Paid`를 순서대로 전달해도 컨슈머가 두 작업을 병렬 작업자에게 넘기면 완료 순서는 뒤집힐 수 있다. 키별 직렬 처리나 순번·버전 확인으로 애플리케이션 완료 순서까지 보호해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.ordering.q3",
+    "promptMarkdown": "모든 이벤트를 하나의 파티션으로 보내면 순서 문제가 사라진다고 할 때 처리량·장애 격리 관점의 절충을 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.ordering"
+    ],
+    "modelAnswer": "하나의 파티션 로그 순서는 단순해지지만 파티션 하나가 병렬성과 장애 격리의 병목이 된다. 또한 애플리케이션 내부 병렬 처리까지 직렬화하지 않으면 완료 순서는 여전히 역전될 수 있다. 필요한 업무 키 범위만 같은 파티션으로 라우팅하고 핫 키·컨슈머 병렬성·서로 다른 키 간 조정 비용을 함께 계산한다.",
+    "explanationMarkdown": "모든 이벤트를 하나의 파티션에 넣으면 로그 순서는 단순해지지만 병렬성과 장애 격리도 하나의 파티션에 묶인다. 필요한 업무 단위 범위만 순서를 보장하고 나머지는 병렬 처리해 처리량 비용을 줄이는 편이 일반적이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.producer-ack-durability.q1",
+    "promptMarkdown": "Kafka 토픽에 복제본이 3개 있고 Producer가 `acks=1`로 레코드를 발행했다. 리더가 성공을 응답한 직후 팔로워에 복제가 완료되기 전에 리더가 실패했다면 가장 적절한 설명은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.producer-ack-durability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "성공 응답을 받았으므로 새 리더에서도 해당 레코드가 반드시 남아 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "acks=1은 리더가 응답할 때 모든 팔로워의 복제를 기다리지 않는다. 리더만 가진 기록이 사라지면 새 리더에는 없을 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "Consumer 오프셋이 아직 확정되지 않았다면 리더 장애가 있어도 레코드 유실은 불가능하다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Consumer 오프셋은 읽기 복구 위치를 다룬다. 발행 레코드 자체가 복제되지 않은 상태로 리더가 실패했는지와는 별도 문제다."
+      },
+      {
+        "key": "C",
+        "content": "`acks=1`은 리더 기록 후 곧바로 응답할 수 있으므로, 복제되지 않은 레코드는 리더 장애 때 유실될 수 있다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Producer가 성공 콜백을 받더라도 팔로워에 기록된 상태가 아닐 수 있다. 어떤 수준의 내구성을 요구하는지에 맞게 확인 조건을 선택해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "`min.insync.replicas` 값을 2로 설정하기만 하면 `acks=1`에서도 항상 두 복제본의 확인을 기다린다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "최소 ISR 조건은 기본적으로 acks=all의 성공 인정과 연결된다. acks=1이 자동으로 all 수준으로 바뀌지 않는다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "acks=1은 리더가 기록한 뒤 팔로워 복제를 기다리지 않고 성공 응답을 줄 수 있다. 그 뒤 리더가 사라지면 해당 기록이 복제본에 없어서 유실될 수 있으므로 발행 성공의 수준을 구분해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.producer-ack-durability.q2",
+    "promptMarkdown": "Kafka 파티션의 replication.factor는 3, min.insync.replicas는 2, Producer의 acks는 all이다. 현재 리더 A만 ISR에 남고 나머지 두 복제본은 ISR에서 빠졌다.\n\n이 설정에서 발행 결과를 어떻게 예상하며, 현재 ISR 크기가 3일 때는 왜 '항상 두 복제본만 확인하면 성공'이 아닌지 설명하라. (일반적인 Kafka 4.2의 ELR 미사용 조건을 가정한다.)",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.producer-ack-durability"
+    ],
+    "modelAnswer": "현재 ISR가 {A} 하나뿐이면 min.insync.replicas=2보다 작아 acks=all 발행은 성공하지 못하고 NotEnoughReplicas 계열 오류가 날 수 있다. ISR가 {A,B,C} 세 개이면 acks=all은 min의 최소 두 개만 아니라 현재 ISR에 포함된 세 복제본 모두의 확인을 요구한다. 세부 의미는 클러스터의 ELR 등 버전별 설정에 따라 확인해야 하며, acks=all도 consumer DB 처리나 외부 부수 효과의 완료를 뜻하지 않는다.",
+    "explanationMarkdown": "min.insync.replicas는 acks=all 쓰기 성공의 하한 조건이며 실제 현재 ISR 크기와 동일하지 않다. ISR가 늘어나면 확인에 참여하는 복제본도 달라진다. 복제본 수 설정 자체가 발행 성공이나 외부 업무 처리를 보장하지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.producer-ack-durability.q3",
+    "promptMarkdown": "주문 DB 변경과 아웃박스 기록을 한 트랜잭션에 커밋한 뒤 릴레이가 Kafka에 이벤트를 보낸다. 브로커에는 실제로 기록되었지만 릴레이는 확인 응답을 잃어 타임아웃을 받았다. 다른 서비스의 Consumer도 이벤트 처리 뒤 오프셋 확정 전에 종료될 수 있다.\n\nProducer의 acks·idempotence, outbox 기록, Consumer의 업무 DB 커밋·offset commit이 각각 어떤 중복/유실 구간을 보호하는지 설명하고, 같은 주문 업무 효과가 중복되지 않게 처리하는 계약을 설계하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.producer-ack-durability"
+    ],
+    "modelAnswer": "아웃박스는 주문 DB 커밋과 발행 의도를 같은 로컬 트랜잭션으로 보존한다. Producer acks=all은 ISR 및 min.insync.replicas 조건에 따른 Kafka 로그 기록 확인이지 Consumer 업무 완료가 아니다. 같은 Producer 세션 내부 전송 재시도는 idempotence로 로그 중복을 줄이지만, 릴레이가 결과 불명 상태에서 신규 발행을 반복하는 것까지 자동으로 처리하지 않는다. Outbox 행의 발행 상태·eventId를 유지하고 결과 조회/재시도로 전달을 보정하며, Consumer는 eventId 처리 기록과 업무 DB 변경을 한 로컬 트랜잭션으로 묶는다. Consumer DB 커밋 뒤 offset commit 전에 종료하면 재전달될 수 있으므로 멱등 처리로 중복 효과를 막는다. 외부 결제 등 로컬 DB 밖 효과에는 제공자 멱등 키·결과 대사·보상 정책이 별도로 필요하다.",
+    "explanationMarkdown": "Kafka 내부 기록 확인, DB와 outbox의 원자적 발행 의도, Consumer 오프셋 확정, 외부 업무 효과는 서로 다른 경계다. 각각이 보호하는 틈을 연결해도 전체 분산 업무를 자동으로 exactly-once로 만들지는 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.at-least-once-idempotency.q4",
+    "promptMarkdown": "Kafka 컨슈머가 아래와 같이 `processed_events` 테이블과 주문 상태 갱신을 **같은 로컬 DB 트랜잭션**으로 묶어 처리한다. 중복 메시지가 다시 도착했을 때의 동작으로 가장 정확한 것은?\n```sql\nBEGIN;\nINSERT INTO processed_events(event_id) VALUES ($1) ON CONFLICT DO NOTHING;\n-- 삽입된 행 수가 1일 때만 업무 상태 갱신\nUPDATE orders SET status = 'PAID' WHERE id = $2;\nCOMMIT;\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.at-least-once-idempotency"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "이 패턴을 쓰면 Kafka 프로듀서 재시도를 모두 꺼야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "컨슈머가 멱등하게 설계되었으므로 오히려 프로듀서·브로커의 At-Least-Once 재시도를 안전하게 활용할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "Kafka `enable.auto.commit=true`가 자동으로 DB 트랜잭션과 분산 커밋을 묶어 주므로 `processed_events`는 불필요하다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Kafka 오프셋 커밋과 PostgreSQL DB 트랜잭션은 서로 다른 자원이므로 자동 분산 커밋되지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "첫 처리가 커밋된 뒤 오프셋 커밋 전 크래시가 나 메시지가 재전달되어도 `processed_events`의 UNIQUE 충돌로 중복 업무 갱신이 원자적으로 차단된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "멱등성 기록(`processed_events`)과 업무 상태 변경을 같은 DB 트랜잭션에 묶으면, At-Least-Once 재전달 환경에서도 최종 상태는 정확히 1회 반영된 결과(effectively-once)를 유지한다."
+      },
+      {
+        "key": "D",
+        "content": "`processed_events`는 별도 Redis 캐시에만 저장하고 TTL 10초를 두는 것이 항상 더 안전하다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "DB 커밋과 별개 저장소(Redis) 사이에는 부분 실패 창이 생기고, 10초 뒤 재전달이나 리플레이 시 중복 차단이 풀려 버린다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "DB 상태를 바꾸는 컨슈머에서 가장 실용적인 중복 방지 패턴은 `processed_events(event_id UNIQUE)` 삽입과 업무 `UPDATE`를 **단일 DB 트랜잭션**으로 묶는 것이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.at-least-once-idempotency.q5",
+    "promptMarkdown": "Spring Kafka 컨슈머에서 `enable.auto.commit=true` 상태로 메시지를 받자마자 백그라운드 스레드 풀에 넘기고 `poll()` 루프로 즉시 돌아가면 발생할 수 있는 전달 보장 위험은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.at-least-once-idempotency",
+      "messaging.core.semantics.consumer-offset"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "백그라운드 작업이 완료되기 전에 오프셋이 먼저 자동 커밋된 뒤 프로세스가 종료되면 해당 메시지가 영구 유실되는 At-Most-Once 동작이 된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "처리 완료 전에 오프셋을 커밋하면 장애 시 브로커는 이미 처리된 것으로 간주해 재전달하지 않는다. 유실을 막으려면 처리 완료 후 수동 오프셋 커밋(`AckMode.MANUAL_IMMEDIATE` 등)과 멱등 컨슈머를 결합해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "자동 커밋이 백그라운드 스레드의 DB 커밋 완료까지 자동으로 대기한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Kafka 클라이언트는 사용자가 별도 스레드 풀로 넘긴 비동기 작업의 완료 여부를 알지 못한다."
+      },
+      {
+        "key": "C",
+        "content": "파티션 순서가 전역적으로 완벽히 보장된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "별도 스레드 풀 병렬 처리는 같은 파티션 내 메시지 처리 순서까지 뒤섞는다."
+      },
+      {
+        "key": "D",
+        "content": "메시지가 브로커에서 영구 삭제되지 않으므로 유실은 절대 일어나지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "브로커 로그에 남아 있어도 컨슈머 그룹의 committed offset이 지나가면 자동 재소비가 일어나지 않는다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "처리 완료 **전** 오프셋 커밋은 메시지 유실(At-Most-Once), 처리 완료 **후** 오프셋 커밋은 중복 가능성(At-Least-Once)을 만든다. 실무에서는 후자 + 멱등성으로 안전성을 확보한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.ordering.q4",
+    "promptMarkdown": "단일 Kafka 파티션 안에서 같은 `orderId`의 `OrderPlaced` → `OrderPaid` 순서가 보장되도록 프로듀서를 설정할 때, `retries > 0` 환경에서 재시도로 인한 순서 역전을 막기 위해 함께 확인해야 할 설정은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.ordering",
+      "messaging.core.delivery.producer-ack-durability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`enable.idempotence=true`(기본값, `max.in.flight.requests.per.connection <= 5`)를 유지해 브로커가 프로듀서 시퀀스 번호로 순서 역전과 중복을 차단하게 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Idempotent Producer는 `(PID, Sequence Number)`를 브로커가 검증하므로 in-flight 요청이 최대 5개여도 재시도 시 순서 역전과 중복 기록을 모두 방지한다."
+      },
+      {
+        "key": "B",
+        "content": "`acks=0`으로 설정하면 네트워크 재시도가 없어 순서가 항상 보장된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`acks=0`은 응답을 기다리지 않아 메시지 유실 위험이 크고 내구성을 포기하게 된다."
+      },
+      {
+        "key": "C",
+        "content": "파티션 개수를 100개로 늘리면 서로 다른 파티션 간 전역 순서가 자동으로 생긴다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Kafka의 순서 보장은 **단일 파티션 내부**로 한정되며 파티션 간 전역 순서는 보장되지 않는다."
+      },
+      {
+        "key": "D",
+        "content": "같은 `orderId`라도 매번 무작위 UUID를 메시지 키로 지정한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "무작위 키를 쓰면 같은 주문 이벤트가 서로 다른 파티션으로 흩어져 순서가 완전히 깨진다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Kafka에서 같은 엔티티의 순서를 지키려면 ① 동일한 파티션 키(`orderId`), ② `enable.idempotence=true`, ③ 컨슈머 측에서 같은 파티션 내 순차 처리(또는 버전/상태 전이 검증)가 함께 맞물려야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.ordering.q5",
+    "promptMarkdown": "분산 환경에서 `OrderPaid` 이벤트가 네트워크/재시도 지연으로 `OrderPlaced`보다 컨슈머에 먼저 도착할 가능성이 있다. 컨슈머 도메인 로직을 순서 역전에 견고하게 만드는 가장 실용적인 방법은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.ordering"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "모든 이벤트를 항상 들어온 순서대로 무조건 덮어쓴다(blind overwrite).",
+        "displayOrder": 0,
+        "rationaleMarkdown": "늦게 도착한 오래된 이벤트가 최신 상태를 과거 상태로 덮어써 데이터 손상이 발생한다."
+      },
+      {
+        "key": "B",
+        "content": "전체 시스템의 모든 토픽을 파티션 1개로 합쳐 단일 스레드로만 처리한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "파티션 1개는 수평 확장과 장애 격리를 완전히 포기하게 되며, 다중 프로듀서 발행 시점 경쟁도 여전히 막지 못한다."
+      },
+      {
+        "key": "C",
+        "content": "컨슈머가 이벤트를 받으면 5분간 `Thread.sleep` 후 처리한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`poll` 간격 초과로 컨슈머 그룹 리밸런싱이 반복되고 처리량이 바닥으로 떨어진다."
+      },
+      {
+        "key": "D",
+        "content": "메시지에 단조 증가 버전(`aggregateVersion`)이나 명시적 상태 머신을 두고, 구버전 이벤트는 무시하거나 선행 상태 미도달 시 재시도·보류 처리한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "인프라 파티션 순서만 맹신하지 않고 `WHERE version < :eventVersion` 같은 버전 비교나 상태 전이 규칙을 컨슈머에 두면 다중 프로듀서·리플레이·재시도 토픽 경유 시에도 상태 역전을 막을 수 있다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "키 기반 파티셔닝은 필요조건이지만 다중 프로듀서나 비동기 재시도 토픽이 끼면 순서가 바뀔 수 있다. 컨슈머 측 버전/상태 전이 검사를 함께 두는 것이 방어적 설계다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.producer-ack-durability.q4",
+    "promptMarkdown": "Kafka 토픽 설정이 `replication.factor=3`, `min.insync.replicas=2`이고 프로듀서가 `acks=all`이다. 브로커 1대가 다운되어 ISR이 2개일 때와, 브로커 2대가 다운되어 ISR이 1개일 때의 발행 동작으로 옳은 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.producer-ack-durability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`acks=all`은 토픽의 모든 컨슈머가 메시지를 소비 완료할 때까지 프로듀서를 대기시킨다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`acks=all`은 컨슈머 소비가 아니라 브로커 ISR 복제본 기록 완료를 기다리는 설정이다."
+      },
+      {
+        "key": "B",
+        "content": "ISR=2일 때는 정상 발행되고, ISR=1일 때는 `NotEnoughReplicasException`으로 쓰기를 거부해 내구성 계약을 지킨다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`acks=all` + `min.insync.replicas=2` 조합은 최소 2개 복제본에 기록될 때만 쓰기를 허용한다. 브로커 1대 장애는 견디고, 2대 장애 시에는 단일 복제본 유실 위험을 막기 위해 쓰기를 거부한다."
+      },
+      {
+        "key": "C",
+        "content": "ISR=1일 때도 리더가 혼자 성공 응답을 반환하므로 가용성이 항상 100% 유지된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`min.insync.replicas=2` 미만이면 브로커가 `NotEnoughReplicasException`으로 `acks=all` 쓰기를 거부한다."
+      },
+      {
+        "key": "D",
+        "content": "ISR=2일 때부터 이미 복제본 3개가 모두 살아 있지 않으므로 쓰기가 실패한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "`min.insync.replicas=2`이므로 2개(리더+팔로워 1)만 ISR에 있으면 정상 발행된다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "`RF=3, min.insync.replicas=2, acks=all`은 운영 Kafka의 표준 내구성 조합이다. 브로커 1대 장애 시 무중단·무손실로 동작하며, 2대 동시 장애 시에는 데이터 유실 대신 쓰기 거부를 선택한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.producer-ack-durability.q5",
+    "promptMarkdown": "Kafka 클러스터에서 `unclean.leader.election.enable=true`를 켰을 때 발생하는 위험과 기본값(`false`)을 유지하는 이유는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.producer-ack-durability"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`false`로 두면 브로커 1대만 장애가 나도 항상 파티션이 중단된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "ISR에 남은 동기화된 팔로워가 정상 리더로 선출되므로 1대 장애는 문제없이 복구된다."
+      },
+      {
+        "key": "B",
+        "content": "컨슈머가 중복 메시지를 자동으로 제거하는 옵션이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "컨슈머 중복 제거와 무관하며 브로커 리더 선출 안전성 설정이다."
+      },
+      {
+        "key": "C",
+        "content": "ISR에 없는 뒤처진 팔로워가 리더로 선출되면 이전 리더에 커밋되었던 메시지가 영구 유실되므로, 데이터 무결성이 중요한 토픽은 기본값 `false`를 유지한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "Unclean leader election은 가용성을 위해 일관성과 내구성을 희생해 미복제 커밋 레코드를 잘라 버린다. 결제·주문·원장 토픽에서는 반드시 `false`를 유지해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "`unclean.leader.election.enable=true`는 디스크 용량을 50% 절약하는 압축 옵션이다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "압축 옵션이 아니라 ISR 밖의 out-of-sync 복제본을 리더로 허용할지 결정하는 장애 조치 정책이다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "`unclean.leader.election.enable=false`는 ISR 밖의 뒤처진 팔로워가 리더가 되어 이미 커밋된 데이터를 잃어버리는 사고를 막는 핵심 내구성 가드레일이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.retry-dlq.q4",
+    "promptMarkdown": "Spring Kafka 컨슈머가 JSON 역직렬화 오류(Poison Pill) 메시지를 만났을 때, 같은 파티션에서 무한 재시도하는 대신 가장 적절한 처리 흐름은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.retry-dlq"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "재시도해도 절대 성공할 수 없는 영구 오류(Deserialization/Validation 실패)는 즉시 Dead Letter Topic(DLQ)으로 격리하고 원본 헤더·오류 원인을 보존한 뒤 오프셋을 전진시켜 뒤따르는 정상 메시지 지연을 막는다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "일시적 네트워크 타임아웃은 지수 백오프+지터로 제한 재시도하되, 스키마/역직렬화 오류 같은 Poison Pill은 즉시 DLQ로 격리해야 파티션 전체가 막히는 Head-of-Line Blocking을 피할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "역직렬화 오류가 해결될 때까지 같은 파티션에서 영원히 재시도한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "코드/데이터를 고치지 않는 한 절대 성공하지 못해 해당 파티션의 모든 정상 메시지 처리가 영구 중단된다."
+      },
+      {
+        "key": "C",
+        "content": "오류 로그도 남기지 않고 메시지를 조용히 버리고 넘어간다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "실패 메시지와 원인을 보존하지 않으면 장애 사실조차 알 수 없고 수정 후 재처리도 불가능하다."
+      },
+      {
+        "key": "D",
+        "content": "파티션 전체를 삭제하고 토픽을 새로 만든다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "파티션에 남아 있는 모든 정상 메시지까지 함께 유실되는 파괴적 조치다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "실패 메시지는 **일시적 오류(제한 재시도 + 지수 백오프/지터)**와 **영구 오류(즉시 DLQ 격리)**로 분류해야 하며, DLQ에는 원본 토픽·파티션·오프셋·예외 스택을 헤더로 남겨 사후 원인 분석과 재처리가 가능해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "messaging.core.delivery.retry-dlq.q5",
+    "promptMarkdown": "Spring Kafka에서 `@RetryableTopic(attempts = \"4\", backoff = @Backoff(delay = 1000, multiplier = 2.0))` 같은 비동기 재시도 토픽(Non-Blocking Retry) 패턴을 사용할 때 얻는 장점과 주의할 트레이드오프는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "messaging.core.delivery.retry-dlq",
+      "messaging.core.delivery.ordering"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "비동기 재시도 토픽을 쓰면 DLQ 모니터링과 알람이 전혀 필요 없다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "최종 실패 메시지가 쌓이는 DLT 적체 모니터링과 재처리 런북은 여전히 필수다."
+      },
+      {
+        "key": "B",
+        "content": "실패 메시지를 별도 재시도 토픽으로 넘겨 메인 파티션의 Head-of-Line Blocking을 피할 수 있지만, 같은 키의 후속 정상 메시지가 먼저 처리되어 순서가 뒤바뀔 수 있으므로 순서 민감 여부를 확인해야 한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "Non-blocking retry는 전체 처리량과 파티션 흐름을 보호하는 대신, 실패한 이벤트가 지연 재시도되는 동안 같은 키의 다음 이벤트가 메인 토픽에서 먼저 소비될 수 있다는 순서 트레이드오프가 있다."
+      },
+      {
+        "key": "C",
+        "content": "비동기 재시도 토픽을 쓰면 같은 키의 메시지 순서가 항상 100% 엄격히 유지된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "실패 메시지가 재시도 토픽으로 우회되는 사이 후속 메시지가 메인 파티션에서 먼저 소비되므로 순서가 역전될 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "재시도 토픽은 브로커 디스크를 전혀 사용하지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "재시도 토픽과 DLT도 일반 Kafka 토픽이므로 보존 기간과 디스크·모니터링 관리가 필요하다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "Blocking retry(파티션 순서 유지, lag/차단 위험)와 Non-blocking retry topic(메인 파티션 흐름 보호, 같은 키 순서 역전 가능)의 트레이드오프를 도메인 특성에 따라 선택해야 한다."
+  }
 ]

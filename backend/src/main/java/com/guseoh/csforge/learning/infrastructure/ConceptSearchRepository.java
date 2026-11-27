@@ -84,10 +84,14 @@ public class ConceptSearchRepository {
             parameters.put("bookmarkCategoryId", criteria.bookmarkCategoryId());
         }
         if (criteria.query() != null) {
-            where.add("(lower(c.title) like :query or lower(coalesce(c.summary, '')) like :query)");
-            parameters.put("query", "%" + criteria.query().toLowerCase(Locale.ROOT) + "%");
+            where.add("(lower(c.title) like :query escape '\\' or lower(coalesce(c.summary, '')) like :query escape '\\')");
+            parameters.put("query", "%" + escapeLike(criteria.query().toLowerCase(Locale.ROOT)) + "%");
         }
         return new QueryParts(where.toString(), parameters);
+    }
+
+    private static String escapeLike(String value) {
+        return value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_");
     }
 
     private <T> void addPredicate(

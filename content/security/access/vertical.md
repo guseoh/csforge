@@ -20,15 +20,7 @@ references:
 
 수평 권한 상승이 “같은 등급 사용자끼리 남의 리소스 접근”이라면 수직 권한 상승은 **낮은 권한 사용자가 더 높은 역할의 기능을 수행**하는 문제입니다.
 
-```text
-일반 사용자(USER)
-   │ POST /admin/products/17/delete
-   ▼
-컨트롤러
-   │ 관리자 인가 누락
-   ▼
-상품 삭제됨
-```
+![수직 권한 상승과 다층 서버 인가 경계](/learning/security/vertical-vs-horizontal-privilege-escalation.svg)
 
 프론트엔드에서 관리자 메뉴를 숨겨도 공격자는 엔드포인트 URL을 직접 호출할 수 있습니다. 화면 표시 여부는 인가 경계가 아닙니다.
 

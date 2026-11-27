@@ -116,7 +116,7 @@ public class QuizSession extends AuditedEntity {
     }
 
     public void ensureResultAvailable() {
-        if (status == QuizSessionStatus.IN_PROGRESS) {
+        if (status != QuizSessionStatus.SUBMITTED && status != QuizSessionStatus.COMPLETED) {
             throw new QuizInvalidStateException("Quiz must be submitted before its result is available");
         }
     }
@@ -155,6 +155,16 @@ public class QuizSession extends AuditedEntity {
         }
         status = QuizSessionStatus.COMPLETED;
         completedAt = now;
+    }
+
+    public void abandon() {
+        if (status == QuizSessionStatus.ABANDONED) {
+            return;
+        }
+        if (status != QuizSessionStatus.IN_PROGRESS) {
+            throw new QuizInvalidStateException("Only in-progress quiz sessions can be abandoned");
+        }
+        status = QuizSessionStatus.ABANDONED;
     }
 
     public boolean isExpired(Instant now) {
