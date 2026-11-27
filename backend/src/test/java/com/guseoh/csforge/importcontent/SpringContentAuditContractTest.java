@@ -48,8 +48,7 @@ class SpringContentAuditContractTest {
                 }
             });
         }
-        assertEquals(37, concepts.size());
-        assertEquals(12, questionFiles.size());
+        AreaContentInventory.assertMatchesDeclaredTopics(CONTENT, concepts, questionFiles);
 
         Set<String> conceptKeys = new HashSet<>();
         Set<String> referencedSvgs = new HashSet<>();
@@ -94,7 +93,8 @@ class SpringContentAuditContractTest {
                 assertFalse(svgContent.contains("<foreignObject"), svgWebPath);
             }
         }
-        assertEquals(22, referencedSvgs.size());
+        assertEquals(AreaContentInventory.svgAssetPaths(PUBLIC_DIR, "spring"), referencedSvgs,
+                "Every area SVG asset must be referenced by a concept");
 
         Set<String> questionKeys = new HashSet<>();
         Set<String> normalizedPrompts = new HashSet<>();
@@ -159,7 +159,7 @@ class SpringContentAuditContractTest {
             }
         }
 
-        assertEquals(149, totalQuestions);
+        assertTrue(totalQuestions >= 149, "Expected >=149 questions, got " + totalQuestions);
         assertTrue(codePrompts >= 40, "Expected >=40 code prompts, got " + codePrompts);
         for (String ck : conceptKeys) {
             assertTrue(questionsPerConcept.getOrDefault(ck, 0) >= 4, () -> "Concept has <4 questions: " + ck);

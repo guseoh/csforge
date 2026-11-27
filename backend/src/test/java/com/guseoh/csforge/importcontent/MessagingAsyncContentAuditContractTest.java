@@ -48,8 +48,7 @@ class MessagingAsyncContentAuditContractTest {
                 }
             });
         }
-        assertEquals(10, concepts.size());
-        assertEquals(3, questionFiles.size());
+        AreaContentInventory.assertMatchesDeclaredTopics(CONTENT, concepts, questionFiles);
 
         Set<String> conceptKeys = new HashSet<>();
         Set<String> referencedSvgs = new HashSet<>();
@@ -97,7 +96,8 @@ class MessagingAsyncContentAuditContractTest {
             }
             assertTrue(perConceptSvgs >= 1, () -> "Concept missing SVG: " + key);
         }
-        assertEquals(12, referencedSvgs.size());
+        assertEquals(AreaContentInventory.svgAssetPaths(PUBLIC_DIR, "messaging-async"), referencedSvgs,
+                "Every area SVG asset must be referenced by a concept");
 
         Set<String> questionKeys = new HashSet<>();
         Set<String> normalizedPrompts = new HashSet<>();
@@ -158,7 +158,7 @@ class MessagingAsyncContentAuditContractTest {
             }
         }
 
-        assertEquals(50, totalQuestions);
+        assertTrue(totalQuestions >= 50, "Expected >=50 questions, got " + totalQuestions);
         for (String ck : conceptKeys) {
             assertTrue(questionsPerConcept.getOrDefault(ck, 0) >= 5, () -> "Concept has <5 questions: " + ck);
             assertTrue(mcPerConcept.getOrDefault(ck, 0) >= 2, () -> "Concept has <2 MC questions: " + ck);

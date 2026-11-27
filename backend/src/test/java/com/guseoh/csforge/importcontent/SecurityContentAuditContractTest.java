@@ -39,8 +39,7 @@ class SecurityContentAuditContractTest {
                 }
             });
         }
-        assertEquals(38, concepts.size());
-        assertEquals(12, questionFiles.size());
+        AreaContentInventory.assertMatchesDeclaredTopics(CONTENT, concepts, questionFiles);
 
         Set<String> conceptKeys = new HashSet<>();
         int conceptsWithSvg = 0;

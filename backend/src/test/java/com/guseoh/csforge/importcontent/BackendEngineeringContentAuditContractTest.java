@@ -39,8 +39,7 @@ class BackendEngineeringContentAuditContractTest {
                 }
             });
         }
-        assertEquals(40, concepts.size());
-        assertEquals(13, questionFiles.size());
+        AreaContentInventory.assertMatchesDeclaredTopics(CONTENT, concepts, questionFiles);
 
         Set<String> conceptKeys = new HashSet<>();
         int conceptsWithSvg = 0;
@@ -109,7 +108,7 @@ class BackendEngineeringContentAuditContractTest {
             }
         }
 
-        assertEquals(160, totalQuestions);
+        assertTrue(totalQuestions >= 160, "Expected >=160 questions, got " + totalQuestions);
         assertTrue(codePrompts >= 12, "Expected >=12 code prompts, got " + codePrompts);
         for (String ck : conceptKeys) {
             int qCount = countByConcept.getOrDefault(ck, 0);

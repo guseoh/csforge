@@ -35,8 +35,7 @@ class NetworkContentAuditContractTest {
                 if (path.getFileName().toString().equals("questions.json")) questionFiles.add(path);
             });
         }
-        assertEquals(127, concepts.size());
-        assertEquals(15, questionFiles.size());
+        AreaContentInventory.assertMatchesDeclaredTopics(CONTENT, concepts, questionFiles);
 
         Set<String> conceptKeys = new HashSet<>();
         int visualizations = 0;
@@ -64,7 +63,8 @@ class NetworkContentAuditContractTest {
             }
             if (source.contains("```csforge-viz")) visualizations++;
         }
-        assertEquals(54, visualizations, "53 curriculum diagrams plus one TEXT pilot");
+        // G1에서 확정한 53개 curriculum 도식과 TEXT pilot 1개는 유지되어야 하며, 이후 추가는 허용한다.
+        assertTrue(visualizations >= 54, "Expected >=54 visualizations, got " + visualizations);
 
         Set<String> questionKeys = new HashSet<>();
         Set<String> normalizedQuestions = new HashSet<>();
@@ -117,10 +117,11 @@ class NetworkContentAuditContractTest {
                 }
             }
         }
-        assertEquals(413, questionCount);
-        assertEquals(159, multipleChoice);
-        assertEquals(127, descriptive);
-        assertEquals(127, scenario);
+        // 각 Concept은 서술형·시나리오를 하나씩, 객관식을 하나 이상 가진다.
+        assertEquals(concepts.size(), descriptive);
+        assertEquals(concepts.size(), scenario);
+        assertTrue(multipleChoice >= concepts.size(), "Expected >=1 MC per concept, got " + multipleChoice);
+        assertEquals(multipleChoice + descriptive + scenario, questionCount);
     }
 
     @Test

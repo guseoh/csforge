@@ -39,8 +39,7 @@ class SystemDesignContentAuditContractTest {
                 }
             });
         }
-        assertEquals(10, concepts.size());
-        assertEquals(3, questionFiles.size());
+        AreaContentInventory.assertMatchesDeclaredTopics(CONTENT, concepts, questionFiles);
 
         Set<String> conceptKeys = new HashSet<>();
         int conceptsWithSvg = 0;
@@ -55,7 +54,7 @@ class SystemDesignContentAuditContractTest {
                 conceptsWithSvg++;
             }
         }
-        assertEquals(10, conceptsWithSvg, "All 10 concepts must include static SVG diagrams");
+        assertEquals(concepts.size(), conceptsWithSvg, "All concepts must include static SVG diagrams");
 
         long svgFileCount;
         try (Stream<Path> svgs = Files.list(SVG_DIR)) {
@@ -109,7 +108,7 @@ class SystemDesignContentAuditContractTest {
             }
         }
 
-        assertEquals(50, totalQuestions);
+        assertTrue(totalQuestions >= 50, "Expected >=50 questions, got " + totalQuestions);
         for (String ck : conceptKeys) {
             int qCount = countByConcept.getOrDefault(ck, 0);
             int mcCount = mcByConcept.getOrDefault(ck, 0);

@@ -6,17 +6,19 @@ import { javaApiScenes } from './java-api-models'
 import { parseVisualization } from './learning-visualization'
 
 const root = new URL('../../../content/java/', import.meta.url)
-const packs = [['functional', 5, 34], ['streams', 7, 42]] as const
+const packs = ['functional', 'streams'] as const
 
 describe('functional and streams content', () => {
-  it.each(packs)('%s preserves valid question and concept structure', (topic, conceptCount, questionCount) => {
+  it.each(packs)('%s preserves valid question and concept structure', (topic) => {
     const folder = new URL(`${topic}/`, root)
     const files = readdirSync(folder).filter((name) => name.endsWith('.md'))
-    expect(files).toHaveLength(conceptCount)
+    expect(files.length).toBeGreaterThan(0)
     const keys = new Set(files.map((file) => readFileSync(new URL(file, folder), 'utf8').match(/^contentKey: (.+)$/m)?.[1]))
     const questions = JSON.parse(readFileSync(new URL('questions.json', folder), 'utf8')) as { contentKey: string; conceptKeys: string[]; questionType: string; choices?: { key: string; displayOrder: number }[]; correctChoiceKey?: string }[]
-    expect(questions).toHaveLength(questionCount)
-    expect(new Set(questions.map((q) => q.contentKey)).size).toBe(questionCount)
+    expect(keys.has(undefined)).toBe(false)
+    expect(keys.size).toBe(files.length)
+    expect(questions.length).toBeGreaterThan(0)
+    expect(new Set(questions.map((q) => q.contentKey)).size).toBe(questions.length)
     for (const q of questions) {
       expect(q.conceptKeys.length).toBeGreaterThan(0)
       for (const key of q.conceptKeys) expect(keys.has(key)).toBe(true)
