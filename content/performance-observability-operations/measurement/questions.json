@@ -234,5 +234,318 @@
     ],
     "modelAnswer": "먼저 동일 API 경로/상태/버전/시간 창과 동일한 성공·타임아웃 집계 경계를 고정하고 클라이언트·LB·서버 HTTP 지연의 차이를 구분한다. 연결 획득 대기 지표와 Hikari active/pending/timeout, SQL 실행·락 대기, 외부 HTTP span을 시간 순서에 맞춰 비교해 병목 가설을 세운다. SQL이 빠르고 연결 대기가 긴 경우 인덱스 추가를 먼저 하지 않고 연결 보유 시간, 트랜잭션 범위, 풀 크기와 인스턴스 수, DB 서버의 최대 연결·CPU·락 포화를 확인한다. 풀을 늘리는 조치는 DB 부하가 허용할 때만 실험하고, 쿼리가 실제로 느린 경우에만 실행 계획과 인덱스를 검토한다. 같은 데이터·부하·계측 경계에서 p95/p99, 오류율·타임아웃, 성공 처리량, DB 포화·풀 대기를 비교하고 사용자 SLO가 개선되는지 검증한다.",
     "explanationMarkdown": "원인 후보별 반증 지표를 먼저 정해야 SQL 최적화, 풀 확대 또는 외부 I/O 조치 중 무엇이 필요한지 판단할 수 있다. 모든 병목의 시간을 단순 합산하거나 단일 p99만 개선됐다고 판단하면 다른 단계의 과부하를 놓칠 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "performance.core.measurement.latency-throughput.q4",
+    "promptMarkdown": "3대의 API 인스턴스 A, B, C가 각각 독립적으로 계산한 p99 지연 시간이 `120ms`, `140ms`, `850ms`다. 전체 서비스의 통합 p99 지연 시간을 구하는 올바른 방법은?\n```promql\n# 잘못된 예시\navg(http_request_duration_seconds{quantile=\"0.99\"})\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "performance.core.measurement.latency-throughput"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "사전 계산된 요약 백분위수(Summary)를 평균 내지 않고, 히스토그램 버킷 카운터를 인스턴스 간 합산한 뒤 통합 백분위수(`histogram_quantile(0.99, sum by (le) (rate(..._bucket[5m])))`)를 계산한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Prometheus Histogram(또는 Native Histogram/HDR Histogram)은 버킷 빈도 합산이 가능하므로 다중 인스턴스에 걸친 정확한 통합 p95/p99를 계산할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "세 값 중 최솟값 `120ms`가 전체 서비스의 p99다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "최솟값을 택하면 지연이 심한 인스턴스 C의 꼬리 지연을 완전히 숨기게 된다."
+      },
+      {
+        "key": "C",
+        "content": "평균(mean) 지연 시간만 보고 p99는 수집하지 않는 것이 표준이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "평균은 극단적 꼬리 지연(tail latency)을 가리므로 백엔드 SLO와 성능 관측에는 p95/p99가 필수다."
+      },
+      {
+        "key": "D",
+        "content": "인스턴스별 p99의 산술 평균 `(120+140+850)/3`이 전체 p99와 수학적으로 같다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "백분위수는 선형 합산이 불가능하므로 각 인스턴스 p99를 평균 내면 트래픽 비율과 꼬리 분포가 왜곡되어 전혀 다른 숫자가 나온다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "백분위수는 평균 내거나 합칠 수 없다. 분산 환경에서는 Micrometer/Prometheus Histogram 버킷을 `sum by (le)`로 집계한 뒤 `histogram_quantile`로 통합 백분위수를 구해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "performance.core.measurement.latency-throughput.q5",
+    "promptMarkdown": "마이크로서비스 진입 API가 응답 1건을 만들기 위해 내부적으로 10개의 하위 서비스를 병렬 호출(fan-out)한다. 각 하위 서비스의 p99 지연 시간이 100ms이고 독립적이라면, 10개 응답을 모두 기다리는 상위 API에서 100ms를 넘는 요청 비율에 대한 해석으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "performance.core.measurement.latency-throughput"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "호출 개수가 늘어날수록 전체 지연 시간은 항상 감소한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "fan-out 증가는 최댓값 지연과 부분 실패 확률을 모두 높인다."
+      },
+      {
+        "key": "B",
+        "content": "각 하위 서비스의 p99가 100ms이므로 상위 API도 똑같이 1%만 100ms를 넘는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "10개 중 **단 하나만** 느려져도 전체 요청이 느려지므로, 모두 100ms 이내일 확률은 `0.99^10 ≈ 0.904`가 되어 약 9.6%가 100ms를 넘게 된다(Tail Latency Amplification)."
+      },
+      {
+        "key": "C",
+        "content": "하위 호출 중 가장 느린 1건이 전체 응답을 결정하므로 100ms 초과 확률이 `1 - 0.99^10 ≈ 9.6%`로 증폭된다(Tail Latency Amplification).",
+        "displayOrder": 2,
+        "rationaleMarkdown": "병렬 fan-out이 많아질수록 개별 서비스의 p99 꼬리 지연이 상위 서비스의 p90/p95로 증폭된다. 불필요한 호출 축소, 타임아웃, 캐싱, hedged request 등을 검토해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "병렬 호출이므로 10개 평균으로 상쇄되어 100ms 초과 확률이 `0.1%`로 줄어든다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "모든 응답을 기다리는 `CompletableFuture.allOf` 구조는 평균이 아니라 최댓값(`max`)에 의해 결정된다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "fan-out 구조에서는 하위 서비스 중 가장 느린 응답 하나가 전체 지연 시간을 결정한다. 꼬리 지연 증폭(`1 - (1 - p)^N`) 때문에 분산 백엔드일수록 p99 관리가 핵심이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "performance.core.measurement.saturation-queueing.q4",
+    "promptMarkdown": "Spring Boot API의 스레드 풀 설정이 다음과 같을 때 트래픽이 처리 용량을 초과하여 5분간 지속되면 어떤 현상이 발생하는가?\n```yaml\nserver:\n  tomcat:\n    threads:\n      max: 200\n    accept-count: 100000\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "performance.core.measurement.saturation-queueing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "200개 스레드가 가득 차면 즉시 `429 Too Many Requests`를 반환한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`accept-count`가 100,000이므로 10만 건이 찰 때까지 연결을 거부하지 않고 계속 큐에 쌓아 둔다."
+      },
+      {
+        "key": "B",
+        "content": "10만 건의 요청이 대기열에 끝없이 쌓여 대기 시간(W)이 폭증하고, 이미 타임아웃으로 이탈한 클라이언트의 요청까지 서버가 뒤늦게 처리하는 연쇄 장애가 발생한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "유입률이 완료율을 넘으면 거대한 무제한에 가까운 대기열은 보호막이 아니라 지연 시간·메모리 폭탄이 된다. 제한된 대기열과 빠른 부하 차단(429/503)이 필요하다."
+      },
+      {
+        "key": "C",
+        "content": "`accept-count`를 크게 잡으면 Tomcat이 자동으로 CPU 코어를 늘려 처리량을 500배 높여 준다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "대기열 크기는 물리 처리 용량(λ)을 늘리지 못하고 오직 대기 중인 요청 수(L)와 체류 시간(W)만 늘린다."
+      },
+      {
+        "key": "D",
+        "content": "대기열에 들어간 요청은 클라이언트 타임아웃과 무관하게 항상 10ms 내에 처리된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Little의 법칙(`W = L / λ`)에 따라 대기열 L이 커지면 평균 체류 시간 W도 비례해 급증한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "처리량(λ)을 넘는 부하가 지속될 때 과도하게 큰 대기열은 꼬리 지연과 타임아웃된 유령 요청 처리를 유발한다. 제한된 큐 + 빠른 부하 차단(load shedding) + 클라이언트 타임아웃 연동이 원칙이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "performance.core.measurement.saturation-queueing.q5",
+    "promptMarkdown": "안정 구간에서 결제 워커 시스템의 평균 처리율(λ)이 `50 req/s`이고 시스템 내부(대기+실행) 평균 동시 요청 수(L)가 `150건`이다. Little의 법칙(`L = λ * W`)으로 계산한 평균 체류 시간(W)은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "performance.core.measurement.saturation-queueing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`3.0초` (`150 / 50`)",
+        "displayOrder": 0,
+        "rationaleMarkdown": "유입과 완료가 균형인 안정 구간에서 `W = L / λ = 150 / 50 = 3.0초`다. 처리율 개선 없이 동시 요청(L)만 늘어나면 평균 체류 시간(W)이 그대로 늘어난다."
+      },
+      {
+        "key": "B",
+        "content": "`0.33초` (`50 / 150`)",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`λ / L`로 식을 거꾸로 나누었다. `L = λ * W`이므로 `W = L / λ`다."
+      },
+      {
+        "key": "C",
+        "content": "`7500초` (`150 * 50`)",
+        "displayOrder": 2,
+        "rationaleMarkdown": "동시 요청 수(`L`)와 처리율(`λ`, req/s)을 곱하면 단위가 맞지 않으며, `L = λ * W`에서 `W = L / λ`로 나누어야 한다."
+      },
+      {
+        "key": "D",
+        "content": "`200초` (`150 + 50`)",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Little의 법칙은 덧셈이 아니라 `L = λ * W` 관계다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Little의 법칙(`L = λ * W`)은 같은 관측 경계의 안정 구간에서 동시 요청 수, 처리율, 평균 체류 시간의 관계를 즉시 검증하는 강력한 용량 분석 도구다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "performance.core.measurement.profiling-load-testing.q4",
+    "promptMarkdown": "다음과 같이 순수 `System.nanoTime()` 루프로 Java 직렬화 코드의 성능을 측정했다. 이 측정이 JMH 없이 신뢰하기 어려운 가장 대표적인 JVM 이유는?\n```java\nlong start = System.nanoTime();\nfor (int i = 0; i < 100_000; i++) {\n    parser.parse(sampleJson); // 반환값 미사용\n}\nSystem.out.println(System.nanoTime() - start);\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "performance.core.measurement.profiling-load-testing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`System.nanoTime()`은 항상 0만 반환하기 때문이다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`System.nanoTime()` 자체는 고해상도 단조 시계이지만, JIT 최적화와 워밍업 변수를 통제하지 못하는 것이 문제다."
+      },
+      {
+        "key": "B",
+        "content": "`for` 루프는 Java 25에서 10만 번 이상 실행할 수 없기 때문이다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "반복 횟수 제한이 아니라 JVM 워밍업·인라이닝·DCE 통제 부재가 핵심 원인이다."
+      },
+      {
+        "key": "C",
+        "content": "JMH를 쓰면 DB와 네트워크를 포함한 운영 p99까지 자동으로 측정해 주기 때문이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "JMH는 격리된 코드 조각의 마이크로벤치마크 도구이며, 전체 서비스 용량과 p99는 부하 테스트로 검증해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "워밍업 미통제(인터프리터→C2 JIT 전환 혼재)와 반환값 미사용으로 인한 JIT 죽은 코드 제거(Dead-Code Elimination)가 측정 결과를 크게 왜곡할 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "JVM JIT 컴파일러는 결과가 쓰이지 않는 순수 계산을 통째로 제거하거나 상수 접기할 수 있다. JMH의 `@Warmup`, `@Fork`, `Blackhole.consume()`으로 이를 통제해야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "JVM 코드 조각 성능 비교에는 단순 `nanoTime()` 루프 대신 JMH(`@Warmup`, `@Measurement`, `@Fork`, `Blackhole`)를 사용하고, 서비스 전체 p99와 포화는 k6 등 부하 테스트로 분리해 검증해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "performance.core.measurement.profiling-load-testing.q5",
+    "promptMarkdown": "운영 중인 Java 25 Spring Boot 서비스의 CPU·GC·락 경합 원인을 최소 오버헤드로 파악하기 위해 JFR(Java Flight Recorder)을 60초간 기록하려 한다. 가장 적절한 실행 명령과 운영 주의점은?\n```bash\njcmd <pid> JFR.start name=prod-check settings=profile duration=60s filename=/tmp/prod.jfr\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "performance.core.measurement.profiling-load-testing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`.jfr` 파일은 CPU 주소 숫자만 담겨 있어 민감 정보가 절대 포함되지 않으므로 공개 S3 버킷에 올려도 된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "JFR 기본 이벤트에는 JVM 시스템 프로퍼티·환경 변수·클래스/메서드 정보가 포함될 수 있어 내부 접근 제한이 필요하다."
+      },
+      {
+        "key": "B",
+        "content": "JFR은 메모리 할당만 기록하고 락 경합이나 GC 이벤트는 기록할 수 없다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "JFR은 실행 샘플(`ExecutionSample`), GC, `JavaMonitorEnter`(락 경합), 소켓/파일 I/O, 객체 할당 등 폭넓은 JVM 이벤트를 함께 기록한다."
+      },
+      {
+        "key": "C",
+        "content": "프로파일 설정의 오버헤드와 기록 기간(`duration`)을 제한하고, `.jfr` 파일에는 스택 트레이스·JVM 인자·환경 변수가 포함될 수 있으므로 접근 권한과 즉시 삭제·보존 정책을 함께 관리한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "JFR은 운영 친화적인 저오버헤드 이벤트 기록 도구이지만, 민감한 시스템 프로퍼티/환경 변수가 담길 수 있어 파일 접근 제어와 기간 제한(`duration`)이 필수다."
+      },
+      {
+        "key": "D",
+        "content": "JFR을 켜면 모든 HTTP 요청이 60초간 멈추므로 반드시 서버를 중지한 뒤 실행해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "JFR은 실행 중인 운영 JVM에서 STW 중단 없이 저오버헤드로 동적 attach 기록하도록 설계되었다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "JFR은 `jcmd`로 운영 JVM에 안전하게 동적 기록할 수 있는 핵심 진단 도구다. 기간(`duration`)과 설정(`default`/`profile`)으로 오버헤드를 제한하고, 기록 파일의 민감 정보 노출을 반드시 통제해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "performance.core.measurement.latency-attribution.q4",
+    "promptMarkdown": "분산 트레이스 워터폴에서 한 API 요청(`GET /api/orders/1`, 총 `320ms`)의 구간 분해가 다음과 같다. 가장 먼저 조사해야 할 병목 구간은?\n```text\nHTTP GET /api/orders/1          [0ms ─────────────────────────── 320ms]\n  ├─ HikariCP.getConnection     [5ms ───────────────── 245ms] (240ms)\n  ├─ SQL SELECT orders          [245ms ─ 253ms]               (8ms)\n  └─ JSON serialize             [255ms ─ 260ms]               (5ms)\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "performance.core.measurement.latency-attribution",
+      "performance.core.measurement.saturation-queueing"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "JSON 직렬화 라이브러리(Jackson)를 수동 문자열 조합으로 교체한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "JSON 직렬화는 전체 320ms 중 5ms(1.5%)뿐이므로 여기를 최적화해도 체감 지연은 거의 변하지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "전체 시간의 75%(`240ms`)가 `HikariCP.getConnection` 커넥션 풀 대기이므로, 어떤 다른 트랜잭션/외부 I/O/장기 쿼리가 커넥션을 오래 점유해 풀을 포화시켰는지 먼저 조사한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "실제 SQL 실행은 8ms로 빠르지만 커넥션을 빌리기까지 240ms를 기다렸다. 커넥션 점유 시간(`hikaricp.connections.usage`), OSIV, 트랜잭션 내 외부 HTTP 호출, 슬로우 쿼리 점유를 우선 추적해야 한다."
+      },
+      {
+        "key": "C",
+        "content": "`orders` 테이블에 인덱스를 5개 추가해 `8ms` SQL을 `4ms`로 줄이면 전체 응답이 절반이 된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "8ms를 4ms로 줄여도 전체 320ms에서 4ms만 줄어든다(Amdahl의 법칙). 지배적 구간(240ms)을 먼저 해결해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "무조건 `maximum-pool-size`를 500으로 늘려 DB에 연결을 500개 연다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "원인 확인 없이 풀 크기만 과도하게 늘리면 DB CPU·컨텍스트 스위칭·메모리가 포화되어 오히려 전체 지연이 더 악화된다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "지연 시간 분해(latency attribution)의 핵심은 전체 시간에서 가장 큰 비중을 차지하는 구간을 먼저 잡는 것이다. 여기서는 SQL(8ms)이 아니라 커넥션 풀 대기(240ms)가 지배적 병목이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "performance.core.measurement.latency-attribution.q5",
+    "promptMarkdown": "분산 트레이스에서 부모 Span `OrderController.create`의 총 소요 시간이 `200ms`이고, 그 내부에 순차 실행된 자식 Span 두 개가 각각 `SQL INSERT` `40ms`, `PaymentClient.pay` `140ms`다. `OrderController.create` 자체의 self-time(순수 자기 실행 시간)은 얼마인가?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "performance.core.measurement.latency-attribution"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`180ms` (`40 + 140`)",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`180ms`는 자식 Span들의 합계이며, 부모 자체의 self-time은 나머지 `20ms`다."
+      },
+      {
+        "key": "B",
+        "content": "`20ms` (`200 - 40 - 140`)",
+        "displayOrder": 1,
+        "rationaleMarkdown": "부모 Span 시간에는 자식 Span 실행 시간이 포함되어 있다. 따라서 순수 자기 시간(self-time)은 `200 - (40 + 140) = 20ms`다."
+      },
+      {
+        "key": "C",
+        "content": "`380ms` (`200 + 40 + 140`)",
+        "displayOrder": 2,
+        "rationaleMarkdown": "중첩된 부모·자식 Span 시간을 단순 합산하면 자식 구간이 이중 계산된다."
+      },
+      {
+        "key": "D",
+        "content": "`200ms` — 자식 Span 시간은 부모에 포함되지 않는다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "동기 호출에서 부모 Span은 시작부터 종료까지 모든 동기 자식 Span의 소요 시간을 포함한다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "중첩(nested) Span을 합산하면 전체 시간이 부풀려진다. 부모 소요 시간에서 동기 자식 구간을 뺀 self-time과 각 자식 구간을 구분해야 실제 병목을 오판하지 않는다."
   }
 ]
