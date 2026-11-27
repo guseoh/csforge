@@ -39,7 +39,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import tools.jackson.databind.ObjectMapper;
 
-/** OS G1 도식 49개의 격리 Import, 재수입, 이력 보존과 실제 Reader API를 검증한다. */
+/** OS G1 도식 Concept의 격리 Import, 재수입, 이력 보존과 실제 Reader API를 검증한다. */
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class OperatingSystemsG1FullPackIntegrationTest {

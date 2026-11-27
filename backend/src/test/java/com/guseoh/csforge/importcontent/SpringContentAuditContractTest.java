@@ -23,7 +23,7 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.ObjectMapper;
 
 /**
- * Spring 학습 영역 37개 Concept, 149개 Question 및 정적 SVG 자산의 무결성 계약을 검증한다.
+ * Spring 학습 영역의 Concept·Question 인벤토리와 정적 SVG 자산의 무결성 계약을 검증한다.
  */
 class SpringContentAuditContractTest {
 
