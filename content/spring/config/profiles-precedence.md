@@ -54,15 +54,7 @@ SERVER_PORT=10080
 
 두 개념을 분리해서 보면 쉽습니다.
 
-```text
-어떤 설정 소스가 후보인가? -> 프로필 / 설정 파일 위치
-             │
-             ▼
-같은 key가 여러 번 나오면?  -> 설정 소스 우선순위
-             │
-             ▼
-최종 Environment 값
-```
+![Spring Boot 프로필과 설정 우선순위](/learning/spring/profiles-precedence-layers.svg)
 
 프로필을 활성화하면 프로필 전용 설정 소스가 후보에 들어오지만 명령행 인자나 환경 변수처럼 더 높은 우선순위의 입력이 같은 key를 다시 덮어쓸 수 있습니다.
 

@@ -1,9 +1,365 @@
 [
-  {"kind":"question","contentKey":"spring.core.data-jpa.repository-abstraction.q1","promptMarkdown":"Spring Data Repository 추상화에 대한 설명으로 가장 정확한 것은?","questionType":"MULTIPLE_CHOICE","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.data-jpa.repository-abstraction"],"choices":[{"key":"A","content":"Repository 메서드는 DB 쿼리 비용과 트랜잭션 의미를 제거한다.","displayOrder":0,"rationaleMarkdown":"Repository 메서드가 쿼리 실행을 감싸도 DB의 scan·join·sort 비용과 트랜잭션 격리 동작은 그대로 남는다. API가 간결해지는 것과 실행 비용이 사라지는 것은 다른 문제다."},{"key":"B","content":"`save()`를 호출하지 않으면 managed Entity는 절대 UPDATE되지 않는다.","displayOrder":1,"rationaleMarkdown":"영속성 컨텍스트가 관리하는 Entity는 트랜잭션 flush 과정에서 변경 감지 대상이 될 수 있다. 따라서 managed 상태의 변경에 항상 `repository.save()`가 필요하다고 단정할 수 없다."},{"key":"C","content":"`findAll()`은 데이터가 아무리 많아도 결과 개수가 자동으로 제한되는 쿼리다.","displayOrder":2,"rationaleMarkdown":"`findAll()`은 호출 형태만 간단할 뿐 결과 크기를 자동으로 제한하지 않는다. 데이터가 커질 수 있다면 page·slice·keyset 등 명시적인 조회 범위를 설계해야 한다."},{"key":"D","content":"반복적인 CRUD·쿼리 어댑터 코드는 줄이지만 반환 크기, 정렬, 조회 계획(fetch plan), 쿼리 비용은 여전히 설계해야 한다.","displayOrder":3,"rationaleMarkdown":"Repository 추상화가 반복 코드를 줄여도 반환 개수와 안정적인 정렬, 연관관계 조회 범위, DB 실행 비용은 기능에 맞게 설계해야 한다."}],"correctChoiceKey":"D","explanationMarkdown":"Spring Data Repository는 CRUD와 쿼리 어댑터의 반복 코드를 줄일 뿐 DB가 수행할 scan·join·sort 비용과 트랜잭션 의미를 없애지 않는다. 반환 개수, 안정적인 정렬, 조회 계획을 기능에 맞게 설계해야 하며 `findAll()`의 결과 크기도 자동 제한되지 않는다."},
-  {"kind":"question","contentKey":"spring.core.data-jpa.repository-abstraction.q2","promptMarkdown":"`@Transactional` 메서드에서 Repository로 managed Order를 조회한 뒤 `order.complete()`만 호출하고 `save(order)`는 호출하지 않았다. 반드시 DB 변경이 안 된다고 말할 수 없는 이유를 설명하라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.data-jpa.repository-abstraction","spring.core.data-jpa.entity-lifecycle"],"modelAnswer":"조회된 Order가 현재 영속성 컨텍스트의 managed Entity라면 JPA provider가 변경 감지(dirty checking)를 통해 flush·commit 과정에서 UPDATE할 수 있다. `save()` 호출 여부만으로 DB 반영 여부를 판단하면 안 된다.","explanationMarkdown":"Repository가 반환한 Order가 현재 영속성 컨텍스트가 관리하는 Entity라면 `complete()`의 필드 변경을 JPA provider가 감지하고 flush 때 UPDATE 대상으로 만들 수 있다. 따라서 Spring Data `save()` 호출 유무가 곧 DB 반영 여부는 아니며 트랜잭션, managed 상태, flush·commit 경계를 함께 확인해야 한다."},
-  {"kind":"question","contentKey":"spring.core.data-jpa.entity-lifecycle.q1","promptMarkdown":"JPA의 managed/detached와 Order의 PAID/CANCELLED가 각각 어떤 종류의 상태인지 짧게 쓰라.","questionType":"SHORT_ANSWER","difficulty":"EASY","status":"PUBLISHED","conceptKeys":["spring.core.data-jpa.entity-lifecycle"],"acceptedAnswers":["managed/detached는 영속성 컨텍스트가 Entity를 관리하는지에 대한 영속성 상태이고 PAID/CANCELLED는 업무 상태와 불변식을 나타낸다","JPA 생명주기는 영속성 관리 관계이고 Order 생명주기는 업무 상태 전이다","managed/detached: persistence state, PAID/CANCELLED: domain state","managed/detached는 영속성 상태, PAID/CANCELLED는 도메인 상태"],"explanationMarkdown":"managed/detached는 영속성 컨텍스트가 변경을 추적하는지에 관한 JPA 상태이고 PAID/CANCELLED는 주문의 업무 상태와 상태 전이에 관한 도메인 상태다. 두 축은 독립적이므로 managed 주문이 CANCELLED일 수도 있고 detached 주문이 PAID일 수도 있다."},
-  {"kind":"question","contentKey":"spring.core.data-jpa.entity-lifecycle.q2","promptMarkdown":"트랜잭션이 끝난 뒤 detached Member의 필드를 변경했다. 아무 추가 작업 없이 DB가 자동 UPDATE된다고 기대하면 왜 틀릴 수 있는가?","questionType":"SCENARIO","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.data-jpa.entity-lifecycle"],"modelAnswer":"detached 객체는 현재 영속성 컨텍스트의 변경 감지 대상이 아니다. 변경을 DB에 반영하려면 새 managed 객체를 조회해 변경하거나 `merge()` 등 명시적인 영속성 경로가 필요하다.","explanationMarkdown":"트랜잭션 종료 후 detached Member의 Java 참조를 계속 가지고 있어도 활성 영속성 컨텍스트의 변경 감지 대상은 아니다. 따라서 필드만 바꿨다고 UPDATE SQL이 보장되지 않으며 새 트랜잭션에서 managed Entity를 변경하거나 명시적인 `merge()` 경로를 사용해야 한다."},
-  {"kind":"question","contentKey":"spring.core.data-jpa.fetch-plan.q1","promptMarkdown":"Order 20개 조회 후 LAZY인 `order.member.name`에 접근해 SELECT가 21번 실행됐다. 문제 이름과 직접 원인을 짧게 쓰라.","questionType":"SHORT_ANSWER","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.data-jpa.fetch-plan"],"acceptedAnswers":["N+1이며 첫 Order 목록 쿼리 뒤 각 member 연관관계를 지연 로딩하면서 별도 SELECT를 반복했기 때문이다","Order 목록 조회 1번 뒤 Member 조회 20번이 연관관계 접근 시 추가로 실행되어 N+1이 발생했다","N+1, 지연 로딩 연관관계의 추가 쿼리 반복"],"explanationMarkdown":"첫 Order 목록 쿼리 1번 뒤 각 Order의 LAZY member 접근이 별도 SELECT 20번을 만들었으므로 N+1이다. 해결 방법은 응답에 필요한 연관관계와 데이터 개수, 페이지네이션 여부를 확인한 뒤 fetch join·entity graph·batch fetch 등을 선택해야 한다."},
-  {"kind":"question","contentKey":"spring.core.data-jpa.fetch-plan.q2","promptMarkdown":"다음 조회와 페이지네이션 조합을 생각하자.\n\n- 부모: `Order`\n- 자식: collection `items`\n- 페이지 크기: 20\n\ncollection fetch join이 to-one fetch join과 달리 주의가 필요한 이유를 SQL row 관점에서 설명하라.","questionType":"SCENARIO","difficulty":"HARD","status":"PUBLISHED","conceptKeys":["spring.core.data-jpa.fetch-plan"],"modelAnswer":"to-many collection join은 Order 하나가 Item 수만큼 SQL row로 중복되므로 DB의 `LIMIT 20`이 부모 Order 20개를 의미하지 않을 수 있다. JPA provider의 처리 방식에 따라 메모리 페이지네이션이나 추가 작업이 생길 수 있어 부모 기준 페이지를 보존하는 다른 조회 계획을 검토해야 한다.","explanationMarkdown":"to-many fetch join은 Order 하나를 Item 수만큼 SQL row로 늘린다. 그래서 SQL row에 적용된 `LIMIT 20`을 부모 Entity 20개와 같은 의미로 볼 수 없다. provider와 쿼리 형태에 따라 메모리 페이지네이션이나 추가 처리가 발생할 수 있으므로 부모 ID를 먼저 페이지 조회한 뒤 연관관계를 가져오는 방식이나 batch fetch 등 다른 계획을 검토한다."},
-  {"kind":"question","contentKey":"spring.core.data-jpa.fetch-plan.q3","promptMarkdown":"N+1을 발견했을 때 모든 연관관계를 EAGER로 바꾸기 전에 확인할 항목을 세 가지 이상 적어라.","questionType":"DESCRIPTIVE","difficulty":"MEDIUM","status":"PUBLISHED","conceptKeys":["spring.core.data-jpa.fetch-plan"],"modelAnswer":"실제 쿼리 횟수, 연관관계 개수(cardinality), 페이지네이션 여부, 필요한 응답 데이터 모양, fetch join·entity graph·batch fetch·projection의 장단점을 확인한다. EAGER도 추가 쿼리나 불필요한 데이터 로딩을 만들 수 있다.","explanationMarkdown":"먼저 실제 쿼리 횟수와 연관관계의 데이터 개수, 페이지네이션, 응답에 필요한 데이터 모양을 확인하고 그 기능에 맞는 fetch join·entity graph·batch fetch·projection을 선택해야 한다. EAGER는 필요한 관계만 효율적으로 가져온다는 보장이 없고 불필요한 객체 그래프나 추가 쿼리를 만들 수 있다."}
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.repository-abstraction.q1",
+    "promptMarkdown": "Spring Data Repository 추상화에 대한 설명으로 가장 정확한 것은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.repository-abstraction"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Repository 메서드는 DB 쿼리 비용과 트랜잭션 의미를 제거한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Repository 메서드가 쿼리 실행을 감싸도 DB의 scan·join·sort 비용과 트랜잭션 격리 동작은 그대로 남는다. API가 간결해지는 것과 실행 비용이 사라지는 것은 다른 문제다."
+      },
+      {
+        "key": "B",
+        "content": "`save()`를 호출하지 않으면 managed Entity는 절대 UPDATE되지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "영속성 컨텍스트가 관리하는 Entity는 트랜잭션 flush 과정에서 변경 감지 대상이 될 수 있다. 따라서 managed 상태의 변경에 항상 `repository.save()`가 필요하다고 단정할 수 없다."
+      },
+      {
+        "key": "C",
+        "content": "`findAll()`은 데이터가 아무리 많아도 결과 개수가 자동으로 제한되는 쿼리다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`findAll()`은 호출 형태만 간단할 뿐 결과 크기를 자동으로 제한하지 않는다. 데이터가 커질 수 있다면 page·slice·keyset 등 명시적인 조회 범위를 설계해야 한다."
+      },
+      {
+        "key": "D",
+        "content": "반복적인 CRUD·쿼리 어댑터 코드는 줄이지만 반환 크기, 정렬, 조회 계획(fetch plan), 쿼리 비용은 여전히 설계해야 한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Repository 추상화가 반복 코드를 줄여도 반환 개수와 안정적인 정렬, 연관관계 조회 범위, DB 실행 비용은 기능에 맞게 설계해야 한다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "Spring Data Repository는 CRUD와 쿼리 어댑터의 반복 코드를 줄일 뿐 DB가 수행할 scan·join·sort 비용과 트랜잭션 의미를 없애지 않는다. 반환 개수, 안정적인 정렬, 조회 계획을 기능에 맞게 설계해야 하며 `findAll()`의 결과 크기도 자동 제한되지 않는다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.repository-abstraction.q2",
+    "promptMarkdown": "`@Transactional` 메서드에서 Repository로 managed Order를 조회한 뒤 `order.complete()`만 호출하고 `save(order)`는 호출하지 않았다. 반드시 DB 변경이 안 된다고 말할 수 없는 이유를 설명하라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.repository-abstraction",
+      "spring.core.data-jpa.entity-lifecycle"
+    ],
+    "modelAnswer": "조회된 Order가 현재 영속성 컨텍스트의 managed Entity라면 JPA provider가 변경 감지(dirty checking)를 통해 flush·commit 과정에서 UPDATE할 수 있다. `save()` 호출 여부만으로 DB 반영 여부를 판단하면 안 된다.",
+    "explanationMarkdown": "Repository가 반환한 Order가 현재 영속성 컨텍스트가 관리하는 Entity라면 `complete()`의 필드 변경을 JPA provider가 감지하고 flush 때 UPDATE 대상으로 만들 수 있다. 따라서 Spring Data `save()` 호출 유무가 곧 DB 반영 여부는 아니며 트랜잭션, managed 상태, flush·commit 경계를 함께 확인해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.entity-lifecycle.q1",
+    "promptMarkdown": "JPA의 managed/detached와 Order의 PAID/CANCELLED가 각각 어떤 종류의 상태인지 짧게 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.entity-lifecycle"
+    ],
+    "acceptedAnswers": [
+      "managed/detached는 영속성 컨텍스트가 Entity를 관리하는지에 대한 영속성 상태이고 PAID/CANCELLED는 업무 상태와 불변식을 나타낸다",
+      "JPA 생명주기는 영속성 관리 관계이고 Order 생명주기는 업무 상태 전이다",
+      "managed/detached: persistence state, PAID/CANCELLED: domain state",
+      "managed/detached는 영속성 상태, PAID/CANCELLED는 도메인 상태"
+    ],
+    "explanationMarkdown": "managed/detached는 영속성 컨텍스트가 변경을 추적하는지에 관한 JPA 상태이고 PAID/CANCELLED는 주문의 업무 상태와 상태 전이에 관한 도메인 상태다. 두 축은 독립적이므로 managed 주문이 CANCELLED일 수도 있고 detached 주문이 PAID일 수도 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.entity-lifecycle.q2",
+    "promptMarkdown": "트랜잭션이 끝난 뒤 detached Member의 필드를 변경했다. 아무 추가 작업 없이 DB가 자동 UPDATE된다고 기대하면 왜 틀릴 수 있는가?",
+    "questionType": "SCENARIO",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.entity-lifecycle"
+    ],
+    "modelAnswer": "detached 객체는 현재 영속성 컨텍스트의 변경 감지 대상이 아니다. 변경을 DB에 반영하려면 새 managed 객체를 조회해 변경하거나 `merge()` 등 명시적인 영속성 경로가 필요하다.",
+    "explanationMarkdown": "트랜잭션 종료 후 detached Member의 Java 참조를 계속 가지고 있어도 활성 영속성 컨텍스트의 변경 감지 대상은 아니다. 따라서 필드만 바꿨다고 UPDATE SQL이 보장되지 않으며 새 트랜잭션에서 managed Entity를 변경하거나 명시적인 `merge()` 경로를 사용해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.fetch-plan.q1",
+    "promptMarkdown": "Order 20개 조회 후 LAZY인 `order.member.name`에 접근해 SELECT가 21번 실행됐다. 문제 이름과 직접 원인을 짧게 쓰라.",
+    "questionType": "SHORT_ANSWER",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.fetch-plan"
+    ],
+    "acceptedAnswers": [
+      "N+1이며 첫 Order 목록 쿼리 뒤 각 member 연관관계를 지연 로딩하면서 별도 SELECT를 반복했기 때문이다",
+      "Order 목록 조회 1번 뒤 Member 조회 20번이 연관관계 접근 시 추가로 실행되어 N+1이 발생했다",
+      "N+1, 지연 로딩 연관관계의 추가 쿼리 반복"
+    ],
+    "explanationMarkdown": "첫 Order 목록 쿼리 1번 뒤 각 Order의 LAZY member 접근이 별도 SELECT 20번을 만들었으므로 N+1이다. 해결 방법은 응답에 필요한 연관관계와 데이터 개수, 페이지네이션 여부를 확인한 뒤 fetch join·entity graph·batch fetch 등을 선택해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.fetch-plan.q2",
+    "promptMarkdown": "다음 조회와 페이지네이션 조합을 생각하자.\n\n- 부모: `Order`\n- 자식: collection `items`\n- 페이지 크기: 20\n\ncollection fetch join이 to-one fetch join과 달리 주의가 필요한 이유를 SQL row 관점에서 설명하라.",
+    "questionType": "SCENARIO",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.fetch-plan"
+    ],
+    "modelAnswer": "to-many collection join은 Order 하나가 Item 수만큼 SQL row로 중복되므로 DB의 `LIMIT 20`이 부모 Order 20개를 의미하지 않을 수 있다. JPA provider의 처리 방식에 따라 메모리 페이지네이션이나 추가 작업이 생길 수 있어 부모 기준 페이지를 보존하는 다른 조회 계획을 검토해야 한다.",
+    "explanationMarkdown": "to-many fetch join은 Order 하나를 Item 수만큼 SQL row로 늘린다. 그래서 SQL row에 적용된 `LIMIT 20`을 부모 Entity 20개와 같은 의미로 볼 수 없다. provider와 쿼리 형태에 따라 메모리 페이지네이션이나 추가 처리가 발생할 수 있으므로 부모 ID를 먼저 페이지 조회한 뒤 연관관계를 가져오는 방식이나 batch fetch 등 다른 계획을 검토한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.fetch-plan.q3",
+    "promptMarkdown": "N+1을 발견했을 때 모든 연관관계를 EAGER로 바꾸기 전에 확인할 항목을 세 가지 이상 적어라.",
+    "questionType": "DESCRIPTIVE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.fetch-plan"
+    ],
+    "modelAnswer": "실제 쿼리 횟수, 연관관계 개수(cardinality), 페이지네이션 여부, 필요한 응답 데이터 모양, fetch join·entity graph·batch fetch·projection의 장단점을 확인한다. EAGER도 추가 쿼리나 불필요한 데이터 로딩을 만들 수 있다.",
+    "explanationMarkdown": "먼저 실제 쿼리 횟수와 연관관계의 데이터 개수, 페이지네이션, 응답에 필요한 데이터 모양을 확인하고 그 기능에 맞는 fetch join·entity graph·batch fetch·projection을 선택해야 한다. EAGER는 필요한 관계만 효율적으로 가져온다는 보장이 없고 불필요한 객체 그래프나 추가 쿼리를 만들 수 있다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.repository-abstraction.q3",
+    "promptMarkdown": "다음 코드에서 `OrderRepository`의 조회 메서드에 대한 평가로 가장 적절한 것은?\n```java\npublic interface OrderRepository extends JpaRepository<Order, Long> {\n    List<Order> findByMemberIdOrderByCreatedAtDesc(Long memberId);\n}\n```\n회원의 누적 주문이 수만 건까지 쌓일 수 있는 API에서 이 메서드를 그대로 노출할 때의 핵심 문제는?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.repository-abstraction"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "결과 크기가 제한되지 않아 대량 조회 시 DB·네트워크·JVM 메모리 부하가 커지며, `createdAt` 동률 시 정렬 순서도 불안정할 수 있다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Unbounded `List` 조회는 누적 데이터가 커질수록 메모리와 응답 시간을 악화시키며, tie-breaker(`id desc`) 없는 정렬은 페이지네이션 전환 시 중복·누락의 원인이 된다."
+      },
+      {
+        "key": "B",
+        "content": "`OrderByCreatedAtDesc`는 JPQL에서 지원되지 않아 런타임에 항상 예외가 발생한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "파생 쿼리 메서드의 `OrderBy...Desc` 문법 자체는 Spring Data JPA가 정상적으로 JPQL `order by` 절로 변환한다."
+      },
+      {
+        "key": "C",
+        "content": "`JpaRepository`를 상속하면 메서드 이름 기반 쿼리는 항상 네이티브 SQL로 실행되어 인덱스를 탈 수 없다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "파생 쿼리는 JPQL로 생성되며 적절한 복합 인덱스 `(member_id, created_at desc, id desc)`가 있으면 인덱스를 활용할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "Spring Data JPA가 `List` 반환 시 자동으로 최대 100건만 조회하므로 누락이 생긴다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Spring Data JPA는 명시적 `Pageable`/`Limit`/`Top` 없이는 결과 개수를 자동 제한하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "Repository 메서드는 간결해 보여도 결과 상한(`Pageable`/`Slice`/keyset)과 안정적인 정렬(예: `createdAt desc, id desc`)을 명시하지 않으면 데이터 증가에 따라 성능과 메모리 장애로 이어진다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.repository-abstraction.q4",
+    "promptMarkdown": "다음과 같이 `@Transactional(readOnly = true)` 서비스 메서드 안에서 조회한 managed 엔티티의 필드를 변경했을 때의 일반적인 설명으로 가장 옳은 것은?\n```java\n@Transactional(readOnly = true)\npublic OrderSummary loadSummary(long orderId) {\n    Order order = orderRepository.findById(orderId).orElseThrow();\n    order.markViewed();\n    return OrderSummary.from(order);\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.repository-abstraction",
+      "spring.core.data-jpa.entity-lifecycle"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "Hibernate가 `FlushMode.MANUAL` 등 읽기 전용 최적화를 적용해 변경 감지와 UPDATE flush를 생략할 수 있으므로 쓰기 의도가 있다면 `readOnly = true`를 제거해야 한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "Spring + Hibernate 조합에서 `readOnly = true`는 스냅샷 생략·수동 flush·읽기 복제본 라우팅 힌트로 동작할 수 있어 변경 내용이 DB에 반영되지 않거나 읽기 전용 DB에서 실패할 수 있다."
+      },
+      {
+        "key": "B",
+        "content": "`readOnly = true`는 조회 SQL을 캐시할 뿐 쓰기 UPDATE는 항상 동일하게 커밋한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`readOnly = true`는 단순 쿼리 캐시가 아니며, JPA flush 생략 및 JDBC/DB 읽기 전용 힌트에 직접 영향을 준다."
+      },
+      {
+        "key": "C",
+        "content": "`order.markViewed()` 호출 즉시 `UnsupportedOperationException`이 발생한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "자바 객체 필드 변경 자체는 일반 메서드 호출이므로 즉시 예외가 나지 않고, flush 생략이나 커밋 단계에서 조용히 누락되거나 DB 오류로 나타난다."
+      },
+      {
+        "key": "D",
+        "content": "`orderRepository.save(order)`만 추가하면 `readOnly = true`에서도 항상 안전하게 UPDATE된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "트랜잭션 자체가 읽기 전용으로 설정되어 있으면 `save()`를 호출해도 flush 생략이나 read-only 커넥션 제약으로 안전하지 않다."
+      }
+    ],
+    "correctChoiceKey": "A",
+    "explanationMarkdown": "조회 전용 유스케이스에 `@Transactional(readOnly = true)`를 쓰는 것은 좋은 습관이지만, 그 안에서 엔티티 상태를 변경하면 Hibernate flush 생략이나 read replica 라우팅으로 쓰기가 누락·실패할 수 있다. 상태를 바꾸는 유스케이스는 쓰기 트랜잭션 경계로 명확히 분리해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.entity-lifecycle.q3",
+    "promptMarkdown": "다음 코드에서 `updateNickname` 실행 결과로 가장 정확한 설명은?\n```java\n@Transactional\npublic void updateNickname(long memberId, String nickname) {\n    Member m1 = memberRepository.findById(memberId).orElseThrow();\n    Member m2 = memberRepository.findById(memberId).orElseThrow();\n    m1.changeNickname(nickname);\n    assert m1 == m2;\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "EASY",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.entity-lifecycle"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`findById`를 두 번 호출했으므로 DB SELECT가 두 번 실행되고 `m1 == m2`는 `false`다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "같은 영속성 컨텍스트 안에서 동일 PK를 다시 조회하면 1차 캐시에 보관된 동일 managed 인스턴스를 반환하므로 두 번째 `findById`는 DB를 다시 조회하지 않는다."
+      },
+      {
+        "key": "B",
+        "content": "같은 영속성 컨텍스트의 1차 캐시가 동일 인스턴스(`m1 == m2`)를 보장하고, flush·commit 시 변경 감지로 UPDATE SQL이 실행된다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "영속성 컨텍스트는 트랜잭션 범위 내에서 엔티티 동일성(repeatable read 수준 참조 일치)을 보장하며, 스냅샷과 비교해 바뀐 컬럼을 flush 시점에 UPDATE한다."
+      },
+      {
+        "key": "C",
+        "content": "`save(m1)`을 호출하지 않았으므로 `m1.changeNickname()`은 DB에 반영되지 않는다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "managed 상태의 엔티티는 명시적 `save()` 호출 없이도 트랜잭션 flush 시점의 dirty checking으로 UPDATE된다."
+      },
+      {
+        "key": "D",
+        "content": "`m1.changeNickname()` 호출 줄에서 즉시 `UPDATE` SQL이 DB로 전송되고 커밋된다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "JPA는 쓰기 지연(write-behind)을 사용하므로 setter/도메인 메서드 호출 즉시 커밋되지 않고 flush·commit 시점에 SQL이 반영된다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "같은 트랜잭션의 영속성 컨텍스트는 PK 기준으로 1차 캐시 동일성(`m1 == m2`)을 유지하며, managed 엔티티의 변경은 flush 시점의 dirty checking을 통해 UPDATE SQL로 반영된다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.entity-lifecycle.q4",
+    "promptMarkdown": "다음 코드에서 `entityManager.clear()` 직후 `member.changeEmail(...)`을 호출하고 메서드가 정상 종료되었다. DB 반영 여부와 원인으로 가장 옳은 것은?\n```java\n@Transactional\npublic void changeEmail(long memberId, String newEmail) {\n    Member member = memberRepository.findById(memberId).orElseThrow();\n    entityManager.clear();\n    member.changeEmail(newEmail);\n}\n```",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.entity-lifecycle"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`@Transactional` 안이므로 `clear()` 이후에도 변경 감지가 동작해 UPDATE된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`entityManager.clear()`는 영속성 컨텍스트를 비워 기존 엔티티를 모두 `detached` 상태로 전환한다. 트랜잭션이 살아 있어도 detached 객체는 변경 감지 대상이 아니다."
+      },
+      {
+        "key": "B",
+        "content": "`clear()`로 `member`가 `detached` 상태가 되어 변경 감지 대상에서 제외되므로 UPDATE SQL이 실행되지 않는다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "영속성 컨텍스트에서 분리된 detached 엔티티의 필드 수정은 JPA가 추적하지 않는다. 변경을 반영하려면 다시 조회하거나 `merge()`가 필요하다."
+      },
+      {
+        "key": "C",
+        "content": "`clear()`가 `DELETE` SQL을 예약해 회원 행이 삭제된다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "`clear()`는 메모리상의 영속성 컨텍스트 관리만 해제할 뿐 DB 행을 삭제하지 않는다(`remove()`와 다르다)."
+      },
+      {
+        "key": "D",
+        "content": "`changeEmail()` 호출 시점에 즉시 `LazyInitializationException`이 발생한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "일반 스칼라 필드 변경은 초기화되지 않은 LAZY 프록시 접근이 아니므로 `LazyInitializationException`이 발생하지 않는다."
+      }
+    ],
+    "correctChoiceKey": "B",
+    "explanationMarkdown": "벌크 UPDATE 후 `@Modifying(clearAutomatically = true)`나 `entityManager.clear()`를 호출하면 이전에 조회해 둔 엔티티 참조는 모두 `detached`가 된다. 그 이후 수정은 dirty checking으로 반영되지 않으므로 영속성 상태 전이를 정확히 추적해야 한다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.fetch-plan.q4",
+    "promptMarkdown": "다음 JPQL과 `Pageable` 조합에 대한 평가로 가장 정확한 것은?\n```java\n@Query(\"select o from Order o join fetch o.items where o.status = :status\")\nPage<Order> findWithItems(@Param(\"status\") OrderStatus status, Pageable pageable);\n```\n(단, `Order`와 `items`는 `@OneToMany` 관계다.)",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "HARD",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.fetch-plan"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "`join fetch`는 항상 `OUTER JOIN`이므로 `items`가 비어 있는 `Order`도 무조건 포함된다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`join fetch`는 기본적으로 `INNER JOIN`이며, 자식이 없는 부모까지 포함하려면 `left join fetch`를 명시해야 한다."
+      },
+      {
+        "key": "B",
+        "content": "Spring Data JPA가 자동으로 `items`를 별도 쿼리로 분리해 N+1 없이 DB 페이징을 수행한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "개발자가 명시한 `join fetch o.items`를 Spring Data JPA가 임의로 2단계 쿼리로 재작성하지 않는다."
+      },
+      {
+        "key": "C",
+        "content": "DB에서 `LIMIT/OFFSET`으로 정확히 부모 `Order` 페이지 크기만큼만 읽어 오므로 항상 가장 안전한 방식이다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "to-many collection fetch join은 부모 1건이 자식 수만큼 SQL row로 증폭되므로 DB `LIMIT`을 그대로 적용하면 부모 페이지 크기가 깨진다."
+      },
+      {
+        "key": "D",
+        "content": "to-many collection fetch join과 `Pageable`이 결합되어 Hibernate가 전체 결과를 메모리로 적재한 뒤 페이징하는 경고(HHH90003004)와 메모리 과부하를 유발할 수 있다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "Hibernate는 컬렉션 fetch join에 페이지네이션이 걸리면 DB `LIMIT` 대신 전체 결과를 메모리로 올려 페이징하거나 별도 `countQuery` 오류를 낼 수 있다. 부모 ID 페이징 후 배치 조회(`@BatchSize`/`IN` 절) 또는 to-one만 fetch join하는 전략이 안전하다."
+      }
+    ],
+    "correctChoiceKey": "D",
+    "explanationMarkdown": "`@OneToMany` 컬렉션 `join fetch`에 `Pageable`을 함께 쓰면 SQL row 수와 부모 엔티티 수가 달라져 Hibernate가 메모리 페이징을 시도하며 대용량 장애로 이어진다. 부모 페이지는 `to-one`만 fetch join하거나 ID 페이지 조회 후 `default_batch_fetch_size`/`IN` 쿼리로 자식을 묶어 로딩하는 패턴이 표준 해법이다."
+  },
+  {
+    "kind": "question",
+    "contentKey": "spring.core.data-jpa.fetch-plan.q5",
+    "promptMarkdown": "주문 목록 API는 응답에 `orderId`, `orderNumber`, `memberName` 3개 필드만 필요하며 수정은 하지 않는다. `Order` 엔티티에는 15개 컬럼과 4개의 연관관계가 있다. 가장 적절한 조회 전략은?",
+    "questionType": "MULTIPLE_CHOICE",
+    "difficulty": "MEDIUM",
+    "status": "PUBLISHED",
+    "conceptKeys": [
+      "spring.core.data-jpa.fetch-plan",
+      "spring.core.data-jpa.repository-abstraction"
+    ],
+    "choices": [
+      {
+        "key": "A",
+        "content": "네이티브 SQL `SELECT *`로 모든 컬럼을 조회한 뒤 자바 스트림에서 필터링한다.",
+        "displayOrder": 0,
+        "rationaleMarkdown": "`SELECT *`는 불필요한 컬럼과 네트워크 I/O를 그대로 발생시키며 JPA 프로젝션의 타입 안전성도 잃는다."
+      },
+      {
+        "key": "B",
+        "content": "모든 연관관계를 `FetchType.EAGER`로 바꿔 한 번에 전체 객체 그래프를 로딩한다.",
+        "displayOrder": 1,
+        "rationaleMarkdown": "`EAGER` 전역 전환은 응답에 불필요한 연관관계까지 모든 조회 유스케이스에서 끌고 와 카테시안 곱과 과다 조회를 유발한다."
+      },
+      {
+        "key": "C",
+        "content": "필요한 컬럼만 선택하는 DTO/인터페이스 프로젝션(예: JPQL constructor expression)으로 읽기 모델을 직접 조회한다.",
+        "displayOrder": 2,
+        "rationaleMarkdown": "수정 의도가 없는 읽기 전용 목록은 필요한 3개 컬럼만 프로젝션하면 불필요한 컬럼 전송, 영속성 컨텍스트 스냅샷 유지 비용, N+1 위험을 동시에 제거할 수 있다."
+      },
+      {
+        "key": "D",
+        "content": "Open Session in View(OSIV)를 켜고 컨트롤러 직렬화 단계에서 LAZY 연관관계를 순회한다.",
+        "displayOrder": 3,
+        "rationaleMarkdown": "OSIV에 의존한 직렬화 시점 LAZY 탐색은 N+1을 숨기고 HTTP 응답 완료까지 DB 커넥션을 점유해 커넥션 풀 고갈 위험을 키운다."
+      }
+    ],
+    "correctChoiceKey": "C",
+    "explanationMarkdown": "수정하지 않는 목록·요약 API는 엔티티 전체를 managed 상태로 올릴 필요가 없다. JPQL `select new ...` DTO 프로젝션으로 필요한 컬럼만 조인 조회하면 N+1과 과다 페칭, dirty checking 스냅샷 메모리 비용을 모두 줄일 수 있다."
+  }
 ]
