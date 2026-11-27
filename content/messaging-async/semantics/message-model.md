@@ -38,15 +38,7 @@ references:
 
 비동기 시스템에서는 여러 종류의 정보를 브로커를 통해 전달할 수 있습니다. 모두 메시지라는 봉투에 담길 수 있지만 **무엇을 요구하는지와 누가 그 의미를 소유하는지**는 다릅니다.
 
-```text
-명령(Command)
-Order service ── ChargeOrder ──▶ Payment consumer
-              "이 작업을 수행해 줘"
-
-이벤트(Event)
-Order service ── OrderPlaced ──▶ Search / Analytics / Notification
-              "이 일이 이미 발생했어"
-```
+![명령(Command)과 이벤트(Event)의 의도와 결합 방향 비교](/learning/messaging-async/command-vs-event-boundary.svg)
 
 ### 명령은 처리 의도가 중심이다
 
